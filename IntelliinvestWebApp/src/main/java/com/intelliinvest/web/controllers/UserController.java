@@ -60,7 +60,7 @@ public class UserController {
 			userResponse = Converter.getUserResponse(user);
 			userResponse.setSuccess(true);
 			userResponse.setMessage("Registration for user " + username + " with userId id " + userId
-					+ " is successful. Please activate your account by clicking link in your activation userId.");
+					+ " is successful. Please activate your account by clicking link in your activation mail.");
 		} else {
 			userResponse.setUserId(userId);
 			userResponse.setSuccess(false);
