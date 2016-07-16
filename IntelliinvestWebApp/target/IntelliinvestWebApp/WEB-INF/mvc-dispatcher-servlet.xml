@@ -20,19 +20,52 @@
 		up static resources in the ${webappRoot}/resources directory -->
 	<resources mapping="/resources/**" location="/resources/" />
 
-	<!-- Define the MongoTemplate which handles connectivity with MongoDB -->
-	<beans:bean id="mongoTemplate"
-		class="org.springframework.data.mongodb.core.MongoTemplate">
-		<beans:constructor-arg name="mongo" ref="mongo" />
-		<beans:constructor-arg name="databaseName"
-			value="intelliinvest" />
-	</beans:bean>
+ <!-- Seeds -->
+    <beans:bean id="mongoSeedListID" class="java.util.ArrayList">
+    <beans:constructor-arg>
+        <beans:list>
+            <beans:ref bean="mongoSeedlID" />
+        </beans:list>
+    </beans:constructor-arg>
+    </beans:bean>
 
-	<!-- Factory bean that creates the MongoDB instance -->
-	<beans:bean id="mongo"
-		class="org.springframework.data.mongodb.core.MongoFactoryBean">
-		<beans:property name="host" value="localhost" />
-	</beans:bean>
+    <beans:bean id="mongoSeedlID" class="com.mongodb.ServerAddress">
+            <beans:constructor-arg type="java.lang.String" name="host" value="10.140.0.3" />
+            <beans:constructor-arg type="int" name="port" value="27013" />
+    </beans:bean>
+
+    <!-- Credentials -->
+    <beans:bean id="mongoCredentialListID" class="java.util.ArrayList">
+    <beans:constructor-arg>
+        <beans:list>
+            <beans:ref bean="mongoCredentialID" />
+        </beans:list>
+    </beans:constructor-arg>
+    </beans:bean>
+
+    <beans:bean id="mongoCredentialID" class="com.mongodb.MongoCredential">
+            <beans:constructor-arg name="mechanism" value = "#{T(com.mongodb.AuthenticationMechanism).SCRAM_SHA_1}" />
+            <beans:constructor-arg type="java.lang.String" name="userName" value="intelliinvest_user" />
+            <beans:constructor-arg type="java.lang.String" name="source" value="intelliinvest" />
+            <beans:constructor-arg type="char[]" name="password" value="Welcome123" />
+    </beans:bean>
+
+    <!-- MongoClient -->
+    <beans:bean id="mongoClientID" class="com.mongodb.MongoClient">
+            <beans:constructor-arg ref="mongoSeedListID" />
+            <beans:constructor-arg ref="mongoCredentialID"  />
+    </beans:bean>
+
+    <!-- MongoDbFactory -->
+    <beans:bean id="simpleMongoDbFactoryID" class="org.springframework.data.mongodb.core.SimpleMongoDbFactory">
+        <beans:constructor-arg ref="mongoClientID" />
+        <beans:constructor-arg name="databaseName" value="intelliinvest" />
+    </beans:bean>
+
+    <!-- MongoTemplate -->
+    <beans:bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <beans:constructor-arg ref="simpleMongoDbFactoryID" />
+    </beans:bean>
 
 	<!-- Use this post processor to translate any MongoExceptions thrown in 
 		@Repository annotated classes -->
