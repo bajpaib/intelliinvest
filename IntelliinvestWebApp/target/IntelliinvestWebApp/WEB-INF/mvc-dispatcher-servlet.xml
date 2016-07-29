@@ -30,8 +30,8 @@
 	</beans:bean>
 
 	<beans:bean id="mongoSeedlID" class="com.mongodb.ServerAddress">
-		<!-- <beans:constructor-arg type="java.lang.String" name="host" value="104.199.142.91" />  -->
-		<beans:constructor-arg type="java.lang.String" name="host" value="localhost" />
+		<!-- <beans:constructor-arg type="java.lang.String" name="host" value="localhost" />  -->
+		<beans:constructor-arg type="java.lang.String" name="host" value="104.199.142.91" />
 		<beans:constructor-arg type="int" name="port" value="27017" />
 	</beans:bean>
 
