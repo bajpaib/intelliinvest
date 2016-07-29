@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Repository;
 
 import com.intelliinvest.data.model.User;
 import com.intelliinvest.web.common.IntelliInvestStore;
@@ -21,25 +22,19 @@ import com.intelliinvest.web.util.Helper;
 import com.intelliinvest.web.util.MailUtil;
 
 public class UserRepository {
-
 	private static Logger logger = Logger.getLogger(UserRepository.class);
-
 	private static final String COLLECTION_USER = "USER";
-
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
-	public User register(String userName, String userId, String phone, String password, boolean sendNotification)
+	public User registerUser(String userName, String userId, String phone, String password, boolean sendNotification)
 			throws Exception {
 		logger.info("Inside register()...");
-
 		User user = getUserByUserId(userId);
-
 		if (user != null) {
 			throw new IntelliinvestException("User " + userId + " already exists");
 		}
 		user = new User();
-
 		user.setPassword(EncryptUtil.encrypt(password));
 		user.setPhone(phone);
 		user.setUsername(userName);
@@ -65,11 +60,9 @@ public class UserRepository {
 		user.setLoggedIn(false);
 
 		mongoTemplate.insert(user, COLLECTION_USER);
-
 		logger.info("Registration for user " + userName + " with mail id " + userId + " successful");
 
 		logger.info("Sending activation mail for user " + userId);
-
 		boolean mail_send_success = MailUtil.sendMail(IntelliInvestStore.properties.getProperty("smtp.host"),
 				IntelliInvestStore.properties.getProperty("mail.from"),
 				IntelliInvestStore.properties.getProperty("mail.password"), new String[] { userId },
@@ -93,12 +86,10 @@ public class UserRepository {
 		if (!Helper.isNotNullAndNonEmpty(userId) || !Helper.isNotNullAndNonEmpty(activationCode)) {
 			throw new IntelliinvestException("Invalid UserId or Activation Code.");
 		}
-
 		User user = getUserByUserId(userId);
 		if (user == null) {
 			throw new IntelliinvestException("User " + userId + " does not exists");
 		}
-
 		if ((user.getActivationCode() == null)
 				|| (user.getActivationCode() != null && !activationCode.equals(user.getActivationCode()))) {
 			throw new IntelliinvestException("Incorrect activation code");
@@ -106,11 +97,9 @@ public class UserRepository {
 
 		Query query = new Query();
 		query.addCriteria(Criteria.where("userId").is(userId).and("activationCode").is(activationCode));
-
 		Update update = new Update();
 		update.set("active", "Y");
 		update.set("updateDate", new Date());
-
 		return mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true), User.class,
 				COLLECTION_USER);
 	}
@@ -128,12 +117,12 @@ public class UserRepository {
 
 			if (user != null) {
 				if (user.getActive().equals("Y")) {
-					
+
 					if (user.getLoggedIn()) {
 						user_logged_in = true;
 						throw new IntelliinvestException("User " + userId + " is already logged in");
 					}
-					
+
 					Query query = new Query();
 					query.addCriteria(Criteria.where("userId").is(userId));
 					Date currentDateTime = new Date();
@@ -166,7 +155,6 @@ public class UserRepository {
 						+ e.getMessage());
 			}
 		}
-
 	}
 
 	public User logout(String userId) throws Exception {
@@ -176,7 +164,7 @@ public class UserRepository {
 		if (user == null) {
 			throw new IntelliinvestException("User " + userId + " does not exists");
 		}
-		
+
 		if (!user.getLoggedIn()) {
 			throw new IntelliinvestException("User " + userId + " is not logged in");
 		}
@@ -189,7 +177,6 @@ public class UserRepository {
 
 		return mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true), User.class,
 				COLLECTION_USER);
-
 	}
 
 	public User forgotPassword(String userId) throws Exception {
@@ -199,7 +186,8 @@ public class UserRepository {
 		try {
 			User user = getUserByUserId(userId);
 			if (user == null) {
-				logger.error("Password reset mail not sent to user with userId id " + userId + " because Username does not exists");
+				logger.error("Password reset mail not sent to user with userId id " + userId
+						+ " because Username does not exists");
 				password_send_failure = true;
 				throw new IntelliinvestException("User " + userId + " does not exists");
 			}
@@ -217,7 +205,7 @@ public class UserRepository {
 
 			user = mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true), User.class,
 					COLLECTION_USER);
-			
+
 			if (MailUtil.sendMail(IntelliInvestStore.properties.getProperty("smtp.host"),
 					IntelliInvestStore.properties.getProperty("mail.from"),
 					IntelliInvestStore.properties.getProperty("mail.password"), new String[] { userId },
@@ -246,7 +234,6 @@ public class UserRepository {
 		if (user == null) {
 			throw new IntelliinvestException("User " + userId + " does not exists");
 		}
-		
 		if (!user.getLoggedIn()) {
 			throw new IntelliinvestException("User " + userId + " is not logged in");
 		}
@@ -257,7 +244,6 @@ public class UserRepository {
 		if (Helper.isNotNullAndNonEmpty(sendNotification)) {
 			update.set("sendNotification", Boolean.parseBoolean(sendNotification));
 		}
-
 		if (Helper.isNotNullAndNonEmpty(phone)) {
 			update.set("phone", phone);
 		}

@@ -3,6 +3,7 @@ package com.intelliinvest.data.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -11,7 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 @Document(collection="USER")
 public class User implements Serializable {
 	
-	private String userId;
+	@Id private String userId;
 	private String username;
 	private String phone;
 	private String password;
@@ -21,8 +22,6 @@ public class User implements Serializable {
 	private String activationCode;
 	private boolean loggedIn;
 	private boolean sendNotification;
-	
-
 	@DateTimeFormat(iso = ISO.DATE)
 	private Date renewalDate;
 	@DateTimeFormat(iso = ISO.DATE)
@@ -35,6 +34,7 @@ public class User implements Serializable {
 	private Date updateDate;
 	
 	public User() {
+		super();
 	}
 
 	public String getUserId() {

@@ -1,9 +1,14 @@
 package com.intelliinvest.web.util;
 
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 
+import com.intelliinvest.web.common.IntelliInvestStore;
+
 public class DateUtil {
+
+	public static final ZoneId ZONE_ID = ZoneId.of(IntelliInvestStore.properties.getProperty("default.timezone"));
 
 	public static Date getCurrentDate() {
 		Calendar cal = Calendar.getInstance();
@@ -11,7 +16,6 @@ public class DateUtil {
 		cal.set(Calendar.MINUTE, 0);
 		cal.set(Calendar.SECOND, 0);
 		cal.set(Calendar.MILLISECOND, 0);
-		cal.set(Calendar.AM_PM, Calendar.AM);
 		return cal.getTime();
 	}
 

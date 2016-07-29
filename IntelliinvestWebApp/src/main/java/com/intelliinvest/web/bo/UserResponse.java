@@ -3,9 +3,8 @@ package com.intelliinvest.web.bo;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.codehaus.jackson.annotate.JsonAutoDetect;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.intelliinvest.web.util.JsonDateSerializer;
 
 @JsonAutoDetect

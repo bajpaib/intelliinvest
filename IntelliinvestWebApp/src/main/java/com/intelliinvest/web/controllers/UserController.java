@@ -32,7 +32,6 @@ public class UserController {
 
 	@RequestMapping(value = "/user/register", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
 	public @ResponseBody UserResponse registerUser(@RequestBody UserFormParameters userFormParameters) {
-
 		UserResponse userResponse = new UserResponse();
 		String userId = userFormParameters.getUserId();
 		String username = userFormParameters.getUsername();
@@ -40,22 +39,19 @@ public class UserController {
 		String phone = userFormParameters.getPhone();
 		String sendNotification = userFormParameters.getSendNotification();
 		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
-
 		User user = null;
 		boolean error = false;
-
 		try {
 			if (Helper.isNotNullAndNonEmpty(username) && Helper.isNotNullAndNonEmpty(password)
 					&& Helper.isNotNullAndNonEmpty(userId) && Helper.isNotNullAndNonEmpty(phone)
 					&& Helper.isNotNullAndNonEmpty(sendNotification + "")) {
-				user = userRepository.register(username, userId, phone, password, Boolean.valueOf(sendNotification));
+				user = userRepository.registerUser(username, userId, phone, password, Boolean.valueOf(sendNotification));
 			}
 		} catch (Exception e) {
 			errorMsg = e.getMessage();
 			logger.error("Exception inside registerUser() " + errorMsg);
 			error = true;
 		}
-
 		if (user != null && !error) {
 			userResponse = Converter.getUserResponse(user);
 			userResponse.setSuccess(true);
@@ -73,12 +69,10 @@ public class UserController {
 	@RequestMapping(value = "/user/activate", method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public @ResponseBody UserResponse activateUser(@RequestParam("userId") String userId,
 			@RequestParam("activationCode") String activationCode) {
-
 		UserResponse userResponse = new UserResponse();
 		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
 		User user = null;
 		boolean error = false;
-
 		try {
 			user = userRepository.activateUser(userId, activationCode);
 		} catch (Exception e) {
@@ -86,30 +80,25 @@ public class UserController {
 			logger.error("Exception inside activateUser() " + errorMsg);
 			error = true;
 		}
-
 		if (user != null && !error) {
 			userResponse.setUserId(userId);
 			userResponse.setSuccess(true);
-			userResponse.setMessage("Account has been activated successfully.");
+			userResponse.setMessage("User has been activated successfully.");
 		} else {
 			userResponse.setUserId(userId);
 			userResponse.setSuccess(false);
 			userResponse.setMessage(errorMsg);
 		}
-
 		return userResponse;
 	}
-
 	@RequestMapping(value = "/user/login", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
 	public @ResponseBody UserResponse login(@RequestBody UserFormParameters userFormParameters) {
-
 		UserResponse userResponse = new UserResponse();
 		String userId = userFormParameters.getUserId();
 		String password = userFormParameters.getPassword();
 		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
 		User user = null;
 		boolean error = false;
-
 		if (Helper.isNotNullAndNonEmpty(userId) && Helper.isNotNullAndNonEmpty(password)) {
 			try {
 				user = userRepository.login(userId, password);
@@ -119,7 +108,6 @@ public class UserController {
 				error = true;
 			}
 		}
-
 		if (user != null && !error) {
 			userResponse = Converter.getUserResponse(user);
 			userResponse.setSuccess(true);
@@ -129,19 +117,16 @@ public class UserController {
 			userResponse.setSuccess(false);
 			userResponse.setMessage(errorMsg);
 		}
-
 		return userResponse;
 	}
 
 	@RequestMapping(value = "/user/logout", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
 	public @ResponseBody UserResponse logout(@RequestBody UserFormParameters userFormParameters) {
-
 		UserResponse userResponse = new UserResponse();
 		String userId = userFormParameters.getUserId();
 		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
 		User user = null;
 		boolean error = false;
-
 		if (Helper.isNotNullAndNonEmpty(userId)) {
 			try {
 				user = userRepository.logout(userId);
@@ -151,7 +136,6 @@ public class UserController {
 				error = true;
 			}
 		}
-
 		if (user != null && !error) {
 			userResponse = Converter.getUserResponse(user);
 			userResponse.setSuccess(true);
@@ -161,19 +145,16 @@ public class UserController {
 			userResponse.setSuccess(false);
 			userResponse.setMessage(errorMsg);
 		}
-
 		return userResponse;
 	}
 
 	@RequestMapping(value = "/user/forgotPassword", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
 	public @ResponseBody UserResponse forgotPassword(@RequestBody UserFormParameters userFormParameters) {
-
 		UserResponse userResponse = new UserResponse();
 		String userId = userFormParameters.getUserId();
 		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
 		User user = null;
 		boolean error = false;
-
 		if (Helper.isNotNullAndNonEmpty(userId)) {
 			try {
 				user = userRepository.forgotPassword(userId);
@@ -183,7 +164,6 @@ public class UserController {
 				error = true;
 			}
 		}
-
 		if (user != null && !error) {
 			userResponse = Converter.getUserResponse(user);
 			userResponse.setSuccess(true);
@@ -193,13 +173,11 @@ public class UserController {
 			userResponse.setSuccess(false);
 			userResponse.setMessage(errorMsg);
 		}
-
 		return userResponse;
 	}
 
 	@RequestMapping(value = "/user/update", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
 	public @ResponseBody UserResponse updateUser(@RequestBody UserFormParameters userFormParameters) {
-
 		UserResponse userResponse = new UserResponse();
 		String userName = userFormParameters.getUsername();
 		String userId = userFormParameters.getUserId();
@@ -210,7 +188,6 @@ public class UserController {
 		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
 		User user = null;
 		boolean error = false;
-
 		try {
 			user = userRepository.updateUser(userName, userId, phone, oldPassword, password, sendNotification);
 		} catch (Exception e) {
@@ -218,7 +195,6 @@ public class UserController {
 			logger.error("Exception inside updateUser() " + errorMsg);
 			error = true;
 		}
-
 		if (user != null && !error) {
 			userResponse = Converter.getUserResponse(user);
 			userResponse.setSuccess(true);
@@ -228,19 +204,16 @@ public class UserController {
 			userResponse.setSuccess(false);
 			userResponse.setMessage(errorMsg);
 		}
-
 		return userResponse;
 	}
 
 	@RequestMapping(value = "/user/getUserByUserId", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
 	public @ResponseBody UserResponse getUserByUserId(@RequestBody UserFormParameters userFormParameters) {
-
 		UserResponse userResponse = new UserResponse();
 		String userId = userFormParameters.getUserId();
 		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
 		User user = null;
 		boolean error = false;
-
 		if (Helper.isNotNullAndNonEmpty(userId)) {
 			try {
 				user = userRepository.getUserByUserId(userId);
@@ -249,19 +222,16 @@ public class UserController {
 				logger.error("Exception inside getUserByUserId() " + errorMsg);
 				error = true;
 			}
-
 		} else {
 			errorMsg = "UserId is null or empty";
 			logger.error("Exception inside updateUser() " + errorMsg);
 			error = true;
 		}
-
 		if (user == null) {
 			errorMsg = "User does not exists.";
 			logger.error("Exception inside updateUser() " + errorMsg);
 			error = true;
 		}
-
 		if (user != null && !error) {
 			userResponse = Converter.getUserResponse(user);
 			userResponse.setSuccess(true);
@@ -271,7 +241,6 @@ public class UserController {
 			userResponse.setSuccess(false);
 			userResponse.setMessage(errorMsg);
 		}
-
 		return userResponse;
 	}
 
@@ -280,7 +249,6 @@ public class UserController {
 		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
 		List<User> userDetails = null;
 		boolean error = false;
-
 		try {
 			userDetails = userRepository.getAllUsers();
 		} catch (Exception e) {
@@ -298,18 +266,15 @@ public class UserController {
 			list.add(userResponse);
 			return list;
 		}
-
 	}
 
 	@RequestMapping(value = "/user/remove", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
 	public @ResponseBody UserResponse removeUser(@RequestBody UserFormParameters userFormParameters) {
-
 		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
 		String userId = userFormParameters.getUserId();
 		UserResponse userResponse = new UserResponse();
 		User user = null;
 		boolean error = false;
-
 		if (Helper.isNotNullAndNonEmpty(userId)) {
 			try {
 				user = userRepository.removeUser(userId);
@@ -319,7 +284,6 @@ public class UserController {
 				error = true;
 			}
 		}
-
 		if (user != null && !error) {
 			userResponse = Converter.getUserResponse(user);
 			userResponse.setSuccess(true);
@@ -330,7 +294,5 @@ public class UserController {
 			userResponse.setMessage(errorMsg);
 		}
 		return userResponse;
-
 	}
-
 }
