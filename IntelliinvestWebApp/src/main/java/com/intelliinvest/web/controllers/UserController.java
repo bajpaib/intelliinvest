@@ -259,7 +259,7 @@ public class UserController {
 		if (userDetails != null && !error) {
 			return Converter.convertUsersList(userDetails);
 		} else {
-			List<UserResponse> list = new ArrayList<>();
+			List<UserResponse> list = new ArrayList<UserResponse>();
 			UserResponse userResponse = new UserResponse();
 			userResponse.setSuccess(false);
 			userResponse.setMessage(errorMsg);

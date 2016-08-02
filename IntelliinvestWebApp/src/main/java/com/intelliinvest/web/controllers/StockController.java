@@ -88,7 +88,7 @@ public class StockController {
 		if (stocks != null && !error) {
 			return Converter.convertStockList(stocks);
 		} else {
-			List<StockResponse> list = new ArrayList<>();
+			List<StockResponse> list = new ArrayList<StockResponse>();
 			StockResponse stockResponse = new StockResponse();
 			stockResponse.setSuccess(false);
 			stockResponse.setMessage(errorMsg);
@@ -155,7 +155,7 @@ public class StockController {
 		if (stockPrices != null && !error) {
 			return Converter.convertStockPriceList(stockPrices);
 		} else {
-			List<StockPriceResponse> list = new ArrayList<>();
+			List<StockPriceResponse> list = new ArrayList<StockPriceResponse>();
 			StockPriceResponse stockPriceResponse = new StockPriceResponse();
 			stockPriceResponse.setSuccess(false);
 			stockPriceResponse.setMessage(errorMsg);

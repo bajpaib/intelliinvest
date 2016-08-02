@@ -3,7 +3,6 @@ package com.intelliinvest.web.common;
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -11,7 +10,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -21,6 +19,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,15 +35,11 @@ import com.intelliinvest.web.util.DateUtil;
 import com.intelliinvest.web.util.Helper;
 import com.intelliinvest.web.util.HttpUtil;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 public class IntelliInvestStore {
 	private static Logger logger = Logger.getLogger(IntelliInvestStore.class);
 	@Autowired
 	private StockRepository stockRepository;
-	final static String GOOGLE_QUOTE_URL = "https://www.google.com/finance/info?q=#CODE#";
-//	final static String GOOGLE_REALTIME_QUOTE_URL = "http://www.google.com/finance/getprices?q=#CODE#&x=#EXCHANGE#&i=120&p=1d&f=d,c,v&df=cpct";
+	private final static String GOOGLE_QUOTE_URL = "https://www.google.com/finance/info?q=#CODE#";
 	private static boolean REFRESH_PERIODICALLY = false;
 	public static Properties properties = null;
 	private ScheduledExecutorService scheduledPool = null;
@@ -72,13 +69,13 @@ public class IntelliInvestStore {
 	public boolean enablePeriodicRefresh() {
 		boolean enable = false;
 		ZoneId zoneId = DateUtil.ZONE_ID;
-		ZonedDateTime zonedNow = ZonedDateTime.now(zoneId);	
+		ZonedDateTime zonedNow = ZonedDateTime.now(zoneId);
 		DayOfWeek dayOfWeek = zonedNow.getDayOfWeek();
 		int hour = zonedNow.getHour();
 		int periodicRefreshStartHour = new Integer(properties.getProperty("periodic.refresh.start.hr"));
 		int periodicRefreshEndHour = new Integer(properties.getProperty("periodic.refresh.end.hr"));
-		if (!dayOfWeek.equals(DayOfWeek.SATURDAY) && !dayOfWeek.equals(DayOfWeek.SUNDAY) && hour >= periodicRefreshStartHour
-				&& hour <= periodicRefreshEndHour) {
+		if (!dayOfWeek.equals(DayOfWeek.SATURDAY) && !dayOfWeek.equals(DayOfWeek.SUNDAY)
+				&& hour >= periodicRefreshStartHour && hour <= periodicRefreshEndHour) {
 			enable = true;
 		}
 		return enable;
@@ -86,7 +83,6 @@ public class IntelliInvestStore {
 
 	private void initializeScheduledTasks() {
 		Runnable refreshCurrentPricesTask = new Runnable() {
-			@Override
 			public void run() {
 				if (REFRESH_PERIODICALLY) {
 					logger.info("refreshing current price data for stocks and world indexes");
@@ -103,7 +99,6 @@ public class IntelliInvestStore {
 		};
 
 		Runnable refreshCacheFromDBTask = new Runnable() {
-			@Override
 			public void run() {
 				if (REFRESH_PERIODICALLY) {
 					logger.info("refreshing IntelliInvest data from DB");
@@ -119,7 +114,6 @@ public class IntelliInvestStore {
 		};
 
 		Runnable enablePeriodicRefreshTask = new Runnable() {
-			@Override
 			public void run() {
 				if (enablePeriodicRefresh()) {
 					REFRESH_PERIODICALLY = true;
@@ -127,29 +121,11 @@ public class IntelliInvestStore {
 				}
 			}
 		};
-
 		Runnable disablePeriodicRefreshTask = new Runnable() {
-			@Override
 			public void run() {
 				if (!enablePeriodicRefresh()) {
 					REFRESH_PERIODICALLY = false;
 					logger.info("Setting REFRESH_PERIODICALLY to false inside disablePeriodicRefreshTask");
-				}
-			}
-		};
-
-		Runnable refreshEODPricesTask = new Runnable() {
-			@Override
-			public void run() {
-				ZoneId zoneId = DateUtil.ZONE_ID;
-				ZonedDateTime zonedNow = ZonedDateTime.now(zoneId);	
-				DayOfWeek dayOfWeek = zonedNow.getDayOfWeek();
-				if (!dayOfWeek.equals(DayOfWeek.SATURDAY) && !dayOfWeek.equals(DayOfWeek.SUNDAY)) {
-					try {
-						updateEODNonWorldPrices();
-					} catch (Exception e) {
-						logger.error("Error refreshing EOD price data for stocks and world indexes " + e.getMessage());
-					}
 				}
 			}
 		};
@@ -176,7 +152,7 @@ public class IntelliInvestStore {
 
 		ZonedDateTime zonedNext9 = zonedNow.withHour(periodicRefreshStartHour).withMinute(periodicRefreshStartMin)
 				.withSecond(0);
-		
+
 		if (zonedNow.compareTo(zonedNext9) > 0) {
 			zonedNext9 = zonedNext9.plusDays(1);
 		}
@@ -187,6 +163,7 @@ public class IntelliInvestStore {
 		logger.info("Scheduled enablePeriodicRefreshTask for periodic price refresh");
 
 		int periodicRefreshEndHour = new Integer(properties.getProperty("periodic.refresh.end.hr"));
+
 		int periodicRefreshEndMin = new Integer(properties.getProperty("periodic.refresh.end.min"));
 
 		ZonedDateTime zonedNext16 = zonedNow.withHour(periodicRefreshEndHour).withMinute(periodicRefreshEndMin)
@@ -200,25 +177,6 @@ public class IntelliInvestStore {
 		long initialDelay16 = duration16.getSeconds();
 		scheduledPool.scheduleAtFixedRate(disablePeriodicRefreshTask, initialDelay16, 24 * 60 * 60, TimeUnit.SECONDS);
 		logger.info("Scheduled disablePeriodicRefreshTask for periodic price refresh");
-
-		int periodicEODPriceRefreshStartHour = new Integer(
-				properties.getProperty("periodic.eod.price.refresh.start.hr"));
-		int periodicEODPriceRefreshStartMin = new Integer(
-				properties.getProperty("periodic.eod.price.refresh.start.min"));
-
-		ZonedDateTime zonedNext21 = zonedNow.withHour(periodicEODPriceRefreshStartHour)
-				.withMinute(periodicEODPriceRefreshStartMin).withSecond(0);
-
-		if (zonedNow.compareTo(zonedNext21) > 0) {
-			zonedNext21 = zonedNext21.plusDays(1);
-		}
-
-		Duration duration21 = Duration.between(zonedNow, zonedNext21);
-		long initialDelay21 = duration21.getSeconds();
-		scheduledPool.scheduleAtFixedRate(refreshEODPricesTask, initialDelay21, 24 * 60 * 60, TimeUnit.SECONDS);
-		
-//		scheduledPool.scheduleAtFixedRate(refreshEODPricesTask, 20, 300, TimeUnit.SECONDS);
-		logger.info("Scheduled refreshEODPricesTask for periodic eod price refresh");
 	}
 
 	public void initialiseCacheFromDB() {
@@ -226,7 +184,7 @@ public class IntelliInvestStore {
 		logger.info("Initialised IntelliInvestStore");
 	}
 
-	private static void loadProperties() {
+	private void loadProperties() {
 		try {
 			logger.info("Loading property file for intelliinvest");
 			properties = new Properties();
@@ -261,7 +219,7 @@ public class IntelliInvestStore {
 				nonWorldStocks.add(stock);
 			}
 		}
-		
+
 		List<StockPrice> allStockPrices = stockRepository.getStockPrices();
 		List<NSEtoBSEMap> nseToBseMap = stockRepository.getNSEtoBSEMap();
 
@@ -294,41 +252,22 @@ public class IntelliInvestStore {
 		}
 		List<StockPrice> nonWorldPrices = getCurrentNonWorldStockPrices(nonWorldStocks);
 		logger.debug("From updateCurrentNonWorldPrices()");
-		for(StockPrice price: nonWorldPrices){		
+		for (StockPrice price : nonWorldPrices) {
 			logger.debug(price.toString());
 		}
-		
+
 		if (Helper.isNotNullAndNonEmpty(nonWorldPrices)) {
 			nonWorldPrices = stockRepository.updateCurrentStockPrices(nonWorldPrices);
 			StockDetailStaticHolder.nonWorldStockPriceMap = getStockPriceMapFromList(nonWorldPrices);
 		}
 		List<StockPrice> worldPrices = getCurrentWorldStockPrices(worldStocks);
 		logger.debug("From updateCurrentWorldPrices()");
-		for(StockPrice price: worldPrices){		
+		for (StockPrice price : worldPrices) {
 			logger.debug(price.toString());
 		}
 		if (Helper.isNotNullAndNonEmpty(worldPrices)) {
 			worldPrices = stockRepository.updateCurrentStockPrices(worldPrices);
 			StockDetailStaticHolder.worldStockPriceMap = getStockPriceMapFromList(worldPrices);
-		}
-	}
-
-	public void updateEODNonWorldPrices() throws Exception {
-		List<Stock> stockDetails = stockRepository.getStocks();
-		List<Stock> nonWorldStocks = new ArrayList<Stock>();
-		for (Stock stock : stockDetails) {
-			if (!stock.isWorldStock()) {
-				nonWorldStocks.add(stock);
-			}
-		}
-		List<StockPrice> nonWorldEODPrices = getEODNonWorldStockPrices(nonWorldStocks);
-		logger.debug("From updateEODNonWorldPrices()");
-		for(StockPrice price: nonWorldEODPrices){		
-			logger.debug(price.toString());
-		}
-		if (Helper.isNotNullAndNonEmpty(nonWorldEODPrices)) {
-			nonWorldEODPrices = stockRepository.updateEODStockPrices(nonWorldEODPrices);
-			StockDetailStaticHolder.nonWorldStockPriceMap = getStockPriceMapFromList(nonWorldEODPrices);
 		}
 	}
 
@@ -358,14 +297,14 @@ public class IntelliInvestStore {
 				String code = stockDetailData.getCode();
 				code = "NSE:" + stockDetailData.getCode();
 				codes = codes + code + ",";
-			}			
-			if(!codes.isEmpty()){
+			}
+			if (!codes.isEmpty()) {
 				codes = codes.substring(0, codes.lastIndexOf(","));
 			}
-			
+
 			String response = HttpUtil
 					.getFromHttpUrlAsString(GOOGLE_QUOTE_URL.replace("#CODE#", codes.replace("&", "%26")));
-			
+
 			stockCurrentPriceList.addAll(getPriceFromJSON("NSE", codes, response));
 		} catch (Exception e) {
 			logger.error("Error fetching stock price in getStockPrice " + codes);
@@ -381,7 +320,7 @@ public class IntelliInvestStore {
 				String stockCode = stock.getCode();
 				String response = HttpUtil
 						.getFromHttpUrlAsString(GOOGLE_QUOTE_URL.replace("#CODE#", stockCode.replace("&", "%26")));
-				JSONArray jsonArray = JSONArray.fromObject(response.replaceFirst("//", "").trim());			
+				JSONArray jsonArray = JSONArray.fromObject(response.replaceFirst("//", "").trim());
 				for (int j = 0; j < jsonArray.size(); j++) {
 					try {
 						JSONObject stockObject = (JSONObject) jsonArray.get(j);
@@ -443,34 +382,8 @@ public class IntelliInvestStore {
 		} catch (Exception e) {
 			logger.info("Error fetching stock price for " + codes);
 		}
-		return stockCurrentPriceList;
-	}
 
-	private List<StockPrice> getEODNonWorldStockPrices(List<Stock> nonWorldStocks) throws Exception {
-		List<StockPrice> stockEODPriceList = new ArrayList<StockPrice>();
-		Date currentDate = DateUtil.getCurrentDate();
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		for (Stock stock : nonWorldStocks) {
-			String eodPricesAsString = getDataFromQuandl(stock.getCode(), currentDate, currentDate);
-			if (!Helper.isNotNullAndNonEmpty(eodPricesAsString)) {
-				throw new IntelliinvestException("Error while fetching EOD prices for date: " + currentDate
-						+ " for Stock: " + stock.getCode());
-			}
-			String[] eodPricesAsArray = eodPricesAsString.split("\n");
-			String eodPriceAsString = eodPricesAsArray[1];
-			String[] eodPriceAsArray = eodPriceAsString.split(",");
-			if (eodPriceAsArray.length >= 8) {
-				StockPrice stockPrice = new StockPrice();
-				stockPrice.setCode(stock.getCode());
-				stockPrice.setEodDate(format.parse(eodPriceAsArray[0]));
-				stockPrice.setEodPrice(new Double(eodPriceAsArray[5]));
-				stockEODPriceList.add(stockPrice);
-			} else {
-				throw new IntelliinvestException("Error while fetching EOD prices for date: " + currentDate
-						+ " for Stock: " + stock.getCode());
-			}
-		}
-		return stockEODPriceList;
+		return stockCurrentPriceList;
 	}
 
 	private Map<String, Stock> getStockDetailMapFromList(List<Stock> datas) {
@@ -481,7 +394,7 @@ public class IntelliInvestStore {
 		return dataMap;
 	}
 
-	private Map<String, StockPrice> getStockPriceMapFromList(List<StockPrice> datas) {
+	public static Map<String, StockPrice> getStockPriceMapFromList(List<StockPrice> datas) {
 		Map<String, StockPrice> dataMap = new HashMap<String, StockPrice>();
 		for (StockPrice data : datas) {
 			dataMap.put(data.getCode(), data);
@@ -551,36 +464,5 @@ public class IntelliInvestStore {
 			map.put(data.getBseCode(), data.getNseCode());
 		}
 		return map;
-	}
-
-	private String getDataFromQuandl(String stock_code, Date startDate, Date endDate) {
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-		stock_code = getQuandlStockCode(stock_code);
-		// link="https://www.quandl.com/api/v3/datasets/NSE/SUVEN.csv?api_key=yhwhU_RHkVxbTtFTff9t&start_date=2016-05-01&end_date=2016-05-24";
-		String link = "https://www.quandl.com/api/v3/datasets/NSE/" + stock_code
-				+ ".csv?api_key=yhwhU_RHkVxbTtFTff9t&start_date=" + format.format(startDate) + "&end_date="
-				+ format.format(endDate);
-		/*String link = "https://www.quandl.com/api/v3/datasets/NSE/" + stock_code
-				+ ".csv?api_key=yhwhU_RHkVxbTtFTff9t&start_date=" + "2016-07-28" + "&end_date="
-				+ "2016-07-28";*/
-		try {
-			logger.debug("Sending Quandl Request:"+ link);	
-			byte b[] = HttpUtil.getFromUrlAsBytes(link);
-			return new String(b);
-		} catch (Exception e) {
-			logger.info("Error while fetching Quandl data from Start Date: " + startDate + "to End date: "
-					+ endDate + " for Stock: " + stock_code + " Error " + e.getMessage());
-		}
-		return null;
-	}
-
-	private String getQuandlStockCode(String stock_code) {
-		Iterator<String> itr = StockDetailStaticHolder.QUANDL_STOCK_CODES_MAPPING.keySet().iterator();
-		while (itr.hasNext()) {
-			String key = itr.next();
-			String value = StockDetailStaticHolder.QUANDL_STOCK_CODES_MAPPING.get(key);
-			stock_code = stock_code.replaceAll(key, value);
-		}
-		return stock_code;
 	}
 }

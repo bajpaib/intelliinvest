@@ -20,6 +20,18 @@
 		up static resources in the ${webappRoot}/resources directory -->
 	<resources mapping="/resources/**" location="/resources/" />
 
+	<beans:bean id="applicationProperties"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<beans:property name="ignoreUnresolvablePlaceholders"
+			value="false" />
+		<beans:property name="order" value="1" />
+		<beans:property name="locations">
+			<beans:list>
+				<beans:value>classpath:intelliinvest.properties</beans:value>
+			</beans:list>
+		</beans:property>
+	</beans:bean>
+
 	<!-- Seeds -->
 	<beans:bean id="mongoSeedListID" class="java.util.ArrayList">
 		<beans:constructor-arg>
@@ -30,29 +42,24 @@
 	</beans:bean>
 
 	<beans:bean id="mongoSeedlID" class="com.mongodb.ServerAddress">
-		<!-- <beans:constructor-arg type="java.lang.String" name="host" value="localhost" />  -->
-		<beans:constructor-arg type="java.lang.String" name="host" value="104.199.142.91" />
-		<beans:constructor-arg type="int" name="port" value="27017" />
+		<!-- <beans:constructor-arg type="java.lang.String" name="host" value="localhost" 
+			/> -->
+		<beans:constructor-arg type="java.lang.String"
+			name="host" value="${db.host}" />
+		<beans:constructor-arg type="int" name="port"
+			value="${db.port}" />
 	</beans:bean>
 
 	<!-- Credentials -->
-	<beans:bean id="mongoCredentialListID" class="java.util.ArrayList">
-		<beans:constructor-arg>
-			<beans:list>
-				<beans:ref bean="mongoCredentialID" />
-			</beans:list>
-		</beans:constructor-arg>
-	</beans:bean>
-
 	<beans:bean id="mongoCredentialID" class="com.mongodb.MongoCredential">
 		<beans:constructor-arg name="mechanism"
 			value="#{T(com.mongodb.AuthenticationMechanism).SCRAM_SHA_1}" />
 		<beans:constructor-arg type="java.lang.String"
-			name="userName" value="intelliinvest_user" />
+			name="userName" value="${db.username}" />
 		<beans:constructor-arg type="java.lang.String"
-			name="source" value="intelliinvest" />
+			name="source" value="${db.database}" />
 		<beans:constructor-arg type="char[]" name="password"
-			value="Welcome123" />
+			value="${db.password}" />
 	</beans:bean>
 
 	<!-- MongoClient -->
@@ -66,7 +73,7 @@
 		class="org.springframework.data.mongodb.core.SimpleMongoDbFactory">
 		<beans:constructor-arg ref="mongoClientID" />
 		<beans:constructor-arg name="databaseName"
-			value="intelliinvest" />
+			value="${db.database}" />
 	</beans:bean>
 
 	<!-- MongoTemplate -->
@@ -90,14 +97,18 @@
 		</beans:property>
 	</beans:bean>
 
-	<beans:bean id="userRepository" class="com.intelliinvest.web.dao.UserRepository"></beans:bean>
-	<beans:bean id="IntelliinvestStore"
+	<beans:bean id="sequenceRepository"
+		class="com.intelliinvest.web.dao.SequenceRepository"></beans:bean>
+	<beans:bean id="intelliinvestStore"
 		class="com.intelliinvest.web.common.IntelliInvestStore"></beans:bean>
+	<beans:bean id="userRepository" class="com.intelliinvest.web.dao.UserRepository"></beans:bean>
 	<beans:bean id="stockRepository" class="com.intelliinvest.web.dao.StockRepository"></beans:bean>
 	<beans:bean id="userPortfolioRepository"
 		class="com.intelliinvest.web.dao.UserPortfolioRepository"></beans:bean>
-	<beans:bean id="sequenceRepository"
-		class="com.intelliinvest.web.dao.SequenceRepository"></beans:bean>
+	<beans:bean id="quandlStockPriceRepository"
+		class="com.intelliinvest.web.dao.QuandlStockPriceRepository"></beans:bean>
+	<beans:bean id="quandlStockPriceImporter"
+		class="com.intelliinvest.data.importer.QuandlStockPriceImporter"></beans:bean>
 
 	<context:component-scan base-package="com.intelliinvest.web.controllers" />
 </beans:beans>

@@ -42,7 +42,7 @@ public class UserPortfolioRepository {
 	private void validateUserLoggedin(String userId) throws IntelliinvestException {
 		User user = userRepository.getUserByUserId(userId);
 		if (user == null) {
-			throw new IntelliinvestException("User " + userId + " already exists");
+			throw new IntelliinvestException("User " + userId + " does not exists");
 		}
 		if (!user.getLoggedIn()) {
 			throw new IntelliinvestException("User " + userId + " is not logged in");
@@ -261,7 +261,6 @@ public class UserPortfolioRepository {
 		for (String code : rawSummaryData.keySet()) {
 			List<PortfolioItem> portfolioItemL = rawSummaryData.get(code);
 			Collections.sort(portfolioItemL, new Comparator<PortfolioItem>() {
-				@Override
 				public int compare(PortfolioItem temp1, PortfolioItem temp2) {
 					return temp1.getTradeDate().compareTo(temp2.getTradeDate());
 				}

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import com.intelliinvest.data.model.PortfolioItem;
 import com.intelliinvest.data.model.Stock;
 import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.data.model.User;
@@ -15,7 +14,7 @@ import com.intelliinvest.web.bo.UserResponse;
 public class Converter {
 
 	public static List<UserResponse> convertUsersList(List<User> userDetails) {
-		List<UserResponse> userResponseList = new ArrayList<>();
+		List<UserResponse> userResponseList = new ArrayList<UserResponse>();
 		if (userDetails != null) {
 			for (User user : userDetails) {
 				userResponseList.add(getUserResponse(user));
@@ -44,16 +43,16 @@ public class Converter {
 	}
 
 	public static List<StockResponse> convertStockList(List<Stock> stocks) {
-		List<StockResponse> stockResponseList = new ArrayList<>();
+		List<StockResponse> stockResponseList = new ArrayList<StockResponse>();
 		if (stocks != null) {
 			for (Stock stock : stocks) {
 				stockResponseList.add(getStockResponse(stock));
 			}
 		}
-		
+
 		stockResponseList.sort(new Comparator<StockResponse>() {
 			public int compare(StockResponse item1, StockResponse item2) {
-					return item1.getCode().compareTo(item2.getCode());
+				return item1.getCode().compareTo(item2.getCode());
 			}
 		});
 		return stockResponseList;
@@ -77,13 +76,13 @@ public class Converter {
 				stockResponseList.add(getStockPriceResponse(price));
 			}
 		}
-		
+
 		stockResponseList.sort(new Comparator<StockPriceResponse>() {
 			public int compare(StockPriceResponse item1, StockPriceResponse item2) {
-					return item1.getCode().compareTo(item2.getCode());
+				return item1.getCode().compareTo(item2.getCode());
 			}
 		});
-		
+
 		return stockResponseList;
 	}
 

@@ -9,7 +9,7 @@
 	<url>http://maven.apache.org</url>
 	<properties>
 		<jdk.version>1.8</jdk.version>
-		<spring.version>4.1.6.RELEASE</spring.version>
+		<spring.version>4.2.3.RELEASE</spring.version>
 	</properties>
 
 	<dependencies>
@@ -83,14 +83,14 @@
 
 		<dependency>
 			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-commons</artifactId>
-			<version>1.10.0.RELEASE</version>
+			<artifactId>spring-data-commons-core</artifactId>
+			<version>1.4.1.RELEASE</version>
 		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.data</groupId>
 			<artifactId>spring-data-mongodb</artifactId>
-			<version>1.8.2.RELEASE</version>
+			<version>1.9.0.RELEASE</version>
 		</dependency>
 
 		<dependency>
@@ -181,18 +181,102 @@
 
 	</dependencies>
 
-	<build>
-		<finalName>IntelliinvestWebApp</finalName>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>${jdk.version}</source>
-					<target>${jdk.version}</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+	<profiles>
+		<!--Profile for local Development -->
+		<profile>
+			<id>local</id>
+			<build>
+				<finalName>SpringMongoWebApp</finalName>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.8</version>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<delete
+											file="${project.build.outputDirectory}/intelliinvest.prod.properties" />
+										<delete file="${project.build.outputDirectory}/log4j.prod.xml" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.3</version>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+							</execution>
+						</executions>
+						<configuration>
+							<source>${jdk.version}</source>
+							<target>${jdk.version}</target>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
 
+		<!--Profile for PROD Development -->
+		<profile>
+			<id>prod</id>
+			<build>
+				<finalName>SpringMongoWebApp</finalName>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<version>1.8</version>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+								<goals>
+									<goal>run</goal>
+								</goals>
+								<configuration>
+									<tasks>
+										<delete
+											file="${project.build.outputDirectory}/intelliinvest.properties" />
+										<copy file="src/main/resources/intelliinvest.prod.properties"
+											tofile="${project.build.outputDirectory}/intelliinvest.properties" />
+										<delete
+											file="${project.build.outputDirectory}/intelliinvest.prod.properties" />
+										<delete file="${project.build.outputDirectory}/log4j.xml" />
+										<copy file="src/main/resources/log4j.prod.xml" tofile="${project.build.outputDirectory}/log4j.xml" />
+										<delete file="${project.build.outputDirectory}/log4j.prod.xml" />
+									</tasks>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-compiler-plugin</artifactId>
+						<version>3.3</version>
+						<executions>
+							<execution>
+								<phase>compile</phase>
+							</execution>
+
+						</executions>
+						<configuration>
+							<source>${jdk.version}</source>
+							<target>${jdk.version}</target>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
+
+
