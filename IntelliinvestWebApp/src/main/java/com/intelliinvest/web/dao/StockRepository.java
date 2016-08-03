@@ -18,7 +18,7 @@ import com.intelliinvest.data.model.Stock;
 import com.intelliinvest.data.model.StockPrice;
 
 public class StockRepository {
-	private static Logger logger = Logger.getLogger(UserRepository.class);
+	private static Logger logger = Logger.getLogger(StockRepository.class);
 	private static final String COLLECTION_STOCK = "STOCK";
 	private static final String COLLECTION_STOCK_PRICE = "STOCK_PRICE";
 	private static final String COLLECTION_NSE_BSE_CODES = "NSE_BSE_CODES";

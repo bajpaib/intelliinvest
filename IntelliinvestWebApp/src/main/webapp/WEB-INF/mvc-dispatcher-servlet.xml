@@ -33,17 +33,7 @@
 	</beans:bean>
 
 	<!-- Seeds -->
-	<beans:bean id="mongoSeedListID" class="java.util.ArrayList">
-		<beans:constructor-arg>
-			<beans:list>
-				<beans:ref bean="mongoSeedlID" />
-			</beans:list>
-		</beans:constructor-arg>
-	</beans:bean>
-
 	<beans:bean id="mongoSeedlID" class="com.mongodb.ServerAddress">
-		<!-- <beans:constructor-arg type="java.lang.String" name="host" value="localhost" 
-			/> -->
 		<beans:constructor-arg type="java.lang.String"
 			name="host" value="${db.host}" />
 		<beans:constructor-arg type="int" name="port"
@@ -64,7 +54,7 @@
 
 	<!-- MongoClient -->
 	<beans:bean id="mongoClientID" class="com.mongodb.MongoClient">
-		<beans:constructor-arg ref="mongoSeedListID" />
+		<beans:constructor-arg ref="mongoSeedlID" />
 		<beans:constructor-arg ref="mongoCredentialID" />
 	</beans:bean>
 
@@ -97,10 +87,12 @@
 		</beans:property>
 	</beans:bean>
 
-	<beans:bean id="sequenceRepository"
-		class="com.intelliinvest.web.dao.SequenceRepository"></beans:bean>
 	<beans:bean id="intelliinvestStore"
 		class="com.intelliinvest.web.common.IntelliInvestStore"></beans:bean>
+	<beans:bean id="scheduledThreadPoolHelper"
+		class="com.intelliinvest.web.util.ScheduledThreadPoolHelper"></beans:bean>
+	<beans:bean id="sequenceRepository"
+		class="com.intelliinvest.web.dao.SequenceRepository"></beans:bean>
 	<beans:bean id="userRepository" class="com.intelliinvest.web.dao.UserRepository"></beans:bean>
 	<beans:bean id="stockRepository" class="com.intelliinvest.web.dao.StockRepository"></beans:bean>
 	<beans:bean id="userPortfolioRepository"
@@ -108,7 +100,9 @@
 	<beans:bean id="quandlStockPriceRepository"
 		class="com.intelliinvest.web.dao.QuandlStockPriceRepository"></beans:bean>
 	<beans:bean id="quandlStockPriceImporter"
-		class="com.intelliinvest.data.importer.QuandlStockPriceImporter"></beans:bean>
+		class="com.intelliinvest.data.importer.QuandlEODStockPriceImporter"></beans:bean>
+	<beans:bean id="googleLiveStockPriceImporter"
+		class="com.intelliinvest.data.importer.GoogleLiveStockPriceImporter"></beans:bean>
 
 	<context:component-scan base-package="com.intelliinvest.web.controllers" />
 </beans:beans>

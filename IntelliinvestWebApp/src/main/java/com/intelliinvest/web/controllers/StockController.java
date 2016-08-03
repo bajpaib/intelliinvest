@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.intelliinvest.data.model.Stock;
-import com.intelliinvest.data.model.StockDetailStaticHolder;
 import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.web.bo.StockFormParameters;
 import com.intelliinvest.web.bo.StockPriceResponse;
@@ -39,10 +38,7 @@ public class StockController {
 		boolean error = false;
 		if (Helper.isNotNullAndNonEmpty(code)) {
 			try {
-				stock = StockDetailStaticHolder.getStock(code);
-				if (stock == null) {
-					stock = stockRepository.getStockByCode(code);
-				}
+				stock = stockRepository.getStockByCode(code);
 			} catch (Exception e) {
 				errorMsg = e.getMessage();
 				logger.error("Exception inside getStockByCode() " + errorMsg);
@@ -75,11 +71,8 @@ public class StockController {
 		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
 		List<Stock> stocks = null;
 		boolean error = false;
-		try {	
-			stocks = StockDetailStaticHolder.getStocks();
-			if (!Helper.isNotNullAndNonEmpty(stocks)) {
-				stocks = stockRepository.getStocks();
-			}	
+		try {
+			stocks = stockRepository.getStocks();
 		} catch (Exception e) {
 			errorMsg = e.getMessage();
 			logger.error("Exception inside getStocks() " + errorMsg);
@@ -106,10 +99,7 @@ public class StockController {
 		boolean error = false;
 		if (Helper.isNotNullAndNonEmpty(code)) {
 			try {
-				stockPrice = StockDetailStaticHolder.getStockPrice(code);
-				if (stockPrice == null) {
-					stockPrice = stockRepository.getStockPriceByCode(code);
-				}
+				stockPrice = stockRepository.getStockPriceByCode(code);
 			} catch (Exception e) {
 				errorMsg = e.getMessage();
 				logger.error("Exception inside getStockPriceByCode() " + errorMsg);
@@ -143,10 +133,7 @@ public class StockController {
 		List<StockPrice> stockPrices = null;
 		boolean error = false;
 		try {
-			stockPrices = StockDetailStaticHolder.getStockPrices();
-			if (!Helper.isNotNullAndNonEmpty(stockPrices)) {
-				stockPrices = stockRepository.getStockPrices();
-			}
+			stockPrices = stockRepository.getStockPrices();
 		} catch (Exception e) {
 			errorMsg = e.getMessage();
 			logger.error("Exception inside getStockPrices() " + errorMsg);

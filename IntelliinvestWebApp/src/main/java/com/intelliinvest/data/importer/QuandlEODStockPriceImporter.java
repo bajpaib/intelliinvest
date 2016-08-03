@@ -9,19 +9,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.data.model.Stock;
-import com.intelliinvest.data.model.StockDetailStaticHolder;
 import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.web.common.IntelliInvestStore;
 import com.intelliinvest.web.common.IntelliinvestException;
@@ -30,29 +26,18 @@ import com.intelliinvest.web.dao.StockRepository;
 import com.intelliinvest.web.util.DateUtil;
 import com.intelliinvest.web.util.Helper;
 import com.intelliinvest.web.util.HttpUtil;
+import com.intelliinvest.web.util.ScheduledThreadPoolHelper;
 
-public class QuandlStockPriceImporter {
-	private static Logger logger = Logger.getLogger(QuandlStockPriceImporter.class);
+public class QuandlEODStockPriceImporter {
+	private static Logger logger = Logger.getLogger(QuandlEODStockPriceImporter.class);
 	@Autowired
 	private QuandlStockPriceRepository quandlStockPriceRepository;
 	@Autowired
 	private StockRepository stockRepository;
-	private ScheduledExecutorService scheduledPool = null;
 
 	@PostConstruct
 	public void init() {
-		scheduledPool = Executors.newScheduledThreadPool(1);
 		initializeScheduledTasks();
-	}
-
-	@PreDestroy
-	public void destroy() {
-		scheduledPool.shutdown();
-		try {
-			scheduledPool.awaitTermination(1, TimeUnit.MINUTES);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
 	}
 
 	private void initializeScheduledTasks() {
@@ -83,10 +68,11 @@ public class QuandlStockPriceImporter {
 		}
 		Duration duration21 = Duration.between(zonedNow, zonedNext21);
 		long initialDelay21 = duration21.getSeconds();
-		// scheduledPool.scheduleAtFixedRate(refreshEODPricesTask,
+		// ScheduledThreadPoolHelper.getScheduledExecutorService().scheduleAtFixedRate(refreshEODPricesTask,
 		// initialDelay21, 24 *
 		// 60 * 60, TimeUnit.SECONDS);
-		scheduledPool.scheduleAtFixedRate(refreshEODPricesTask, 20, 300, TimeUnit.SECONDS);
+		ScheduledThreadPoolHelper.getScheduledExecutorService().scheduleAtFixedRate(refreshEODPricesTask, 20, 300,
+				TimeUnit.SECONDS);
 		logger.info("Scheduled refreshEODPricesTask for periodic eod price refresh");
 	}
 
@@ -100,12 +86,11 @@ public class QuandlStockPriceImporter {
 		}
 		List<StockPrice> stockEODPriceList = new ArrayList<StockPrice>();
 		List<QuandlStockPrice> quandlStockPriceList = new ArrayList<QuandlStockPrice>();
-		Date currentDate = DateUtil.getCurrentDate();
+		Date currentDate = new Date();
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		for (Stock stock : nseStocks) {
 			String eodPricesAsString = getDataFromQuandl(stock.getCode(), currentDate, currentDate);
-			System.out.println("Response: "+eodPricesAsString);
-			
+//			logger.debug("Response: " + eodPricesAsString);
 			if (!Helper.isNotNullAndNonEmpty(eodPricesAsString)) {
 				throw new IntelliinvestException(
 						"Error while fetching EOD prices for date: " + currentDate + " for Stock: " + stock.getCode());
@@ -147,8 +132,7 @@ public class QuandlStockPriceImporter {
 			}
 		}
 		if (Helper.isNotNullAndNonEmpty(stockEODPriceList)) {
-			StockDetailStaticHolder.nonWorldStockPriceMap = IntelliInvestStore
-					.getStockPriceMapFromList(stockRepository.updateEODStockPrices(stockEODPriceList));
+			stockRepository.updateEODStockPrices(stockEODPriceList);
 		}
 		if (Helper.isNotNullAndNonEmpty(quandlStockPriceList)) {
 			quandlStockPriceRepository.updateQuandlStockPrices(quandlStockPriceList);
@@ -158,17 +142,17 @@ public class QuandlStockPriceImporter {
 	private String getDataFromQuandl(String stock_code, Date startDate, Date endDate) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		stock_code = getQuandlStockCode(stock_code);
-		// link="https://www.quandl.com/api/v3/datasets/NSE/SUVEN.csv?api_key=yhwhU_RHkVxbTtFTff9t&start_date=2016-05-01&end_date=2016-05-24";
-/*		String link = "https://www.quandl.com/api/v3/datasets/NSE/" + stock_code
+		String link = "https://www.quandl.com/api/v3/datasets/NSE/" + stock_code
 				+ ".csv?api_key=yhwhU_RHkVxbTtFTff9t&start_date=" + format.format(startDate) + "&end_date="
-				+ format.format(endDate);*/
-		
-		  String link = "https://www.quandl.com/api/v3/datasets/NSE/" +
-		  stock_code + ".csv?api_key=yhwhU_RHkVxbTtFTff9t&start_date=" +
-		  "2016-08-02" + "&end_date=" + "2016-08-02";
-		 
+				+ format.format(endDate);
+		/*
+		 * String link = "https://www.quandl.com/api/v3/datasets/NSE/" +
+		 * stock_code + ".csv?api_key=yhwhU_RHkVxbTtFTff9t&start_date=" +
+		 * "2016-08-02" + "&end_date=" + "2016-08-02";
+		 */
+
 		try {
-			logger.debug("Sending Quandl Request:" + link);
+//			logger.debug("Sending Quandl Request:" + link);
 			byte b[] = HttpUtil.getFromUrlAsBytes(link);
 			return new String(b);
 		} catch (Exception e) {
@@ -179,10 +163,10 @@ public class QuandlStockPriceImporter {
 	}
 
 	private String getQuandlStockCode(String stock_code) {
-		Iterator<String> itr = StockDetailStaticHolder.QUANDL_STOCK_CODES_MAPPING.keySet().iterator();
+		Iterator<String> itr = IntelliInvestStore.QUANDL_STOCK_CODES_MAPPING.keySet().iterator();
 		while (itr.hasNext()) {
 			String key = itr.next();
-			String value = StockDetailStaticHolder.QUANDL_STOCK_CODES_MAPPING.get(key);
+			String value = IntelliInvestStore.QUANDL_STOCK_CODES_MAPPING.get(key);
 			stock_code = stock_code.replaceAll(key, value);
 		}
 		return stock_code;

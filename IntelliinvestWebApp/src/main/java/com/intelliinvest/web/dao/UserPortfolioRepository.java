@@ -15,11 +15,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Repository;
 
 import com.intelliinvest.data.model.Portfolio;
 import com.intelliinvest.data.model.PortfolioItem;
-import com.intelliinvest.data.model.StockDetailStaticHolder;
+import com.intelliinvest.data.model.QuandlStockPrice;
+import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.data.model.User;
 import com.intelliinvest.data.model.UserPortfolio;
 import com.intelliinvest.web.common.IntelliinvestException;
@@ -36,6 +36,10 @@ public class UserPortfolioRepository {
 	private UserRepository userRepository;
 	@Autowired
 	private SequenceRepository sequenceRepository;
+	@Autowired
+	private StockRepository stockRepository;
+	@Autowired
+	private QuandlStockPriceRepository quandlStockPriceRepository;
 
 	private String SEQ_KEY = "SeqKey";
 
@@ -335,9 +339,12 @@ public class UserPortfolioRepository {
 					Integer remainingQuantity = sellList.get(sellList.indexOf(portfolioItem)).getQuantity();
 					portfolioItem.setRemainingQuantity(remainingQuantity);
 				}
-				double currentPrice = StockDetailStaticHolder.getCurrentPrice(portfolioItem.getCode());
-				double eodPrice = StockDetailStaticHolder.getEODPrice(portfolioItem.getCode());
-				double cp = StockDetailStaticHolder.getCP(portfolioItem.getCode());
+				StockPrice stockPrice = stockRepository.getStockPriceByCode(code);
+				QuandlStockPrice eodQuandlPrice = quandlStockPriceRepository.getStockPrice(code);
+
+				double currentPrice = stockPrice.getCurrentPrice();
+				double eodPrice = eodQuandlPrice.getClose();
+				double cp = stockPrice.getCp();
 				portfolioItem.setCp(cp);
 				portfolioItem.setCurrentPrice(currentPrice);
 				portfolioItem.setAmount(portfolioItem.getRemainingQuantity() * currentPrice);
@@ -400,9 +407,11 @@ public class UserPortfolioRepository {
 				summaryData.setDirection(buyQuantity > sellQuantity ? "Long" : "Short");
 			}
 			summaryData.setRealisedPnl(realisedPnl);
-			double currentPrice = StockDetailStaticHolder.getCurrentPrice(summaryData.getCode());
-			double eodPrice = StockDetailStaticHolder.getEODPrice(summaryData.getCode());
-			double cp = StockDetailStaticHolder.getCP(summaryData.getCode());
+			StockPrice stockPrice = stockRepository.getStockPriceByCode(summaryData.getCode());
+			QuandlStockPrice eodQuandlPrice = quandlStockPriceRepository.getStockPrice(summaryData.getCode());
+			double currentPrice = stockPrice.getCurrentPrice();
+			double eodPrice = eodQuandlPrice.getClose();
+			double cp = stockPrice.getCp();
 			summaryData.setCp(cp);
 			summaryData.setCurrentPrice(currentPrice);
 			summaryData.setAmount(summaryData.getRemainingQuantity() * currentPrice);
