@@ -186,7 +186,7 @@
 		<profile>
 			<id>local</id>
 			<build>
-				<finalName>SpringMongoWebApp</finalName>
+				<finalName>IntelliinvestWebApp</finalName>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
@@ -230,7 +230,7 @@
 		<profile>
 			<id>prod</id>
 			<build>
-				<finalName>SpringMongoWebApp</finalName>
+				<finalName>IntelliinvestWebApp</finalName>
 				<plugins>
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
