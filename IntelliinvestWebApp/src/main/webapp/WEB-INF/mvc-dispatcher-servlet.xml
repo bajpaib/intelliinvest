@@ -89,16 +89,16 @@
 
 	<beans:bean id="intelliinvestStore"
 		class="com.intelliinvest.web.common.IntelliInvestStore"></beans:bean>
+	<beans:bean id="stockRepository" class="com.intelliinvest.web.dao.StockRepository"></beans:bean>
+	<beans:bean id="quandlEODStockPriceRepository"
+		class="com.intelliinvest.web.dao.QuandlEODStockPriceRepository"></beans:bean>
+	<beans:bean id="userRepository" class="com.intelliinvest.web.dao.UserRepository"></beans:bean>
 	<beans:bean id="scheduledThreadPoolHelper"
 		class="com.intelliinvest.web.util.ScheduledThreadPoolHelper"></beans:bean>
 	<beans:bean id="sequenceRepository"
 		class="com.intelliinvest.web.dao.SequenceRepository"></beans:bean>
-	<beans:bean id="userRepository" class="com.intelliinvest.web.dao.UserRepository"></beans:bean>
-	<beans:bean id="stockRepository" class="com.intelliinvest.web.dao.StockRepository"></beans:bean>
 	<beans:bean id="userPortfolioRepository"
 		class="com.intelliinvest.web.dao.UserPortfolioRepository"></beans:bean>
-	<beans:bean id="quandlStockPriceRepository"
-		class="com.intelliinvest.web.dao.QuandlStockPriceRepository"></beans:bean>
 	<beans:bean id="quandlStockPriceImporter"
 		class="com.intelliinvest.data.importer.QuandlEODStockPriceImporter"></beans:bean>
 	<beans:bean id="googleLiveStockPriceImporter"

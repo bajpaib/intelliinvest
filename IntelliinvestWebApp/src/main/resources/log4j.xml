@@ -12,7 +12,7 @@
 
 	<appender name="file" class="org.apache.log4j.RollingFileAppender">
 	   <param name="append" value="false" />
-	   <param name="maxFileSize" value="10KB" />
+	   <param name="maxFileSize" value="500KB" />
 	   <param name="maxBackupIndex" value="10" />
 	   <!-- For Tomcat -->
 	   <param name="file" value="${CATALINA_HOME}/logs/intelliinvest.log" />
@@ -24,7 +24,7 @@
 
 	<root>
 		<priority value="DEBUG" />
-		<appender-ref ref="console" />
+		<appender-ref ref="file" />
 	</root>
 
 </log4j:configuration>

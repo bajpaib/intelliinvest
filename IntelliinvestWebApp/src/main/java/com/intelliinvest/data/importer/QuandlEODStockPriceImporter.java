@@ -20,8 +20,7 @@ import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.data.model.Stock;
 import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.web.common.IntelliInvestStore;
-import com.intelliinvest.web.common.IntelliinvestException;
-import com.intelliinvest.web.dao.QuandlStockPriceRepository;
+import com.intelliinvest.web.dao.QuandlEODStockPriceRepository;
 import com.intelliinvest.web.dao.StockRepository;
 import com.intelliinvest.web.util.DateUtil;
 import com.intelliinvest.web.util.Helper;
@@ -31,7 +30,7 @@ import com.intelliinvest.web.util.ScheduledThreadPoolHelper;
 public class QuandlEODStockPriceImporter {
 	private static Logger logger = Logger.getLogger(QuandlEODStockPriceImporter.class);
 	@Autowired
-	private QuandlStockPriceRepository quandlStockPriceRepository;
+	private QuandlEODStockPriceRepository quandlEODStockPriceRepository;
 	@Autowired
 	private StockRepository stockRepository;
 
@@ -68,11 +67,13 @@ public class QuandlEODStockPriceImporter {
 		}
 		Duration duration21 = Duration.between(zonedNow, zonedNext21);
 		long initialDelay21 = duration21.getSeconds();
-		// ScheduledThreadPoolHelper.getScheduledExecutorService().scheduleAtFixedRate(refreshEODPricesTask,
-		// initialDelay21, 24 *
-		// 60 * 60, TimeUnit.SECONDS);
-		ScheduledThreadPoolHelper.getScheduledExecutorService().scheduleAtFixedRate(refreshEODPricesTask, 20, 300,
-				TimeUnit.SECONDS);
+		ScheduledThreadPoolHelper.getScheduledExecutorService().scheduleAtFixedRate(refreshEODPricesTask,
+				initialDelay21, 24 * 60 * 60, TimeUnit.SECONDS);
+
+		/*
+		 * ScheduledThreadPoolHelper.getScheduledExecutorService().
+		 * scheduleAtFixedRate(refreshEODPricesTask, 20, 300, TimeUnit.SECONDS);
+		 */
 		logger.info("Scheduled refreshEODPricesTask for periodic eod price refresh");
 	}
 
@@ -90,10 +91,11 @@ public class QuandlEODStockPriceImporter {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		for (Stock stock : nseStocks) {
 			String eodPricesAsString = getDataFromQuandl(stock.getCode(), currentDate, currentDate);
-//			logger.debug("Response: " + eodPricesAsString);
+			// logger.debug("Response: " + eodPricesAsString);
 			if (!Helper.isNotNullAndNonEmpty(eodPricesAsString)) {
-				throw new IntelliinvestException(
+				logger.error(
 						"Error while fetching EOD prices for date: " + currentDate + " for Stock: " + stock.getCode());
+				continue;
 			}
 			String[] eodPricesAsArray = eodPricesAsString.split("\n");
 			String eodPriceAsString = eodPricesAsArray[1];
@@ -112,7 +114,9 @@ public class QuandlEODStockPriceImporter {
 				stockPrice.setEodDate(eodDate);
 				stockPrice.setEodPrice(close);
 				stockEODPriceList.add(stockPrice);
-				
+				// logger.debug("Added stock price to stockEODPriceList for
+				// Stock: " + stockPrice.getCode());
+
 				QuandlStockPrice quandlStockPrice = new QuandlStockPrice();
 				quandlStockPrice.setExchange("NSE");
 				quandlStockPrice.setSymbol(stock.getCode());
@@ -126,8 +130,10 @@ public class QuandlEODStockPriceImporter {
 				quandlStockPrice.setTottrdval(totTrdVal);
 				quandlStockPrice.setEodDate(eodDate);
 				quandlStockPriceList.add(quandlStockPrice);
+				// logger.debug("Added stock price to stockEODPriceList for
+				// Stock: " + stockPrice.getCode());
 			} else {
-				throw new IntelliinvestException(
+				logger.error(
 						"Error while fetching EOD prices for date: " + currentDate + " for Stock: " + stock.getCode());
 			}
 		}
@@ -135,28 +141,30 @@ public class QuandlEODStockPriceImporter {
 			stockRepository.updateEODStockPrices(stockEODPriceList);
 		}
 		if (Helper.isNotNullAndNonEmpty(quandlStockPriceList)) {
-			quandlStockPriceRepository.updateQuandlStockPrices(quandlStockPriceList);
+			quandlEODStockPriceRepository.updateEODStockPrices(quandlStockPriceList);
 		}
 	}
 
 	private String getDataFromQuandl(String stock_code, Date startDate, Date endDate) {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		stock_code = getQuandlStockCode(stock_code);
+
 		String link = "https://www.quandl.com/api/v3/datasets/NSE/" + stock_code
 				+ ".csv?api_key=yhwhU_RHkVxbTtFTff9t&start_date=" + format.format(startDate) + "&end_date="
 				+ format.format(endDate);
+
 		/*
 		 * String link = "https://www.quandl.com/api/v3/datasets/NSE/" +
 		 * stock_code + ".csv?api_key=yhwhU_RHkVxbTtFTff9t&start_date=" +
-		 * "2016-08-02" + "&end_date=" + "2016-08-02";
+		 * "2016-08-04" + "&end_date=" + "2016-08-04";
 		 */
 
 		try {
-//			logger.debug("Sending Quandl Request:" + link);
+			// logger.debug("Sending Quandl Request:" + link);
 			byte b[] = HttpUtil.getFromUrlAsBytes(link);
 			return new String(b);
 		} catch (Exception e) {
-			logger.info("Error while fetching Quandl data from Start Date: " + startDate + "to End date: " + endDate
+			logger.error("Error while fetching Quandl data from Start Date: " + startDate + "to End date: " + endDate
 					+ " for Stock: " + stock_code + " Error " + e.getMessage());
 		}
 		return null;

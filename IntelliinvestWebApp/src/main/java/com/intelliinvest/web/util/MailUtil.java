@@ -70,7 +70,7 @@ public class MailUtil {
 			String subject, String message, String[] attachment) {
 		boolean returnValue = true;
 		try {
-			logger.info("Mail Details : sender " + sender + " recipients " + recipients + " subject " + subject + " message " + message );
+//			logger.info("Mail Details : sender " + sender + " recipients " + recipients + " subject " + subject + " message " + message );
 			logger.info("Started Sending Email");
 
 			MailSSLSocketFactory sf = new MailSSLSocketFactory();

@@ -32,6 +32,8 @@ public class GoogleLiveStockPriceImporter {
 	private static Logger logger = Logger.getLogger(GoogleLiveStockPriceImporter.class);
 	@Autowired
 	private StockRepository stockRepository;
+	@Autowired
+	private IntelliInvestStore intelliinvestStore;
 	private final static String GOOGLE_QUOTE_URL = "https://www.google.com/finance/info?q=#CODE#";
 	private static boolean REFRESH_PERIODICALLY = false;
 	private ZoneId zoneId = DateUtil.ZONE_ID;
@@ -147,20 +149,10 @@ public class GoogleLiveStockPriceImporter {
 			}
 		}
 		List<StockPrice> nonWorldPrices = getCurrentNonWorldStockPrices(nonWorldStocks);
-
-/*		for (StockPrice price : nonWorldPrices) {
-			logger.debug(price.toString());
-		}*/
-
 		if (Helper.isNotNullAndNonEmpty(nonWorldPrices)) {
 			nonWorldPrices = stockRepository.updateCurrentStockPrices(nonWorldPrices);
 		}
 		List<StockPrice> worldPrices = getCurrentWorldStockPrices(worldStocks);
-
-/*		for (StockPrice price : worldPrices) {
-			logger.debug(price.toString());
-		}*/
-
 		if (Helper.isNotNullAndNonEmpty(worldPrices)) {
 			worldPrices = stockRepository.updateCurrentStockPrices(worldPrices);
 		}
@@ -226,23 +218,21 @@ public class GoogleLiveStockPriceImporter {
 					}
 					stockCurrentPriceList.add(new StockPrice(code, cp, price, 0, null, ltDate));
 				} catch (Exception e1) {
+					logger.error("Error fetching stock price from " + exchange + " for " + code +". Trying from BOM now");
 					if (exchange.equals("NSE")) {
-						if (IntelliInvestStore.NSEToBSEMap.containsKey(code)) {
-							String bseCode = IntelliInvestStore.NSEToBSEMap.get(code);
-							// logger.info("Error fetching stock price from NSE.
-							// Trying to get from BOM for code " + code + " -> "
-							// + bseCode );
+						String bseCode = intelliinvestStore.getBSECode(code);
+						if (bseCode != null) {
 							response = HttpUtil.getFromHttpUrlAsString(
 									GOOGLE_QUOTE_URL.replace("#CODE#", "BOM:" + bseCode.replace("&", "%26")));
 							stockCurrentPriceList.addAll(getPriceFromJSON("BOM", code, response));
 						}
 					} else {
-						logger.info("Error fetching data from " + exchange + " for code " + code);
+						logger.error("Error fetching stock price from " + exchange + " for code " + code);
 					}
 				}
 			}
 		} catch (Exception e) {
-			logger.info("Error fetching stock price for " + codes);
+			logger.error("Error fetching stock price for " + codes);
 		}
 
 		return stockCurrentPriceList;

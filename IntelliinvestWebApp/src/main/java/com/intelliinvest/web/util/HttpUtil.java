@@ -33,7 +33,7 @@ public class HttpUtil {
 			instream = connection.getInputStream();
 			return IOUtils.toByteArray(instream);
 		}catch(Exception e){
-			logger.info("Error executing request " + urlStr);
+			logger.error("Error executing request " + urlStr);
 			throw new ClientProtocolException("Unexpected response status: " + e.getMessage());
 		}finally{
 			if(null!=instream){
@@ -52,7 +52,7 @@ public class HttpUtil {
 			instream = connection.getInputStream();
 			return IOUtils.toString(instream);
 		}catch(Exception e){
-			logger.info("Error executing request " + urlStr);
+			logger.error("Error executing request " + urlStr);
 			throw new ClientProtocolException("Unexpected response status: " + e.getMessage());
 		}finally{
 			if(null!=instream){
@@ -75,7 +75,7 @@ public class HttpUtil {
                     HttpEntity entity = response.getEntity();
                     return entity != null ? EntityUtils.toByteArray(entity) : null;
                 } else {
-                	logger.info("Error executing request " + httpget.getURI());
+                	logger.error("Error executing request " + httpget.getURI());
                     throw new ClientProtocolException("Unexpected response status: " + status);
                 }
             }
@@ -98,7 +98,7 @@ public class HttpUtil {
 					HttpEntity entity = response.getEntity();
 					return entity != null ? EntityUtils.toString(entity) : null;
 				} else {
-					logger.info("Error executing request " + httpget.getURI());
+					logger.error("Error executing request " + httpget.getURI());
 					throw new ClientProtocolException("Unexpected response status: " + status);
 				}
 			}

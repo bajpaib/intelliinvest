@@ -39,7 +39,7 @@ public class UserPortfolioRepository {
 	@Autowired
 	private StockRepository stockRepository;
 	@Autowired
-	private QuandlStockPriceRepository quandlStockPriceRepository;
+	private QuandlEODStockPriceRepository quandlEODStockPriceRepository;
 
 	private String SEQ_KEY = "SeqKey";
 
@@ -62,13 +62,13 @@ public class UserPortfolioRepository {
 	}
 
 	public UserPortfolio getUserPortfolioByUserId(String userId) throws DataAccessException {
-		logger.info("Inside getUserPortfolioByUserId()...");
+		logger.debug("Inside getUserPortfolioByUserId()...");
 		return mongoTemplate.findOne(Query.query(Criteria.where("userId").is(userId)), UserPortfolio.class,
 				COLLECTION_USER_PORTFOLIO);
 	}
 
 	public Portfolio getPortfolio(String userId, String portfolioName) throws IntelliinvestException {
-		logger.info("Inside getPortfolio()...");
+		logger.debug("Inside getPortfolio()...");
 		validateUserLoggedin(userId);
 		UserPortfolio userPortfolio = getUserPortfolioByUserId(userId);
 		if (userPortfolio == null) {
@@ -88,7 +88,7 @@ public class UserPortfolioRepository {
 	}
 
 	public String getPortfolioNames(String userId) throws IntelliinvestException {
-		logger.info("Inside getPortfolioNames()...");
+		logger.debug("Inside getPortfolioNames()...");
 		String retVal = null;
 		validateUserLoggedin(userId);
 		UserPortfolio userPortfolio = getUserPortfolioByUserId(userId);
@@ -110,7 +110,7 @@ public class UserPortfolioRepository {
 
 	public Portfolio addPortfolioItems(String userId, String portfolioName, List<PortfolioItem> portfolioItems)
 			throws IntelliinvestException {
-		logger.info("Inside addPortfolioItems()...");
+		logger.debug("Inside addPortfolioItems()...");
 		validateUserLoggedin(userId);
 		UserPortfolio userPortfolio = getUserPortfolioByUserId(userId);
 		if (userPortfolio == null) {
@@ -143,7 +143,7 @@ public class UserPortfolioRepository {
 
 	public Portfolio updatePortfolioItems(String userId, String portfolioName, List<PortfolioItem> portfolioItems)
 			throws IntelliinvestException {
-		logger.info("Inside updatePortfolioItems()...");
+		logger.debug("Inside updatePortfolioItems()...");
 		validateUserLoggedin(userId);
 		UserPortfolio userPortfolio = getUserPortfolioByUserId(userId);
 		if (userPortfolio == null) {
@@ -178,7 +178,7 @@ public class UserPortfolioRepository {
 	}
 
 	public void deletePortfolio(String userId, String portfolioName) throws IntelliinvestException {
-		logger.info("Inside deletePortfolio()...");
+		logger.debug("Inside deletePortfolio()...");
 		validateUserLoggedin(userId);
 		UserPortfolio userPortfolio = getUserPortfolioByUserId(userId);
 		if (userPortfolio == null) {
@@ -202,7 +202,7 @@ public class UserPortfolioRepository {
 
 	public Portfolio deletePortfolioItems(String userId, String portfolioName, List<PortfolioItem> portfolioItems)
 			throws IntelliinvestException {
-		logger.info("Inside deletePortfolioItems()...");
+		logger.debug("Inside deletePortfolioItems()...");
 		validateUserLoggedin(userId);
 		UserPortfolio userPortfolio = getUserPortfolioByUserId(userId);
 		if (userPortfolio == null) {
@@ -339,12 +339,19 @@ public class UserPortfolioRepository {
 					Integer remainingQuantity = sellList.get(sellList.indexOf(portfolioItem)).getQuantity();
 					portfolioItem.setRemainingQuantity(remainingQuantity);
 				}
-				StockPrice stockPrice = stockRepository.getStockPriceByCode(code);
-				QuandlStockPrice eodQuandlPrice = quandlStockPriceRepository.getStockPrice(code);
 
-				double currentPrice = stockPrice.getCurrentPrice();
-				double eodPrice = eodQuandlPrice.getClose();
-				double cp = stockPrice.getCp();
+				double currentPrice = 0;
+				double cp = 0;
+				double eodPrice = 0;
+				StockPrice stockPrice = stockRepository.getStockPriceByCode(code);
+				if (stockPrice != null) {
+					currentPrice = stockPrice.getCurrentPrice();
+					cp = stockPrice.getCp();
+				}
+				QuandlStockPrice eodQuandlPrice = quandlEODStockPriceRepository.getEODStockPrice(code);
+				if (eodQuandlPrice != null) {
+					eodPrice = eodQuandlPrice.getClose();
+				}
 				portfolioItem.setCp(cp);
 				portfolioItem.setCurrentPrice(currentPrice);
 				portfolioItem.setAmount(portfolioItem.getRemainingQuantity() * currentPrice);
@@ -407,11 +414,19 @@ public class UserPortfolioRepository {
 				summaryData.setDirection(buyQuantity > sellQuantity ? "Long" : "Short");
 			}
 			summaryData.setRealisedPnl(realisedPnl);
+
+			double currentPrice = 0;
+			double cp = 0;
+			double eodPrice = 0;
 			StockPrice stockPrice = stockRepository.getStockPriceByCode(summaryData.getCode());
-			QuandlStockPrice eodQuandlPrice = quandlStockPriceRepository.getStockPrice(summaryData.getCode());
-			double currentPrice = stockPrice.getCurrentPrice();
-			double eodPrice = eodQuandlPrice.getClose();
-			double cp = stockPrice.getCp();
+			if (stockPrice != null) {
+				currentPrice = stockPrice.getCurrentPrice();
+				cp = stockPrice.getCp();
+			}
+			QuandlStockPrice eodQuandlPrice = quandlEODStockPriceRepository.getEODStockPrice(summaryData.getCode());
+			if (eodQuandlPrice != null) {
+				eodPrice = eodQuandlPrice.getClose();
+			}
 			summaryData.setCp(cp);
 			summaryData.setCurrentPrice(currentPrice);
 			summaryData.setAmount(summaryData.getRemainingQuantity() * currentPrice);

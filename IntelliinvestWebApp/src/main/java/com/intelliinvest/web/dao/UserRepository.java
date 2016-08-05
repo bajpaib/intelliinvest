@@ -2,6 +2,10 @@ package com.intelliinvest.web.dao;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +15,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.stereotype.Repository;
 
 import com.intelliinvest.data.model.User;
 import com.intelliinvest.web.common.IntelliInvestStore;
@@ -26,6 +29,25 @@ public class UserRepository {
 	private static final String COLLECTION_USER = "USER";
 	@Autowired
 	private MongoTemplate mongoTemplate;
+
+	private Map<String, Boolean> userLoginCache = new ConcurrentHashMap<String, Boolean>();
+
+	@PostConstruct
+	public void init() {
+		initialiseCacheFromDB();
+	}
+
+	public void initialiseCacheFromDB() {
+		List<User> users = getAllUsers();
+		if (Helper.isNotNullAndNonEmpty(users)) {
+			for (User user : users) {
+				userLoginCache.put(user.getUserId(), user.getLoggedIn());
+			}
+			logger.info("Initialised userLoginCache from DB in UserRepository");
+		} else {
+			logger.error("Could not initialise userLoginCache from DB in UserRepository. USER is empty.");
+		}
+	}
 
 	public User registerUser(String userName, String userId, String phone, String password, boolean sendNotification)
 			throws Exception {
@@ -61,7 +83,6 @@ public class UserRepository {
 
 		mongoTemplate.insert(user, COLLECTION_USER);
 		logger.info("Registration for user " + userName + " with mail id " + userId + " successful");
-
 		logger.info("Sending activation mail for user " + userId);
 		boolean mail_send_success = MailUtil.sendMail(IntelliInvestStore.properties.getProperty("smtp.host"),
 				IntelliInvestStore.properties.getProperty("mail.from"),
@@ -70,19 +91,15 @@ public class UserRepository {
 				"Hi " + userName + ",<br>To activate your account please click below link<br>http://"
 						+ IntelliInvestStore.properties.getProperty("context.url") + "/user/activate?userId=" + userId
 						+ "&activationCode=" + randomText + "<br>Regards,<br>IntelliInvest Team.");
-
 		if (!mail_send_success) {
 			throw new IntelliinvestException("Exception occured while sending mail to User " + userId);
 		}
-
 		logger.info(" Activation mail sent successfully to " + userId);
-
 		return user;
 	}
 
 	public User activateUser(String userId, String activationCode) throws Exception {
 		logger.info("Inside activateUser()...");
-
 		if (!Helper.isNotNullAndNonEmpty(userId) || !Helper.isNotNullAndNonEmpty(activationCode)) {
 			throw new IntelliinvestException("Invalid UserId or Activation Code.");
 		}
@@ -94,7 +111,6 @@ public class UserRepository {
 				|| (user.getActivationCode() != null && !activationCode.equals(user.getActivationCode()))) {
 			throw new IntelliinvestException("Incorrect activation code");
 		}
-
 		Query query = new Query();
 		query.addCriteria(Criteria.where("userId").is(userId).and("activationCode").is(activationCode));
 		Update update = new Update();
@@ -105,8 +121,8 @@ public class UserRepository {
 	}
 
 	public User login(String userId, String password) throws Exception {
-		logger.info("Inside activateUser()...");
-
+		logger.debug("Inside login()...");
+		User retVal = null;
 		boolean user_not_active = false;
 		boolean user_not_exists = false;
 		boolean user_logged_in = false;
@@ -122,18 +138,18 @@ public class UserRepository {
 						user_logged_in = true;
 						throw new IntelliinvestException("User " + userId + " is already logged in");
 					}
-
 					Query query = new Query();
 					query.addCriteria(Criteria.where("userId").is(userId));
 					Date currentDateTime = new Date();
-
 					Update update = new Update();
 					update.set("loggedIn", true);
 					update.set("updateDate", currentDateTime);
 					update.set("lastLoginDate", currentDateTime);
-
-					return mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true),
+					retVal = mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true),
 							User.class, COLLECTION_USER);
+					// update cache
+					userLoginCache.put(user.getUserId(), true);
+					return retVal;
 				} else {
 					logger.error("Login for user " + userId + " failed. User is not active.");
 					user_not_active = true;
@@ -158,8 +174,7 @@ public class UserRepository {
 	}
 
 	public User logout(String userId) throws Exception {
-		logger.info("Inside logout()...");
-
+		logger.debug("Inside logout()...");
 		User user = getUserByUserId(userId);
 		if (user == null) {
 			throw new IntelliinvestException("User " + userId + " does not exists");
@@ -168,21 +183,22 @@ public class UserRepository {
 		if (!user.getLoggedIn()) {
 			throw new IntelliinvestException("User " + userId + " is not logged in");
 		}
-
 		Query query = new Query();
 		query.addCriteria(Criteria.where("userId").is(userId));
 		Update update = new Update();
 		update.set("loggedIn", false);
 		update.set("updateDate", new Date());
 
-		return mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true), User.class,
+		user = mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true), User.class,
 				COLLECTION_USER);
+		// update cache
+		userLoginCache.put(user.getUserId(), false);
+		return user;
 	}
 
 	public User forgotPassword(String userId) throws Exception {
-		logger.info("Inside forgotPassword()...");
+		logger.debug("Inside forgotPassword()...");
 		boolean password_send_failure = false;
-
 		try {
 			User user = getUserByUserId(userId);
 			if (user == null) {
@@ -191,21 +207,19 @@ public class UserRepository {
 				password_send_failure = true;
 				throw new IntelliinvestException("User " + userId + " does not exists");
 			}
-
 			Long time = System.currentTimeMillis();
 			String randomText = "INI" + time.toString().substring(time.toString().length() - 5);
 			String encryptedNewPassword = EncryptUtil.encrypt(randomText);
-
 			Query query = new Query();
 			query.addCriteria(Criteria.where("userId").is(userId));
 			Update update = new Update();
 			update.set("password", encryptedNewPassword);
 			update.set("loggedIn", false);
 			update.set("updateDate", new Date());
-
 			user = mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true), User.class,
 					COLLECTION_USER);
-
+			// update cache
+			userLoginCache.put(user.getUserId(), false);
 			if (MailUtil.sendMail(IntelliInvestStore.properties.getProperty("smtp.host"),
 					IntelliInvestStore.properties.getProperty("mail.from"),
 					IntelliInvestStore.properties.getProperty("mail.password"), new String[] { userId },
@@ -227,9 +241,7 @@ public class UserRepository {
 
 	public User updateUser(String userName, String userId, String phone, String oldPassword, String newPassword,
 			String sendNotification) throws Exception {
-
-		logger.info("Inside updateUser()...");
-
+		logger.debug("Inside updateUser()...");
 		User user = getUserByUserId(userId);
 		if (user == null) {
 			throw new IntelliinvestException("User " + userId + " does not exists");
@@ -237,7 +249,6 @@ public class UserRepository {
 		if (!user.getLoggedIn()) {
 			throw new IntelliinvestException("User " + userId + " is not logged in");
 		}
-
 		Query query = new Query();
 		Update update = new Update();
 
@@ -247,9 +258,7 @@ public class UserRepository {
 		if (Helper.isNotNullAndNonEmpty(phone)) {
 			update.set("phone", phone);
 		}
-
 		update.set("updateDate", new Date());
-
 		if (Helper.isNotNullAndNonEmpty(oldPassword) && Helper.isNotNullAndNonEmpty(newPassword)) {
 			if (user.getPassword() == null
 					|| (user.getPassword() != null && !oldPassword.equals(EncryptUtil.decrypt(user.getPassword())))) {
@@ -262,23 +271,24 @@ public class UserRepository {
 		} else {
 			query.addCriteria(Criteria.where("userId").is(userId));
 		}
-
 		return mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true), User.class,
 				COLLECTION_USER);
 	}
 
 	public List<User> getAllUsers() throws DataAccessException {
-		logger.info("Inside getAllUsers()...");
+		logger.debug("Inside getAllUsers()...");
 		return mongoTemplate.findAll(User.class, COLLECTION_USER);
 	}
 
 	public User getUserByUserId(String userId) throws DataAccessException {
-		logger.info("Inside getUserByUserId()...");
+		logger.debug("Inside getUserByUserId()...");
 		return mongoTemplate.findOne(Query.query(Criteria.where("userId").is(userId)), User.class, COLLECTION_USER);
 	}
 
 	public User removeUser(String userId) throws DataAccessException {
 		logger.info("Inside removeUser()...");
+		// update cache
+		userLoginCache.remove(userId);
 		return mongoTemplate.findAndRemove(Query.query(Criteria.where("userId").is(userId)), User.class,
 				COLLECTION_USER);
 	}

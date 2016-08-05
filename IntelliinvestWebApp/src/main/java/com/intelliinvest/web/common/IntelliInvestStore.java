@@ -10,17 +10,19 @@ import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 import com.intelliinvest.data.model.NSEtoBSEMap;
-import com.intelliinvest.web.dao.StockRepository;
 
 public class IntelliInvestStore {
 	private static Logger logger = Logger.getLogger(IntelliInvestStore.class);
 	@Autowired
-	private StockRepository stockRepository;
+	private MongoTemplate mongoTemplate;
+
+	private static final String COLLECTION_NSE_BSE_CODES = "NSE_BSE_CODES";
 	public static Map<String, String> QUANDL_STOCK_CODES_MAPPING = new ConcurrentHashMap<String, String>();
-	public static Map<String, String> NSEToBSEMap = new ConcurrentHashMap<String, String>();
-	public static Map<String, String> BSEToNSEMap = new ConcurrentHashMap<String, String>();
+	private static Map<String, String> NSEToBSEMap = new ConcurrentHashMap<String, String>();
 	public static Properties properties = null;
 
 	@PostConstruct
@@ -53,13 +55,19 @@ public class IntelliInvestStore {
 		}
 	}
 
-	public void initialiseCacheFromDB() {
-		List<NSEtoBSEMap> nseToBseMap = stockRepository.getNSEtoBSEMap();
+	private void initialiseCacheFromDB() {
+		List<NSEtoBSEMap> nseToBseMap = getNSEtoBSEMapFromDB();
 		if (nseToBseMap != null && !nseToBseMap.isEmpty()) {
 			IntelliInvestStore.NSEToBSEMap = getMapFromList(nseToBseMap);
-			IntelliInvestStore.BSEToNSEMap = getMapFromListReverse(nseToBseMap);
+			logger.info("Initialised nseToBseMap from DB");
+		} else {
+			logger.error("Could not Initialised nseToBseMap from DB. NSE_BSE_CODES is empty ");
 		}
-		logger.info("Initialised IntelliInvestStore from DB");
+	}
+
+	private List<NSEtoBSEMap> getNSEtoBSEMapFromDB() throws DataAccessException {
+		logger.debug("Inside getNSEtoBSEMap()...");
+		return mongoTemplate.findAll(NSEtoBSEMap.class, COLLECTION_NSE_BSE_CODES);
 	}
 
 	private Map<String, String> getMapFromList(List<NSEtoBSEMap> datas) {
@@ -70,11 +78,7 @@ public class IntelliInvestStore {
 		return map;
 	}
 
-	private Map<String, String> getMapFromListReverse(List<NSEtoBSEMap> datas) {
-		Map<String, String> map = new HashMap<String, String>();
-		for (NSEtoBSEMap data : datas) {
-			map.put(data.getBseCode(), data.getNseCode());
-		}
-		return map;
+	public String getBSECode(String nseCode) {
+		return NSEToBSEMap.get(nseCode);
 	}
 }
