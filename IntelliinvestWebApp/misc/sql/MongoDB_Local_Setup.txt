@@ -1,0 +1,37 @@
+1. How to install mongoDB on Windows locally
+
+https://docs.mongodb.com/v3.0/tutorial/install-mongodb-on-windows/
+
+2. How to use Mongo Shell (command prompt)
+
+https://docs.mongodb.com/manual/mongo/
+
+3. How to use Mongo DB in Java
+
+https://docs.mongodb.com/getting-started/java/
+
+4. Run mongoDB instance locally
+
+Open command prompt from mongo db installation directory and run
+
+$ mongod 
+
+5. Create local intelliinvest (Mongo DB) instance using mongo shell
+
+Open command prompt and and run the following to start using mongo shell
+$ mongo  
+
+>use intelliinvest  //create DB
+
+>mongo
+>db = db.getSiblingDB('admin')
+>db.createUser({user: "root", pwd: "Welcome123", roles:["readWriteAnyDatabase","userAdminAnyDatabase","dbAdminAnyDatabase","clusterAdmin"]})
+
+>db = db.getSiblingDB('intelliinvest')
+>db.createUser({user: "intelliinvest_user", pwd: "Welcome123", roles:["readWrite","dbAdmin"]})
+
+6. Log in into intelliinvest (Mongo DB) instance using mongo shell
+
+Open command prompt and and run the following
+
+>mongo intelliinvest --username intelliinvest_user --password Welcome123

@@ -1,0 +1,7 @@
+db.STOCK.insert({_id:'INDEXBOM:SENSEX',name:"BSE Sensex",worldStock:true,niftyStock:false,updateDate:ISODate('2016-08-04')})
+db.STOCK.insert({_id:'INDEXBOM:BSE-REALTY',name:"BSE-REALTY",worldStock:true,niftyStock:false,updateDate:ISODate('2016-08-04')})
+db.STOCK.insert({_id:'NSE:NIFTY',name:"NIFTY",worldStock:true,niftyStock:false,updateDate:ISODate('2016-08-04')})
+db.STOCK.insert({_id:'INDEXBOM:BSE-MIDCAP',name:"BSE-MIDCAP",worldStock:true,niftyStock:false,updateDate:ISODate('2016-08-04')})
+db.STOCK.insert({_id:'INDEXBOM:BSE-SMLCAP',name:"BSE-SMLCAP",worldStock:true,niftyStock:false,updateDate:ISODate('2016-08-04')})
+db.STOCK.insert({_id:'INDEXBOM:BSE-BANK',name:"BSE-BANK",worldStock:true,niftyStock:false,updateDate:ISODate('2016-08-04')})
+db.STOCK.insert({_id:'INDEXBOM:BSE-FMCG',name:"BSE-FMCG",worldStock:true,niftyStock:false,updateDate:ISODate('2016-08-04')})
