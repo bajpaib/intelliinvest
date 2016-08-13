@@ -15,7 +15,7 @@
 	   <param name="maxFileSize" value="500KB" />
 	   <param name="maxBackupIndex" value="10" />
 	   <!-- For Tomcat -->
-	   <param name="file" value="${CATALINA_HOME}/logs/intelliinvest.log" />
+	   <param name="file" value="/opt/bitnami/apache-tomcat/logs/intelliinvest.log" />
 	   <layout class="org.apache.log4j.PatternLayout">
 		<param name="ConversionPattern" 
 			value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />

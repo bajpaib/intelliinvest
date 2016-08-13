@@ -16,18 +16,23 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedOperationParameter;
+import org.springframework.jmx.export.annotation.ManagedOperationParameters;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.intelliinvest.data.model.Stock;
 import com.intelliinvest.data.model.StockPrice;
+import com.intelliinvest.web.util.DateUtil;
 import com.intelliinvest.web.util.Helper;
 
+@ManagedResource(objectName = "bean:name=StockRepository", description = "StockRepository")
 public class StockRepository {
 	private static Logger logger = Logger.getLogger(StockRepository.class);
 	private static final String COLLECTION_STOCK = "STOCK";
 	private static final String COLLECTION_STOCK_PRICE = "STOCK_PRICE";
 	@Autowired
 	private MongoTemplate mongoTemplate;
-
 	private Map<String, Stock> stockCache = new ConcurrentHashMap<String, Stock>();
 	private Map<String, StockPrice> stockPriceCache = new ConcurrentHashMap<String, StockPrice>();
 
@@ -36,6 +41,7 @@ public class StockRepository {
 		initialiseCacheFromDB();
 	}
 
+	@ManagedOperation(description = "initialiseCacheFromDB")
 	public void initialiseCacheFromDB() {
 		List<Stock> stocks = getStocksFromDB();
 		if (Helper.isNotNullAndNonEmpty(stocks)) {
@@ -46,6 +52,7 @@ public class StockRepository {
 		} else {
 			logger.error("Could not initialise stockCache from DB in StockRepository. STOCK is empty.");
 		}
+
 		List<StockPrice> prices = getStockPricesFromDB();
 		if (Helper.isNotNullAndNonEmpty(prices)) {
 			for (StockPrice price : prices) {
@@ -62,18 +69,17 @@ public class StockRepository {
 		Stock retVal = null;
 		retVal = stockCache.get(code);
 		if (retVal == null) {
-			logger.error("Inside getStockByCode(). Stock not found in cache for " + code);
+			logger.error("Inside getStockByCode() Stock not found in cache for " + code);
 		}
 		return retVal;
 	}
 
 	public List<Stock> getStocks() {
-		logger.debug("Inside getStocks()...");	
-		if (stockCache.size() == 0) {
-			logger.error("Inside getStocks(). stockCache is empty");
-			return null;
-		}
+		logger.debug("Inside getStocks()...");
 		List<Stock> retVal = new ArrayList<Stock>();
+		if (stockCache.size() == 0) {
+			logger.error("Inside getStocks() stockCache is empty");
+		}
 		for (Stock stock : stockCache.values()) {
 			retVal.add(stock);
 		}
@@ -96,12 +102,11 @@ public class StockRepository {
 	}
 
 	public List<StockPrice> getStockPrices() throws DataAccessException {
-		logger.debug("Inside getStockPrices()...");	
+		logger.debug("Inside getStockPrices()...");
+		List<StockPrice> retVal = new ArrayList<StockPrice>();
 		if (stockPriceCache.size() == 0) {
 			logger.error("Inside getStockPrices() stockPriceCache is empty");
-			return null;
 		}
-		List<StockPrice> retVal = new ArrayList<StockPrice>();
 		for (StockPrice price : stockPriceCache.values()) {
 			retVal.add(price);
 		}
@@ -116,7 +121,7 @@ public class StockRepository {
 	public List<StockPrice> updateCurrentStockPrices(List<StockPrice> currentPrices) {
 		logger.debug("Inside updateCurrentStockPrices()...");
 		List<StockPrice> retVal = new ArrayList<StockPrice>();
-		Date currentDateTime = new Date();
+		Date currentDateTime = DateUtil.getCurrentDate();
 		for (StockPrice price : currentPrices) {
 			Query query = new Query();
 			Update update = new Update();
@@ -137,7 +142,7 @@ public class StockRepository {
 	public List<StockPrice> updateEODStockPrices(List<StockPrice> eodPrices) {
 		logger.debug("Inside updateEODStockPrices()...");
 		List<StockPrice> retVal = new ArrayList<StockPrice>();
-		Date currentDateTime = new Date();
+		Date currentDateTime = DateUtil.getCurrentDate();
 		for (StockPrice price : eodPrices) {
 			Query query = new Query();
 			Update update = new Update();
@@ -163,9 +168,32 @@ public class StockRepository {
 			String name = stockValues[1];
 			boolean worldStock = Boolean.parseBoolean(stockValues[2]);
 			boolean niftyStock = Boolean.parseBoolean(stockValues[2]);
-			Stock stock = new Stock(code, name, worldStock, niftyStock, new Date());
+			Stock stock = new Stock(code, name, worldStock, niftyStock, DateUtil.getCurrentDate());
 			mongoTemplate.save(stock, COLLECTION_STOCK);
 			stockCache.put(stock.getCode(), stock);
+		}
+	}
+
+	@ManagedOperation(description = "getStockByCode")
+	@ManagedOperationParameters({ @ManagedOperationParameter(name = "code", description = "Stock Code") })
+	public String getStock(String code) throws DataAccessException {
+		Stock stock = getStockByCode(code.trim());
+		if (stock != null) {
+			return stock.toString();
+		} else {
+			return "Stock not found";
+		}
+
+	}
+
+	@ManagedOperation(description = "getStockPriceByCode")
+	@ManagedOperationParameters({ @ManagedOperationParameter(name = "code", description = "Stock Code") })
+	public String getStockPrice(String code) throws DataAccessException {
+		StockPrice price = getStockPriceByCode(code.trim());
+		if (price != null) {
+			return price.toString();
+		} else {
+			return "Stock Price not found";
 		}
 	}
 }

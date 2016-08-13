@@ -43,7 +43,7 @@ public class UserRepository {
 			for (User user : users) {
 				userLoginCache.put(user.getUserId(), user.getLoggedIn());
 			}
-			logger.info("Initialised userLoginCache from DB in UserRepository");
+			logger.info("Initialised userLoginCache from DB in UserRepository with size " + userLoginCache.size());
 		} else {
 			logger.error("Could not initialise userLoginCache from DB in UserRepository. USER is empty.");
 		}
@@ -69,7 +69,7 @@ public class UserRepository {
 		Date expiryDate = DateUtil.addDaysToDate(currentDate,
 				new Integer(IntelliInvestStore.properties.get("trail.period").toString()));
 
-		Date currentDateTime = new Date();
+		Date currentDateTime = DateUtil.getCurrentDate();
 		user.setUserId(userId);
 		user.setPlan("DEFAULT_10");
 		user.setUserType("User");
@@ -115,7 +115,7 @@ public class UserRepository {
 		query.addCriteria(Criteria.where("userId").is(userId).and("activationCode").is(activationCode));
 		Update update = new Update();
 		update.set("active", "Y");
-		update.set("updateDate", new Date());
+		update.set("updateDate", DateUtil.getCurrentDate());
 		return mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true), User.class,
 				COLLECTION_USER);
 	}
@@ -140,7 +140,7 @@ public class UserRepository {
 					}
 					Query query = new Query();
 					query.addCriteria(Criteria.where("userId").is(userId));
-					Date currentDateTime = new Date();
+					Date currentDateTime = DateUtil.getCurrentDate();
 					Update update = new Update();
 					update.set("loggedIn", true);
 					update.set("updateDate", currentDateTime);
@@ -187,7 +187,7 @@ public class UserRepository {
 		query.addCriteria(Criteria.where("userId").is(userId));
 		Update update = new Update();
 		update.set("loggedIn", false);
-		update.set("updateDate", new Date());
+		update.set("updateDate", DateUtil.getCurrentDate());
 
 		user = mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true), User.class,
 				COLLECTION_USER);
@@ -215,7 +215,7 @@ public class UserRepository {
 			Update update = new Update();
 			update.set("password", encryptedNewPassword);
 			update.set("loggedIn", false);
-			update.set("updateDate", new Date());
+			update.set("updateDate", DateUtil.getCurrentDate());
 			user = mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true), User.class,
 					COLLECTION_USER);
 			// update cache
@@ -258,7 +258,7 @@ public class UserRepository {
 		if (Helper.isNotNullAndNonEmpty(phone)) {
 			update.set("phone", phone);
 		}
-		update.set("updateDate", new Date());
+		update.set("updateDate", DateUtil.getCurrentDate());
 		if (Helper.isNotNullAndNonEmpty(oldPassword) && Helper.isNotNullAndNonEmpty(newPassword)) {
 			if (user.getPassword() == null
 					|| (user.getPassword() != null && !oldPassword.equals(EncryptUtil.decrypt(user.getPassword())))) {

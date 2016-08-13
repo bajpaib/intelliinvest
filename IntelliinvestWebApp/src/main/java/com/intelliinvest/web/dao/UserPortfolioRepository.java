@@ -18,11 +18,11 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import com.intelliinvest.data.model.Portfolio;
 import com.intelliinvest.data.model.PortfolioItem;
-import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.data.model.User;
 import com.intelliinvest.data.model.UserPortfolio;
 import com.intelliinvest.web.common.IntelliinvestException;
+import com.intelliinvest.web.util.DateUtil;
 import com.intelliinvest.web.util.Helper;
 import com.intelliinvest.web.util.MathUtil;
 
@@ -38,8 +38,6 @@ public class UserPortfolioRepository {
 	private SequenceRepository sequenceRepository;
 	@Autowired
 	private StockRepository stockRepository;
-	@Autowired
-	private QuandlEODStockPriceRepository quandlEODStockPriceRepository;
 
 	private String SEQ_KEY = "SeqKey";
 
@@ -124,7 +122,7 @@ public class UserPortfolioRepository {
 				break;
 			}
 		}
-		Date currentDateTime = new Date();
+		Date currentDateTime = DateUtil.getCurrentDate();
 		if (portfolio == null) {
 			portfolio = new Portfolio();
 			portfolio.setPortfolioName(portfolioName);
@@ -172,7 +170,7 @@ public class UserPortfolioRepository {
 			portfolioItem.setQuantity(item.getQuantity());
 			portfolioItem.setTradeDate(item.getTradeDate());
 		}
-		portfolio.setUpdateDate(new Date());
+		portfolio.setUpdateDate(DateUtil.getCurrentDate());
 		mongoTemplate.save(userPortfolio, COLLECTION_USER_PORTFOLIO);
 		return portfolio;
 	}
@@ -235,7 +233,7 @@ public class UserPortfolioRepository {
 				iter.remove();
 			}
 		}
-		portfolio.setUpdateDate(new Date());
+		portfolio.setUpdateDate(DateUtil.getCurrentDate());
 		mongoTemplate.save(userPortfolio, COLLECTION_USER_PORTFOLIO);
 		return portfolio;
 	}
@@ -347,10 +345,7 @@ public class UserPortfolioRepository {
 				if (stockPrice != null) {
 					currentPrice = stockPrice.getCurrentPrice();
 					cp = stockPrice.getCp();
-				}
-				QuandlStockPrice eodQuandlPrice = quandlEODStockPriceRepository.getEODStockPrice(code);
-				if (eodQuandlPrice != null) {
-					eodPrice = eodQuandlPrice.getClose();
+					eodPrice = stockPrice.getEodPrice();
 				}
 				portfolioItem.setCp(cp);
 				portfolioItem.setCurrentPrice(currentPrice);
@@ -422,10 +417,7 @@ public class UserPortfolioRepository {
 			if (stockPrice != null) {
 				currentPrice = stockPrice.getCurrentPrice();
 				cp = stockPrice.getCp();
-			}
-			QuandlStockPrice eodQuandlPrice = quandlEODStockPriceRepository.getEODStockPrice(summaryData.getCode());
-			if (eodQuandlPrice != null) {
-				eodPrice = eodQuandlPrice.getClose();
+				eodPrice = stockPrice.getEodPrice();
 			}
 			summaryData.setCp(cp);
 			summaryData.setCurrentPrice(currentPrice);

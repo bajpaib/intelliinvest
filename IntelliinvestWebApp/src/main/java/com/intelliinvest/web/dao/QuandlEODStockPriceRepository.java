@@ -4,6 +4,7 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.grou
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.sort;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -23,18 +24,23 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.web.common.IntelliinvestException;
+import com.intelliinvest.web.util.DateUtil;
 import com.intelliinvest.web.util.Helper;
 
+@ManagedResource(objectName = "bean:name=QuandlEODStockPriceRepository", description = "QuandlEODStockPriceRepository")
 public class QuandlEODStockPriceRepository {
 	private static Logger logger = Logger.getLogger(QuandlEODStockPriceRepository.class);
 	private static final String COLLECTION_QUANDL_STOCK_PRICE = "QUANDL_STOCK_PRICE";
 	private static final String DEFAULT_EXCHANGE = "NSE";
+
 	@Autowired
 	private MongoTemplate mongoTemplate;
-	private Map<QuandlStockPriceKey, QuandlStockPrice> eodPriceCache = new ConcurrentHashMap<QuandlStockPriceKey, QuandlStockPrice>();
+	private Map<QuandlStockPriceKey, QuandlStockPrice> priceCache = new ConcurrentHashMap<QuandlStockPriceKey, QuandlStockPrice>();
 
 	@PostConstruct
 	public void init() {
@@ -95,57 +101,67 @@ public class QuandlEODStockPriceRepository {
 		private QuandlEODStockPriceRepository getOuterType() {
 			return QuandlEODStockPriceRepository.this;
 		}
-	}
 
-	public void initialiseCacheFromDB() {
-		List<QuandlStockPrice> prices = getLatestEODStockPricesFromDB();
-		if (Helper.isNotNullAndNonEmpty(prices)) {
-			for (QuandlStockPrice price : prices) {
-				QuandlStockPriceKey key = new QuandlStockPriceKey(price.getExchange(), price.getSymbol());
-				eodPriceCache.put(key, price);
-			}
-			logger.info("Initialised eodPriceCache in QuandlStockPriceRepository from DB with size " + eodPriceCache.size());
-		} else {
-			logger.error(
-					"Could not initialise eodPriceCache from DB in QuandlStockPriceRepository. QUANDL_STOCK_PRICE is empty.");
+		@Override
+		public String toString() {
+			return "QuandlStockPriceKey [exchange=" + exchange + ", symbol=" + symbol + "]";
 		}
 	}
 
-	public QuandlStockPrice getEODStockPrice(String symbol) {
+	@ManagedOperation(description = "initialiseCacheFromDB")
+	public void initialiseCacheFromDB() {
+		List<QuandlStockPrice> prices = getLatestStockPricesFromDB();
+		if (Helper.isNotNullAndNonEmpty(prices)) {
+			for (QuandlStockPrice price : prices) {
+				QuandlStockPriceKey key = new QuandlStockPriceKey(price.getExchange(), price.getSymbol());
+				priceCache.put(key, price);
+			}
+			logger.info("Initialised priceCache from DB in QuandlStockPriceRepository with size " + priceCache.size());
+		} else {
+			logger.error(
+					"Could not initialise priceCache from DB in QuandlStockPriceRepository. QUANDL_STOCK_PRICE is empty.");
+		}
+	}
+
+	private QuandlStockPrice getEODStockPrice(String symbol) {
 		return getEODStockPrice(symbol, DEFAULT_EXCHANGE);
 	}
 
-	public QuandlStockPrice getEODStockPrice(String symbol, String exchange) {
-		logger.debug("Inside getEODStockPrice()...");
-		QuandlStockPrice price = eodPriceCache.get(new QuandlStockPriceKey(symbol, exchange));
+	private QuandlStockPrice getEODStockPrice(String symbol, String exchange) {
+		QuandlStockPrice price = priceCache.get(new QuandlStockPriceKey(exchange, symbol));
 		if (price == null) {
-			logger.error("Inside getEODStockPrice(). QuandlStockPrice not found in cache for " + symbol);
+			logger.error("Inside getEODStockPrice() QuandlStockPrice not found in cache for " + symbol);
 		}
 		return price;
 	}
 
-	public QuandlStockPrice getEODStockPriceFromDB(String exchange, String symbol, Date eodDate)
+	private QuandlStockPrice getStockPriceFromDB(String exchange, String symbol, Date eodDate)
 			throws DataAccessException {
-		logger.debug("Inside getEODStockPriceFromDB()...");
+//		logger.debug("Inside getStockPrice()...");
 		Query query = new Query();
 		query.addCriteria(Criteria.where("exchange").is(exchange).and("symbol").is(symbol).and("eodDate").is(eodDate));
 		return mongoTemplate.findOne(query, QuandlStockPrice.class, COLLECTION_QUANDL_STOCK_PRICE);
 	}
 
-	public List<QuandlStockPrice> getLatestEODStockPricesFromDB() throws DataAccessException {
-		logger.info("Inside getLatestEODStockPricesFromDB()...");
+	private List<QuandlStockPrice> getLatestStockPricesFromDB() throws DataAccessException {
+		logger.info("Inside getLatestStockPrices()...");
 		// retrieve record having max eodDate for each stock
 		final Aggregation aggregation = newAggregation(sort(Sort.Direction.DESC, "eodDate"),
-				group("exchange", "symbol").first("eodDate").as("eodDate"));
+				group("exchange","symbol").first("eodDate").as("eodDate"));
 		AggregationResults<QuandlStockPrice> results = mongoTemplate.aggregate(aggregation,
 				COLLECTION_QUANDL_STOCK_PRICE, QuandlStockPrice.class);
-		return results.getMappedResults();
+		List<QuandlStockPrice> retVal = new ArrayList<QuandlStockPrice>();
+		
+		for(QuandlStockPrice price: results.getMappedResults()){
+			retVal.add(getStockPriceFromDB(price.getExchange(), price.getSymbol(),price.getEodDate()));
+		}		
+		return retVal;
 	}
 
 	public void updateEODStockPrices(List<QuandlStockPrice> quandlPrices) throws IntelliinvestException {
-		logger.info("Inside updateEODStockPrices()...");
+		logger.info("Inside updateQuandlStockPrices()...");
 		BulkOperations operation = mongoTemplate.bulkOps(BulkMode.UNORDERED, QuandlStockPrice.class);
-		Date currentDate = new Date();
+		Date currentDate = DateUtil.getCurrentDate();
 		for (QuandlStockPrice price : quandlPrices) {
 			Query query = new Query();
 			query.addCriteria(Criteria.where("exchange").is(price.getExchange()).and("symbol").is(price.getSymbol())
@@ -166,10 +182,35 @@ public class QuandlEODStockPriceRepository {
 			operation.upsert(query, update);
 		}
 		operation.execute();
-		// update eodPriceCache with latest price
+	}
+
+	public void updateCache(List<QuandlStockPrice> quandlPrices) {
+		// update priceCache with latest price
 		for (QuandlStockPrice price : quandlPrices) {
 			QuandlStockPriceKey key = new QuandlStockPriceKey(price.getExchange(), price.getSymbol());
-			eodPriceCache.put(key, price);
+			priceCache.put(key, price);
 		}
+	}
+
+	@ManagedOperation(description = "getEODStockPriceFromCache")
+	public String getEODStockPriceFromCache(String symbol) {
+		QuandlStockPrice price = getEODStockPrice(symbol);
+		if (price != null) {
+			return price.toString();
+		} else {
+			return "Price not found";
+		}
+	}
+
+	@ManagedOperation(description = "dumpEODPriceCache")
+	public String dumpEODPriceCache() {
+		StringBuilder builder = new StringBuilder();
+		for (Map.Entry<QuandlStockPriceKey, QuandlStockPrice> entry : priceCache.entrySet()) {
+			builder.append(entry.getKey().toString());
+			builder.append("=");
+			builder.append(entry.getValue().toString());
+			builder.append("\n");
+		}
+		return builder.toString();
 	}
 }

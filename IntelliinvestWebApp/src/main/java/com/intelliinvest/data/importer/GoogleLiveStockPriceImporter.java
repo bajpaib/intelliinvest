@@ -18,6 +18,8 @@ import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.intelliinvest.data.model.Stock;
 import com.intelliinvest.data.model.StockPrice;
@@ -28,6 +30,7 @@ import com.intelliinvest.web.util.Helper;
 import com.intelliinvest.web.util.HttpUtil;
 import com.intelliinvest.web.util.ScheduledThreadPoolHelper;
 
+@ManagedResource(objectName = "bean:name=GoogleLiveStockPriceImporter", description = "GoogleLiveStockPriceImporter")
 public class GoogleLiveStockPriceImporter {
 	private static Logger logger = Logger.getLogger(GoogleLiveStockPriceImporter.class);
 	@Autowired
@@ -188,7 +191,6 @@ public class GoogleLiveStockPriceImporter {
 
 			String response = HttpUtil
 					.getFromHttpUrlAsString(GOOGLE_QUOTE_URL.replace("#CODE#", codes.replace("&", "%26")));
-
 			stockCurrentPriceList.addAll(getPriceFromJSON("NSE", codes, response));
 		} catch (Exception e) {
 			logger.error("Error fetching stock price in getStockPrice " + codes);
@@ -203,7 +205,7 @@ public class GoogleLiveStockPriceImporter {
 		JSONArray jsonArray = JSONArray.fromObject(response.replaceFirst("//", "").trim());
 		try {
 			Calendar currentCal = Calendar.getInstance();
-			currentCal.setTime(format.parse(format.format(new Date())));
+			currentCal.setTime(format.parse(format.format(DateUtil.getCurrentDate())));
 			currentCal.add(Calendar.MONTH, -1);
 			for (int i = 0; i < jsonArray.size(); i++) {
 				JSONObject stockObject = (JSONObject) jsonArray.get(i);
@@ -216,18 +218,26 @@ public class GoogleLiveStockPriceImporter {
 					if (currentCal.getTime().compareTo(ltDate) > 0) {
 						throw new RuntimeException("Stale details for " + code);
 					}
+					if ("BOM".equals(exchange)) {
+						String bseCode = code;
+						code = intelliinvestStore.getNSECode(bseCode);
+//						logger.info("getNSECode: from bseCode:" + bseCode + " to nseCode:" + code);
+					}
+//					logger.info("Adding stock price for code:" + code + " and exchange:" + exchange);
 					stockCurrentPriceList.add(new StockPrice(code, cp, price, 0, null, ltDate));
-				} catch (Exception e1) {
-					logger.error("Error fetching stock price from " + exchange + " for " + code +". Trying from BOM now");
+				} catch (Exception e1) {				
 					if (exchange.equals("NSE")) {
+//						logger.error("Error fetching stock price from " + exchange + " for " + code + ". Trying from BOM now");
 						String bseCode = intelliinvestStore.getBSECode(code);
 						if (bseCode != null) {
 							response = HttpUtil.getFromHttpUrlAsString(
 									GOOGLE_QUOTE_URL.replace("#CODE#", "BOM:" + bseCode.replace("&", "%26")));
 							stockCurrentPriceList.addAll(getPriceFromJSON("BOM", code, response));
+						}else {
+//							logger.error("bseToNSse mapping not found for " + code);
 						}
 					} else {
-						logger.error("Error fetching stock price from " + exchange + " for code " + code);
+//						logger.error("Error fetching stock price from " + exchange + " for code " + code);
 					}
 				}
 			}
@@ -251,7 +261,8 @@ public class GoogleLiveStockPriceImporter {
 						JSONObject stockObject = (JSONObject) jsonArray.get(j);
 						Double price = new Double(stockObject.getString("l_fix").replaceAll(",", ""));
 						Double cp = new Double(stockObject.getString("cp").replaceAll(",", ""));
-						stockCurrentPriceList.add(new StockPrice(stockCode, cp, price, 0, null, new Date()));
+						stockCurrentPriceList
+								.add(new StockPrice(stockCode, cp, price, 0, null, DateUtil.getCurrentDate()));
 					} catch (Exception e) {
 						logger.error("Error fetching stock price for " + stockCode);
 						logger.error(e.getMessage());
@@ -262,5 +273,34 @@ public class GoogleLiveStockPriceImporter {
 			logger.error("Error fetching World stock prices");
 		}
 		return stockCurrentPriceList;
+	}
+
+	@ManagedOperation(description = "backLoadLivePrices")
+	public String backLoadLivePrices() {
+		logger.error("Inside backLoadLivePrices...");
+		try {
+			List<Stock> stockDetails = stockRepository.getStocks();
+			List<Stock> nonWorldStocks = new ArrayList<Stock>();
+			List<Stock> worldStocks = new ArrayList<Stock>();
+			for (Stock stock : stockDetails) {
+				if (stock.isWorldStock()) {
+					worldStocks.add(stock);
+				} else {
+					nonWorldStocks.add(stock);
+				}
+			}
+			List<StockPrice> nonWorldPrices = getCurrentNonWorldStockPrices(nonWorldStocks);
+			if (Helper.isNotNullAndNonEmpty(nonWorldPrices)) {
+				nonWorldPrices = stockRepository.updateCurrentStockPrices(nonWorldPrices);
+			}
+			List<StockPrice> worldPrices = getCurrentWorldStockPrices(worldStocks);
+			if (Helper.isNotNullAndNonEmpty(worldPrices)) {
+				worldPrices = stockRepository.updateCurrentStockPrices(worldPrices);
+			}
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+
+		return "Success";
 	}
 }
