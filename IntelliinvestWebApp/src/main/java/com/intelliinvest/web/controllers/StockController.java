@@ -9,17 +9,20 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.intelliinvest.common.CommonConstParams;
+import com.intelliinvest.data.dao.StockRepository;
+import com.intelliinvest.data.importer.GoogleLiveStockPriceImporter;
+import com.intelliinvest.data.importer.QuandlEODStockPriceImporter;
 import com.intelliinvest.data.model.Stock;
 import com.intelliinvest.data.model.StockPrice;
+import com.intelliinvest.util.Converter;
+import com.intelliinvest.util.Helper;
 import com.intelliinvest.web.bo.StockFormParameters;
 import com.intelliinvest.web.bo.StockPriceResponse;
 import com.intelliinvest.web.bo.StockResponse;
-import com.intelliinvest.web.common.CommonConstParams;
-import com.intelliinvest.web.dao.StockRepository;
-import com.intelliinvest.web.util.Converter;
-import com.intelliinvest.web.util.Helper;
 
 @Controller
 public class StockController {
@@ -28,6 +31,10 @@ public class StockController {
 	private static final String APPLICATION_JSON = "application/json";
 	@Autowired
 	private StockRepository stockRepository;
+	@Autowired
+	private GoogleLiveStockPriceImporter googleLiveStockPriceImporter;
+	@Autowired
+	private QuandlEODStockPriceImporter quandlEODStockPriceImporter;
 
 	@RequestMapping(value = "/stock/getStockByCode", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
 	public @ResponseBody StockResponse getStockByCode(@RequestBody StockFormParameters stockFormParameters) {
@@ -150,4 +157,5 @@ public class StockController {
 			return list;
 		}
 	}
+
 }

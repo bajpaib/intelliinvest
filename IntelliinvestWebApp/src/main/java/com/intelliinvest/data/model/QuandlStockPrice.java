@@ -25,6 +25,7 @@ public class QuandlStockPrice {
 	private double tottrdval;
 	@DateTimeFormat(iso = ISO.DATE)
 	private Date eodDate;
+	@DateTimeFormat(iso = ISO.DATE)
 	private Date updateDate;
 
 	public QuandlStockPrice() {
@@ -146,4 +147,14 @@ public class QuandlStockPrice {
 				+ ", high=" + high + ", low=" + low + ", close=" + close + ", last=" + last + ", tottrdqty=" + tottrdqty
 				+ ", tottrdval=" + tottrdval + ", eodDate=" + eodDate + ", updateDate=" + updateDate + "]";
 	}
+
+	@Override
+	public QuandlStockPrice clone() throws CloneNotSupportedException {
+		return new QuandlStockPrice(exchange, symbol, series, open, high, low,
+				close, last, tottrdqty, tottrdval, eodDate, updateDate);
+	}
+
+	
+	
+	
 }

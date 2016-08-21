@@ -1,0 +1,18 @@
+# Back Load live prices from Google into STOCK_PRICE
+http://localhost:8080/IntelliinvestWebApp/rest/stock/backLoadLivePrices
+
+# Back Load latest EOD prices from Quandl into STOCK_PRICE and QUANDL_STOCK_PRICE
+http://localhost:8080/IntelliinvestWebApp/rest/stock/uploadLatestEODPricesFromNSE
+
+#Backload historical prices into QUANDL_STOCK_PRICE
+http://localhost:8080/IntelliinvestWebApp/rest/stock/backloadEODPricesFromNSE?startDate=2016-01-01&endDate=2016-08-20
+
+http://localhost:8080/IntelliinvestWebApp/rest/stock/backloadEODPricesFromNSE?startDate=2015-07-01&endDate=2015-12-31
+
+http://localhost:8080/IntelliinvestWebApp/rest/stock/backloadEODPricesFromNSE?startDate=2015-01-01&endDate=2015-06-30
+
+#Run forecast for today + 1
+http://localhost:8080/IntelliinvestWebApp/rest/stock/forecastAndUpdateTomorrowClose?today=2016-08-18
+
+#Run forecast report
+http://localhost:8080/IntelliinvestWebApp/rest/stock/generateAndEmailForecastReport?forecastDate=2016-08-19

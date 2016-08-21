@@ -110,21 +110,29 @@
 	</beans:bean>
 
 	<beans:bean id="intelliinvestStore"
-		class="com.intelliinvest.web.common.IntelliInvestStore"></beans:bean>
-	<beans:bean id="stockRepository" class="com.intelliinvest.web.dao.StockRepository"></beans:bean>
+		class="com.intelliinvest.common.IntelliInvestStore"></beans:bean>
+	<beans:bean id="mailUtil"
+		class="com.intelliinvest.util.MailUtil"></beans:bean>	
+	<beans:bean id="stockRepository" class="com.intelliinvest.data.dao.StockRepository"></beans:bean>
 	<beans:bean id="quandlEODStockPriceRepository"
-		class="com.intelliinvest.web.dao.QuandlEODStockPriceRepository"></beans:bean>
-	<beans:bean id="userRepository" class="com.intelliinvest.web.dao.UserRepository"></beans:bean>
+		class="com.intelliinvest.data.dao.QuandlEODStockPriceRepository"></beans:bean>
+	<beans:bean id="userRepository" class="com.intelliinvest.data.dao.UserRepository"></beans:bean>
 	<beans:bean id="scheduledThreadPoolHelper"
-		class="com.intelliinvest.web.util.ScheduledThreadPoolHelper"></beans:bean>
+		class="com.intelliinvest.util.ScheduledThreadPoolHelper"></beans:bean>
 	<beans:bean id="sequenceRepository"
-		class="com.intelliinvest.web.dao.SequenceRepository"></beans:bean>
+		class="com.intelliinvest.data.dao.SequenceRepository"></beans:bean>
 	<beans:bean id="userPortfolioRepository"
-		class="com.intelliinvest.web.dao.UserPortfolioRepository"></beans:bean>
+		class="com.intelliinvest.data.dao.UserPortfolioRepository"></beans:bean>
+	<beans:bean id="forecastedStockPriceRepository"
+		class="com.intelliinvest.data.dao.ForecastedStockPriceRepository"></beans:bean>	
 	<beans:bean id="quandlStockPriceImporter"
 		class="com.intelliinvest.data.importer.QuandlEODStockPriceImporter"></beans:bean>
 	<beans:bean id="googleLiveStockPriceImporter"
 		class="com.intelliinvest.data.importer.GoogleLiveStockPriceImporter"></beans:bean>
-
+	<beans:bean id="dailyClosePriceForecaster"
+		class="com.intelliinvest.data.forecast.DailyClosePriceForecaster"></beans:bean>
+	<beans:bean id="dailyClosePriceForecastReport"
+		class="com.intelliinvest.data.forecast.DailyClosePriceForecastReport"></beans:bean>
+				
 	<context:component-scan base-package="com.intelliinvest.web.controllers" />
 </beans:beans>

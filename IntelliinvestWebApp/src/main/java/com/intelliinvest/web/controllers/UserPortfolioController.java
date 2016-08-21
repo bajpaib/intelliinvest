@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.intelliinvest.common.CommonConstParams;
+import com.intelliinvest.common.IntelliinvestException;
+import com.intelliinvest.data.dao.UserPortfolioRepository;
 import com.intelliinvest.data.model.Portfolio;
 import com.intelliinvest.data.model.PortfolioItem;
+import com.intelliinvest.util.Helper;
 import com.intelliinvest.web.bo.UserPortfolioFormParameters;
 import com.intelliinvest.web.bo.UserPortfolioResponse;
-import com.intelliinvest.web.common.CommonConstParams;
-import com.intelliinvest.web.common.IntelliinvestException;
-import com.intelliinvest.web.dao.UserPortfolioRepository;
-import com.intelliinvest.web.util.Helper;
 
 @Controller
 public class UserPortfolioController {

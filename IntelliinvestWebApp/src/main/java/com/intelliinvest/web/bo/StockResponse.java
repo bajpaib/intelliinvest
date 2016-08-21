@@ -5,7 +5,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.intelliinvest.web.util.JsonDateSerializer;
+import com.intelliinvest.util.JsonDateSerializer;
 
 @JsonAutoDetect
 public class StockResponse implements Serializable {

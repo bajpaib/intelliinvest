@@ -13,6 +13,9 @@ db.SEQUENCE.insert({_id: "SeqKey",seq:0})
 
 db.QUANDL_STOCK_PRICE.createIndex({ 'exchange': 1, 'symbol': 1, 'eodDate': -1 })
 
+db.createCollection("STOCK_PRICE_DAILY_FORECAST")
+db.STOCK_PRICE_DAILY_FORECAST.createIndex({ 'code': 1, 'forecastDate': -1 })
+
 Other useful commands
 ----------------------
 

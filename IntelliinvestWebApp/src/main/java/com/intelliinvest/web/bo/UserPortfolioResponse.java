@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.intelliinvest.data.model.PortfolioItem;
-import com.intelliinvest.web.util.MathUtil;
+import com.intelliinvest.util.MathUtil;
 
 @JsonAutoDetect
 public class UserPortfolioResponse implements Serializable {

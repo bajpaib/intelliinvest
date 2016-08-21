@@ -1,7 +1,6 @@
 package com.intelliinvest.data.importer;
 
 import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -13,22 +12,22 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
+import com.intelliinvest.common.IntelliInvestStore;
+import com.intelliinvest.data.dao.StockRepository;
 import com.intelliinvest.data.model.Stock;
 import com.intelliinvest.data.model.StockPrice;
-import com.intelliinvest.web.common.IntelliInvestStore;
-import com.intelliinvest.web.dao.StockRepository;
-import com.intelliinvest.web.util.DateUtil;
-import com.intelliinvest.web.util.Helper;
-import com.intelliinvest.web.util.HttpUtil;
-import com.intelliinvest.web.util.ScheduledThreadPoolHelper;
+import com.intelliinvest.util.DateUtil;
+import com.intelliinvest.util.Helper;
+import com.intelliinvest.util.HttpUtil;
+import com.intelliinvest.util.ScheduledThreadPoolHelper;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 @ManagedResource(objectName = "bean:name=GoogleLiveStockPriceImporter", description = "GoogleLiveStockPriceImporter")
 public class GoogleLiveStockPriceImporter {
@@ -53,13 +52,11 @@ public class GoogleLiveStockPriceImporter {
 	public boolean enablePeriodicRefresh() {
 		boolean enable = false;
 		ZonedDateTime zonedNow = ZonedDateTime.now(zoneId);
-		DayOfWeek dayOfWeek = zonedNow.getDayOfWeek();
 		int hour = zonedNow.getHour();
-		int periodicRefreshStartHour = new Integer(
-				IntelliInvestStore.properties.getProperty("periodic.refresh.start.hr"));
+		int periodicRefreshStartHour = new Integer(IntelliInvestStore.properties.getProperty("periodic.refresh.start.hr"));
 		int periodicRefreshEndHour = new Integer(IntelliInvestStore.properties.getProperty("periodic.refresh.end.hr"));
-		if (!dayOfWeek.equals(DayOfWeek.SATURDAY) && !dayOfWeek.equals(DayOfWeek.SUNDAY)
-				&& hour >= periodicRefreshStartHour && hour <= periodicRefreshEndHour) {
+		
+		if (!DateUtil.isBankHoliday(DateUtil.getCurrentDate()) && hour >= periodicRefreshStartHour && hour <= periodicRefreshEndHour) {
 			enable = true;
 		}
 		return enable;
@@ -77,7 +74,7 @@ public class GoogleLiveStockPriceImporter {
 								"Error refreshing current price data for stocks and world indexes " + e.getMessage());
 					}
 				} else {
-					logger.info("refreshing of all price data for IntelliInvest is disabled");
+					logger.info("refreshing of live price data for IntelliInvest is disabled");
 				}
 			}
 		};
@@ -125,7 +122,6 @@ public class GoogleLiveStockPriceImporter {
 		ScheduledThreadPoolHelper.getScheduledExecutorService().scheduleAtFixedRate(enablePeriodicRefreshTask,
 				initialDelay9, 24 * 60 * 60, TimeUnit.SECONDS);
 		logger.info("Scheduled enablePeriodicRefreshTask for periodic price refresh");
-
 		int periodicRefreshEndHour = new Integer(IntelliInvestStore.properties.getProperty("periodic.refresh.end.hr"));
 		int periodicRefreshEndMin = new Integer(IntelliInvestStore.properties.getProperty("periodic.refresh.end.min"));
 		ZonedDateTime zonedNext16 = zonedNow.withHour(periodicRefreshEndHour).withMinute(periodicRefreshEndMin)
@@ -221,23 +217,24 @@ public class GoogleLiveStockPriceImporter {
 					if ("BOM".equals(exchange)) {
 						String bseCode = code;
 						code = intelliinvestStore.getNSECode(bseCode);
-//						logger.info("getNSECode: from bseCode:" + bseCode + " to nseCode:" + code);
+						// logger.info("getNSECode: from bseCode:" + bseCode + " to nseCode:" + code);
 					}
-//					logger.info("Adding stock price for code:" + code + " and exchange:" + exchange);
+					// logger.info("Adding stock price for code:" + code + " and exchange:" + exchange);
 					stockCurrentPriceList.add(new StockPrice(code, cp, price, 0, null, ltDate));
-				} catch (Exception e1) {				
+				} catch (Exception e1) {
 					if (exchange.equals("NSE")) {
-//						logger.error("Error fetching stock price from " + exchange + " for " + code + ". Trying from BOM now");
+						// logger.error("Error fetching stock price from " +
+						// exchange + " for " + code + ". Trying from BOM now");
 						String bseCode = intelliinvestStore.getBSECode(code);
 						if (bseCode != null) {
 							response = HttpUtil.getFromHttpUrlAsString(
 									GOOGLE_QUOTE_URL.replace("#CODE#", "BOM:" + bseCode.replace("&", "%26")));
 							stockCurrentPriceList.addAll(getPriceFromJSON("BOM", code, response));
-						}else {
-//							logger.error("bseToNSse mapping not found for " + code);
+						} else {
+							// logger.error("bseToNSse mapping not found for " + code);
 						}
 					} else {
-//						logger.error("Error fetching stock price from " + exchange + " for code " + code);
+						// logger.error("Error fetching stock price from " + exchange + " for code " + code);
 					}
 				}
 			}
@@ -277,7 +274,7 @@ public class GoogleLiveStockPriceImporter {
 
 	@ManagedOperation(description = "backLoadLivePrices")
 	public String backLoadLivePrices() {
-		logger.error("Inside backLoadLivePrices...");
+		logger.info("Inside backLoadLivePrices...");
 		try {
 			List<Stock> stockDetails = stockRepository.getStocks();
 			List<Stock> nonWorldStocks = new ArrayList<Stock>();

@@ -10,7 +10,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.intelliinvest.web.util.JsonDateSerializer;
+import com.intelliinvest.util.JsonDateSerializer;
 
 @JsonAutoDetect
 public class PortfolioItem implements Serializable {

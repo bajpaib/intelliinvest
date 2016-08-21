@@ -12,13 +12,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.intelliinvest.common.CommonConstParams;
+import com.intelliinvest.data.dao.UserRepository;
 import com.intelliinvest.data.model.User;
+import com.intelliinvest.util.Converter;
+import com.intelliinvest.util.Helper;
 import com.intelliinvest.web.bo.UserFormParameters;
 import com.intelliinvest.web.bo.UserResponse;
-import com.intelliinvest.web.common.CommonConstParams;
-import com.intelliinvest.web.dao.UserRepository;
-import com.intelliinvest.web.util.Converter;
-import com.intelliinvest.web.util.Helper;
 
 @Controller
 public class UserController {
