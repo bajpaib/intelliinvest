@@ -3,16 +3,13 @@ package com.intelliinvest.web.bo;
 import java.io.Serializable;
 import java.util.List;
 
-import com.intelliinvest.data.model.Portfolio;
-import com.intelliinvest.data.model.PortfolioItem;
-
 public class UserPortfolioFormParameters implements Serializable {
 
 	private String userId;
 	private String portfolioName;
 	private String portfolioItemCode;
-	private List<PortfolioItem> portfolioItems;
-
+	private List<PortfolioItemRequest> portfolioItems;	
+	
 	public UserPortfolioFormParameters() {
 		super();
 	}
@@ -41,12 +38,11 @@ public class UserPortfolioFormParameters implements Serializable {
 		this.portfolioItemCode = portfolioItemCode;
 	}
 
-	public List<PortfolioItem> getPortfolioItems() {
+	public List<PortfolioItemRequest> getPortfolioItems() {
 		return portfolioItems;
 	}
 
-	public void setPortfolioItems(List<PortfolioItem> portfolioItems) {
+	public void setPortfolioItems(List<PortfolioItemRequest> portfolioItems) {
 		this.portfolioItems = portfolioItems;
 	}
-
 }

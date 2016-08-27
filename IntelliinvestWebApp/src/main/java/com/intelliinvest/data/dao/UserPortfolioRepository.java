@@ -1,9 +1,9 @@
 package com.intelliinvest.data.dao;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -122,7 +122,7 @@ public class UserPortfolioRepository {
 				break;
 			}
 		}
-		Date currentDateTime = DateUtil.getCurrentDate();
+		LocalDateTime currentDateTime = DateUtil.getLocalDateTime();
 		if (portfolio == null) {
 			portfolio = new Portfolio();
 			portfolio.setPortfolioName(portfolioName);
@@ -170,7 +170,7 @@ public class UserPortfolioRepository {
 			portfolioItem.setQuantity(item.getQuantity());
 			portfolioItem.setTradeDate(item.getTradeDate());
 		}
-		portfolio.setUpdateDate(DateUtil.getCurrentDate());
+		portfolio.setUpdateDate(DateUtil.getLocalDateTime());
 		mongoTemplate.save(userPortfolio, COLLECTION_USER_PORTFOLIO);
 		return portfolio;
 	}
@@ -233,7 +233,7 @@ public class UserPortfolioRepository {
 				iter.remove();
 			}
 		}
-		portfolio.setUpdateDate(DateUtil.getCurrentDate());
+		portfolio.setUpdateDate(DateUtil.getLocalDateTime());
 		mongoTemplate.save(userPortfolio, COLLECTION_USER_PORTFOLIO);
 		return portfolio;
 	}

@@ -146,7 +146,7 @@ public class MailUtil {
 				}
 			}
 			msg.setContent(mp);
-			msg.setSentDate(DateUtil.getCurrentDate());
+			msg.setSentDate(DateUtil.getDateFromLocalDate());
 			/*
 			 * Transport trans = session.getTransport("smtp"); trans.connect();
 			 * if (!trans.isConnected()) { logger.error(

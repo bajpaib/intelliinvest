@@ -1,11 +1,13 @@
 package com.intelliinvest.web.bo;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.intelliinvest.util.JsonDateSerializer;
+import com.intelliinvest.util.JsonDateTimeSerializer;
 
 @JsonAutoDetect
 public class StockPriceResponse implements Serializable {
@@ -14,8 +16,8 @@ public class StockPriceResponse implements Serializable {
 	private double cp;
 	private double currentPrice;
 	private double eodPrice;
-	private Date eodDate;
-	private Date updateDate;
+	private LocalDate eodDate;
+	private LocalDateTime updateDate;
 	private boolean success;
 	private String message;
 
@@ -56,20 +58,20 @@ public class StockPriceResponse implements Serializable {
 	}
 
 	@JsonSerialize(using = JsonDateSerializer.class)
-	public Date getEodDate() {
+	public LocalDate getEodDate() {
 		return eodDate;
 	}
 
-	public void setEodDate(Date eodDate) {
+	public void setEodDate(LocalDate eodDate) {
 		this.eodDate = eodDate;
 	}
 
-	@JsonSerialize(using = JsonDateSerializer.class)
-	public Date getUpdateDate() {
+	@JsonSerialize(using = JsonDateTimeSerializer.class)
+	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
 
-	public void setUpdateDate(Date updateDate) {
+	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
 

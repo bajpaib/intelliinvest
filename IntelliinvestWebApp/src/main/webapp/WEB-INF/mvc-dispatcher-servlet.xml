@@ -2,10 +2,13 @@
 <beans:beans xmlns="http://www.springframework.org/schema/mvc"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
 	xsi:schemaLocation="http://www.springframework.org/schema/mvc
     http://www.springframework.org/schema/mvc/spring-mvc.xsd
     http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/data/mongo
+    http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd
     http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context.xsd">
 
@@ -81,17 +84,43 @@
 	</beans:bean>
 
 	<!-- MongoDbFactory -->
-	<beans:bean id="simpleMongoDbFactoryID"
+	<beans:bean id="mongoDbFactory"
 		class="org.springframework.data.mongodb.core.SimpleMongoDbFactory">
 		<beans:constructor-arg ref="mongoClientID" />
 		<beans:constructor-arg name="databaseName"
 			value="${db.database}" />
 	</beans:bean>
 
+	<!-- by default look for a Mongo object named 'mongo' - default name used 
+		for the converter is 'mappingConverter' -->
+	<mongo:mapping-converter id="mappingConverter"
+		base-package="com.intelliinvest.data.convertor">
+		<mongo:custom-converters>
+			<mongo:converter>
+				<beans:bean
+					class="com.intelliinvest.data.convertor.MongoDBConverters.DateFromLocalDate" />
+			</mongo:converter>
+			<mongo:converter>
+				<beans:bean
+					class="com.intelliinvest.data.convertor.MongoDBConverters.LocalDateFromDate" />
+			</mongo:converter>
+			<mongo:converter>
+				<beans:bean
+					class="com.intelliinvest.data.convertor.MongoDBConverters.DateFromLocalDateTime" />
+			</mongo:converter>
+			<mongo:converter>
+				<beans:bean
+					class="com.intelliinvest.data.convertor.MongoDBConverters.LocalDateTimeFromDate" />
+			</mongo:converter>
+		</mongo:custom-converters>
+	</mongo:mapping-converter>
+
 	<!-- MongoTemplate -->
 	<beans:bean id="mongoTemplate"
 		class="org.springframework.data.mongodb.core.MongoTemplate">
-		<beans:constructor-arg ref="simpleMongoDbFactoryID" />
+		<beans:constructor-arg ref="mongoDbFactory" />
+		<beans:constructor-arg name="mongoConverter"
+			ref="mappingConverter" />
 	</beans:bean>
 
 	<!-- Use this post processor to translate any MongoExceptions thrown in 
@@ -109,10 +138,8 @@
 		</beans:property>
 	</beans:bean>
 
-	<beans:bean id="intelliinvestStore"
-		class="com.intelliinvest.common.IntelliInvestStore"></beans:bean>
-	<beans:bean id="mailUtil"
-		class="com.intelliinvest.util.MailUtil"></beans:bean>	
+	<beans:bean id="intelliinvestStore" class="com.intelliinvest.common.IntelliInvestStore"></beans:bean>
+	<beans:bean id="mailUtil" class="com.intelliinvest.util.MailUtil"></beans:bean>
 	<beans:bean id="stockRepository" class="com.intelliinvest.data.dao.StockRepository"></beans:bean>
 	<beans:bean id="quandlEODStockPriceRepository"
 		class="com.intelliinvest.data.dao.QuandlEODStockPriceRepository"></beans:bean>
@@ -124,7 +151,7 @@
 	<beans:bean id="userPortfolioRepository"
 		class="com.intelliinvest.data.dao.UserPortfolioRepository"></beans:bean>
 	<beans:bean id="forecastedStockPriceRepository"
-		class="com.intelliinvest.data.dao.ForecastedStockPriceRepository"></beans:bean>	
+		class="com.intelliinvest.data.dao.ForecastedStockPriceRepository"></beans:bean>
 	<beans:bean id="quandlStockPriceImporter"
 		class="com.intelliinvest.data.importer.QuandlEODStockPriceImporter"></beans:bean>
 	<beans:bean id="googleLiveStockPriceImporter"
@@ -133,6 +160,6 @@
 		class="com.intelliinvest.data.forecast.DailyClosePriceForecaster"></beans:bean>
 	<beans:bean id="dailyClosePriceForecastReport"
 		class="com.intelliinvest.data.forecast.DailyClosePriceForecastReport"></beans:bean>
-				
+
 	<context:component-scan base-package="com.intelliinvest.web.controllers" />
 </beans:beans>

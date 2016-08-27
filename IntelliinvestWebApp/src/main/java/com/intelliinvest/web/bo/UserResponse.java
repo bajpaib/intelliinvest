@@ -1,11 +1,13 @@
 package com.intelliinvest.web.bo;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.intelliinvest.util.JsonDateSerializer;
+import com.intelliinvest.util.JsonDateTimeSerializer;
 
 @JsonAutoDetect
 public class UserResponse implements Serializable {
@@ -18,11 +20,11 @@ public class UserResponse implements Serializable {
 	private String userType;
 	private String active;
 	private String activationCode;
-	private Date createDate;
-	private Date updateDate;
-	private Date renewalDate;
-	private Date expiryDate;
-	private Date lastLoginDate;
+	private LocalDateTime createDate;
+	private LocalDateTime updateDate;
+	private LocalDate renewalDate;
+	private LocalDate expiryDate;
+	private LocalDateTime lastLoginDate;
 	private boolean loggedIn;
 	private boolean sendNotification;
 	private boolean success;
@@ -95,48 +97,48 @@ public class UserResponse implements Serializable {
 		this.activationCode = activationCode;
 	}
 
-	@JsonSerialize(using = JsonDateSerializer.class)
-	public Date getCreateDate() {
+	@JsonSerialize(using = JsonDateTimeSerializer.class)
+	public LocalDateTime getCreateDate() {
 		return createDate;
 	}
 
-	public void setCreateDate(Date createDate) {
+	public void setCreateDate(LocalDateTime createDate) {
 		this.createDate = createDate;
 	}
 
-	@JsonSerialize(using = JsonDateSerializer.class)
-	public Date getUpdateDate() {
+	@JsonSerialize(using = JsonDateTimeSerializer.class)
+	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
 
-	public void setUpdateDate(Date updateDate) {
+	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
 
 	@JsonSerialize(using = JsonDateSerializer.class)
-	public Date getRenewalDate() {
+	public LocalDate getRenewalDate() {
 		return renewalDate;
 	}
 
-	public void setRenewalDate(Date renewalDate) {
+	public void setRenewalDate(LocalDate renewalDate) {
 		this.renewalDate = renewalDate;
 	}
 
 	@JsonSerialize(using = JsonDateSerializer.class)
-	public Date getExpiryDate() {
+	public LocalDate getExpiryDate() {
 		return expiryDate;
 	}
 
-	public void setExpiryDate(Date expiryDate) {
+	public void setExpiryDate(LocalDate expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 
-	@JsonSerialize(using = JsonDateSerializer.class)
-	public Date getLastLoginDate() {
+	@JsonSerialize(using = JsonDateTimeSerializer.class)
+	public LocalDateTime getLastLoginDate() {
 		return lastLoginDate;
 	}
 
-	public void setLastLoginDate(Date lastLoginDate) {
+	public void setLastLoginDate(LocalDateTime lastLoginDate) {
 		this.lastLoginDate = lastLoginDate;
 	}
 

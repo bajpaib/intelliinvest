@@ -1,7 +1,7 @@
 package com.intelliinvest.web.controllers;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -38,8 +38,8 @@ public class ForecastedStockPriceController {
 			@RequestParam("forecastDate") String forecastDate) {
 		ForecastedStockPrice price = null;
 		try {
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			Date date = format.parse(forecastDate);
+			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate date = LocalDate.parse(forecastDate, dateFormat);
 			price = forecastedStockPriceRepository.getDailyForecastStockPriceFromDB(code, date);
 		} catch (Exception e) {
 			logger.error("Exception inside getDailyForecastStockPrice() " + e.getMessage());
@@ -51,8 +51,8 @@ public class ForecastedStockPriceController {
 	public @ResponseBody List<ForecastedStockPrice> getDailyForecastStockPrices(@RequestParam("forecastDate") String forecastDate) {
 		List<ForecastedStockPrice> priceList = null;
 		try {
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			Date date = format.parse(forecastDate);
+			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate date = LocalDate.parse(forecastDate, dateFormat);
 			priceList = forecastedStockPriceRepository.getDailyForecastStockPricesFromDB(date);
 		} catch (Exception e) {
 			logger.error("Exception inside getLatestDailyForecastStockPrices() " + e.getMessage());

@@ -2,17 +2,32 @@
 http://localhost:8080/IntelliinvestWebApp/rest/stock/backLoadLivePrices
 
 # Back Load latest EOD prices from Quandl into STOCK_PRICE and QUANDL_STOCK_PRICE
-http://localhost:8080/IntelliinvestWebApp/rest/stock/uploadLatestEODPricesFromNSE
+http://localhost:8080/IntelliinvestWebApp/rest/stock/backloadLatestEODPricesFromNSE
 
-#Backload historical prices into QUANDL_STOCK_PRICE
-http://localhost:8080/IntelliinvestWebApp/rest/stock/backloadEODPricesFromNSE?startDate=2016-01-01&endDate=2016-08-20
+# Backload historical prices into QUANDL_STOCK_PRICE
+http://localhost:8080/IntelliinvestWebApp/rest/stock/backloadEODPricesFromNSE?startDate=2015-01-01&endDate=2016-08-27
 
-http://localhost:8080/IntelliinvestWebApp/rest/stock/backloadEODPricesFromNSE?startDate=2015-07-01&endDate=2015-12-31
+http://localhost:8080/IntelliinvestWebApp/rest/stock/backloadEODPricesFromNSEForStock?stockCode=ACC&startDate=2015-01-01&endDate=2016-08-27
 
-http://localhost:8080/IntelliinvestWebApp/rest/stock/backloadEODPricesFromNSE?startDate=2015-01-01&endDate=2015-06-30
+# Run forecast for today + 1
+http://localhost:8080/IntelliinvestWebApp/rest/stock/forecastAndUpdateTomorrowClose?today=2016-08-25
 
-#Run forecast for today + 1
-http://localhost:8080/IntelliinvestWebApp/rest/stock/forecastAndUpdateTomorrowClose?today=2016-08-18
+# Generate forecast report
+http://localhost:8080/IntelliinvestWebApp/rest/stock/generateAndEmailForecastReport?forecastDate=2016-08-26
 
-#Run forecast report
-http://localhost:8080/IntelliinvestWebApp/rest/stock/generateAndEmailForecastReport?forecastDate=2016-08-19
+# ListStocks and StockPrices
+
+http://localhost:8080/IntelliinvestWebApp/rest/stock/getStockByCode?stockCode=ACC
+
+http://localhost:8080/IntelliinvestWebApp/rest/stock/getStockPriceByCode?stockCode=ACC
+
+http://localhost:8080/IntelliinvestWebApp/rest/stock/getStocks
+
+http://localhost:8080/IntelliinvestWebApp/rest/stock/getStockPrices
+
+# List EOD stock price
+http://localhost:8080/IntelliinvestWebApp/rest/stock/getEODStockPrice?stockCode=ACC&eodDate=2016-08-25
+
+# Quandl API call
+https://www.quandl.com/api/v3/datasets/NSE/ACC.csv?api_key=yhwhU_RHkVxbTtFTff9t&start_date=2016-08-25&end_date=2016-08-25
+		

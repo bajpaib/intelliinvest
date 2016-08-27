@@ -1,7 +1,8 @@
 package com.intelliinvest.data.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -23,15 +24,15 @@ public class User implements Serializable {
 	private boolean loggedIn;
 	private boolean sendNotification;
 	@DateTimeFormat(iso = ISO.DATE)
-	private Date renewalDate;
+	private LocalDate renewalDate;
 	@DateTimeFormat(iso = ISO.DATE)
-	private Date expiryDate;
+	private LocalDate expiryDate;
 	@DateTimeFormat(iso = ISO.DATE_TIME)
-	private Date lastLoginDate;
+	private LocalDateTime lastLoginDate;
 	@DateTimeFormat(iso = ISO.DATE_TIME)
-	private Date createDate;
+	private LocalDateTime createDate;
 	@DateTimeFormat(iso = ISO.DATE_TIME)
-	private Date updateDate;
+	private LocalDateTime updateDate;
 	
 	public User() {
 		super();
@@ -117,43 +118,43 @@ public class User implements Serializable {
 		this.sendNotification = sendNotification;
 	}
 
-	public Date getCreateDate() {
+	public LocalDateTime getCreateDate() {
 		return createDate;
 	}
 
-	public void setCreateDate(Date createDate) {
+	public void setCreateDate(LocalDateTime createDate) {
 		this.createDate = createDate;
 	}
 
-	public Date getUpdateDate() {
+	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
 
-	public void setUpdateDate(Date updateDate) {
+	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
 	
-	public Date getRenewalDate() {
+	public LocalDate getRenewalDate() {
 		return renewalDate;
 	}
 
-	public void setRenewalDate(Date renewalDate) {
+	public void setRenewalDate(LocalDate renewalDate) {
 		this.renewalDate = renewalDate;
 	}
 
-	public Date getExpiryDate() {
+	public LocalDate getExpiryDate() {
 		return expiryDate;
 	}
 
-	public void setExpiryDate(Date expiryDate) {
+	public void setExpiryDate(LocalDate expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 
-	public Date getLastLoginDate() {
+	public LocalDateTime getLastLoginDate() {
 		return lastLoginDate;
 	}
 
-	public void setLastLoginDate(Date lastLoginDate) {
+	public void setLastLoginDate(LocalDateTime lastLoginDate) {
 		this.lastLoginDate = lastLoginDate;
 	}
 

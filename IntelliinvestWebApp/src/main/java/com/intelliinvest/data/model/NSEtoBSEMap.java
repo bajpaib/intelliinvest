@@ -1,7 +1,7 @@
 package com.intelliinvest.data.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -14,9 +14,9 @@ public class NSEtoBSEMap implements Serializable{
 	private String nseCode;
 	private String bseCode;
 	@DateTimeFormat(iso = ISO.DATE)
-	private Date createDate;
+	private LocalDateTime createDate;
 	@DateTimeFormat(iso = ISO.DATE)
-	private Date updateDate;
+	private LocalDateTime updateDate;
 	
 	public NSEtoBSEMap() {
 		super();
@@ -38,19 +38,19 @@ public class NSEtoBSEMap implements Serializable{
 		this.bseCode = bseCode;
 	}
 
-	public Date getCreateDate() {
+	public LocalDateTime getCreateDate() {
 		return createDate;
 	}
 
-	public void setCreateDate(Date createDate) {
+	public void setCreateDate(LocalDateTime createDate) {
 		this.createDate = createDate;
 	}
 
-	public Date getUpdateDate() {
+	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
 
-	public void setUpdateDate(Date updateDate) {
+	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
 

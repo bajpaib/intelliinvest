@@ -2,11 +2,11 @@ package com.intelliinvest.data.forecast;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -58,10 +58,10 @@ public class DailyClosePriceForecastReport {
 	private void initializeScheduledTasks() {
 		Runnable dailyClosePriceForecastReportTask = new Runnable() {
 			public void run() {
-				if (!DateUtil.isBankHoliday(DateUtil.getCurrentDate())) {
+				if (!DateUtil.isBankHoliday(DateUtil.getLocalDate())) {
 					try {
 						// We need to generate forecast report for today
-						generateAndEmailForecastReport(DateUtil.getCurrentDateWithNoTime());
+						generateAndEmailForecastReport(DateUtil.getLocalDate());
 					} catch (Exception e) {
 						logger.error("Error while running dailyClosePriceForecastReportTask for NSE stocks "
 								+ e.getMessage());
@@ -69,12 +69,12 @@ public class DailyClosePriceForecastReport {
 				}
 			}
 		};
-		ZonedDateTime zonedNow = DateUtil.getZonedDateTime();
+		LocalDateTime zonedNow = DateUtil.getLocalDateTime();
 		int dailyClosePricePredictStartHour = new Integer(
 				IntelliInvestStore.properties.getProperty("daily.close.price.forecast.report.start.hr"));
 		int dailyClosePricePredictStartMin = new Integer(
 				IntelliInvestStore.properties.getProperty("daily.close.price.forecast.report.start.min"));
-		ZonedDateTime zonedNext = zonedNow.withHour(dailyClosePricePredictStartHour)
+		LocalDateTime zonedNext = zonedNow.withHour(dailyClosePricePredictStartHour)
 				.withMinute(dailyClosePricePredictStartMin).withSecond(0);
 		if (zonedNow.compareTo(zonedNext) > 0) {
 			zonedNext = zonedNext.plusDays(1);
@@ -87,7 +87,7 @@ public class DailyClosePriceForecastReport {
 		logger.info("Scheduled dailyClosePriceForecastReportTask");
 	}
 
-	private void generateAndEmailForecastReport(Date today) {
+	private void generateAndEmailForecastReport(LocalDate today) {
 		try {
 			// We need to compare today's close with the close prices forecasted
 			// on the last business day
@@ -102,9 +102,8 @@ public class DailyClosePriceForecastReport {
 					nonWorldStocks.add(stock);
 				}
 			}
-			System.out.println("nonWorldStocks:" + nonWorldStocks.size());
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			String date = format.format(today);
+			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");			
+			String date = dateFormat.format(today);
 
 			BufferedWriter writer = new BufferedWriter(
 					new FileWriter(reportDataDir + "/" + DAILY_CLOSE_PRICE_FORECAST_REPORT + date + ".csv"));
@@ -142,7 +141,7 @@ public class DailyClosePriceForecastReport {
 						valuesQueue.add(new Double(MathUtil.round(percentDifference)).toString());
 						String valueLine = valuesQueue.toString().replaceAll("\\[|\\]", "");
 						writer.write(valueLine);
-						System.out.println("Writing Stock Number:" + i + " valueLine:" + valueLine);
+//						System.out.println("Writing Stock Number:" + i + " valueLine:" + valueLine);
 						++i;
 						writer.newLine();
 						valuesQueue.clear();
@@ -157,10 +156,10 @@ public class DailyClosePriceForecastReport {
 			}
 			String[] recipients = {
 					IntelliInvestStore.properties.getProperty("daily.close.price.forecast.report.recepients") };
-			String subject = "Daily Close Price Forecast Report for " + format.format(today);
+			String subject = "Daily Close Price Forecast Report for " + dateFormat.format(today);
 			String message = subject;
 			String[] attachment = {
-					reportDataDir + "/" + DAILY_CLOSE_PRICE_FORECAST_REPORT + format.format(today) + ".csv" };
+					reportDataDir + "/" + DAILY_CLOSE_PRICE_FORECAST_REPORT + dateFormat.format(today) + ".csv" };
 			mailUtil.sendMail(recipients, subject, message, attachment);
 
 		} catch (Exception e) {
@@ -186,8 +185,8 @@ public class DailyClosePriceForecastReport {
 			@ManagedOperationParameter(name = "Forecast Date (yyyy-MM-dd)", description = "Forecast Date") })
 	public String generateAndEmailForecastReport(String forecastDate) {
 		try {
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			Date date = format.parse(forecastDate);
+			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate date = LocalDate.parse(forecastDate, dateFormat);
 			generateAndEmailForecastReport(date);
 		} catch (Exception e) {
 			return e.getMessage();

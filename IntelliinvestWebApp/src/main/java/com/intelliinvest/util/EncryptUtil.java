@@ -18,9 +18,9 @@ public class EncryptUtil {
 		 return cipher.decrypt(value);
 	}
 	
-	public static void main(String[] args) throws Exception
+/*	public static void main(String[] args) throws Exception
 	{	
 		System.out.println(encrypt("Welcome12#"));
 		System.out.println(decrypt("Welcome12#"));
-	}
+	}*/
 }

@@ -1,12 +1,9 @@
 package com.intelliinvest.data.importer;
 
-import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -38,7 +35,6 @@ public class GoogleLiveStockPriceImporter {
 	private IntelliInvestStore intelliinvestStore;
 	private final static String GOOGLE_QUOTE_URL = "https://www.google.com/finance/info?q=#CODE#";
 	private static boolean REFRESH_PERIODICALLY = false;
-	private ZoneId zoneId = DateUtil.ZONE_ID;
 
 	@PostConstruct
 	public void init() {
@@ -51,12 +47,12 @@ public class GoogleLiveStockPriceImporter {
 
 	public boolean enablePeriodicRefresh() {
 		boolean enable = false;
-		ZonedDateTime zonedNow = ZonedDateTime.now(zoneId);
-		int hour = zonedNow.getHour();
+		LocalDateTime localDateTime = DateUtil.getLocalDateTime();
+		int hour = localDateTime.getHour();
 		int periodicRefreshStartHour = new Integer(IntelliInvestStore.properties.getProperty("periodic.refresh.start.hr"));
 		int periodicRefreshEndHour = new Integer(IntelliInvestStore.properties.getProperty("periodic.refresh.end.hr"));
 		
-		if (!DateUtil.isBankHoliday(DateUtil.getCurrentDate()) && hour >= periodicRefreshStartHour && hour <= periodicRefreshEndHour) {
+		if (!DateUtil.isBankHoliday(DateUtil.getLocalDate()) && hour >= periodicRefreshStartHour && hour <= periodicRefreshEndHour) {
 			enable = true;
 		}
 		return enable;
@@ -109,8 +105,8 @@ public class GoogleLiveStockPriceImporter {
 		int periodicRefreshStartMin = new Integer(
 				IntelliInvestStore.properties.getProperty("periodic.refresh.start.min"));
 
-		ZonedDateTime zonedNow = ZonedDateTime.now(zoneId);
-		ZonedDateTime zonedNext9 = zonedNow.withHour(periodicRefreshStartHour).withMinute(periodicRefreshStartMin)
+		LocalDateTime zonedNow = DateUtil.getLocalDateTime();
+		LocalDateTime zonedNext9 = zonedNow.withHour(periodicRefreshStartHour).withMinute(periodicRefreshStartMin)
 				.withSecond(0);
 
 		if (zonedNow.compareTo(zonedNext9) > 0) {
@@ -124,7 +120,7 @@ public class GoogleLiveStockPriceImporter {
 		logger.info("Scheduled enablePeriodicRefreshTask for periodic price refresh");
 		int periodicRefreshEndHour = new Integer(IntelliInvestStore.properties.getProperty("periodic.refresh.end.hr"));
 		int periodicRefreshEndMin = new Integer(IntelliInvestStore.properties.getProperty("periodic.refresh.end.min"));
-		ZonedDateTime zonedNext16 = zonedNow.withHour(periodicRefreshEndHour).withMinute(periodicRefreshEndMin)
+		LocalDateTime zonedNext16 = zonedNow.withHour(periodicRefreshEndHour).withMinute(periodicRefreshEndMin)
 				.withSecond(0);
 		if (zonedNow.compareTo(zonedNext16) > 0) {
 			zonedNext16 = zonedNext16.plusDays(1);
@@ -196,22 +192,22 @@ public class GoogleLiveStockPriceImporter {
 	}
 
 	private List<StockPrice> getPriceFromJSON(String exchange, String codes, String response) {
+//		System.out.println("Response:" + response);
 		List<StockPrice> stockCurrentPriceList = new ArrayList<StockPrice>();
-		SimpleDateFormat format = new SimpleDateFormat("MMM dd, hh:mmaa z");
+		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		JSONArray jsonArray = JSONArray.fromObject(response.replaceFirst("//", "").trim());
 		try {
-			Calendar currentCal = Calendar.getInstance();
-			currentCal.setTime(format.parse(format.format(DateUtil.getCurrentDate())));
-			currentCal.add(Calendar.MONTH, -1);
+			LocalDateTime localDateTime = DateUtil.getLocalDateTime();			
+			LocalDateTime oneMonthBefore = localDateTime.minusMonths(1);
 			for (int i = 0; i < jsonArray.size(); i++) {
 				JSONObject stockObject = (JSONObject) jsonArray.get(i);
 				String code = stockObject.getString("t").replace("\\x26", "&");
 				try {
 					Double price = new Double(stockObject.getString("l_fix").replaceAll(",", ""));
 					Double cp = new Double(stockObject.getString("cp").replaceAll(",", ""));
-					String lt = stockObject.getString("lt");
-					Date ltDate = format.parse(lt);
-					if (currentCal.getTime().compareTo(ltDate) > 0) {
+					String lt = stockObject.getString("lt_dts");
+					LocalDateTime ltDate = LocalDateTime.parse(lt, dateFormat);
+					if (oneMonthBefore.isAfter(ltDate)) {
 						throw new RuntimeException("Stale details for " + code);
 					}
 					if ("BOM".equals(exchange)) {
@@ -259,7 +255,7 @@ public class GoogleLiveStockPriceImporter {
 						Double price = new Double(stockObject.getString("l_fix").replaceAll(",", ""));
 						Double cp = new Double(stockObject.getString("cp").replaceAll(",", ""));
 						stockCurrentPriceList
-								.add(new StockPrice(stockCode, cp, price, 0, null, DateUtil.getCurrentDate()));
+								.add(new StockPrice(stockCode, cp, price, 0, null, DateUtil.getLocalDateTime()));
 					} catch (Exception e) {
 						logger.error("Error fetching stock price for " + stockCode);
 						logger.error(e.getMessage());

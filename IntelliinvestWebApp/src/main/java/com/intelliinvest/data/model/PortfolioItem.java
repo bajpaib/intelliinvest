@@ -1,7 +1,7 @@
 package com.intelliinvest.data.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -21,7 +21,7 @@ public class PortfolioItem implements Serializable {
 	private int quantity;
 	private String direction;
 	@DateTimeFormat(iso = ISO.DATE)
-	private Date tradeDate;
+	private LocalDate tradeDate;
 	@Transient
 	private int remainingQuantity;
 	@Transient
@@ -44,7 +44,7 @@ public class PortfolioItem implements Serializable {
 	}
 
 	public PortfolioItem(String portfolioItemId, String code, double price, int quantity, int remainingQuantity,
-			String direction, Date tradeDate, double realisedPnl, double cp, double currentPrice, double amount,
+			String direction, LocalDate tradeDate, double realisedPnl, double cp, double currentPrice, double amount,
 			double totalAmount, double unrealisedPnl, double todaysPnl) {
 		super();
 		this.portfolioItemId = portfolioItemId;
@@ -112,11 +112,11 @@ public class PortfolioItem implements Serializable {
 	}
 
 	@JsonSerialize(using = JsonDateSerializer.class)
-	public Date getTradeDate() {
+	public LocalDate getTradeDate() {
 		return tradeDate;
 	}
 
-	public void setTradeDate(Date tradeDate) {
+	public void setTradeDate(LocalDate tradeDate) {
 		this.tradeDate = tradeDate;
 	}
 

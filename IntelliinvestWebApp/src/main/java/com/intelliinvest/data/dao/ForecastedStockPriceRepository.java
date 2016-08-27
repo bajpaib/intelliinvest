@@ -4,9 +4,9 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.grou
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.sort;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +29,8 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.intelliinvest.common.IntelliinvestException;
-import com.intelliinvest.data.dao.QuandlEODStockPriceRepository.QuandlStockPriceKey;
 import com.intelliinvest.data.model.ForecastedStockPrice;
-import com.intelliinvest.data.model.QuandlStockPrice;
+import com.intelliinvest.util.DateUtil;
 
 @ManagedResource(objectName = "bean:name=ForecastedStockPriceRepository", description = "ForecastedStockPriceRepository")
 public class ForecastedStockPriceRepository {
@@ -40,7 +39,7 @@ public class ForecastedStockPriceRepository {
 	@Autowired
 	private MongoTemplate mongoTemplate;
 
-	public List<ForecastedStockPrice> getDailyForecastStockPricesFromDB(String code, Date startDate, Date endDate)
+	public List<ForecastedStockPrice> getDailyForecastStockPricesFromDB(String code, LocalDate startDate, LocalDate endDate)
 			throws DataAccessException {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("code").is(code).and("forecastDate").gte(startDate).lte(endDate));
@@ -65,21 +64,21 @@ public class ForecastedStockPriceRepository {
 		return retVal;
 	}
 	
-	public ForecastedStockPrice getDailyForecastStockPriceFromDB(String code, Date forecastDate)
+	public ForecastedStockPrice getDailyForecastStockPriceFromDB(String code, LocalDate forecastDate)
 			throws DataAccessException {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("code").is(code).and("forecastDate").is(forecastDate));
 		return mongoTemplate.findOne(query, ForecastedStockPrice.class, COLLECTION_STOCK_PRICE_DAILY_FORECAST);
 	}
 	
-	public List<ForecastedStockPrice> getDailyForecastStockPricesFromDB(Date forecastDate)
+	public List<ForecastedStockPrice> getDailyForecastStockPricesFromDB(LocalDate forecastDate)
 			throws DataAccessException {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("forecastDate").is(forecastDate));
 		return mongoTemplate.find(query, ForecastedStockPrice.class, COLLECTION_STOCK_PRICE_DAILY_FORECAST);
 	}
 	
-	public  Map<String, ForecastedStockPrice> getDailyForecastStockPricesMapFromDB(Date forecastDate) throws DataAccessException{
+	public  Map<String, ForecastedStockPrice> getDailyForecastStockPricesMapFromDB(LocalDate forecastDate) throws DataAccessException{
 		List<ForecastedStockPrice> prices = getDailyForecastStockPricesFromDB(forecastDate);
 		Map<String, ForecastedStockPrice> retVal = new HashMap<String, ForecastedStockPrice>();		
 		for(ForecastedStockPrice price: prices){
@@ -96,12 +95,12 @@ public class ForecastedStockPriceRepository {
 		for (ForecastedStockPrice price : forecastPrices) {
 			Query query = new Query();
 			query.addCriteria(
-					Criteria.where("code").is(price.getCode()).and("forecastDate").is(price.getForecastDate()));
+					Criteria.where("code").is(price.getCode()).and("forecastDate").is(DateUtil.getDateFromLocalDate(price.getForecastDate())));
 			Update update = new Update();
 			update.set("code", price.getCode());
 			update.set("forecastPrice", price.getForecastPrice());
-			update.set("forecastDate", price.getForecastDate());
-			update.set("updateDate", price.getUpdateDate());
+			update.set("forecastDate", DateUtil.getDateFromLocalDate(price.getForecastDate()));
+			update.set("updateDate", DateUtil.getDateFromLocalDateTime(price.getUpdateDate()));
 			operation.upsert(query, update);
 		}
 		operation.execute();
@@ -109,11 +108,11 @@ public class ForecastedStockPriceRepository {
 
 	@ManagedOperation(description = "getDailyForecastStockPrice")
 	@ManagedOperationParameters({ @ManagedOperationParameter(name = "Stock Code", description = "Stock Code"),
-			@ManagedOperationParameter(name = "Forecast Date (yyyy-MM-dd)", description = "Forecast Date (yyyy-MM-dd)") })
+			@ManagedOperationParameter(name = "Forecast LocalDate (yyyy-MM-dd)", description = "Forecast LocalDate (yyyy-MM-dd)") })
 	public String getDailyForecastStockPrice(String code, String forecastDateStr) {
 		try {
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			Date forecastDate = format.parse(forecastDateStr);
+			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate forecastDate = LocalDate.parse(forecastDateStr, dateFormat);
 			ForecastedStockPrice price = getDailyForecastStockPriceFromDB(code, forecastDate);
 			if (price != null) {
 				return price.toString();
@@ -126,11 +125,11 @@ public class ForecastedStockPriceRepository {
 	}
 	
 	@ManagedOperation(description = "getDailyForecastStockPrices")
-	@ManagedOperationParameters({@ManagedOperationParameter(name = "Forecast Date (yyyy-MM-dd)", description = "Forecast Date (yyyy-MM-dd)") })
+	@ManagedOperationParameters({@ManagedOperationParameter(name = "Forecast LocalDate (yyyy-MM-dd)", description = "Forecast LocalDate (yyyy-MM-dd)") })
 	public String getDailyForecastStockPrices(String forecastDateStr) {
 		try {
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			Date forecastDate = format.parse(forecastDateStr);
+			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate forecastDate = LocalDate.parse(forecastDateStr, dateFormat);
 			List<ForecastedStockPrice> prices = getDailyForecastStockPricesFromDB(forecastDate);
 			StringBuilder builder = new StringBuilder();
 			for (ForecastedStockPrice price : prices) {

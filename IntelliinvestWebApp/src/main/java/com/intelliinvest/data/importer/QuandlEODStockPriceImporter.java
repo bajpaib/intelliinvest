@@ -2,11 +2,11 @@ package com.intelliinvest.data.importer;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -48,21 +48,21 @@ public class QuandlEODStockPriceImporter {
 	private void initializeScheduledTasks() {
 		Runnable refreshEODPricesTask = new Runnable() {
 			public void run() {
-				if (!DateUtil.isBankHoliday(DateUtil.getCurrentDate())) {
+				if (!DateUtil.isBankHoliday(DateUtil.getLocalDate())) {
 					try {
-						updateLatestEODPricesFromNSE();
+						backloadLatestEODPricesFromNSE();
 					} catch (Exception e) {
 						logger.error("Error refreshing EOD price data for NSE stocks " + e.getMessage());
 					}
 				}
 			}
 		};
-		ZonedDateTime zonedNow = DateUtil.getZonedDateTime();
+		LocalDateTime zonedNow = DateUtil.getLocalDateTime();
 		int dailyEODPriceRefreshStartHour = new Integer(
 				IntelliInvestStore.properties.getProperty("daily.eod.price.refresh.start.hr"));
 		int dailyEODPriceRefreshStartMin = new Integer(
 				IntelliInvestStore.properties.getProperty("daily.eod.price.refresh.start.min"));
-		ZonedDateTime zonedNext = zonedNow.withHour(dailyEODPriceRefreshStartHour)
+		LocalDateTime zonedNext = zonedNow.withHour(dailyEODPriceRefreshStartHour)
 				.withMinute(dailyEODPriceRefreshStartMin).withSecond(0);
 		if (zonedNow.compareTo(zonedNext) > 0) {
 			zonedNext = zonedNext.plusDays(1);
@@ -75,9 +75,9 @@ public class QuandlEODStockPriceImporter {
 		logger.info("Scheduled refreshEODPricesTask for periodic eod price refresh");
 	}
 
-	public void updateLatestEODPricesFromNSE() throws Exception {
+	public void backloadLatestEODPricesFromNSE() throws Exception {
 		logger.info("Inside updateLatestEODPricesFromNSE");
-		Date currentDate = DateUtil.getCurrentDateWithNoTime();
+		LocalDate currentDate = DateUtil.getLocalDate();
 		List<StockPrice> stockPriceList = new ArrayList<StockPrice>();
 		List<QuandlStockPrice> quandlStockPriceList = new ArrayList<QuandlStockPrice>();
 		
@@ -85,7 +85,7 @@ public class QuandlEODStockPriceImporter {
 
 		// if prices not available for T, try T-1
 		if (!(Helper.isNotNullAndNonEmpty(stockPriceList) && Helper.isNotNullAndNonEmpty(quandlStockPriceList))) {
-			Date lastBusinessDate = DateUtil.getLastBusinessDate();
+			LocalDate lastBusinessDate = DateUtil.getLastBusinessDate();
 			fetchEODPricesFromNSE(lastBusinessDate,stockPriceList,quandlStockPriceList);
 		}
 
@@ -98,7 +98,7 @@ public class QuandlEODStockPriceImporter {
 		}
 	}
 	
-	private void fetchEODPricesFromNSE(Date date, List<StockPrice> stockPriceList, List<QuandlStockPrice> quandlStockPriceList){
+	private void fetchEODPricesFromNSE(LocalDate date, List<StockPrice> stockPriceList, List<QuandlStockPrice> quandlStockPriceList){
 		logger.info("Inside fetchEODPricesFromNSE for date " + date);
 		List<Stock> stockDetails = stockRepository.getStocks();
 		List<Stock> nonWorldStocks = new ArrayList<Stock>();
@@ -136,7 +136,7 @@ public class QuandlEODStockPriceImporter {
 		logger.info("Inside fetchEODPricesFromNSE, # of quandlStockPriceList downloaded for date " + date + " is " + quandlStockPriceList.size());
 	}
 
-	private void fetchEODPricesFromNSE(String stockCode, Date startDate, Date endDate, List<StockPrice> stockPriceList, List<QuandlStockPrice> quandlStockPriceList)
+	private void fetchEODPricesFromNSE(String stockCode, LocalDate startDate, LocalDate endDate, List<StockPrice> stockPriceList, List<QuandlStockPrice> quandlStockPriceList)
 			throws Exception {
 //		logger.info("Inside fetchEODPricesFromNSE for stockCode:" + stockCode + " from  " + startDate + " to " + endDate);
 		try {
@@ -156,14 +156,14 @@ public class QuandlEODStockPriceImporter {
 		if (stockPriceList == null) {
 			populateStockPrice = false;
 		}
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String[] eodPricesAsArray = eodPricesAsString.split("\n");
 
 		for (int i = 1; i < eodPricesAsArray.length; i++) {
 			String eodPriceAsString = eodPricesAsArray[i];
 			String[] eodPriceAsArray = eodPriceAsString.split(",");
 			if (eodPriceAsArray.length >= 8) {
-				Date eodDate = format.parse(eodPriceAsArray[0]);
+				LocalDate eodDate = LocalDate.parse(eodPriceAsArray[0], dateFormat);
 				double open = new Double(eodPriceAsArray[1]);
 				double high = new Double(eodPriceAsArray[2]);
 				double low = new Double(eodPriceAsArray[3]);
@@ -199,13 +199,13 @@ public class QuandlEODStockPriceImporter {
 		}
 	}
 
-	private String getDataFromQuandl(String stockCode, Date startDate, Date endDate) throws IntelliinvestException {
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+	private String getDataFromQuandl(String stockCode, LocalDate startDate, LocalDate endDate) throws IntelliinvestException {
+		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		stockCode = getQuandlStockCode(stockCode);
 		String retVal;
 		String link = "https://www.quandl.com/api/v3/datasets/NSE/" + stockCode
-				+ ".csv?api_key=yhwhU_RHkVxbTtFTff9t&start_date=" + format.format(startDate) + "&end_date="
-				+ format.format(endDate);
+				+ ".csv?api_key=yhwhU_RHkVxbTtFTff9t&start_date=" + dateFormat.format(startDate) + "&end_date="
+				+ dateFormat.format(endDate);
 		try {
 			// logger.debug("Sending Quandl Request:" + link);
 			byte b[] = HttpUtil.getFromUrlAsBytes(link);
@@ -231,10 +231,10 @@ public class QuandlEODStockPriceImporter {
 		return stock_code;
 	}
 
-	@ManagedOperation(description = "uploadLatestEODPricesFromNSE")
-	public String uploadLatestEODPricesFromNSE() {
+	@ManagedOperation(description = "backloadEODPricesFromNSE")
+	public String backloadEODPricesFromNSE() {
 		try {
-			updateLatestEODPricesFromNSE();
+			backloadLatestEODPricesFromNSE();
 		} catch (Exception e) {
 			return e.getMessage();
 		}
@@ -248,9 +248,9 @@ public class QuandlEODStockPriceImporter {
 	public String backloadEODPricesFromNSE(String startDate, String endDate) {
 		StringBuilder buf = new StringBuilder();
 		try {
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			Date start = format.parse(startDate);
-			Date end = format.parse(endDate);			
+			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate start = LocalDate.parse(startDate, dateFormat);
+			LocalDate end = LocalDate.parse(endDate, dateFormat);		
 			List<Stock> stockDetails = stockRepository.getStocks();
 			List<Stock> nonWorldStocks = new ArrayList<Stock>();
 			for (Stock stock : stockDetails) {
@@ -285,10 +285,10 @@ public class QuandlEODStockPriceImporter {
 			@ManagedOperationParameter(name = "End Date", description = "End Date (yyyy-MM-dd)") })
 	public String backloadEODPricesFromNSEForStock(String stockCode, String startDate, String endDate) {
 		try {
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 			List<QuandlStockPrice> quandlStockPriceList = new ArrayList<QuandlStockPrice>();
-			Date start = format.parse(startDate);
-			Date end = format.parse(endDate);
+			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate start = LocalDate.parse(startDate, dateFormat);
+			LocalDate end = LocalDate.parse(endDate, dateFormat);				
 			fetchEODPricesFromNSE(stockCode,start,end, null, quandlStockPriceList);
 			if (Helper.isNotNullAndNonEmpty(quandlStockPriceList)) {
 				quandlEODStockPriceRepository.updateEODStockPrices(quandlStockPriceList);
@@ -307,12 +307,12 @@ public class QuandlEODStockPriceImporter {
 		try {
 			reader = new BufferedReader(new FileReader(filePath));
 			List<QuandlStockPrice> quandlStockPriceList = new ArrayList<QuandlStockPrice>();
-			SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 			String line = reader.readLine();
 			while ((line = reader.readLine()) != null) {
 				String[] eodPriceAsArray = line.split(",");
 				if (eodPriceAsArray.length >= 8) {
-					Date eodDate = format.parse(eodPriceAsArray[0].trim());
+					LocalDate eodDate = LocalDate.parse(eodPriceAsArray[0].trim(), dateFormat);
 					double open = new Double(eodPriceAsArray[1]);
 					double high = new Double(eodPriceAsArray[2]);
 					double low = new Double(eodPriceAsArray[3]);

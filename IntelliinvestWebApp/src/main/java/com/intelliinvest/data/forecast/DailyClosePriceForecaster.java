@@ -5,12 +5,12 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.time.ZonedDateTime;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -87,23 +87,23 @@ public class DailyClosePriceForecaster {
 	private void initializeScheduledTasks() {
 		Runnable dailyClosePricePredictorTask = new Runnable() {
 			public void run() {
-				if (!DateUtil.isBankHoliday(DateUtil.getCurrentDate())) {
+				if (!DateUtil.isBankHoliday(DateUtil.getLocalDate())) {
 					try {
 						// We need to forecast tomorrow's close using values for
 						// today's close
-						forecastTomorrowClose(DateUtil.getCurrentDateWithNoTime());
+						forecastTomorrowClose(DateUtil.getLocalDate());
 					} catch (Exception e) {
 						logger.error("Error refreshing EOD price data for NSE stocks " + e.getMessage());
 					}
 				}
 			}
 		};
-		ZonedDateTime zonedNow = DateUtil.getZonedDateTime();
+		LocalDateTime zonedNow = DateUtil.getLocalDateTime();
 		int dailyClosePricePredictStartHour = new Integer(
 				IntelliInvestStore.properties.getProperty("daily.close.price.forecast.start.hr"));
 		int dailyClosePricePredictStartMin = new Integer(
 				IntelliInvestStore.properties.getProperty("daily.close.price.forecast.start.min"));
-		ZonedDateTime zonedNext = zonedNow.withHour(dailyClosePricePredictStartHour)
+		LocalDateTime zonedNext = zonedNow.withHour(dailyClosePricePredictStartHour)
 				.withMinute(dailyClosePricePredictStartMin).withSecond(0);
 		if (zonedNow.compareTo(zonedNext) > 0) {
 			zonedNext = zonedNext.plusDays(1);
@@ -116,7 +116,7 @@ public class DailyClosePriceForecaster {
 		logger.info("Scheduled dailyClosePricePredictorTask for tomorrow close price forecast");
 	}
 
-	private void forecastTomorrowClose(Date today) throws Exception {
+	private void forecastTomorrowClose(LocalDate today) throws Exception {
 		createExcutorService();
 		List<Stock> stockDetails = stockRepository.getStocks();
 		List<Stock> nonWorldStocks = new ArrayList<Stock>();
@@ -138,10 +138,11 @@ public class DailyClosePriceForecaster {
 			try {
 				code = entry.getKey();
 				Future<Double> future = entry.getValue();
-				Double result = future.get();
+				Double result = future.get();				
 				// We need to update STOCK_PRICE_DAILY_FORECAST table
-				Date nextBusinessDate = DateUtil.addBusinessDaysToDate(today, 1);
-				forecastPrices.add(new ForecastedStockPrice(code, result, nextBusinessDate, today));
+				LocalDate nextBusinessDate = DateUtil.addBusinessDays(today, 1);
+				forecastPrices.add(new ForecastedStockPrice(code, result, nextBusinessDate, DateUtil.getLocalDateTime()));
+//				logger.debug("Stock:" + code + ". ForecastPrice:" + result.doubleValue() + ". ForecastDate:"+ nextBusinessDate);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 				logger.error("InterruptedException in forecastCloseTask for stock:" + code + ". Exception:" + e.getMessage());
@@ -155,9 +156,9 @@ public class DailyClosePriceForecaster {
 
 	class ForecastCloseTask implements Callable<Double> {
 		private Stock stock;
-		private Date today;
+		private LocalDate today;
 
-		public ForecastCloseTask(Stock stock, Date today) {
+		public ForecastCloseTask(Stock stock, LocalDate today) {
 			super();
 			this.stock = stock;
 			this.today = today;
@@ -209,13 +210,13 @@ public class DailyClosePriceForecaster {
 		return true;
 	}
 
-	private double[] prepareData(Stock stock, Date today) throws Exception {
+	private double[] prepareData(Stock stock, LocalDate today) throws Exception {
 		logger.debug("Inside prepareData() for stock:" + stock.getCode() + " and date:" + today.toString());
 		int years = new Integer(IntelliInvestStore.properties.getProperty("daily.close.price.forecast.history.years"))
 				.intValue();
 		int months = new Integer(IntelliInvestStore.properties.getProperty("daily.close.price.forecast.history.months"))
 				.intValue();
-		Date startDate = new Date(today.getYear() - years, today.getMonth() - months, today.getDay());
+		LocalDate startDate = today.minusYears(years).minusMonths(months);
 		List<QuandlStockPrice> stockPricesFromDB = quandlEODStockPriceRepository.getStockPricesFromDB(stock.getCode(), startDate, today);
 		stockPricesFromDB.sort(new Comparator<QuandlStockPrice>() {
 			public int compare(QuandlStockPrice price1, QuandlStockPrice price2) {
@@ -424,8 +425,8 @@ public class DailyClosePriceForecaster {
 		try {
 			// We need to forecast tomorrow's close using values for today's
 			// close
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			Date date = format.parse(today);
+			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate date = LocalDate.parse(today, dateFormat);
 			forecastTomorrowClose(date);
 		} catch (Exception e) {
 			return e.getMessage();

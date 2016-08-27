@@ -2,7 +2,7 @@ package com.intelliinvest.data.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
@@ -14,9 +14,9 @@ public class Portfolio implements Serializable {
 	@Id
 	private String portfolioName;
 	@DateTimeFormat(iso = ISO.DATE)
-	private Date createDate;
+	private LocalDateTime createDate;
 	@DateTimeFormat(iso = ISO.DATE)
-	private Date updateDate;
+	private LocalDateTime updateDate;
 	private List<PortfolioItem> portfolioItems = new ArrayList<PortfolioItem>();
 
 	public Portfolio() {
@@ -31,19 +31,19 @@ public class Portfolio implements Serializable {
 		this.portfolioName = portfolioName;
 	}
 
-	public Date getCreateDate() {
+	public LocalDateTime getCreateDate() {
 		return createDate;
 	}
 
-	public void setCreateDate(Date createDate) {
+	public void setCreateDate(LocalDateTime createDate) {
 		this.createDate = createDate;
 	}
 
-	public Date getUpdateDate() {
+	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
 
-	public void setUpdateDate(Date updateDate) {
+	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
 

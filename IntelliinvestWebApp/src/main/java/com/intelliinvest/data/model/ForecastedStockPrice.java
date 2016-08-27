@@ -1,23 +1,27 @@
 package com.intelliinvest.data.model;
 
-import java.util.Date;
+
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.intelliinvest.util.JsonDateSerializer;
+import com.intelliinvest.util.JsonDateTimeSerializer;
 
 public class ForecastedStockPrice {
 
 	private String code;
 	private double forecastPrice;
 	@DateTimeFormat(iso = ISO.DATE)
-	private Date forecastDate;
+	private LocalDate forecastDate;
 	@DateTimeFormat(iso = ISO.DATE)
-	private Date updateDate;
+	private LocalDateTime updateDate;
 	
-	public ForecastedStockPrice(String code, double forecastPrice, Date forecastDate, Date updateDate) {
+	public ForecastedStockPrice(String code, double forecastPrice, LocalDate forecastDate, LocalDateTime updateDate) {
 		super();
 		this.code = code;
 		this.forecastPrice = forecastPrice;
@@ -42,20 +46,20 @@ public class ForecastedStockPrice {
 	}
 
 	@JsonSerialize(using = JsonDateSerializer.class)
-	public Date getForecastDate() {
+	public LocalDate getForecastDate() {
 		return forecastDate;
 	}
 
-	public void setForecastDate(Date forecastDate) {
+	public void setForecastDate(LocalDate forecastDate) {
 		this.forecastDate = forecastDate;
 	}
 
-	@JsonSerialize(using = JsonDateSerializer.class)
-	public Date getUpdateDate() {
+	@JsonSerialize(using = JsonDateTimeSerializer.class)
+	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
 
-	public void setUpdateDate(Date updateDate) {
+	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
 

@@ -4,8 +4,8 @@ import static org.springframework.data.mongodb.core.aggregation.Aggregation.grou
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
 import static org.springframework.data.mongodb.core.aggregation.Aggregation.sort;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,7 +124,7 @@ public class QuandlEODStockPriceRepository {
 		}
 	}
 
-	private QuandlStockPrice getEODStockPrice(String symbol) throws Exception {
+	public QuandlStockPrice getEODStockPrice(String symbol) throws Exception {
 		return getEODStockPrice(symbol, DEFAULT_EXCHANGE);
 	}
 
@@ -136,22 +136,22 @@ public class QuandlEODStockPriceRepository {
 		return price.clone();
 	}
 
-	public QuandlStockPrice getStockPriceFromDB(String symbol, Date eodDate) throws DataAccessException {
+	public QuandlStockPrice getStockPriceFromDB(String symbol, LocalDate eodDate) throws DataAccessException {
 		return getStockPriceFromDB(DEFAULT_EXCHANGE, symbol, eodDate);
 	}
 
-	private QuandlStockPrice getStockPriceFromDB(String exchange, String symbol, Date eodDate)
+	private QuandlStockPrice getStockPriceFromDB(String exchange, String symbol, LocalDate eodDate)
 			throws DataAccessException {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("exchange").is(exchange).and("symbol").is(symbol).and("eodDate").is(eodDate));
 		return mongoTemplate.findOne(query, QuandlStockPrice.class, COLLECTION_QUANDL_STOCK_PRICE);
 	}
 
-	public List<QuandlStockPrice> getStockPricesFromDB(String symbol, Date startDate, Date endDate) {
+	public List<QuandlStockPrice> getStockPricesFromDB(String symbol, LocalDate startDate, LocalDate endDate) {
 		return getStockPricesFromDB(DEFAULT_EXCHANGE, symbol, startDate, endDate);
 	}
 
-	public List<QuandlStockPrice> getStockPricesFromDB(String exchange, String symbol, Date startDate, Date endDate)
+	public List<QuandlStockPrice> getStockPricesFromDB(String exchange, String symbol, LocalDate startDate, LocalDate endDate)
 			throws DataAccessException {
 		if (!Helper.isNotNullAndNonEmpty(exchange)) {
 			exchange = DEFAULT_EXCHANGE;
@@ -162,11 +162,11 @@ public class QuandlEODStockPriceRepository {
 		return mongoTemplate.find(query, QuandlStockPrice.class, COLLECTION_QUANDL_STOCK_PRICE);
 	}
 
-	public List<QuandlStockPrice> getStockPricesFromDB(Date eodDate) {
+	public List<QuandlStockPrice> getStockPricesFromDB(LocalDate eodDate) {
 		return getStockPricesFromDB(DEFAULT_EXCHANGE, eodDate);
 	}
 
-	public List<QuandlStockPrice> getStockPricesFromDB(String exchange, Date eodDate) throws DataAccessException {
+	public List<QuandlStockPrice> getStockPricesFromDB(String exchange, LocalDate eodDate) throws DataAccessException {
 		if (!Helper.isNotNullAndNonEmpty(exchange)) {
 			exchange = DEFAULT_EXCHANGE;
 		}
@@ -175,7 +175,7 @@ public class QuandlEODStockPriceRepository {
 		return mongoTemplate.find(query, QuandlStockPrice.class, COLLECTION_QUANDL_STOCK_PRICE);
 	}
 	
-	public Map<String, QuandlStockPrice> getEODStockPrices(Date date) throws Exception {		
+	public Map<String, QuandlStockPrice> getEODStockPrices(LocalDate date) throws Exception {		
 		Map <String, QuandlStockPrice> retVal = new HashMap<String, QuandlStockPrice>();		
 		List<QuandlStockPrice> prices =  getStockPricesFromDB(date);		
 		for(QuandlStockPrice price: prices){
@@ -203,11 +203,10 @@ public class QuandlEODStockPriceRepository {
 	public void updateEODStockPrices(List<QuandlStockPrice> quandlPrices) throws IntelliinvestException {
 		logger.info("Inside updateQuandlStockPrices()...");
 		BulkOperations operation = mongoTemplate.bulkOps(BulkMode.UNORDERED, QuandlStockPrice.class);
-		Date currentDate = DateUtil.getCurrentDate();
 		for (QuandlStockPrice price : quandlPrices) {
 			Query query = new Query();
 			query.addCriteria(Criteria.where("exchange").is(price.getExchange()).and("symbol").is(price.getSymbol())
-					.and("eodDate").is(price.getEodDate()));
+					.and("eodDate").is(DateUtil.getDateFromLocalDate(price.getEodDate())));
 			Update update = new Update();
 			update.set("exchange", price.getExchange());
 			update.set("symbol", price.getSymbol());
@@ -219,8 +218,8 @@ public class QuandlEODStockPriceRepository {
 			update.set("last", price.getLast());
 			update.set("tottrdqty", price.getTottrdqty());
 			update.set("tottrdval", price.getTottrdval());
-			update.set("eodDate", price.getEodDate());
-			update.set("updateDate", currentDate);
+			update.set("eodDate", DateUtil.getDateFromLocalDate(price.getEodDate()));
+			update.set("updateDate", DateUtil.getDateFromLocalDateTime(DateUtil.getLocalDateTime()));
 			operation.upsert(query, update);
 		}
 		operation.execute();

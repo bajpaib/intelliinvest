@@ -121,14 +121,13 @@ public class StockRepository {
 	public List<StockPrice> updateCurrentStockPrices(List<StockPrice> currentPrices) {
 		logger.debug("Inside updateCurrentStockPrices()...");
 		List<StockPrice> retVal = new ArrayList<StockPrice>();
-		Date currentDateTime = DateUtil.getCurrentDate();
 		for (StockPrice price : currentPrices) {
 			Query query = new Query();
 			Update update = new Update();
 			update.set("code", price.getCode());
 			update.set("currentPrice", price.getCurrentPrice());
 			update.set("cp", price.getCp());
-			update.set("updateDate", currentDateTime);
+			update.set("updateDate", DateUtil.getLocalDateTime());
 			query.addCriteria(Criteria.where("code").is(price.getCode()));
 			price = mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true).upsert(true),
 					StockPrice.class, COLLECTION_STOCK_PRICE);
@@ -142,14 +141,13 @@ public class StockRepository {
 	public List<StockPrice> updateEODStockPrices(List<StockPrice> eodPrices) {
 		logger.debug("Inside updateEODStockPrices()...");
 		List<StockPrice> retVal = new ArrayList<StockPrice>();
-		Date currentDateTime = DateUtil.getCurrentDate();
 		for (StockPrice price : eodPrices) {
 			Query query = new Query();
 			Update update = new Update();
 			update.set("code", price.getCode());
 			update.set("eodPrice", price.getEodPrice());
 			update.set("eodDate", price.getEodDate());
-			update.set("updateDate", currentDateTime);
+			update.set("updateDate", DateUtil.getLocalDateTime());
 			query.addCriteria(Criteria.where("code").is(price.getCode()));
 			price = mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true).upsert(true),
 					StockPrice.class, COLLECTION_STOCK_PRICE);
@@ -168,7 +166,7 @@ public class StockRepository {
 			String name = stockValues[1];
 			boolean worldStock = Boolean.parseBoolean(stockValues[2]);
 			boolean niftyStock = Boolean.parseBoolean(stockValues[2]);
-			Stock stock = new Stock(code, name, worldStock, niftyStock, DateUtil.getCurrentDate());
+			Stock stock = new Stock(code, name, worldStock, niftyStock, DateUtil.getLocalDateTime());
 			mongoTemplate.save(stock, COLLECTION_STOCK);
 			stockCache.put(stock.getCode(), stock);
 		}

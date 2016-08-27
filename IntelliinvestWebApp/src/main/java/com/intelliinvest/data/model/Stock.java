@@ -1,7 +1,7 @@
 package com.intelliinvest.data.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -17,13 +17,13 @@ public class Stock implements Serializable{
 	private boolean worldStock;
 	private boolean niftyStock;
 	@DateTimeFormat(iso = ISO.DATE)
-	private Date updateDate;
+	private LocalDateTime updateDate;
 
 	public Stock() {
 		super();
 	}
 
-	public Stock(String code, String name, boolean worldStock, boolean niftyStock, Date updateDate) {
+	public Stock(String code, String name, boolean worldStock, boolean niftyStock, LocalDateTime updateDate) {
 		super();
 		this.code = code;
 		this.name = name;
@@ -64,11 +64,11 @@ public class Stock implements Serializable{
 		this.niftyStock = niftyStock;
 	}
 
-	public Date getUpdateDate() {
+	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
 
-	public void setUpdateDate(Date updateDate) {
+	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
 

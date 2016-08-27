@@ -1,6 +1,7 @@
 package com.intelliinvest.data.model;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
@@ -24,16 +25,16 @@ public class QuandlStockPrice {
 	private int tottrdqty;
 	private double tottrdval;
 	@DateTimeFormat(iso = ISO.DATE)
-	private Date eodDate;
+	private LocalDate eodDate;
 	@DateTimeFormat(iso = ISO.DATE)
-	private Date updateDate;
+	private LocalDateTime updateDate;
 
 	public QuandlStockPrice() {
 		super();
 	}
 
 	public QuandlStockPrice(String exchange, String symbol, String series, double open, double high, double low,
-			double close, double last, int tottrdqty, double tottrdval, Date eodDate, Date updateDate) {
+			double close, double last, int tottrdqty, double tottrdval, LocalDate eodDate, LocalDateTime updateDate) {
 		super();
 		this.exchange = exchange;
 		this.symbol = symbol;
@@ -129,15 +130,19 @@ public class QuandlStockPrice {
 		this.tottrdval = tottrdval;
 	}
 
-	public Date getEodDate() {
+	public LocalDate getEodDate() {
 		return eodDate;
 	}
 
-	public void setEodDate(Date eodDate) {
+	public void setEodDate(LocalDate eodDate) {
 		this.eodDate = eodDate;
 	}
 
-	public void setUpdateDate(Date updateDate) {
+	public LocalDateTime getUpdateDate() {
+		return updateDate;
+	}
+
+	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
 
@@ -150,11 +155,8 @@ public class QuandlStockPrice {
 
 	@Override
 	public QuandlStockPrice clone() throws CloneNotSupportedException {
-		return new QuandlStockPrice(exchange, symbol, series, open, high, low,
-				close, last, tottrdqty, tottrdval, eodDate, updateDate);
+		return new QuandlStockPrice(exchange, symbol, series, open, high, low, close, last, tottrdqty, tottrdval,
+				eodDate, updateDate);
 	}
 
-	
-	
-	
 }

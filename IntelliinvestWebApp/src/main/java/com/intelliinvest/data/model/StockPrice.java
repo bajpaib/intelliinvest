@@ -1,6 +1,7 @@
 package com.intelliinvest.data.model;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,15 +17,15 @@ public class StockPrice {
 	private double currentPrice;
 	private double eodPrice;
 	@DateTimeFormat(iso = ISO.DATE)
-	private Date eodDate;
+	private LocalDate eodDate;
 	@DateTimeFormat(iso = ISO.DATE)
-	private Date updateDate;
+	private LocalDateTime updateDate;
 
 	public StockPrice() {
 		super();
 	}
 
-	public StockPrice(String code, double cp, double currentPrice, double eodPrice, Date eodDate, Date updateDate) {
+	public StockPrice(String code, double cp, double currentPrice, double eodPrice, LocalDate eodDate, LocalDateTime updateDate) {
 		super();
 		this.code = code;
 		this.cp = cp;
@@ -66,19 +67,19 @@ public class StockPrice {
 		this.eodPrice = eodPrice;
 	}
 
-	public Date getEodDate() {
+	public LocalDate getEodDate() {
 		return eodDate;
 	}
 
-	public void setEodDate(Date eodDate) {
+	public void setEodDate(LocalDate eodDate) {
 		this.eodDate = eodDate;
 	}
 
-	public Date getUpdateDate() {
+	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
 
-	public void setUpdateDate(Date updateDate) {
+	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
 
