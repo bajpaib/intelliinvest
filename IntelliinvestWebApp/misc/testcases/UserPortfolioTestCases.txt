@@ -74,14 +74,7 @@ Request
   }
 ]
 
-3. http://130.211.243.180/IntelliinvestWebApp/rest/stock/getStockByCode
-
-Request
--------
-
-{
-"code":"ACC"
-}
+3. http://130.211.243.180/IntelliinvestWebApp/rest/stock/getStockByCode?stockCode=ACC
 
 Response
 --------
@@ -95,14 +88,7 @@ Response
   "message": "Stock details have been returned successfully."
 }
 
-4. http://130.211.243.180/IntelliinvestWebApp/rest/stock/getStockPriceByCode
-
-Request
--------
-
-{
-"code":"ACC"
-}
+4. http://130.211.243.180/IntelliinvestWebApp/rest/stock/getStockPriceByCode?stockCode=ACC
 
 Response
 --------
