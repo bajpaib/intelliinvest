@@ -23,8 +23,3 @@ http://localhost:8080/IntelliinvestWebApp/rest/forecast/getForecastStockPrice?to
 6. Generate and Email DailyForecastReport for today T
 
 http://localhost:8080/IntelliinvestWebApp/rest/forecast/generateAndEmailDailyForecastReport?today=2016-08-02
-
-7. Retrieve Times Series data for T
-
-http://localhost:8080/IntelliinvestWebApp/rest/timeseries/getTimeSeriesByCode?code=ACC&date=2016-08-01
-

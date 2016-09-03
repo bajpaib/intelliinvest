@@ -96,3 +96,8 @@ Response
   "success": true,
   "message": "StockPrice details have been returned successfully."
 }
+
+5. Retrieve Times Series data for T
+
+http://localhost:8080/IntelliinvestWebApp/rest/timeseries/getTimeSeriesByCode?code=ACC&date=2016-08-01
+
