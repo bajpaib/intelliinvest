@@ -39,16 +39,18 @@ public class QuandlEODStockPriceImporter {
 	private QuandlEODStockPriceRepository quandlEODStockPriceRepository;
 	@Autowired
 	private StockRepository stockRepository;
+	@Autowired
+	private DateUtil dateUtil;
 
 	@PostConstruct
 	public void init() {
 		initializeScheduledTasks();
 	}
-	
+
 	private void initializeScheduledTasks() {
 		Runnable refreshEODPricesTask = new Runnable() {
 			public void run() {
-				if (!DateUtil.isBankHoliday(DateUtil.getLocalDate())) {
+				if (!dateUtil.isBankHoliday(dateUtil.getLocalDate())) {
 					try {
 						backloadLatestEODPricesFromNSE();
 					} catch (Exception e) {
@@ -57,7 +59,7 @@ public class QuandlEODStockPriceImporter {
 				}
 			}
 		};
-		LocalDateTime zonedNow = DateUtil.getLocalDateTime();
+		LocalDateTime zonedNow = dateUtil.getLocalDateTime();
 		int dailyEODPriceRefreshStartHour = new Integer(
 				IntelliInvestStore.properties.getProperty("daily.eod.price.refresh.start.hr"));
 		int dailyEODPriceRefreshStartMin = new Integer(
@@ -77,16 +79,15 @@ public class QuandlEODStockPriceImporter {
 
 	public void backloadLatestEODPricesFromNSE() throws Exception {
 		logger.info("Inside updateLatestEODPricesFromNSE");
-		LocalDate currentDate = DateUtil.getLocalDate();
+		LocalDate currentDate = dateUtil.getLocalDate();
 		List<StockPrice> stockPriceList = new ArrayList<StockPrice>();
 		List<QuandlStockPrice> quandlStockPriceList = new ArrayList<QuandlStockPrice>();
-		
-		fetchEODPricesFromNSE(currentDate,stockPriceList,quandlStockPriceList);
 
+		fetchEODPricesFromNSE(currentDate, stockPriceList, quandlStockPriceList);
 		// if prices not available for T, try T-1
 		if (!(Helper.isNotNullAndNonEmpty(stockPriceList) && Helper.isNotNullAndNonEmpty(quandlStockPriceList))) {
-			LocalDate lastBusinessDate = DateUtil.getLastBusinessDate();
-			fetchEODPricesFromNSE(lastBusinessDate,stockPriceList,quandlStockPriceList);
+			LocalDate lastBusinessDate = dateUtil.getLastBusinessDate();
+			fetchEODPricesFromNSE(lastBusinessDate, stockPriceList, quandlStockPriceList);
 		}
 
 		if (Helper.isNotNullAndNonEmpty(stockPriceList) && Helper.isNotNullAndNonEmpty(quandlStockPriceList)) {
@@ -97,8 +98,9 @@ public class QuandlEODStockPriceImporter {
 			logger.error("updateLatestEODPricesFromNSE did not retrieved any prices");
 		}
 	}
-	
-	private void fetchEODPricesFromNSE(LocalDate date, List<StockPrice> stockPriceList, List<QuandlStockPrice> quandlStockPriceList){
+
+	private void fetchEODPricesFromNSE(LocalDate date, List<StockPrice> stockPriceList,
+			List<QuandlStockPrice> quandlStockPriceList) {
 		logger.info("Inside fetchEODPricesFromNSE for date " + date);
 		List<Stock> stockDetails = stockRepository.getStocks();
 		List<Stock> nonWorldStocks = new ArrayList<Stock>();
@@ -107,48 +109,56 @@ public class QuandlEODStockPriceImporter {
 				nonWorldStocks.add(stock);
 			}
 		}
-		
-		for (Stock stock : nonWorldStocks) {		
-			try {				
+
+		for (Stock stock : nonWorldStocks) {
+			try {
 				List<StockPrice> stockPriceListTemp = null;
 				List<QuandlStockPrice> quandlStockPriceListTemp = new ArrayList<QuandlStockPrice>();
-				
-				if(stockPriceList!=null){
+
+				if (stockPriceList != null) {
 					stockPriceListTemp = new ArrayList<StockPrice>();
 				}
-				fetchEODPricesFromNSE(stock.getCode(), date, date, stockPriceListTemp, quandlStockPriceListTemp);	
-				
-				if (stockPriceList!=null && Helper.isNotNullAndNonEmpty(stockPriceListTemp)){ 
+				fetchEODPricesFromNSE(stock.getCode(), date, date, stockPriceListTemp, quandlStockPriceListTemp);
+
+				if (stockPriceList != null && Helper.isNotNullAndNonEmpty(stockPriceListTemp)) {
 					stockPriceList.addAll(stockPriceListTemp);
 				}
 				if (Helper.isNotNullAndNonEmpty(quandlStockPriceListTemp)) {
 					quandlStockPriceList.addAll(quandlStockPriceListTemp);
 				} else {
-					logger.debug("No prices were retrieved for stock: " + stock.getCode() + " and startDate=" + date + " and endDate=" + date);
+					logger.debug("No prices were retrieved for stock: " + stock.getCode() + " and startDate=" + date
+							+ " and endDate=" + date);
 				}
-			}catch (Exception e){
-				// log error and move on to next stock 
-				logger.error("Exception while retrieving EOD prices for tock: " + stock.getCode() + " and startDate=" + date + " and endDate=" + date);
-			}			
+			} catch (Exception e) {
+				// log error and move on to next stock
+				logger.error("Exception while retrieving EOD prices for tock: " + stock.getCode() + " and startDate="
+						+ date + " and endDate=" + date);
+			}
 		}
-		
-		logger.info("Inside fetchEODPricesFromNSE, # of stockPriceList downloaded for date " + date + " is " + stockPriceList.size());
-		logger.info("Inside fetchEODPricesFromNSE, # of quandlStockPriceList downloaded for date " + date + " is " + quandlStockPriceList.size());
+
+		logger.info("Inside fetchEODPricesFromNSE, # of stockPriceList downloaded for date " + date + " is "
+				+ stockPriceList.size());
+		logger.info("Inside fetchEODPricesFromNSE, # of quandlStockPriceList downloaded for date " + date + " is "
+				+ quandlStockPriceList.size());
 	}
 
-	private void fetchEODPricesFromNSE(String stockCode, LocalDate startDate, LocalDate endDate, List<StockPrice> stockPriceList, List<QuandlStockPrice> quandlStockPriceList)
-			throws Exception {
-//		logger.info("Inside fetchEODPricesFromNSE for stockCode:" + stockCode + " from  " + startDate + " to " + endDate);
+	private void fetchEODPricesFromNSE(String stockCode, LocalDate startDate, LocalDate endDate,
+			List<StockPrice> stockPriceList, List<QuandlStockPrice> quandlStockPriceList) throws Exception {
+		// logger.info("Inside fetchEODPricesFromNSE for stockCode:" + stockCode
+		// + " from " + startDate + " to " + endDate);
 		try {
 			String eodPricesAsString = getDataFromQuandl(stockCode, startDate, endDate);
-			// logger.info("eodPricesAsString for stock "+ stock.getCode() + ":"+ eodPricesAsString);
-			populateEODStockPrices(stockCode, eodPricesAsString,stockPriceList,quandlStockPriceList);			
+			// logger.info("eodPricesAsString for stock "+ stock.getCode() +
+			// ":"+ eodPricesAsString);
+			populateEODStockPrices(stockCode, eodPricesAsString, stockPriceList, quandlStockPriceList);
 		} catch (Exception e) {
-			throw new IntelliinvestException("Error refreshing EOD price data for stock " + stockCode + " " + e.getMessage());
+			throw new IntelliinvestException(
+					"Error refreshing EOD price data for stock " + stockCode + " " + e.getMessage());
 		}
 	}
-	
-	private void populateEODStockPrices(String stockCode, String eodPricesAsString, List<StockPrice> stockPriceList, List<QuandlStockPrice> quandlStockPriceList) throws Exception {
+
+	private void populateEODStockPrices(String stockCode, String eodPricesAsString, List<StockPrice> stockPriceList,
+			List<QuandlStockPrice> quandlStockPriceList) throws Exception {
 		if (!Helper.isNotNullAndNonEmpty(eodPricesAsString)) {
 			throw new IntelliinvestException("No prices were retrieved for : " + stockCode);
 		}
@@ -199,7 +209,8 @@ public class QuandlEODStockPriceImporter {
 		}
 	}
 
-	private String getDataFromQuandl(String stockCode, LocalDate startDate, LocalDate endDate) throws IntelliinvestException {
+	private String getDataFromQuandl(String stockCode, LocalDate startDate, LocalDate endDate)
+			throws IntelliinvestException {
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		stockCode = getQuandlStockCode(stockCode);
 		String retVal;
@@ -250,7 +261,7 @@ public class QuandlEODStockPriceImporter {
 		try {
 			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 			LocalDate start = LocalDate.parse(startDate, dateFormat);
-			LocalDate end = LocalDate.parse(endDate, dateFormat);		
+			LocalDate end = LocalDate.parse(endDate, dateFormat);
 			List<Stock> stockDetails = stockRepository.getStocks();
 			List<Stock> nonWorldStocks = new ArrayList<Stock>();
 			for (Stock stock : stockDetails) {
@@ -262,7 +273,7 @@ public class QuandlEODStockPriceImporter {
 				try {
 					List<QuandlStockPrice> quandlStockPriceList = new ArrayList<QuandlStockPrice>();
 
-					fetchEODPricesFromNSE(stock.getCode(),start,end, null,quandlStockPriceList);
+					fetchEODPricesFromNSE(stock.getCode(), start, end, null, quandlStockPriceList);
 					if (Helper.isNotNullAndNonEmpty(quandlStockPriceList)) {
 						quandlEODStockPriceRepository.updateEODStockPrices(quandlStockPriceList);
 					}
@@ -288,8 +299,8 @@ public class QuandlEODStockPriceImporter {
 			List<QuandlStockPrice> quandlStockPriceList = new ArrayList<QuandlStockPrice>();
 			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 			LocalDate start = LocalDate.parse(startDate, dateFormat);
-			LocalDate end = LocalDate.parse(endDate, dateFormat);				
-			fetchEODPricesFromNSE(stockCode,start,end, null, quandlStockPriceList);
+			LocalDate end = LocalDate.parse(endDate, dateFormat);
+			fetchEODPricesFromNSE(stockCode, start, end, null, quandlStockPriceList);
 			if (Helper.isNotNullAndNonEmpty(quandlStockPriceList)) {
 				quandlEODStockPriceRepository.updateEODStockPrices(quandlStockPriceList);
 			}

@@ -1,7 +1,7 @@
 package com.intelliinvest.data.dao;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -21,6 +22,7 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
+import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.data.model.Stock;
 import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.util.DateUtil;
@@ -33,6 +35,8 @@ public class StockRepository {
 	private static final String COLLECTION_STOCK_PRICE = "STOCK_PRICE";
 	@Autowired
 	private MongoTemplate mongoTemplate;
+	@Autowired
+	private DateUtil dateUtil;
 	private Map<String, Stock> stockCache = new ConcurrentHashMap<String, Stock>();
 	private Map<String, StockPrice> stockPriceCache = new ConcurrentHashMap<String, StockPrice>();
 
@@ -83,12 +87,23 @@ public class StockRepository {
 		for (Stock stock : stockCache.values()) {
 			retVal.add(stock);
 		}
+		
+		if(Helper.isNotNullAndNonEmpty(retVal)){
+			retVal.sort(new Comparator<Stock>() {
+				public int compare(Stock stock1, Stock stock2) {
+					return stock1.getCode().compareTo(stock2.getCode());
+
+				}
+			});
+		}
 		return retVal;
 	}
 
 	public List<Stock> getStocksFromDB() throws DataAccessException {
 		logger.debug("Inside getStocksFromDB()...");
-		return mongoTemplate.findAll(Stock.class, COLLECTION_STOCK);
+		Query query = new Query();
+		query.with(new Sort(Sort.Direction.ASC,"code"));
+		return mongoTemplate.find(query, Stock.class, COLLECTION_STOCK);
 	}
 
 	public StockPrice getStockPriceByCode(String code) throws DataAccessException {
@@ -110,12 +125,22 @@ public class StockRepository {
 		for (StockPrice price : stockPriceCache.values()) {
 			retVal.add(price);
 		}
+		if(Helper.isNotNullAndNonEmpty(retVal)){
+			retVal.sort(new Comparator<StockPrice>() {
+				public int compare(StockPrice price1, StockPrice price2) {
+					return price1.getCode().compareTo(price2.getCode());
+
+				}
+			});
+		}
 		return retVal;
 	}
 
 	public List<StockPrice> getStockPricesFromDB() throws DataAccessException {
 		logger.debug("Inside getStockPricesFromDB()...");
-		return mongoTemplate.findAll(StockPrice.class, COLLECTION_STOCK_PRICE);
+		Query query = new Query();
+		query.with(new Sort(Sort.Direction.ASC,"code"));
+		return mongoTemplate.find(query,StockPrice.class, COLLECTION_STOCK_PRICE);
 	}
 
 	public List<StockPrice> updateCurrentStockPrices(List<StockPrice> currentPrices) {
@@ -127,7 +152,7 @@ public class StockRepository {
 			update.set("code", price.getCode());
 			update.set("currentPrice", price.getCurrentPrice());
 			update.set("cp", price.getCp());
-			update.set("updateDate", DateUtil.getLocalDateTime());
+			update.set("updateDate", dateUtil.getLocalDateTime());
 			query.addCriteria(Criteria.where("code").is(price.getCode()));
 			price = mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true).upsert(true),
 					StockPrice.class, COLLECTION_STOCK_PRICE);
@@ -147,7 +172,7 @@ public class StockRepository {
 			update.set("code", price.getCode());
 			update.set("eodPrice", price.getEodPrice());
 			update.set("eodDate", price.getEodDate());
-			update.set("updateDate", DateUtil.getLocalDateTime());
+			update.set("updateDate", dateUtil.getLocalDateTime());
 			query.addCriteria(Criteria.where("code").is(price.getCode()));
 			price = mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true).upsert(true),
 					StockPrice.class, COLLECTION_STOCK_PRICE);
@@ -166,7 +191,7 @@ public class StockRepository {
 			String name = stockValues[1];
 			boolean worldStock = Boolean.parseBoolean(stockValues[2]);
 			boolean niftyStock = Boolean.parseBoolean(stockValues[2]);
-			Stock stock = new Stock(code, name, worldStock, niftyStock, DateUtil.getLocalDateTime());
+			Stock stock = new Stock(code, name, worldStock, niftyStock, dateUtil.getLocalDateTime());
 			mongoTemplate.save(stock, COLLECTION_STOCK);
 			stockCache.put(stock.getCode(), stock);
 		}
@@ -181,7 +206,6 @@ public class StockRepository {
 		} else {
 			return "Stock not found";
 		}
-
 	}
 
 	@ManagedOperation(description = "getStockPriceByCode")

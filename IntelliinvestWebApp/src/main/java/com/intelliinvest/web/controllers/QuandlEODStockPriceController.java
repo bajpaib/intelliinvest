@@ -23,25 +23,25 @@ public class QuandlEODStockPriceController {
 	@Autowired
 	private QuandlEODStockPriceRepository quandlEODStockPriceRepository;
 
-	@RequestMapping(value = "/stock/backloadLatestEODPricesFromNSE", method = RequestMethod.GET)
+	@RequestMapping(value = "/quandl/backloadLatestEODPricesFromNSE", method = RequestMethod.GET)
 	public @ResponseBody String backloadLatestEODPricesFromNSE() {
 		return quandlEODStockPriceImporter.backloadEODPricesFromNSE();
 	}
 
-	@RequestMapping(value = "/stock/backloadEODPricesFromNSEForStock", method = RequestMethod.GET)
+	@RequestMapping(value = "/quandl/backloadEODPricesFromNSEForStock", method = RequestMethod.GET)
 	public @ResponseBody String backloadEODPricesFromNSEForStock(@RequestParam("stockCode") String stockCode,
 			@RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate) {
 		return quandlEODStockPriceImporter.backloadEODPricesFromNSEForStock(stockCode, startDate, endDate);
 	}
 
-	@RequestMapping(value = "/stock/backloadEODPricesFromNSE", method = RequestMethod.GET)
+	@RequestMapping(value = "/quandl/backloadEODPricesFromNSE", method = RequestMethod.GET)
 	public @ResponseBody String backloadEODPricesFromNSE(@RequestParam("startDate") String startDate,
 			@RequestParam("endDate") String endDate) {
 		return quandlEODStockPriceImporter.backloadEODPricesFromNSE(startDate, endDate);
 	}
 
-	@RequestMapping(value = "/stock/getEODStockPrice", method = RequestMethod.GET)
-	public @ResponseBody QuandlStockPrice getStockPricesFromDB(@RequestParam("stockCode") String stockCode,
+	@RequestMapping(value = "/quandl/getEODStockPriceForDate", method = RequestMethod.GET)
+	public @ResponseBody QuandlStockPrice getEODStockPriceForDate(@RequestParam("stockCode") String stockCode,
 			@RequestParam("eodDate") String eodDate) {
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		LocalDate date = LocalDate.parse(eodDate, dateFormat);

@@ -32,6 +32,8 @@ public class UserRepository {
 	private MongoTemplate mongoTemplate;
 	@Autowired
 	private MailUtil mailUtil;
+	@Autowired
+	private DateUtil dateUtil;
 
 	private Map<String, Boolean> userLoginCache = new ConcurrentHashMap<String, Boolean>();
 
@@ -68,11 +70,11 @@ public class UserRepository {
 		Long time = System.currentTimeMillis();
 		String randomText = "ACT" + time.toString().substring(time.toString().length() - 5);
 
-		LocalDate currentDate = DateUtil.getLocalDate();
-		LocalDate expiryDate = DateUtil.addBusinessDays(currentDate,
+		LocalDate currentDate = dateUtil.getLocalDate();
+		LocalDate expiryDate = dateUtil.addBusinessDays(currentDate,
 				new Integer(IntelliInvestStore.properties.get("trail.period").toString()));
 
-		LocalDateTime currentDateTime = DateUtil.getLocalDateTime();
+		LocalDateTime currentDateTime = dateUtil.getLocalDateTime();
 		user.setUserId(userId);
 		user.setPlan("DEFAULT_10");
 		user.setUserType("User");
@@ -83,12 +85,10 @@ public class UserRepository {
 		user.setCreateDate(currentDateTime);
 		user.setUpdateDate(currentDateTime);
 		user.setLoggedIn(false);
-
 		mongoTemplate.insert(user, COLLECTION_USER);
 		logger.info("Registration for user " + userName + " with mail id " + userId + " successful");
 		logger.info("Sending activation mail for user " + userId);
-		boolean mail_send_success = mailUtil.sendMail(new String[] { userId },
-				"Activation of IntelliInvest Account",
+		boolean mail_send_success = mailUtil.sendMail(new String[] { userId }, "Activation of IntelliInvest Account",
 				"Hi " + userName + ",<br>To activate your account please click below link<br>http://"
 						+ IntelliInvestStore.properties.getProperty("context.url") + "/user/activate?userId=" + userId
 						+ "&activationCode=" + randomText + "<br>Regards,<br>IntelliInvest Team.");
@@ -116,7 +116,7 @@ public class UserRepository {
 		query.addCriteria(Criteria.where("userId").is(userId).and("activationCode").is(activationCode));
 		Update update = new Update();
 		update.set("active", "Y");
-		update.set("updateDate", DateUtil.getLocalDateTime());
+		update.set("updateDate", dateUtil.getLocalDateTime());
 		return mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true), User.class,
 				COLLECTION_USER);
 	}
@@ -141,7 +141,7 @@ public class UserRepository {
 					}
 					Query query = new Query();
 					query.addCriteria(Criteria.where("userId").is(userId));
-					LocalDateTime currentDateTime = DateUtil.getLocalDateTime();
+					LocalDateTime currentDateTime = dateUtil.getLocalDateTime();
 					Update update = new Update();
 					update.set("loggedIn", true);
 					update.set("updateDate", currentDateTime);
@@ -188,7 +188,7 @@ public class UserRepository {
 		query.addCriteria(Criteria.where("userId").is(userId));
 		Update update = new Update();
 		update.set("loggedIn", false);
-		update.set("updateDate", DateUtil.getLocalDateTime());
+		update.set("updateDate", dateUtil.getLocalDateTime());
 
 		user = mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true), User.class,
 				COLLECTION_USER);
@@ -216,13 +216,13 @@ public class UserRepository {
 			Update update = new Update();
 			update.set("password", encryptedNewPassword);
 			update.set("loggedIn", false);
-			update.set("updateDate", DateUtil.getLocalDateTime());
+			update.set("updateDate", dateUtil.getLocalDateTime());
 			user = mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true), User.class,
 					COLLECTION_USER);
 			// update cache
 			userLoginCache.put(user.getUserId(), false);
-			if (mailUtil.sendMail(new String[] { userId },
-					"Password reset from IntelliInvest", "Hi,\n Your password has been reset to " + randomText)) {
+			if (mailUtil.sendMail(new String[] { userId }, "Password reset from IntelliInvest",
+					"Hi,\n Your password has been reset to " + randomText)) {
 				logger.info("Mail sent to user with mail id " + userId + "");
 			} else {
 				logger.error("Error sending mail to user with userId id " + userId + "");
@@ -257,7 +257,7 @@ public class UserRepository {
 		if (Helper.isNotNullAndNonEmpty(phone)) {
 			update.set("phone", phone);
 		}
-		update.set("updateDate", DateUtil.getLocalDateTime());
+		update.set("updateDate", dateUtil.getLocalDateTime());
 		if (Helper.isNotNullAndNonEmpty(oldPassword) && Helper.isNotNullAndNonEmpty(newPassword)) {
 			if (user.getPassword() == null
 					|| (user.getPassword() != null && !oldPassword.equals(EncryptUtil.decrypt(user.getPassword())))) {

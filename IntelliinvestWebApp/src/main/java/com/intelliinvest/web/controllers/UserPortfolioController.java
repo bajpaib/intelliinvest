@@ -34,12 +34,10 @@ public class UserPortfolioController {
 	@RequestMapping(value = "/portfolio/getPortfolioNames", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
 	public @ResponseBody UserPortfolioResponse getPortfolioNames(
 			@RequestBody UserPortfolioFormParameters portfolioFormParameters) {
-
 		UserPortfolioResponse portfolioResponse = new UserPortfolioResponse();
 		String userId = portfolioFormParameters.getUserId();
 		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
 		boolean error = false;
-
 		try {
 			if (!Helper.isNotNullAndNonEmpty(userId)) {
 				throw new IntelliinvestException("Invalid input. Please check userId.");
@@ -107,24 +105,23 @@ public class UserPortfolioController {
 		String portfolioName = portfolioFormParameters.getPortfolioName();
 		String portfolioItemCode = portfolioFormParameters.getPortfolioItemCode();
 		List<PortfolioItemRequest> requests = portfolioFormParameters.getPortfolioItems();
-		
+
 		List<PortfolioItem> portfolioItems = new ArrayList<PortfolioItem>();
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		
-		for(PortfolioItemRequest request: requests){
+
+		for (PortfolioItemRequest request : requests) {
 			PortfolioItem item = new PortfolioItem();
 			item.setPortfolioItemId(request.getPortfolioItemId());
 			item.setPrice(request.getPrice());
 			item.setCode(request.getCode());
 			item.setDirection(request.getDirection());
 			item.setQuantity(request.getQuantity());
-			item.setTradeDate(LocalDate.parse(request.getTradeDate(), dateFormat));			
+			item.setTradeDate(LocalDate.parse(request.getTradeDate(), dateFormat));
 			portfolioItems.add(item);
 		}
 
 		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
 		boolean error = false;
-
 		try {
 			if (!(Helper.isNotNullAndNonEmpty(userId) && Helper.isNotNullAndNonEmpty(portfolioName)
 					&& Helper.isNotNullAndNonEmpty(portfolioItemCode) && Helper.isNotNullAndNonEmpty(portfolioItems))) {
@@ -207,21 +204,20 @@ public class UserPortfolioController {
 		List<PortfolioItemRequest> requests = portfolioFormParameters.getPortfolioItems();
 		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
 		boolean error = false;
-
 		List<PortfolioItem> portfolioItems = new ArrayList<PortfolioItem>();
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		
-		for(PortfolioItemRequest request: requests){
+
+		for (PortfolioItemRequest request : requests) {
 			PortfolioItem item = new PortfolioItem();
 			item.setPortfolioItemId(request.getPortfolioItemId());
 			item.setPrice(request.getPrice());
 			item.setCode(request.getCode());
 			item.setDirection(request.getDirection());
 			item.setQuantity(request.getQuantity());
-			item.setTradeDate(LocalDate.parse(request.getTradeDate(), dateFormat));			
+			item.setTradeDate(LocalDate.parse(request.getTradeDate(), dateFormat));
 			portfolioItems.add(item);
 		}
-		
+
 		try {
 			if (!(Helper.isNotNullAndNonEmpty(userId) && Helper.isNotNullAndNonEmpty(portfolioName)
 					&& Helper.isNotNullAndNonEmpty(portfolioItemCode) && Helper.isNotNullAndNonEmpty(portfolioItems))) {
@@ -293,23 +289,22 @@ public class UserPortfolioController {
 		List<PortfolioItemRequest> requests = portfolioFormParameters.getPortfolioItems();
 		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
 		boolean error = false;
-
 		List<PortfolioItem> portfolioItems = new ArrayList<PortfolioItem>();
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		
-		for(PortfolioItemRequest request: requests){
+
+		for (PortfolioItemRequest request : requests) {
 			PortfolioItem item = new PortfolioItem();
 			item.setPortfolioItemId(request.getPortfolioItemId());
 			item.setPrice(request.getPrice());
 			item.setCode(request.getCode());
 			item.setDirection(request.getDirection());
 			item.setQuantity(request.getQuantity());
-			if(request.getTradeDate()!=null){
-				item.setTradeDate(LocalDate.parse(request.getTradeDate(), dateFormat));	
-			}					
+			if (request.getTradeDate() != null) {
+				item.setTradeDate(LocalDate.parse(request.getTradeDate(), dateFormat));
+			}
 			portfolioItems.add(item);
 		}
-		
+
 		try {
 			if (!(Helper.isNotNullAndNonEmpty(userId) && Helper.isNotNullAndNonEmpty(portfolioName)
 					&& Helper.isNotNullAndNonEmpty(portfolioItemCode) && Helper.isNotNullAndNonEmpty(portfolioItems))) {

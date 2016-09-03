@@ -53,28 +53,42 @@ import com.intelliinvest.util.MathUtil;
 import com.intelliinvest.util.ScheduledThreadPoolHelper;
 
 /**
- * Daily Forecast 
+ * Monthly Forecast ---------------
  *
- * Load data for daily.close.price.forecast.history.years/months
+ * Load data for monthly.close.price.forecast.history.years/months
  *
- * TRAINING: INPUT: select date, open, high,low,last,close and totTrdQty
- * for Day1. OUTPUT: close as output for Day2
+ * TRAINING 
+ * 
+ * INPUT: Select 1-20 business days from start and select the following 
+ * date: Avg(Day1-Day20) 
+ * open: Day1 
+ * high: Max(Day1 - Day20) 
+ * low: Min(Day1 - Day20) 
+ * last: Day20 
+ * close: Day20 
+ * totTrdQty: Sum(Day1-Day20)
  *
- * Continue above process by choosing Day 2 as input and Day 3 as output
- * Continue above process by choosing Day 3 as input and Day 4 as output 
- * ....
+ * OUTPUT: Select 40th business day from start and choose close as output
+ *
+ * Continue above process by choosing 2-21 business days as inputs and 11th
+ * business day as output Continue above process by choosing 3-22 business days
+ * as inputs and 12th business day as output 
  * .... 
- * Last set of input and output used for training INPUT: select date, open,
- * high,low,last,close and totTrdQty for (T-1) OUTPUT: today's (T) closing price
+ * .... 
+ * Last set of inputs and
+ * output used for training INPUT: select date, open, high,low,last,close and
+ * totTrdQty for (T-40) to (T-20) business days OUTPUT: today's (T) closing
+ * price
  *
  * PREDICTION: INPUT: select date, open, high,low,last,close and
- * totTrdQty for T OUTPUT: tomorrow's (T+1) closing price
+ * totTrdQty for (T-19) to (T) business days Predict OUTPUT: next month's (T+20)
+ * closing price
  *
  */
+@ManagedResource(objectName = "bean:name=MonthlyClosePriceForecaster", description = "MonthlyClosePriceForecaster")
+public class MonthlyClosePriceForecaster {
 
-@ManagedResource(objectName = "bean:name=DailyClosePriceForecaster", description = "DailyClosePriceForecaster")
-public class DailyClosePriceForecaster {
-	private static Logger logger = Logger.getLogger(DailyClosePriceForecaster.class);
+	private static Logger logger = Logger.getLogger(MonthlyClosePriceForecaster.class);
 	@Autowired
 	private StockRepository stockRepository;
 	@Autowired
@@ -85,8 +99,8 @@ public class DailyClosePriceForecaster {
 	private DateUtil dateUtil;
 
 	private ExecutorService executorService = null;
-	private static final String LEARNING_DATA_FILE_NAME = "dailyLearningData.csv";
-	private static final String NEURAL_NETWORK_MODEL_FILE_NAME = "dailyStockPredictor.nnet";
+	private static final String LEARNING_DATA_FILE_NAME = "monthlyLearningData.csv";
+	private static final String NEURAL_NETWORK_MODEL_FILE_NAME = "monthlyStockPredictor.nnet";
 	private static final int NUM_INPUTS = 7;
 	private String learningDataFileDir;
 	private int maxIterations;
@@ -96,48 +110,48 @@ public class DailyClosePriceForecaster {
 	@PostConstruct
 	public void init() {
 		initializeScheduledTasks();
-		learningDataFileDir = IntelliInvestStore.properties.getProperty("daily.close.price.forecast.data.dir");
+		learningDataFileDir = IntelliInvestStore.properties.getProperty("monthly.close.price.forecast.data.dir");
 		maxIterations = new Integer(
-				IntelliInvestStore.properties.getProperty("daily.close.price.forecast.max.iterations", "10000"));
+				IntelliInvestStore.properties.getProperty("monthly.close.price.forecast.max.iterations", "10000"));
 		learningRate = new Double(
-				IntelliInvestStore.properties.getProperty("daily.close.price.forecast.learning.rate", "0.5"));
+				IntelliInvestStore.properties.getProperty("monthly.close.price.forecast.learning.rate", "0.5"));
 		maxError = new Double(
-				IntelliInvestStore.properties.getProperty("daily.close.price.forecast.max.error", "0.00001"));
+				IntelliInvestStore.properties.getProperty("monthly.close.price.forecast.max.error", "0.00001"));
 	}
 
 	private void initializeScheduledTasks() {
-		Runnable dailyClosePricePredictorTask = new Runnable() {
+		Runnable monthlyClosePricePredictorTask = new Runnable() {
 			public void run() {
 				if (!dateUtil.isBankHoliday(dateUtil.getLocalDate())) {
 					try {
 						// We need to forecast tomorrow's close using values for
 						// today's close
-						forecastTomorrowClose(dateUtil.getLocalDate());
+						forecastMonthlyClose(dateUtil.getLocalDate());
 					} catch (Exception e) {
-						logger.error("Error while running dailyClosePricePredictorTask " + e.getMessage());
+						logger.error("Error while running monthlyClosePricePredictorTask " + e.getMessage());
 					}
 				}
 			}
 		};
 		LocalDateTime zonedNow = dateUtil.getLocalDateTime();
-		int dailyClosePricePredictStartHour = new Integer(
-				IntelliInvestStore.properties.getProperty("daily.close.price.forecast.start.hr"));
-		int dailyClosePricePredictStartMin = new Integer(
-				IntelliInvestStore.properties.getProperty("daily.close.price.forecast.start.min"));
-		LocalDateTime zonedNext = zonedNow.withHour(dailyClosePricePredictStartHour)
-				.withMinute(dailyClosePricePredictStartMin).withSecond(0);
+		int monthlyClosePricePredictStartHour = new Integer(
+				IntelliInvestStore.properties.getProperty("monthly.close.price.forecast.start.hr"));
+		int monthlyClosePricePredictStartMin = new Integer(
+				IntelliInvestStore.properties.getProperty("monthly.close.price.forecast.start.min"));
+		LocalDateTime zonedNext = zonedNow.withHour(monthlyClosePricePredictStartHour)
+				.withMinute(monthlyClosePricePredictStartMin).withSecond(0);
 		if (zonedNow.compareTo(zonedNext) > 0) {
 			zonedNext = zonedNext.plusDays(1);
 		}
 		Duration duration = Duration.between(zonedNow, zonedNext);
 		long initialDelay = duration.getSeconds();
-		ScheduledThreadPoolHelper.getScheduledExecutorService().scheduleAtFixedRate(dailyClosePricePredictorTask,
+		ScheduledThreadPoolHelper.getScheduledExecutorService().scheduleAtFixedRate(monthlyClosePricePredictorTask,
 				initialDelay, 24 * 60 * 60, TimeUnit.SECONDS);
 
-		logger.info("Scheduled dailyClosePricePredictorTask for tomorrow close price forecast");
+		logger.info("Scheduled monthlyClosePricePredictorTask for monthly close price forecast");
 	}
 
-	private void forecastTomorrowClose(LocalDate today) throws Exception {
+	private void forecastMonthlyClose(LocalDate today) throws Exception {
 		createExcutorService();
 		List<Stock> stockDetails = stockRepository.getStocks();
 		List<Stock> nonWorldStocks = new ArrayList<Stock>();
@@ -161,11 +175,11 @@ public class DailyClosePriceForecaster {
 				Future<Double> future = entry.getValue();
 				Double result = future.get();
 				// We need to update STOCK_PRICE_FORECAST table
-				LocalDate nextBusinessDate = dateUtil.addBusinessDays(today, 1);
-				forecastPrices
-						.add(new ForecastedStockPrice(code, result, 0d, 0d, today, nextBusinessDate, null, null, null));
+				LocalDate nextMonthlyBusinessDate = dateUtil.addBusinessDays(today, 20);
+				forecastPrices.add(new ForecastedStockPrice(code, 0d, 0d, result, today, null, null,
+						nextMonthlyBusinessDate, null));
 				logger.debug("Stock:" + code + ". ForecastPrice:" + result.doubleValue() + ". ForecastDate:"
-						+ nextBusinessDate);
+						+ nextMonthlyBusinessDate);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 				logger.error("InterruptedException in forecastCloseTask for stock:" + code + ". Exception:"
@@ -175,7 +189,7 @@ public class DailyClosePriceForecaster {
 						"ExecutionException in forecastCloseTask for stock:" + code + ". Exception:" + e.getMessage());
 			}
 		}
-		forecastedStockPriceRepository.updateForecastStockPrices(forecastPrices, ForecastType.DAILY);
+		forecastedStockPriceRepository.updateForecastStockPrices(forecastPrices, ForecastType.MONTHLY);
 		shutdownExecutorService();
 	}
 
@@ -191,24 +205,28 @@ public class DailyClosePriceForecaster {
 
 		@Override
 		public Double call() throws Exception {
-			// We need to forecast tomorrow's close using value for today's close
+			// We need to forecast T+20 close using (T-19) to (T) as inputs
 			QuandlStockPrice price = quandlEODStockPriceRepository.getStockPriceFromDB(stock.getCode(), today);
 			if (price == null) {
-				throw new Exception("Can't forecast tomorrow close. Today's closing price is not available for stock:"
+				throw new Exception("Can't forecast T+20 close. Today's closing price is not available for stock:"
 						+ stock.getCode() + " and date:" + today.toString());
 			}
 			if (!validateEODPrice(price)) {
-				throw new Exception("Can't forecast tomorrow close. Invalid today's closing price:" + price.toString());
+				throw new Exception("Can't forecast T+20 close. Invalid today's closing price:" + price.toString());
 			}
+
 			// fetch data from DB
 			ArrayList<QuandlStockPrice> stockPrices = fetchDataFromDB(stock.getCode(), today);
+			if (stockPrices.size() <= 40) {
+				throw new Exception("Can't forecast T+20 close. Insufficient number of input prices");
+			}
 			// prepare training data
 			double[] minMaxData = prepareTrainingData(stock.getCode(), stockPrices);
 			// train network
 			trainNetwork(stock.getCode());
 			// forecast close from network
-			return forecastTomorrowClose(price, minMaxData[0], minMaxData[1], minMaxData[2], minMaxData[3],
-					minMaxData[4], minMaxData[5]);
+			return forecastMonthlyClose(stock.getCode(), stockPrices, minMaxData[0], minMaxData[1], minMaxData[2],
+					minMaxData[3], minMaxData[4], minMaxData[5]);
 		}
 	}
 
@@ -239,10 +257,10 @@ public class DailyClosePriceForecaster {
 
 	private ArrayList<QuandlStockPrice> fetchDataFromDB(String stockCode, LocalDate today) {
 		logger.debug("Inside fetchDataFromDB() for stock:" + stockCode + " and date:" + today.toString());
-		int years = new Integer(IntelliInvestStore.properties.getProperty("daily.close.price.forecast.history.years"))
+		int years = new Integer(IntelliInvestStore.properties.getProperty("monthly.close.price.forecast.history.years"))
 				.intValue();
-		int months = new Integer(IntelliInvestStore.properties.getProperty("daily.close.price.forecast.history.months"))
-				.intValue();
+		int months = new Integer(
+				IntelliInvestStore.properties.getProperty("monthly.close.price.forecast.history.months")).intValue();
 		LocalDate startDate = today.minusYears(years).minusMonths(months);
 		List<QuandlStockPrice> stockPricesFromDB = quandlEODStockPriceRepository.getStockPricesFromDB(stockCode,
 				startDate, today);
@@ -258,22 +276,38 @@ public class DailyClosePriceForecaster {
 	private double[] prepareTrainingData(String stockCode, ArrayList<QuandlStockPrice> stockPrices) throws Exception {
 		logger.debug("Inside prepareTrainingData() for stock:" + stockCode);
 		List<TrainingData> trainingData = new ArrayList<TrainingData>();
-		for (int i = 0; i < stockPrices.size() - 1; ++i) {
-			// Fetch first and second record
-			QuandlStockPrice price1 = stockPrices.get(i);
-			QuandlStockPrice price2 = stockPrices.get(i + 1);
-			trainingData.add(new TrainingData(dateUtil.convertToJulian(price1.getEodDate()), price1.getOpen(),
-					price1.getHigh(), price1.getLow(), price1.getLast(), price1.getClose(), price1.getTottrdqty(),
-					price2.getClose()));
+
+		for (int i = 0; i < stockPrices.size() - 39; ++i) {
+			// Fetch first 20 and 40th record
+			List<QuandlStockPrice> prices = new ArrayList<QuandlStockPrice>();
+			for (int j = i; j < i + 20; ++j) {
+				prices.add(stockPrices.get(j));
+			}
+			QuandlStockPrice price40 = stockPrices.get(i + 39);
+
+			// Inputs
+			double date = getAverageDate(prices);
+			double open = prices.get(0).getOpen();
+			double high = getMaxHigh(prices);
+			double low = getMinLow(prices);
+			double last = prices.get(19).getLast();
+			double close = prices.get(19).getClose();
+			int totTrdQty = getSumTotTrdQty(prices);
+			// Output
+			double outputClose = price40.getClose();
+			trainingData.add(new TrainingData(date, open, high, low, last, close, totTrdQty, outputClose));
 		}
+
 		// Find the minimum and maximum values for price - needed for
 		// normalization
 		double maxPrice = 0;
 		double minPrice = Double.MAX_VALUE;
+
 		// Find the minimum and maximum values for eod date - needed for
 		// normalization
 		double maxDate = 0d;
 		double minDate = Double.MAX_VALUE;
+
 		// Find the minimum and maximum values for tradeVol - needed for
 		// normalization
 		int maxTrdVol = 0;
@@ -306,7 +340,6 @@ public class DailyClosePriceForecaster {
 				minTrdVol = tempTradeVol;
 			}
 		}
-
 		BufferedWriter writer = new BufferedWriter(
 				new FileWriter(learningDataFileDir + "/" + stockCode + "_" + LEARNING_DATA_FILE_NAME));
 		try {
@@ -373,19 +406,45 @@ public class DailyClosePriceForecaster {
 		return trainingSet;
 	}
 
-	// forecast T+1 close from network
-	private double forecastTomorrowClose(QuandlStockPrice price, double maxPrice, double minPrice, double maxDate,
-			double minDate, double maxTrdVol, double minTrdVol) {
+	// forecast T+20 close from network
+	private double forecastMonthlyClose(String stockCode, ArrayList<QuandlStockPrice> stockPrices, double maxPrice,
+			double minPrice, double maxDate, double minDate, double maxTrdVol, double minTrdVol) {
 		double retVal = 0;
-		logger.debug("Inside forecastTomorrowClose() for stock:" + price.getSymbol());
+		logger.debug("Inside forecastMonthlyClose() for stock:" + stockCode);
 		NeuralNetwork neuralNetwork = NeuralNetwork
-				.createFromFile(learningDataFileDir + "/" + price.getSymbol() + "_" + NEURAL_NETWORK_MODEL_FILE_NAME);
-		neuralNetwork.setInput(normalizeValue(dateUtil.convertToJulian(price.getEodDate()), maxDate, minDate),
-				normalizeValue(price.getOpen(), maxPrice, minPrice),
-				normalizeValue(price.getHigh(), maxPrice, minPrice), normalizeValue(price.getLow(), maxPrice, minPrice),
-				normalizeValue(price.getLast(), maxPrice, minPrice),
-				normalizeValue(price.getClose(), maxPrice, minPrice),
-				normalizeValue(price.getTottrdqty(), maxTrdVol, minTrdVol));
+				.createFromFile(learningDataFileDir + "/" + stockCode + "_" + NEURAL_NETWORK_MODEL_FILE_NAME);
+
+		// Input select date, open, high,low,last,close and totTrdQty for (T-19)
+		// to (T) business days. Output is (T+20) close
+
+		int size = stockPrices.size();
+		List<QuandlStockPrice> prices = new ArrayList<QuandlStockPrice>();
+		for (int i = size - 1; i > stockPrices.size() - 21; --i) {
+			// Fetch last 20
+			prices.add(stockPrices.get(i));
+		}
+
+		prices.sort(new Comparator<QuandlStockPrice>() {
+			public int compare(QuandlStockPrice price1, QuandlStockPrice price2) {
+				return price1.getEodDate().compareTo(price2.getEodDate());
+
+			}
+		});
+
+		// Inputs
+		double date = getAverageDate(prices);
+		double open = prices.get(0).getOpen();
+		double high = getMaxHigh(prices);
+		double low = getMinLow(prices);
+		double last = prices.get(19).getLast();
+		double close = prices.get(19).getClose();
+		int totTrdQty = getSumTotTrdQty(prices);
+
+		neuralNetwork.setInput(normalizeValue(date, maxDate, minDate), normalizeValue(open, maxPrice, minPrice),
+				normalizeValue(high, maxPrice, minPrice), normalizeValue(low, maxPrice, minPrice),
+				normalizeValue(last, maxPrice, minPrice), normalizeValue(close, maxPrice, minPrice),
+				normalizeValue(totTrdQty, maxTrdVol, minTrdVol));
+
 		neuralNetwork.calculate();
 		double[] networkOutput = neuralNetwork.getOutput();
 		retVal = deNormalizeValue(networkOutput[0], maxPrice, minPrice);
@@ -414,6 +473,42 @@ public class DailyClosePriceForecaster {
 		return min;
 	}
 
+	private double getAverageDate(List<QuandlStockPrice> prices) {
+		double sum = 0;
+		for (QuandlStockPrice price : prices) {
+			sum = sum + dateUtil.convertToJulian(price.getEodDate());
+		}
+		return sum / prices.size();
+	}
+
+	private int getSumTotTrdQty(List<QuandlStockPrice> prices) {
+		int sum = 0;
+		for (QuandlStockPrice price : prices) {
+			sum = sum + price.getTottrdqty();
+		}
+		return sum;
+	}
+
+	private double getMaxHigh(List<QuandlStockPrice> prices) {
+		double max = 0;
+		for (QuandlStockPrice price : prices) {
+			if (price.getHigh() > max) {
+				max = price.getHigh();
+			}
+		}
+		return max;
+	}
+
+	private double getMinLow(List<QuandlStockPrice> prices) {
+		double min = Double.MAX_VALUE;
+		for (QuandlStockPrice price : prices) {
+			if (price.getLow() < min) {
+				min = price.getLow();
+			}
+		}
+		return min;
+	}
+
 	double normalizeValue(double input, double max, double min) {
 		return (input - min) / (max - min) * 0.8 + 0.1;
 	}
@@ -424,7 +519,7 @@ public class DailyClosePriceForecaster {
 
 	private void createExcutorService() {
 		int count = new Integer(
-				IntelliInvestStore.properties.getProperty("daily.close.price.forecast.thread.pool.count")).intValue();
+				IntelliInvestStore.properties.getProperty("monthly.close.price.forecast.thread.pool.count")).intValue();
 		executorService = Executors.newFixedThreadPool(count);
 	}
 
@@ -437,15 +532,15 @@ public class DailyClosePriceForecaster {
 		}
 	}
 
-	@ManagedOperation(description = "forecastAndUpdateTomorrowClose")
+	@ManagedOperation(description = "forecastAndUpdateMonthlyClose")
 	@ManagedOperationParameters({
 			@ManagedOperationParameter(name = "Today's Date (yyyy-MM-dd)", description = "Today's Date") })
-	public String forecastAndUpdateTomorrowClose(String today) {
+	public String forecastAndUpdateMonthlyClose(String today) {
 		try {
-			// We need to forecast T+1 close using values for T close
+			// We need to forecast T+20 close using values T-19 to T closes
 			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 			LocalDate date = LocalDate.parse(today, dateFormat);
-			forecastTomorrowClose(date);
+			forecastMonthlyClose(date);
 		} catch (Exception e) {
 			return e.getMessage();
 		}

@@ -1,26 +1,8 @@
-Mapped "{[/stock/getStocks],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public java.util.List<com.intelliinvest.web.bo.StockResponse> com.intelliinvest.web.controllers.StockController.getStocks()
-Mapped "{[/stock/getStockPrices],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public java.util.List<com.intelliinvest.web.bo.StockPriceResponse> com.intelliinvest.web.controllers.StockController.getStockPrices()
-Mapped "{[/stock/getStockByCode],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.StockResponse com.intelliinvest.web.controllers.StockController.getStockByCode(com.intelliinvest.web.bo.StockFormParameters)
-Mapped "{[/stock/getStockPriceByCode],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.StockPriceResponse com.intelliinvest.web.controllers.StockController.getStockPriceByCode(com.intelliinvest.web.bo.StockFormParameters)
-Mapped "{[/user/login],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.UserResponse com.intelliinvest.web.controllers.UserController.login(com.intelliinvest.web.bo.UserFormParameters)
-Mapped "{[/user/remove],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.UserResponse com.intelliinvest.web.controllers.UserController.removeUser(com.intelliinvest.web.bo.UserFormParameters)
-Mapped "{[/user/logout],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.UserResponse com.intelliinvest.web.controllers.UserController.logout(com.intelliinvest.web.bo.UserFormParameters)
-Mapped "{[/user/register],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.UserResponse com.intelliinvest.web.controllers.UserController.registerUser(com.intelliinvest.web.bo.UserFormParameters)
-Mapped "{[/user/activate],methods=[GET],params=[],headers=[],consumes=[],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.UserResponse com.intelliinvest.web.controllers.UserController.activateUser(java.lang.String,java.lang.String)
-Mapped "{[/user/forgotPassword],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.UserResponse com.intelliinvest.web.controllers.UserController.forgotPassword(com.intelliinvest.web.bo.UserFormParameters)
-Mapped "{[/user/update],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.UserResponse com.intelliinvest.web.controllers.UserController.updateUser(com.intelliinvest.web.bo.UserFormParameters)
-Mapped "{[/user/getUsers],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public java.util.List<com.intelliinvest.web.bo.UserResponse> com.intelliinvest.web.controllers.UserController.getAllUsers()
-Mapped "{[/user/getUserByUserId],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.UserResponse com.intelliinvest.web.controllers.UserController.getUserByUserId(com.intelliinvest.web.bo.UserFormParameters)
-Mapped "{[/portfolio/deletePortfolio],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.UserPortfolioResponse com.intelliinvest.web.controllers.UserPortfolioController.deletePortfolio(com.intelliinvest.web.bo.UserPortfolioFormParameters)
-Mapped "{[/portfolio/updatePortfolioItemsForCode],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.UserPortfolioResponse com.intelliinvest.web.controllers.UserPortfolioController.updatePortfolioItemsForCode(com.intelliinvest.web.bo.UserPortfolioFormParameters)
-Mapped "{[/portfolio/deletePortfolioItemsForCode],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.UserPortfolioResponse com.intelliinvest.web.controllers.UserPortfolioController.deletePortfolioItemsForCode(com.intelliinvest.web.bo.UserPortfolioFormParameters)
-Mapped "{[/portfolio/getPortfolioNames],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.UserPortfolioResponse com.intelliinvest.web.controllers.UserPortfolioController.getPortfolioNames(com.intelliinvest.web.bo.UserPortfolioFormParameters)
-Mapped "{[/portfolio/getPortfolioSummary],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.UserPortfolioResponse com.intelliinvest.web.controllers.UserPortfolioController.getPortfolioSummary(com.intelliinvest.web.bo.UserPortfolioFormParameters)
-Mapped "{[/portfolio/addPortfolioItemsForCode],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.UserPortfolioResponse com.intelliinvest.web.controllers.UserPortfolioController.addPortfolioItemsForCode(com.intelliinvest.web.bo.UserPortfolioFormParameters)
-Mapped "{[/portfolio/getPortfolioItemsByCode],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.UserPortfolioResponse com.intelliinvest.web.controllers.UserPortfolioController.getPortfolioItemsByCode(com.intelliinvest.web.bo.UserPortfolioFormParameters)
+1. http://localhost:8080/IntelliinvestWebApp/rest/stock/getStocks
 
-1. http://130.211.243.180/IntelliinvestWebApp/rest/stock/getStocks
-
+Request
+-------
+GET
 
 Response
 --------
@@ -46,11 +28,14 @@ Response
   }
 ]
 
-2. http://130.211.243.180/IntelliinvestWebApp/rest/stock/getStockPrices
+2. http://localhost:8080/IntelliinvestWebApp/rest/stock/getStockPrices
 
 Request
 -------
+GET
 
+Response
+--------
 [
   {
     "code": "ACC",
@@ -74,7 +59,12 @@ Request
   }
 ]
 
-3. http://130.211.243.180/IntelliinvestWebApp/rest/stock/getStockByCode?stockCode=ACC
+3. http://localhost:8080/IntelliinvestWebApp/rest/stock/getStockByCode?stockCode=ACC
+
+Request
+-------
+
+GET
 
 Response
 --------
@@ -88,7 +78,11 @@ Response
   "message": "Stock details have been returned successfully."
 }
 
-4. http://130.211.243.180/IntelliinvestWebApp/rest/stock/getStockPriceByCode?stockCode=ACC
+4. http://localhost:8080/IntelliinvestWebApp/rest/stock/getStockPriceByCode?stockCode=ACC
+Request
+-------
+
+GET
 
 Response
 --------
@@ -103,7 +97,7 @@ Response
   "message": "StockPrice details have been returned successfully."
 }
 
-5. http://130.211.243.180/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
+5. http://localhost:8080/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
 
 Request
 -------
@@ -112,12 +106,11 @@ Request
 "userId":"prashant.bajpai@gmail.com",
 "portfolioName":"portfolio_A",
 "portfolioItemCode":"ACC",
-"portfolioItems":[{"code":"ACC","price":"1680", "quantity": "100","direction":"Buy","tradeDate":"2016-07-29"}] 
+"portfolioItems":[{"code":"ACC","price":"1680", "quantity": "100","direction":"Buy","tradeDate":"2016-07-29"}]
 }
 
 Response
 --------
-
 {
   "userId": "prashant.bajpai@gmail.com",
   "portfolioName": "portfolio_A",
@@ -142,9 +135,9 @@ Response
   ],
   "success": true,
   "message": "Portfolio Items have been added successfully"
-}  
+}
 
-6. http://130.211.243.180/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
+6. http://localhost:8080/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
 
 Request
 -------
@@ -153,7 +146,7 @@ Request
 "userId":"prashant.bajpai@gmail.com",
 "portfolioName":"portfolio_A",
 "portfolioItemCode":"BAJAJ-AUTO",
-"portfolioItems":[{"code":"BAJAJ-AUTO","price":"2720", "quantity": "200","direction":"Sell","tradeDate":"2016-07-29"}] 
+"portfolioItems":[{"code":"BAJAJ-AUTO","price":"2720", "quantity": "200","direction":"Sell","tradeDate":"2016-07-29"}]
 }
 
 
@@ -185,7 +178,7 @@ Response
   "message": "Portfolio Items have been added successfully"
 }
 
-7. http://130.211.243.180/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
+7. http://localhost:8080/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
 
 Request
 -------
@@ -194,12 +187,11 @@ Request
 "userId":"prashant.bajpai@gmail.com",
 "portfolioName":"portfolio_B",
 "portfolioItemCode":"AXISBANK",
-"portfolioItems":[{"code":"AXISBANK","price":"160", "quantity": "300","direction":"Buy","tradeDate":"2016-07-29"}] 
+"portfolioItems":[{"code":"AXISBANK","price":"160", "quantity": "300","direction":"Buy","tradeDate":"2016-07-29"}]
 }
 
 Response
 --------
-
 {
   "userId": "prashant.bajpai@gmail.com",
   "portfolioName": "portfolio_B",
@@ -226,7 +218,7 @@ Response
   "message": "Portfolio Items have been added successfully"
 }
 
-8. http://130.211.243.180/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
+8. http://localhost:8080/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
 
 Request
 -------
@@ -235,7 +227,7 @@ Request
 "userId":"prashant.bajpai@gmail.com",
 "portfolioName":"portfolio_B",
 "portfolioItemCode":"BANKBARODA",
-"portfolioItems":[{"code":"BANKBARODA","price":"160", "quantity": "400","direction":"Sell","tradeDate":"2016-07-29"}] 
+"portfolioItems":[{"code":"BANKBARODA","price":"160", "quantity": "400","direction":"Sell","tradeDate":"2016-07-29"}]
 }
 
 
@@ -267,7 +259,7 @@ Response
   "message": "Portfolio Items have been added successfully"
 }
 
-9. http://130.211.243.180/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
+9. http://localhost:8080/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
 
 Request
 -------
@@ -276,12 +268,11 @@ Request
 "userId":"prashant.bajpai@gmail.com",
 "portfolioName":"portfolio_A",
 "portfolioItemCode":"ACC",
-"portfolioItems":[{"code":"ACC", "price":"1700", "quantity": "60","direction":"Sell","tradeDate":"2016-07-28"}] 
+"portfolioItems":[{"code":"ACC", "price":"1700", "quantity": "60","direction":"Sell","tradeDate":"2016-07-28"}]
 }
 
 Response
 --------
-
 {
   "userId": "prashant.bajpai@gmail.com",
   "portfolioName": "portfolio_A",
@@ -308,15 +299,17 @@ Response
   "message": "Portfolio Items have been added successfully"
 }
 
-10. http://130.211.243.180/IntelliinvestWebApp/rest/portfolio/getPortfolioNames
+10. http://localhost:8080/IntelliinvestWebApp/rest/portfolio/getPortfolioNames
 
 Request
 --------
 
 {
   "userId": "prashant.bajpai@gmail.com"
-}  
+}
 
+Response
+--------
 Response
 --------
 
@@ -329,7 +322,7 @@ Response
   "message": "Portfolio Names have been retrieved successfully"
 }
 
-11. http://130.211.243.180/IntelliinvestWebApp/rest/portfolio/getPortfolioItemsByCode
+11. http://localhost:8080/IntelliinvestWebApp/rest/portfolio/getPortfolioItemsByCode
 
 Request
 -------
@@ -343,7 +336,6 @@ Request
 
 Response
 --------
-
 {
   "userId": "prashant.bajpai@gmail.com",
   "portfolioName": "portfolio_A",
@@ -385,9 +377,7 @@ Response
   "success": true,
   "message": "Portfolio Items have been retrieved successfully for portfolio portfolio_A and code ACC"
 }
-
-
-12. http://130.211.243.180/IntelliinvestWebApp/rest/portfolio/updatePortfolioItemsForCode
+12. http://localhost:8080/IntelliinvestWebApp/rest/portfolio/updatePortfolioItemsForCode
 
 Request
 -------
@@ -396,12 +386,11 @@ Request
 "userId":"prashant.bajpai@gmail.com",
 "portfolioName":"portfolio_A",
 "portfolioItemCode":"ACC",
-"portfolioItems":[{"portfolioItemId": "13","code":"ACC","price":"1690", "quantity": "50","direction":"Sell","tradeDate":"2016-07-28"}] 
+"portfolioItems":[{"portfolioItemId": "13","code":"ACC","price":"1690", "quantity": "50","direction":"Sell","tradeDate":"2016-07-28"}]
 }
 
 Response
 --------
-
 {
   "userId": "prashant.bajpai@gmail.com",
   "portfolioName": "portfolio_A",
@@ -440,43 +429,42 @@ Response
     }
   ],
   "portfolioSummaryItems": [
-    {
-      "portfolioItemId": "ACC",
-      "code": "ACC",
-      "price": 1680,
-      "quantity": 100,
-      "direction": "Long",
-      "tradeDate": null,
-      "remainingQuantity": 50,
-      "realisedPnl": 500,
-      "cp": 0.3,
-      "currentPrice": 1690.2,
-      "amount": 84510,
-      "totalAmount": 168000,
-      "unrealisedPnl": 510,
-      "todaysPnl": 252.76
-    }
-  ],
-  "success": true,
-  "message": "Portfolio Items have been updated successfully"
-}
-
-
-13. http://130.211.243.180/IntelliinvestWebApp/rest/portfolio/deletePortfolioItemsForCode
-
-Request
--------
-
-{
-"userId":"prashant.bajpai@gmail.com",
-"portfolioName":"portfolio_A",
-"portfolioItemCode":"ACC",
-"portfolioItems":[{"portfolioItemId": "13"}] 
-}
-
-Response
+      {
+        "portfolioItemId": "ACC",
+        "code": "ACC",
+        "price": 1680,
+        "quantity": 100,
+        "direction": "Long",
+        "tradeDate": null,
+        "remainingQuantity": 50,
+        "realisedPnl": 500,
+        "cp": 0.3,
+        "currentPrice": 1690.2,
+        "amount": 84510,
+        "totalAmount": 168000,
+        "unrealisedPnl": 510,
+        "todaysPnl": 252.76
+      }
+    ],
+    "success": true,
+    "message": "Portfolio Items have been updated successfully"
+  }
+  
+  
+  13. http://localhost:8080/IntelliinvestWebApp/rest/portfolio/deletePortfolioItemsForCode
+  
+  Request
+  -------
+  
+  {
+  "userId":"prashant.bajpai@gmail.com",
+  "portfolioName":"portfolio_A",
+  "portfolioItemCode":"ACC",
+  "portfolioItems":[{"portfolioItemId": "13"}]
+  }
+  
+  Response
 --------
-
 {
   "userId": "prashant.bajpai@gmail.com",
   "portfolioName": "portfolio_A",
@@ -519,8 +507,7 @@ Response
   "success": true,
   "message": "Portfolio Items have been deleted successfully"
 }
-
-14. http://130.211.243.180/IntelliinvestWebApp/rest/portfolio/deletePortfolio
+14. http://localhost:8080/IntelliinvestWebApp/rest/portfolio/deletePortfolio
 
 Request
 -------
@@ -542,7 +529,7 @@ Response
   "message": "Portfolio has been deleted successfully"
 }
 
-15. http://130.211.243.180/IntelliinvestWebApp/rest/portfolio/getPortfolioSummary
+15. http://localhost:8080/IntelliinvestWebApp/rest/portfolio/getPortfolioSummary
 
 Request
 -------
@@ -554,7 +541,6 @@ Request
 
 Response
 --------
-
 {
   "userId": "prashant.bajpai@gmail.com",
   "portfolioName": "portfolio_B",

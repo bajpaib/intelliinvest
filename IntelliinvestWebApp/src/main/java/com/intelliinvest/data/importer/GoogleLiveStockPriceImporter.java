@@ -33,6 +33,8 @@ public class GoogleLiveStockPriceImporter {
 	private StockRepository stockRepository;
 	@Autowired
 	private IntelliInvestStore intelliinvestStore;
+	@Autowired
+	private DateUtil dateUtil;
 	private final static String GOOGLE_QUOTE_URL = "https://www.google.com/finance/info?q=#CODE#";
 	private static boolean REFRESH_PERIODICALLY = false;
 
@@ -47,12 +49,14 @@ public class GoogleLiveStockPriceImporter {
 
 	public boolean enablePeriodicRefresh() {
 		boolean enable = false;
-		LocalDateTime localDateTime = DateUtil.getLocalDateTime();
+		LocalDateTime localDateTime = dateUtil.getLocalDateTime();
 		int hour = localDateTime.getHour();
-		int periodicRefreshStartHour = new Integer(IntelliInvestStore.properties.getProperty("periodic.refresh.start.hr"));
+		int periodicRefreshStartHour = new Integer(
+				IntelliInvestStore.properties.getProperty("periodic.refresh.start.hr"));
 		int periodicRefreshEndHour = new Integer(IntelliInvestStore.properties.getProperty("periodic.refresh.end.hr"));
-		
-		if (!DateUtil.isBankHoliday(DateUtil.getLocalDate()) && hour >= periodicRefreshStartHour && hour <= periodicRefreshEndHour) {
+
+		if (!dateUtil.isBankHoliday(dateUtil.getLocalDate()) && hour >= periodicRefreshStartHour
+				&& hour <= periodicRefreshEndHour) {
 			enable = true;
 		}
 		return enable;
@@ -74,7 +78,6 @@ public class GoogleLiveStockPriceImporter {
 				}
 			}
 		};
-
 		Runnable enablePeriodicRefreshTask = new Runnable() {
 			public void run() {
 				if (enablePeriodicRefresh()) {
@@ -105,7 +108,7 @@ public class GoogleLiveStockPriceImporter {
 		int periodicRefreshStartMin = new Integer(
 				IntelliInvestStore.properties.getProperty("periodic.refresh.start.min"));
 
-		LocalDateTime zonedNow = DateUtil.getLocalDateTime();
+		LocalDateTime zonedNow = dateUtil.getLocalDateTime();
 		LocalDateTime zonedNext9 = zonedNow.withHour(periodicRefreshStartHour).withMinute(periodicRefreshStartMin)
 				.withSecond(0);
 
@@ -192,12 +195,12 @@ public class GoogleLiveStockPriceImporter {
 	}
 
 	private List<StockPrice> getPriceFromJSON(String exchange, String codes, String response) {
-//		System.out.println("Response:" + response);
+		// System.out.println("Response:" + response);
 		List<StockPrice> stockCurrentPriceList = new ArrayList<StockPrice>();
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		JSONArray jsonArray = JSONArray.fromObject(response.replaceFirst("//", "").trim());
 		try {
-			LocalDateTime localDateTime = DateUtil.getLocalDateTime();			
+			LocalDateTime localDateTime = dateUtil.getLocalDateTime();
 			LocalDateTime oneMonthBefore = localDateTime.minusMonths(1);
 			for (int i = 0; i < jsonArray.size(); i++) {
 				JSONObject stockObject = (JSONObject) jsonArray.get(i);
@@ -213,14 +216,14 @@ public class GoogleLiveStockPriceImporter {
 					if ("BOM".equals(exchange)) {
 						String bseCode = code;
 						code = intelliinvestStore.getNSECode(bseCode);
-						// logger.info("getNSECode: from bseCode:" + bseCode + " to nseCode:" + code);
+						// logger.info("getNSECode: from bseCode:" + bseCode + "
+						// to nseCode:" + code);
 					}
 					// logger.info("Adding stock price for code:" + code + " and exchange:" + exchange);
 					stockCurrentPriceList.add(new StockPrice(code, cp, price, 0, null, ltDate));
 				} catch (Exception e1) {
 					if (exchange.equals("NSE")) {
-						// logger.error("Error fetching stock price from " +
-						// exchange + " for " + code + ". Trying from BOM now");
+						// logger.error("Error fetching stock price from " + exchange + " for " + code + ". Trying from BOM now");
 						String bseCode = intelliinvestStore.getBSECode(code);
 						if (bseCode != null) {
 							response = HttpUtil.getFromHttpUrlAsString(
@@ -255,7 +258,7 @@ public class GoogleLiveStockPriceImporter {
 						Double price = new Double(stockObject.getString("l_fix").replaceAll(",", ""));
 						Double cp = new Double(stockObject.getString("cp").replaceAll(",", ""));
 						stockCurrentPriceList
-								.add(new StockPrice(stockCode, cp, price, 0, null, DateUtil.getLocalDateTime()));
+								.add(new StockPrice(stockCode, cp, price, 0, null, dateUtil.getLocalDateTime()));
 					} catch (Exception e) {
 						logger.error("Error fetching stock price for " + stockCode);
 						logger.error(e.getMessage());

@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.intelliinvest.util.JsonDateSerializer;
 import com.intelliinvest.util.JsonDateTimeSerializer;
+import com.intelliinvest.util.MathUtil;
 
 @JsonAutoDetect
 public class StockPriceResponse implements Serializable {
@@ -46,7 +47,7 @@ public class StockPriceResponse implements Serializable {
 	}
 
 	public void setCurrentPrice(double currentPrice) {
-		this.currentPrice = currentPrice;
+		this.currentPrice = MathUtil.round(currentPrice);
 	}
 
 	public double getEodPrice() {
@@ -54,7 +55,7 @@ public class StockPriceResponse implements Serializable {
 	}
 
 	public void setEodPrice(double eodPrice) {
-		this.eodPrice = eodPrice;
+		this.eodPrice = MathUtil.round(eodPrice);
 	}
 
 	@JsonSerialize(using = JsonDateSerializer.class)

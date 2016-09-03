@@ -38,7 +38,8 @@ public class UserPortfolioRepository {
 	private SequenceRepository sequenceRepository;
 	@Autowired
 	private StockRepository stockRepository;
-
+	@Autowired
+	private DateUtil dateUtil;
 	private String SEQ_KEY = "SeqKey";
 
 	private void validateUserLoggedin(String userId) throws IntelliinvestException {
@@ -122,7 +123,7 @@ public class UserPortfolioRepository {
 				break;
 			}
 		}
-		LocalDateTime currentDateTime = DateUtil.getLocalDateTime();
+		LocalDateTime currentDateTime = dateUtil.getLocalDateTime();
 		if (portfolio == null) {
 			portfolio = new Portfolio();
 			portfolio.setPortfolioName(portfolioName);
@@ -170,7 +171,7 @@ public class UserPortfolioRepository {
 			portfolioItem.setQuantity(item.getQuantity());
 			portfolioItem.setTradeDate(item.getTradeDate());
 		}
-		portfolio.setUpdateDate(DateUtil.getLocalDateTime());
+		portfolio.setUpdateDate(dateUtil.getLocalDateTime());
 		mongoTemplate.save(userPortfolio, COLLECTION_USER_PORTFOLIO);
 		return portfolio;
 	}
@@ -233,7 +234,7 @@ public class UserPortfolioRepository {
 				iter.remove();
 			}
 		}
-		portfolio.setUpdateDate(DateUtil.getLocalDateTime());
+		portfolio.setUpdateDate(dateUtil.getLocalDateTime());
 		mongoTemplate.save(userPortfolio, COLLECTION_USER_PORTFOLIO);
 		return portfolio;
 	}
@@ -324,7 +325,6 @@ public class UserPortfolioRepository {
 					sellIndex++;
 				}
 			}
-
 			for (PortfolioItem portfolioItem : portfolioItemL) {
 				// set realisedPnl on original sell portfolio item and remaining
 				// quantity on original buy or sell portfolio item
@@ -384,8 +384,7 @@ public class UserPortfolioRepository {
 			List<PortfolioItem> portfolioItemL = rawSummaryData.get(code);
 			// Only one buy/sell portfolio item will have remaining quantity,
 			// hence only one will will contribute to buyQuantity/sellQuantity
-			// and
-			// buyAmount/sellAmount.
+			// and buyAmount/sellAmount.
 			for (PortfolioItem portfolioItem : portfolioItemL) {
 				if (portfolioItem.getDirection().equalsIgnoreCase("Buy")) {
 					buyQuantity = buyQuantity + portfolioItem.getRemainingQuantity();

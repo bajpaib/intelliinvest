@@ -22,6 +22,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.intelliinvest.common.IntelliInvestStore;
 import com.sun.mail.util.MailSSLSocketFactory;
@@ -31,7 +32,8 @@ public class MailUtil {
 	public static final String ERR_INVALID_EMAIL_ADDRESS = "Invalid Email Address: ";
 	public static final String ERR_VALID_BUT_UNSENT_EMAIL_ADDRESS = "Valid but Unsent Email Address: ";
 	public static final String SENT_EMAILED_ADDRESS = "Sent Email Address";
-
+	@Autowired
+	private DateUtil dateUtil;
 	private Session session;
 	private String smptHost;
 	private String sender;
@@ -146,7 +148,7 @@ public class MailUtil {
 				}
 			}
 			msg.setContent(mp);
-			msg.setSentDate(DateUtil.getDateFromLocalDateTime());
+			msg.setSentDate(dateUtil.getDateFromLocalDateTime());
 			/*
 			 * Transport trans = session.getTransport("smtp"); trans.connect();
 			 * if (!trans.isConnected()) { logger.error(
@@ -155,7 +157,6 @@ public class MailUtil {
 			Transport.send(msg);
 			// trans.close();
 			logger.info("Finished Sending Email");
-
 		} catch (MessagingException mex) {
 			logger.error("Exception occurred while sending mail ..." + mex.getMessage());
 			try {

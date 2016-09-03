@@ -7,8 +7,8 @@ Mapped "{[/user/update],methods=[POST],params=[],headers=[],consumes=[applicatio
 Mapped "{[/user/getUsers],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public java.util.List<com.intelliinvest.web.bo.UserResponse> com.intelliinvest.web.controllers.UserController.getAllUsers()
 Mapped "{[/user/getUserByUserId],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.UserResponse com.intelliinvest.web.controllers.UserController.getUserByUserId(com.intelliinvest.web.bo.UserFormParameters)
 Mapped "{[/user/register],methods=[POST],params=[],headers=[],consumes=[application/json],produces=[application/json],custom=[]}" onto public com.intelliinvest.web.bo.UserResponse com.intelliinvest.web.controllers.UserController.registerUser(com.intelliinvest.web.bo.UserFormParameters)
-
-1. http://130.211.243.180/IntelliinvestWebApp/rest/user/register
+//104.199.142.91
+1. http://localhost:8080/IntelliinvestWebApp/rest/user/register
 
 Request
 -------
@@ -44,12 +44,12 @@ Response
   "message": "Registration for user prashantbajpai with userId id prashant.bajpai@gmail.com is successful. Please activate your account by clicking link in your activation userId."
 }
 
-2. http://130.211.243.180/IntelliinvestWebApp/rest/user/activate?userId=prashant.bajpai@gmail.com&activationCode=ACT41347
+2. http://localhost:8080/IntelliinvestWebApp/rest/user/activate?userId=prashant.bajpai@gmail.com&activationCode=ACT41347
 
 
 Hi prashantbajpai,
 To activate your account please click below link
-http://130.211.243.180/IntelliinvestWebApp/rest/user/activate?userId=prashant.bajpai@gmail.com&activationCode=ACT39902
+http://localhost:8080/IntelliinvestWebApp/rest/user/activate?userId=prashant.bajpai@gmail.com&activationCode=ACT39902
 Regards,
 IntelliInvest Team.
 
@@ -76,7 +76,7 @@ Response
 "message":"Account has been activated successfully."
 }
 
-3. http://130.211.243.180/IntelliinvestWebApp/rest/user/login
+3. http://localhost:8080/IntelliinvestWebApp/rest/user/login
 
 Request
 -------
@@ -109,7 +109,7 @@ Response
   "message": "User has successfully logged in."
 }
 
-4. http://130.211.243.180/IntelliinvestWebApp/rest/user/logout
+4. http://localhost:8080/IntelliinvestWebApp/rest/user/logout
 
 Request
 -------
@@ -141,7 +141,7 @@ Response
 }
 
 
-5. http://130.211.243.180/IntelliinvestWebApp/rest/user/getUserByUserId
+5. http://localhost:8080/IntelliinvestWebApp/rest/user/getUserByUserId
 
 Request
 -------
@@ -173,7 +173,7 @@ Response
   "message": "User details have been returned successfully."
 }
 
-6. http://130.211.243.180/IntelliinvestWebApp/rest/user/forgotPassword
+6. http://localhost:8080/IntelliinvestWebApp/rest/user/forgotPassword
 
 Request
 -------
@@ -205,7 +205,7 @@ Response
   "message": "New password has been sent to your registered mail id."
 }
 
-7. http://130.211.243.180/IntelliinvestWebApp/rest/user/login
+7. http://localhost:8080/IntelliinvestWebApp/rest/user/login
 
 Request
 -------
@@ -237,7 +237,7 @@ Response
   "message": "User has successfully logged in."
 }
 
-8. http://130.211.243.180/IntelliinvestWebApp/rest/user/update
+8. http://localhost:8080/IntelliinvestWebApp/rest/user/update
 
 Request
 -------
@@ -272,7 +272,7 @@ Response
 }
 
 
-9. http://130.211.243.180/IntelliinvestWebApp/rest/user/update
+9. http://localhost:8080/IntelliinvestWebApp/rest/user/update
 
 Request
 -------
@@ -307,7 +307,7 @@ Response
   "message": "User details have been updated successfully."
 }
 
-9. http://130.211.243.180/IntelliinvestWebApp/rest/user/remove
+9. http://localhost:8080/IntelliinvestWebApp/rest/user/remove
 
 Request
 -------

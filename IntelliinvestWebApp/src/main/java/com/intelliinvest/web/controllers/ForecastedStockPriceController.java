@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.intelliinvest.data.dao.ForecastedStockPriceRepository;
 import com.intelliinvest.data.forecast.DailyClosePriceForecastReport;
 import com.intelliinvest.data.forecast.DailyClosePriceForecaster;
+import com.intelliinvest.data.forecast.MonthlyClosePriceForecaster;
+import com.intelliinvest.data.forecast.WeeklyClosePriceForecaster;
 import com.intelliinvest.data.model.ForecastedStockPrice;
 
 @Controller
@@ -26,42 +28,56 @@ public class ForecastedStockPriceController {
 	@Autowired
 	private DailyClosePriceForecastReport dailyClosePriceForecastReport;
 	@Autowired
+	private WeeklyClosePriceForecaster weeklyClosePriceForecaster;
+	@Autowired
+	private MonthlyClosePriceForecaster monthlyClosePriceForecaster;
+	@Autowired
 	private ForecastedStockPriceRepository forecastedStockPriceRepository;
 
-	@RequestMapping(value = "/stock/forecastAndUpdateTomorrowClose", method = RequestMethod.GET)
+	@RequestMapping(value = "/forecast/forecastAndUpdateTomorrowClose", method = RequestMethod.GET)
 	public @ResponseBody String forecastAndUpdateTomorrowClose(@RequestParam("today") String today) {
 		return dailyClosePriceForecaster.forecastAndUpdateTomorrowClose(today);
 	}
 
-	@RequestMapping(value = "/stock/getDailyForecastStockPrice", method = RequestMethod.GET, produces = APPLICATION_JSON)
-	public @ResponseBody ForecastedStockPrice getDailyForecastStockPrice(@RequestParam("code") String code,
-			@RequestParam("forecastDate") String forecastDate) {
+	@RequestMapping(value = "/forecast/forecastAndUpdateWeeklyClose", method = RequestMethod.GET)
+	public @ResponseBody String forecastAndUpdateWeeklyClose(@RequestParam("today") String today) {
+		return weeklyClosePriceForecaster.forecastAndUpdateWeeklyClose(today);
+	}
+
+	@RequestMapping(value = "/forecast/forecastAndUpdateMonthlyClose", method = RequestMethod.GET)
+	public @ResponseBody String forecastAndUpdateMonthlyClose(@RequestParam("today") String today) {
+		return monthlyClosePriceForecaster.forecastAndUpdateMonthlyClose(today);
+	}
+
+	@RequestMapping(value = "/forecast/getForecastStockPrice", method = RequestMethod.GET, produces = APPLICATION_JSON)
+	public @ResponseBody ForecastedStockPrice getForecastStockPrice(@RequestParam("code") String code,
+			@RequestParam("today") String today) {
 		ForecastedStockPrice price = null;
 		try {
 			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-			LocalDate date = LocalDate.parse(forecastDate, dateFormat);
-			price = forecastedStockPriceRepository.getDailyForecastStockPriceFromDB(code, date);
+			LocalDate date = LocalDate.parse(today, dateFormat);
+			price = forecastedStockPriceRepository.getForecastStockPriceFromDB(code, date);
 		} catch (Exception e) {
 			logger.error("Exception inside getDailyForecastStockPrice() " + e.getMessage());
 		}
 		return price;
 	}
-	
-	@RequestMapping(value = "/stock/getDailyForecastStockPrices", method = RequestMethod.GET, produces = APPLICATION_JSON)
-	public @ResponseBody List<ForecastedStockPrice> getDailyForecastStockPrices(@RequestParam("forecastDate") String forecastDate) {
+
+	@RequestMapping(value = "/forecast/getForecastStockPrices", method = RequestMethod.GET, produces = APPLICATION_JSON)
+	public @ResponseBody List<ForecastedStockPrice> getForecastStockPrices(@RequestParam("today") String today) {
 		List<ForecastedStockPrice> priceList = null;
 		try {
 			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-			LocalDate date = LocalDate.parse(forecastDate, dateFormat);
-			priceList = forecastedStockPriceRepository.getDailyForecastStockPricesFromDB(date);
+			LocalDate date = LocalDate.parse(today, dateFormat);
+			priceList = forecastedStockPriceRepository.getForecastStockPricesFromDB(date);
 		} catch (Exception e) {
 			logger.error("Exception inside getLatestDailyForecastStockPrices() " + e.getMessage());
 		}
 		return priceList;
 	}
-	
-	@RequestMapping(value = "/stock/generateAndEmailForecastReport", method = RequestMethod.GET)
-	public @ResponseBody String generateAndEmailForecastReport(@RequestParam("forecastDate") String forecastDate) {
-		return dailyClosePriceForecastReport.generateAndEmailForecastReport(forecastDate);
+
+	@RequestMapping(value = "/forecast/generateAndEmailDailyForecastReport", method = RequestMethod.GET)
+	public @ResponseBody String generateAndEmailDailyForecastReport(@RequestParam("today") String today) {
+		return dailyClosePriceForecastReport.generateAndEmailDailyForecastReport(today);
 	}
 }

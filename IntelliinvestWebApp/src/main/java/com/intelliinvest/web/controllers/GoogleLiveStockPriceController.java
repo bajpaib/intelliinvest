@@ -15,7 +15,7 @@ public class GoogleLiveStockPriceController {
 	@Autowired
 	private GoogleLiveStockPriceImporter googleLiveStockPriceImporter;
 
-	@RequestMapping(value = "/stock/backLoadLivePrices", method = RequestMethod.GET)
+	@RequestMapping(value = "/google/backLoadLivePrices", method = RequestMethod.GET)
 	public @ResponseBody String backLoadLivePrices() {
 		return googleLiveStockPriceImporter.backLoadLivePrices();
 	}
