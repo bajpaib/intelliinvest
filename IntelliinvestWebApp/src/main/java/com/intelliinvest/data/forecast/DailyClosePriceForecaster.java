@@ -344,8 +344,7 @@ public class DailyClosePriceForecaster {
 		learningRule.addListener(new LearningEventListener() {
 			public void handleLearningEvent(LearningEvent learningEvent) {
 				SupervisedLearning rule = (SupervisedLearning) learningEvent.getSource();
-				logger.debug("Network error for interation " + rule.getCurrentIteration() + ": "
-						+ rule.getTotalNetworkError());
+//				logger.debug("Network error for interation " + rule.getCurrentIteration() + ": " + rule.getTotalNetworkError());
 			}
 		});
 		DataSet trainingSet = loadTraininigData(learningDataFileDir + "/" + stockCode + "_" + LEARNING_DATA_FILE_NAME);
