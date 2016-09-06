@@ -22,4 +22,4 @@ http://130.211.249.92/IntelliinvestWebApp/rest/forecast/getForecastStockPrice?to
 
 6. Generate and Email DailyForecastReport for today T
 
-http://130.211.249.92/IntelliinvestWebApp/rest/forecast/generateAndEmailDailyForecastReport?today=2016-08-06
+http://130.211.249.92/IntelliinvestWebApp/rest/forecast/generateAndEmailClosePriceForecastReport?today=2016-08-06

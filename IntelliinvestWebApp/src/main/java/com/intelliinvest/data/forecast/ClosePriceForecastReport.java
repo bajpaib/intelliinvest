@@ -33,8 +33,8 @@ import com.intelliinvest.util.MailUtil;
 import com.intelliinvest.util.MathUtil;
 import com.intelliinvest.util.ScheduledThreadPoolHelper;
 
-@ManagedResource(objectName = "bean:name=DailyClosePriceForecastReport", description = "DailyClosePriceForecastReport")
-public class DailyClosePriceForecastReport {
+@ManagedResource(objectName = "bean:name=ClosePriceForecastReport", description = "ClosePriceForecastReport")
+public class ClosePriceForecastReport {
 
 	private static Logger logger = Logger.getLogger(DailyClosePriceForecaster.class);
 	@Autowired
@@ -48,13 +48,13 @@ public class DailyClosePriceForecastReport {
 	@Autowired
 	private DateUtil dateUtil;
 
-	private static final String DAILY_CLOSE_PRICE_FORECAST_REPORT = "DailyClosePriceForecastReport";
+	private static final String CLOSE_PRICE_FORECAST_REPORT = "ClosePriceForecastReport";
 	private String reportDataDir;
 
 	@PostConstruct
 	public void init() {
 		initializeScheduledTasks();
-		reportDataDir = IntelliInvestStore.properties.getProperty("daily.close.price.forecast.report.data.dir");
+		reportDataDir = IntelliInvestStore.properties.getProperty("close.price.forecast.report.data.dir");
 	}
 
 	private void initializeScheduledTasks() {
@@ -73,9 +73,9 @@ public class DailyClosePriceForecastReport {
 		};
 		LocalDateTime zonedNow = dateUtil.getLocalDateTime();
 		int dailyClosePricePredictStartHour = new Integer(
-				IntelliInvestStore.properties.getProperty("daily.close.price.forecast.report.start.hr"));
+				IntelliInvestStore.properties.getProperty("close.price.forecast.report.start.hr"));
 		int dailyClosePricePredictStartMin = new Integer(
-				IntelliInvestStore.properties.getProperty("daily.close.price.forecast.report.start.min"));
+				IntelliInvestStore.properties.getProperty("close.price.forecast.report.start.min"));
 		LocalDateTime zonedNext = zonedNow.withHour(dailyClosePricePredictStartHour)
 				.withMinute(dailyClosePricePredictStartMin).withSecond(0);
 		if (zonedNow.compareTo(zonedNext) > 0) {
@@ -91,12 +91,25 @@ public class DailyClosePriceForecastReport {
 
 	private void generateAndEmailForecastReport(LocalDate today) {
 		try {
-			// We need to compare today's close with the close prices forecasted
-			// on the last business day
-			LocalDate lastBusinessDate = dateUtil.getLastBusinessDate(today);
-			Map<String, ForecastedStockPrice> forecastedPrices = forecastedStockPriceRepository
-					.getForecastStockPricesMapFromDB(lastBusinessDate);
+			// Get Today's closing prices
 			Map<String, QuandlStockPrice> eodPrices = quandlEODStockPriceRepository.getEODStockPrices(today);
+			// We need to compare today's close with tomorrowForecastPrice
+			// forecasted a day before (on T-1)
+			LocalDate lastBusinessDate = dateUtil.getLastBusinessDate(today);
+			Map<String, ForecastedStockPrice> dailyForecastedPrices = forecastedStockPriceRepository
+					.getForecastStockPricesMapFromDB(lastBusinessDate);
+
+			// We need to compare today's close with weeklyForecastPrice
+			// forecasted a day before (on T-5)
+			LocalDate weeklyBusinessDate = dateUtil.substractBusinessDays(today, 5);
+			Map<String, ForecastedStockPrice> weeklyForecastedPrices = forecastedStockPriceRepository
+					.getForecastStockPricesMapFromDB(weeklyBusinessDate);
+
+			// We need to compare today's close with weeklyForecastPrice
+			// forecasted a day before (on T-20)
+			LocalDate monthlyBusinessDate = dateUtil.substractBusinessDays(today, 20);
+			Map<String, ForecastedStockPrice> monthlyForecastedPrices = forecastedStockPriceRepository
+					.getForecastStockPricesMapFromDB(monthlyBusinessDate);
 
 			List<Stock> stockDetails = stockRepository.getStocks();
 			List<Stock> nonWorldStocks = new ArrayList<Stock>();
@@ -109,40 +122,74 @@ public class DailyClosePriceForecastReport {
 			String date = dateFormat.format(today);
 
 			BufferedWriter writer = new BufferedWriter(
-					new FileWriter(reportDataDir + "/" + DAILY_CLOSE_PRICE_FORECAST_REPORT + date + ".csv"));
+					new FileWriter(reportDataDir + "/" + CLOSE_PRICE_FORECAST_REPORT + date + ".csv"));
 			writeHeader(writer);
 			try {
 				for (Stock stock : nonWorldStocks) {
 					try {
 						double actualClose = 0.0;
-						double forecastedClose = 0.0;
-						double difference = 0.0;
-						double percentDifference = 0.0;
+						double dailyForecastedClose = 0.0;
+						double dailyDifference = 0.0;
+						double percentDailyDifference = 0.0;
 
 						QuandlStockPrice eodPrice = eodPrices.get(stock.getCode());
 						if (eodPrice != null) {
 							actualClose = eodPrice.getClose();
 						}
-						ForecastedStockPrice forecastPrice = forecastedPrices.get(stock.getCode());
-						if (forecastPrice != null) {
-							forecastedClose = forecastPrice.getTomorrowForecastPrice();
+
+						ForecastedStockPrice dailyForecastPrice = dailyForecastedPrices.get(stock.getCode());
+						if (dailyForecastPrice != null && dailyForecastPrice.getTomorrowForecastDate().equals(today)) {
+							dailyForecastedClose = dailyForecastPrice.getTomorrowForecastPrice();
+							if (!(MathUtil.isNearZero(actualClose) || MathUtil.isNearZero(dailyForecastedClose))) {
+								dailyDifference = eodPrice.getClose() - dailyForecastPrice.getTomorrowForecastPrice();
+								percentDailyDifference = (dailyDifference * 100) / eodPrice.getClose();
+							}
 						}
 
-						if (!(MathUtil.isNearZero(actualClose) || MathUtil.isNearZero(forecastedClose))) {
-							difference = eodPrice.getClose() - forecastPrice.getTomorrowForecastPrice();
-							percentDifference = (difference * 100) / eodPrice.getClose();
+						double weeklyForecastedClose = 0.0;
+						double weeklyDifference = 0.0;
+						double percentWeeklyDifference = 0.0;
+
+						ForecastedStockPrice weeklyForecastPrice = weeklyForecastedPrices.get(stock.getCode());
+						if (weeklyForecastPrice != null && weeklyForecastPrice.getWeeklyForecastDate().equals(today)) {
+							weeklyForecastedClose = weeklyForecastPrice.getWeeklyForecastPrice();
+							if (!(MathUtil.isNearZero(actualClose) || MathUtil.isNearZero(weeklyForecastedClose))) {
+								weeklyDifference = eodPrice.getClose() - weeklyForecastPrice.getTomorrowForecastPrice();
+								percentWeeklyDifference = (weeklyDifference * 100) / eodPrice.getClose();
+							}
 						}
 
+						double monthlyForecastedClose = 0.0;
+						double monthlyDifference = 0.0;
+						double percentMonthlyDifference = 0.0;
+
+						ForecastedStockPrice monthlyForecastPrice = monthlyForecastedPrices.get(stock.getCode());
+						if (monthlyForecastPrice != null
+								&& monthlyForecastPrice.getWeeklyForecastDate().equals(today)) {
+							monthlyForecastedClose = monthlyForecastPrice.getWeeklyForecastPrice();
+							if (!(MathUtil.isNearZero(actualClose) || MathUtil.isNearZero(monthlyForecastedClose))) {
+								monthlyDifference = eodPrice.getClose()
+										- monthlyForecastPrice.getTomorrowForecastPrice();
+								percentMonthlyDifference = (monthlyDifference * 100) / eodPrice.getClose();
+							}
+						}
 						LinkedList<String> valuesQueue = new LinkedList<String>();
 						valuesQueue.add(date);
 						valuesQueue.add(stock.getCode());
 						valuesQueue.add(new Double(MathUtil.round(actualClose)).toString());
-						valuesQueue.add(new Double(MathUtil.round(forecastedClose)).toString());
-						valuesQueue.add(new Double(MathUtil.round(difference)).toString());
-						valuesQueue.add(new Double(MathUtil.round(percentDifference)).toString());
+						valuesQueue.add(new Double(MathUtil.round(dailyForecastedClose)).toString());
+						valuesQueue.add(new Double(MathUtil.round(dailyDifference)).toString());
+						valuesQueue.add(new Double(MathUtil.round(percentDailyDifference)).toString());
+						valuesQueue.add(new Double(MathUtil.round(weeklyForecastedClose)).toString());
+						valuesQueue.add(new Double(MathUtil.round(weeklyDifference)).toString());
+						valuesQueue.add(new Double(MathUtil.round(percentWeeklyDifference)).toString());
+						valuesQueue.add(new Double(MathUtil.round(monthlyForecastedClose)).toString());
+						valuesQueue.add(new Double(MathUtil.round(monthlyDifference)).toString());
+						valuesQueue.add(new Double(MathUtil.round(percentMonthlyDifference)).toString());
 						String valueLine = valuesQueue.toString().replaceAll("\\[|\\]", "");
 						writer.write(valueLine);
-						// System.out.println("Writing Stock Number:" + i + " valueLine:" + valueLine);
+						// System.out.println("Writing Stock Number:" + i + "
+						// valueLine:" + valueLine);
 						writer.newLine();
 						valuesQueue.clear();
 					} catch (Exception e) {
@@ -155,15 +202,15 @@ public class DailyClosePriceForecastReport {
 				writer.close();
 			}
 			String[] recipients = {
-					IntelliInvestStore.properties.getProperty("daily.close.price.forecast.report.recepients") };
-			String subject = "Daily Close Price Forecast Report for " + dateFormat.format(today);
+					IntelliInvestStore.properties.getProperty("close.price.forecast.report.recepients") };
+			String subject = "Close Price Forecast Report for " + dateFormat.format(today);
 			String message = subject;
 			String[] attachment = {
-					reportDataDir + "/" + DAILY_CLOSE_PRICE_FORECAST_REPORT + dateFormat.format(today) + ".csv" };
+					reportDataDir + "/" + CLOSE_PRICE_FORECAST_REPORT + dateFormat.format(today) + ".csv" };
 			mailUtil.sendMail(recipients, subject, message, attachment);
 
 		} catch (Exception e) {
-			logger.error("Exception while writing DailyClosePriceForecastReportTask for " + today);
+			logger.error("Exception while writing ClosePriceForecastReportTask for " + today);
 		}
 	}
 
@@ -171,19 +218,25 @@ public class DailyClosePriceForecastReport {
 		LinkedList<String> valuesQueue = new LinkedList<String>();
 		valuesQueue.add("CloseDate");
 		valuesQueue.add("StockCode");
-		valuesQueue.add("ActualClose");
-		valuesQueue.add("ForecastedClose");
-		valuesQueue.add("Difference");
-		valuesQueue.add("%Difference");
+		valuesQueue.add("ActualCls");
+		valuesQueue.add("PredDailyCls");
+		valuesQueue.add("PredDailyClsDiff");
+		valuesQueue.add("%DailyClsDiff");
+		valuesQueue.add("PredWeeklyCls");
+		valuesQueue.add("PredWeeklyClsDiff");
+		valuesQueue.add("%WeeklyClsDiff");
+		valuesQueue.add("PredMonthlyCls");
+		valuesQueue.add("PredMonthlyClsDiff");
+		valuesQueue.add("%MonthlyClsDiff");
 		String valueLine = valuesQueue.toString().replaceAll("\\[|\\]", "");
 		writer.write(valueLine);
 		writer.newLine();
 	}
 
-	@ManagedOperation(description = "generateAndEmailDailyForecastReport")
+	@ManagedOperation(description = "generateAndEmailClosePriceForecastReport")
 	@ManagedOperationParameters({
 			@ManagedOperationParameter(name = "Today Date (yyyy-MM-dd)", description = "Today Date") })
-	public String generateAndEmailDailyForecastReport(String today) {
+	public String generateAndEmailClosePriceForecastReport(String today) {
 		try {
 			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 			LocalDate date = LocalDate.parse(today, dateFormat);

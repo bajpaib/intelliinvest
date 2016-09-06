@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.intelliinvest.data.dao.ForecastedStockPriceRepository;
-import com.intelliinvest.data.forecast.DailyClosePriceForecastReport;
+import com.intelliinvest.data.forecast.ClosePriceForecastReport;
 import com.intelliinvest.data.forecast.DailyClosePriceForecaster;
 import com.intelliinvest.data.forecast.MonthlyClosePriceForecaster;
 import com.intelliinvest.data.forecast.WeeklyClosePriceForecaster;
@@ -26,7 +26,7 @@ public class ForecastedStockPriceController {
 	@Autowired
 	private DailyClosePriceForecaster dailyClosePriceForecaster;
 	@Autowired
-	private DailyClosePriceForecastReport dailyClosePriceForecastReport;
+	private ClosePriceForecastReport closePriceForecastReport;
 	@Autowired
 	private WeeklyClosePriceForecaster weeklyClosePriceForecaster;
 	@Autowired
@@ -76,8 +76,8 @@ public class ForecastedStockPriceController {
 		return priceList;
 	}
 
-	@RequestMapping(value = "/forecast/generateAndEmailDailyForecastReport", method = RequestMethod.GET)
-	public @ResponseBody String generateAndEmailDailyForecastReport(@RequestParam("today") String today) {
-		return dailyClosePriceForecastReport.generateAndEmailDailyForecastReport(today);
+	@RequestMapping(value = "/forecast/generateAndEmailClosePriceForecastReport", method = RequestMethod.GET)
+	public @ResponseBody String generateAndEmailClosePriceForecastReport(@RequestParam("today") String today) {
+		return closePriceForecastReport.generateAndEmailClosePriceForecastReport(today);
 	}
 }

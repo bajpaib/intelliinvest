@@ -160,8 +160,8 @@
                 class="com.intelliinvest.data.importer.GoogleLiveStockPriceImporter"></beans:bean>
         <beans:bean id="dailyClosePriceForecaster"
                 class="com.intelliinvest.data.forecast.DailyClosePriceForecaster"></beans:bean>
-        <beans:bean id="dailyClosePriceForecastReport"
-                class="com.intelliinvest.data.forecast.DailyClosePriceForecastReport"></beans:bean>
+        <beans:bean id="closePriceForecastReport"
+                class="com.intelliinvest.data.forecast.ClosePriceForecastReport"></beans:bean>
         <beans:bean id="weeklyClosePriceForecaster"
                 class="com.intelliinvest.data.forecast.WeeklyClosePriceForecaster"></beans:bean>
         <beans:bean id="monthlyClosePriceForecaster"
