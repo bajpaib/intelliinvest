@@ -5,18 +5,21 @@ import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 
-@Document(collection = "STOCK")
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.intelliinvest.util.JsonDateTimeSerializer;
+
+@Document(collection = Stock.COLLECTION_NAME)
 public class Stock implements Serializable{
 
+	private static final long serialVersionUID = 1L;
+	public static final String COLLECTION_NAME = "STOCK";
 	@Id
 	private String code;
 	private String name;
 	private boolean worldStock;
 	private boolean niftyStock;
-	@DateTimeFormat(iso = ISO.DATE)
+	@JsonSerialize(using=JsonDateTimeSerializer.class)
 	private LocalDateTime updateDate;
 
 	public Stock() {
@@ -78,6 +81,11 @@ public class Stock implements Serializable{
 			return true;
 		if (obj == null)
 			return false;
+		if(obj instanceof String){
+			Stock stock = new Stock();
+			stock.setCode(obj.toString());
+			obj = stock;
+		}
 		if (getClass() != obj.getClass())
 			return false;
 		Stock other = (Stock) obj;

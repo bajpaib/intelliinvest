@@ -4,19 +4,10 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 	id="WebApp_ID" version="2.5">
 	<display-name>IntelliinvestWebApp</display-name>
+	
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
-
-  <!-- The context params that are read by Log4jConfigListener -->
-  <context-param>
-    <param-name>log4jConfigLocation</param-name>
-    <param-value>classpath:log4j.xml</param-value> 
-  </context-param>
- 
-  <listener>
-    <listener-class>org.springframework.web.util.Log4jConfigListener</listener-class>
-  </listener>
 
   <!-- The context params that are read by ContextLoaderListener  -->
   <context-param>
@@ -33,7 +24,7 @@
     <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
     <init-param>
       <param-name>contextConfigLocation</param-name>
-      <param-value>/WEB-INF/mvc-dispatcher-servlet.xml</param-value>
+      <param-value>classpath:intelliinvest.spring.xml</param-value>
     </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>

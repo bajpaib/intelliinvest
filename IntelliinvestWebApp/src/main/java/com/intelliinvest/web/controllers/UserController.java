@@ -1,10 +1,11 @@
 package com.intelliinvest.web.controllers;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,287 +13,76 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.intelliinvest.common.CommonConstParams;
-import com.intelliinvest.data.dao.UserRepository;
 import com.intelliinvest.data.model.User;
-import com.intelliinvest.util.Converter;
-import com.intelliinvest.util.Helper;
-import com.intelliinvest.web.bo.UserFormParameters;
-import com.intelliinvest.web.bo.UserResponse;
+import com.intelliinvest.response.Status;
+import com.intelliinvest.service.UserService;
 
 @Controller
 public class UserController {
 
-	private static Logger logger = Logger.getLogger(UserController.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
-	private static final String APPLICATION_JSON = "application/json";
+	private final UserService userService;
 
 	@Autowired
-	private UserRepository userRepository;
-
-	@RequestMapping(value = "/user/register", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
-	public @ResponseBody UserResponse registerUser(@RequestBody UserFormParameters userFormParameters) {
-		UserResponse userResponse = new UserResponse();
-		String userId = userFormParameters.getUserId();
-		String username = userFormParameters.getUsername();
-		String password = userFormParameters.getPassword();
-		String phone = userFormParameters.getPhone();
-		String sendNotification = userFormParameters.getSendNotification();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
-		User user = null;
-		boolean error = false;
-		try {
-			if (Helper.isNotNullAndNonEmpty(username) && Helper.isNotNullAndNonEmpty(password)
-					&& Helper.isNotNullAndNonEmpty(userId) && Helper.isNotNullAndNonEmpty(phone)
-					&& Helper.isNotNullAndNonEmpty(sendNotification + "")) {
-				user = userRepository.registerUser(username, userId, phone, password, Boolean.valueOf(sendNotification));
-			}
-		} catch (Exception e) {
-			errorMsg = e.getMessage();
-			logger.error("Exception inside registerUser() " + errorMsg);
-			error = true;
-		}
-		if (user != null && !error) {
-			userResponse = Converter.getUserResponse(user);
-			userResponse.setSuccess(true);
-			userResponse.setMessage("Registration for user " + username + " with userId id " + userId
-					+ " is successful. Please activate your account by clicking link in your activation mail.");
-		} else {
-			userResponse.setUserId(userId);
-			userResponse.setSuccess(false);
-			userResponse.setMessage(errorMsg);
-		}
-
-		return userResponse;
+	public UserController(UserService userService) {
+		this.userService = userService;
+	}
+	
+	@RequestMapping(value = "/user/register", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Status registerUser(@RequestBody User user) {
+		userService.registerUser(user);
+		return new Status(Status.SUCCESS, "User with userId " + user.getUserId() + " registered successfully. Please check activation mail before login.");
 	}
 
-	@RequestMapping(value = "/user/activate", method = RequestMethod.GET, produces = APPLICATION_JSON)
-	public @ResponseBody UserResponse activateUser(@RequestParam("userId") String userId,
-			@RequestParam("activationCode") String activationCode) {
-		UserResponse userResponse = new UserResponse();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
-		User user = null;
-		boolean error = false;
-		try {
-			user = userRepository.activateUser(userId, activationCode);
-		} catch (Exception e) {
-			errorMsg = e.getMessage();
-			logger.error("Exception inside activateUser() " + errorMsg);
-			error = true;
-		}
-		if (user != null && !error) {
-			userResponse.setUserId(userId);
-			userResponse.setSuccess(true);
-			userResponse.setMessage("User has been activated successfully.");
-		} else {
-			userResponse.setUserId(userId);
-			userResponse.setSuccess(false);
-			userResponse.setMessage(errorMsg);
-		}
-		return userResponse;
+	@RequestMapping(value = "/user/activate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Status activateUser(@RequestParam("userId") String userId, @RequestParam("activationCode") String activationCode) {
+		userService.activateUser(userId, activationCode);
+		return new Status(Status.SUCCESS, "Activated account for userId " + userId + " successfully");
 	}
-	@RequestMapping(value = "/user/login", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
-	public @ResponseBody UserResponse login(@RequestBody UserFormParameters userFormParameters) {
-		UserResponse userResponse = new UserResponse();
-		String userId = userFormParameters.getUserId();
-		String password = userFormParameters.getPassword();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
-		User user = null;
-		boolean error = false;
-		if (Helper.isNotNullAndNonEmpty(userId) && Helper.isNotNullAndNonEmpty(password)) {
-			try {
-				user = userRepository.login(userId, password);
-			} catch (Exception e) {
-				errorMsg = e.getMessage();
-				logger.error("Exception inside login() " + errorMsg);
-				error = true;
-			}
-		}
-		if (user != null && !error) {
-			userResponse = Converter.getUserResponse(user);
-			userResponse.setSuccess(true);
-			userResponse.setMessage("User has successfully logged in.");
-		} else {
-			userResponse.setUserId(userId);
-			userResponse.setSuccess(false);
-			userResponse.setMessage(errorMsg);
-		}
-		return userResponse;
+	@RequestMapping(value = "/user/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Status login(@RequestParam("userId") String userId, @RequestParam("password") String password) {
+		userService.login(userId, password);
+		return new Status(Status.SUCCESS, "Login for user " + userId + " successful");
 	}
 
-	@RequestMapping(value = "/user/logout", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
-	public @ResponseBody UserResponse logout(@RequestBody UserFormParameters userFormParameters) {
-		UserResponse userResponse = new UserResponse();
-		String userId = userFormParameters.getUserId();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
-		User user = null;
-		boolean error = false;
-		if (Helper.isNotNullAndNonEmpty(userId)) {
-			try {
-				user = userRepository.logout(userId);
-			} catch (Exception e) {
-				errorMsg = e.getMessage();
-				logger.error("Exception inside logout() " + errorMsg);
-				error = true;
-			}
-		}
-		if (user != null && !error) {
-			userResponse = Converter.getUserResponse(user);
-			userResponse.setSuccess(true);
-			userResponse.setMessage("User has logged out successfully...");
-		} else {
-			userResponse.setUserId(userId);
-			userResponse.setSuccess(false);
-			userResponse.setMessage(errorMsg);
-		}
-		return userResponse;
+	@RequestMapping(value = "/user/logout", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Status logout(@RequestParam("userId") String userId) {
+		userService.logout(userId);
+		return new Status(Status.SUCCESS, "Logout for user " + userId + " successful");
 	}
 
-	@RequestMapping(value = "/user/forgotPassword", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
-	public @ResponseBody UserResponse forgotPassword(@RequestBody UserFormParameters userFormParameters) {
-		UserResponse userResponse = new UserResponse();
-		String userId = userFormParameters.getUserId();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
-		User user = null;
-		boolean error = false;
-		if (Helper.isNotNullAndNonEmpty(userId)) {
-			try {
-				user = userRepository.forgotPassword(userId);
-			} catch (Exception e) {
-				errorMsg = e.getMessage();
-				logger.error("Exception inside forgotPassword() " + errorMsg);
-				error = true;
-			}
-		}
-		if (user != null && !error) {
-			userResponse = Converter.getUserResponse(user);
-			userResponse.setSuccess(true);
-			userResponse.setMessage("New password has been sent to your registered mail id.");
-		} else {
-			userResponse.setUserId(userId);
-			userResponse.setSuccess(false);
-			userResponse.setMessage(errorMsg);
-		}
-		return userResponse;
+	@RequestMapping(value = "/user/forgot/password", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Status forgotPassword(@RequestParam("userId") String userId) {
+		userService.forgotPassword(userId);
+		return new Status(Status.SUCCESS, "Reset password for user " + userId + " successful. Please chack mail for new password.");
 	}
 
-	@RequestMapping(value = "/user/update", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
-	public @ResponseBody UserResponse updateUser(@RequestBody UserFormParameters userFormParameters) {
-		UserResponse userResponse = new UserResponse();
-		String userName = userFormParameters.getUsername();
-		String userId = userFormParameters.getUserId();
-		String oldPassword = userFormParameters.getOldPassword();
-		String password = userFormParameters.getPassword();
-		String phone = userFormParameters.getPhone();
-		String sendNotification = userFormParameters.getSendNotification();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
-		User user = null;
-		boolean error = false;
-		try {
-			user = userRepository.updateUser(userName, userId, phone, oldPassword, password, sendNotification);
-		} catch (Exception e) {
-			errorMsg = e.getMessage();
-			logger.error("Exception inside updateUser() " + errorMsg);
-			error = true;
-		}
-		if (user != null && !error) {
-			userResponse = Converter.getUserResponse(user);
-			userResponse.setSuccess(true);
-			userResponse.setMessage("User details have been updated successfully.");
-		} else {
-			userResponse.setUserId(userId);
-			userResponse.setSuccess(false);
-			userResponse.setMessage(errorMsg);
-		}
-		return userResponse;
+	@RequestMapping(value = "/user/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Status updateUser(@RequestParam("userId") String userId,
+												@RequestParam(required=false, value="userName") String userName,
+												@RequestParam(required=false, value="phone") String phone,
+												@RequestParam(required=false, value="sendNotification") String sendNotification,
+												@RequestParam(required=false, value="oldPassword") String oldPassword,
+												@RequestParam(required=false, value="password") String password
+												) {
+			userService.updateUser(userId, userName, phone, sendNotification, oldPassword, password);
+			return new Status(Status.SUCCESS, "User details updated successfully");
 	}
 
-	@RequestMapping(value = "/user/getUserByUserId", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
-	public @ResponseBody UserResponse getUserByUserId(@RequestBody UserFormParameters userFormParameters) {
-		UserResponse userResponse = new UserResponse();
-		String userId = userFormParameters.getUserId();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
-		User user = null;
-		boolean error = false;
-		if (Helper.isNotNullAndNonEmpty(userId)) {
-			try {
-				user = userRepository.getUserByUserId(userId);
-			} catch (Exception e) {
-				errorMsg = e.getMessage();
-				logger.error("Exception inside getUserByUserId() " + errorMsg);
-				error = true;
-			}
-		} else {
-			errorMsg = "UserId is null or empty";
-			logger.error("Exception inside updateUser() " + errorMsg);
-			error = true;
-		}
-		if (user == null) {
-			errorMsg = "User does not exists.";
-			logger.error("Exception inside updateUser() " + errorMsg);
-			error = true;
-		}
-		if (user != null && !error) {
-			userResponse = Converter.getUserResponse(user);
-			userResponse.setSuccess(true);
-			userResponse.setMessage("User details have been returned successfully.");
-		} else {
-			userResponse.setUserId(userId);
-			userResponse.setSuccess(false);
-			userResponse.setMessage(errorMsg);
-		}
-		return userResponse;
+	@RequestMapping(value = "/user", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody User getUserByUserId(@RequestParam("userId") String userId) {
+		return userService.getUser(userId);
 	}
 
-	@RequestMapping(value = "/user/getUsers", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
-	public @ResponseBody List<UserResponse> getAllUsers() {
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
-		List<User> userDetails = null;
-		boolean error = false;
-		try {
-			userDetails = userRepository.getAllUsers();
-		} catch (Exception e) {
-			errorMsg = e.getMessage();
-			logger.error("Exception inside getAllUsers() " + errorMsg);
-			error = true;
-		}
-		if (userDetails != null && !error) {
-			return Converter.convertUsersList(userDetails);
-		} else {
-			List<UserResponse> list = new ArrayList<UserResponse>();
-			UserResponse userResponse = new UserResponse();
-			userResponse.setSuccess(false);
-			userResponse.setMessage(errorMsg);
-			list.add(userResponse);
-			return list;
-		}
+	@RequestMapping(value = "/users", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<User> getAllUsers() {
+		return userService.getAllUsers();
 	}
 
-	@RequestMapping(value = "/user/remove", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
-	public @ResponseBody UserResponse removeUser(@RequestBody UserFormParameters userFormParameters) {
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
-		String userId = userFormParameters.getUserId();
-		UserResponse userResponse = new UserResponse();
-		User user = null;
-		boolean error = false;
-		if (Helper.isNotNullAndNonEmpty(userId)) {
-			try {
-				user = userRepository.removeUser(userId);
-			} catch (Exception e) {
-				errorMsg = e.getMessage();
-				logger.error("Exception inside removeUser() " + errorMsg);
-				error = true;
-			}
-		}
-		if (user != null && !error) {
-			userResponse = Converter.getUserResponse(user);
-			userResponse.setSuccess(true);
-			userResponse.setMessage("User has been removed successfully.");
-		} else {
-			userResponse.setUserId(userId);
-			userResponse.setSuccess(false);
-			userResponse.setMessage(errorMsg);
-		}
-		return userResponse;
+	@RequestMapping(value = "/user/remove", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Status removeUser(@RequestParam("userId") String userId) {
+		userService.removeUser(userId);
+		return new Status(Status.SUCCESS, "User " + userId + " removed successfully");
 	}
 }

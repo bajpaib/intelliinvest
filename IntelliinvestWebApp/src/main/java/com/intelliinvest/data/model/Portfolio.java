@@ -1,26 +1,40 @@
 package com.intelliinvest.data.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
+import org.springframework.data.annotation.Transient;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.intelliinvest.util.DateUtil;
+import com.intelliinvest.util.JsonDateSerializer;
+import com.intelliinvest.util.JsonDateTimeSerializer;
 
 public class Portfolio implements Serializable {
-
+	private static final long serialVersionUID = 1L;
+	
 	@Id
 	private String portfolioName;
-	@DateTimeFormat(iso = ISO.DATE)
-	private LocalDateTime createDate;
-	@DateTimeFormat(iso = ISO.DATE)
-	private LocalDateTime updateDate;
-	private List<PortfolioItem> portfolioItems = new ArrayList<PortfolioItem>();
-
+	@JsonSerialize(using=JsonDateSerializer.class)
+	private LocalDate createDate = DateUtil.getLocalDate();
+	@JsonSerialize(using=JsonDateTimeSerializer.class)
+	private LocalDateTime updateDate = DateUtil.getLocalDateTime();
+	private Collection<PortfolioItem> portfolioItems = new ArrayList<PortfolioItem>();
+	
+	@Transient
+	private Collection<PortfolioItem> summaryPortfolioItems = new ArrayList<PortfolioItem>();
+	
 	public Portfolio() {
 		super();
+	}
+	
+	public Portfolio(String portfolioName) {
+		this.portfolioName = portfolioName;
 	}
 
 	public String getPortfolioName() {
@@ -31,11 +45,11 @@ public class Portfolio implements Serializable {
 		this.portfolioName = portfolioName;
 	}
 
-	public LocalDateTime getCreateDate() {
+	public LocalDate getCreateDate() {
 		return createDate;
 	}
 
-	public void setCreateDate(LocalDateTime createDate) {
+	public void setCreateDate(LocalDate createDate) {
 		this.createDate = createDate;
 	}
 
@@ -47,29 +61,54 @@ public class Portfolio implements Serializable {
 		this.updateDate = updateDate;
 	}
 
-	public List<PortfolioItem> getPortfolioItems() {
+	public Collection<PortfolioItem> getPortfolioItems() {
 		return portfolioItems;
 	}
 
-	public void setPortfolioItems(List<PortfolioItem> portfolioItems) {
+	public void setPortfolioItems(Collection<PortfolioItem> portfolioItems) {
 		this.portfolioItems = portfolioItems;
 	}
-
+	
+	public Collection<PortfolioItem> getSummaryPortfolioItems() {
+		return summaryPortfolioItems;
+	}
+	
+	public void setSummaryPortfolioItems(Collection<PortfolioItem> summaryPortfolioItems) {
+		this.summaryPortfolioItems = summaryPortfolioItems;
+	}
+	
 	public void addPortfolioItem(PortfolioItem portfolioItem) {
 		this.portfolioItems.add(portfolioItem);
 	}
-
-	public PortfolioItem getPortfolioItemIdById(String portfolioItemId) {
-		PortfolioItem retVal = null;
-		for (PortfolioItem item : portfolioItems) {
-			if (portfolioItemId.equals(item.getPortfolioItemId())) {
-				retVal = item;
-				break;
+	
+	public void addPortfolioItems(Collection<PortfolioItem> portfolioItems) {
+		this.portfolioItems.addAll(portfolioItems);
+	}
+	
+	public List<PortfolioItem> getPortfolioItemsByCode(String stockCode) {
+		List<PortfolioItem> portfolioItems = new ArrayList<PortfolioItem>();
+		for (PortfolioItem portfolioItem : this.portfolioItems) {
+			if (stockCode.equals(portfolioItem.getCode())) {
+				portfolioItems.add(portfolioItem);
 			}
 		}
-		return retVal;
+		return portfolioItems;
+	}
+	
+	public PortfolioItem getPortfolioItem(String portfolioItemId) {
+		for (PortfolioItem portfolioItemToCheck : this.portfolioItems) {
+			if(portfolioItemId.equals(portfolioItemToCheck.getPortfolioItemId())){
+				return portfolioItemToCheck;
+			}
+		}
+		return null;
 	}
 
+	@Override
+	public int hashCode() {
+		return portfolioName.hashCode();
+	}
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

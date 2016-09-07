@@ -3,36 +3,24 @@ package com.intelliinvest.data.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.intelliinvest.util.JsonDateSerializer;
+import com.intelliinvest.util.JsonDateTimeSerializer;
 
-@Document(collection = "STOCK_PRICE")
 public class StockPrice {
 
-	@Id
 	private String code;
-	private double cp;
-	private double currentPrice;
-	private double eodPrice;
-	@DateTimeFormat(iso = ISO.DATE)
+	private double cp = 0d;
+	private double currentPrice = 0d;
+	private double eodPrice = 0d;
+	@JsonSerialize(using=JsonDateSerializer.class)
 	private LocalDate eodDate;
-	@DateTimeFormat(iso = ISO.DATE)
+	@JsonSerialize(using=JsonDateTimeSerializer.class)
 	private LocalDateTime updateDate;
 
-	public StockPrice() {
-		super();
-	}
-
-	public StockPrice(String code, double cp, double currentPrice, double eodPrice, LocalDate eodDate, LocalDateTime updateDate) {
+	public StockPrice(String code) {
 		super();
 		this.code = code;
-		this.cp = cp;
-		this.currentPrice = currentPrice;
-		this.eodPrice = eodPrice;
-		this.eodDate = eodDate;
-		this.updateDate = updateDate;
 	}
 
 	public String getCode() {
@@ -105,10 +93,4 @@ public class StockPrice {
 		return "StockPrice [code=" + code + ", cp=" + cp + ", currentPrice=" + currentPrice + ", eodPrice=" + eodPrice
 				+ ", eodDate=" + eodDate + ", updateDate=" + updateDate + "]";
 	}
-
-	@Override
-	protected StockPrice clone() throws CloneNotSupportedException {
-		return new StockPrice(code, cp, currentPrice, eodPrice, eodDate, updateDate);
-	}
-
 }

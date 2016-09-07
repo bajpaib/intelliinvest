@@ -3,15 +3,23 @@ Go to mongo db installation directory on your machine. Open a command prompt and
 mongo intelliinvest --username intelliinvest_user --password Welcome123
 
 db.createCollection("USER")
-db.createCollection("USER_PORTFOLIO")
+db.USER.createIndex({ 'userId': 1 })
+
 db.createCollection("STOCK")
-db.createCollection("STOCK_PRICE")
+
 db.createCollection("NSE_BSE_CODES")
+
+db.createCollection("EOD_STOCK_PRICE")
+db.EOD_STOCK_PRICE.createIndex({ 'exchange': 1, 'symbol': 1, 'eodDate': -1 })
+
+db.createCollection("LIVE_STOCK_PRICE")
+db.LIVE_STOCK_PRICE.createIndex({ 'exchange': 1, 'code': 1 })
+
+
+db.createCollection("USER_PORTFOLIO")
+
 db.createCollection("SEQUENCE")
 db.SEQUENCE.insert({_id: "SeqKey",seq:0})
-
-db.createCollection("QUANDL_STOCK_PRICE")
-db.QUANDL_STOCK_PRICE.createIndex({ 'exchange': 1, 'symbol': 1, 'eodDate': -1 })
 
 db.createCollection("HOLIDAY_CALENDAR")
 
@@ -25,13 +33,15 @@ Other useful commands
 db.USER.find({})
 db.USER_PORTFOLIO.find({})
 db.STOCK.find({})
-db.STOCK_PRICE.find({})
-db.QUANDL_STOCK_PRICE.find({})
+db.LIVE_STOCK_PRICE.find({})
+db.EOD_STOCK_PRICE.find({})
 db.NSE_BSE_CODES.find({})
 
 db.USER.remove({})
 db.USER_PORTFOLIO.remove({})
 db.STOCK.remove({})
-db.STOCK_PRICE.remove({})
-db.QUANDL_STOCK_PRICE.remove({})
+db.LIVE_STOCK_PRICE.remove({})
+db.EOD_STOCK_PRICE.remove({})
 db.NSE_BSE_CODES.remove({})
+
+

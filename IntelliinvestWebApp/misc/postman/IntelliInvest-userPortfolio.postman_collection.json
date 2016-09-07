@@ -1,0 +1,1661 @@
+{
+	"id": "a064d276-75ab-93a6-1467-36875346d6dc",
+	"name": "IntelliInvest-userPortfolio",
+	"description": "User Portfolio",
+	"order": [
+		"ac5e1d10-ac9b-c8b8-e6a1-2d8335a3e816",
+		"19d718f3-5823-8246-0f39-1856b33f3ebb",
+		"a253b80d-8f90-c7d1-48a0-f537da65a76e",
+		"4d243dff-a691-5e27-8c10-a109990bea22",
+		"9d0bb18b-e9aa-eb6a-8a86-8b0cbdd7dcb5",
+		"95399fe9-fd66-821b-90aa-25ec6194d106",
+		"5a2c4711-7383-07ca-1eb6-e3291c55dbef",
+		"52a8c220-6089-ffab-7d2a-7ca35e02782d",
+		"1c75788f-928c-d93c-a081-44e9d5da28b3",
+		"04308509-84fc-9336-6432-dc1a4792cc51",
+		"8aa1aae5-8848-7513-13c1-736205a8f225",
+		"3d311c49-6eda-f9ac-4d80-aa694ea31f8e",
+		"9065e5e6-183c-49cc-3821-15ea04a72992",
+		"3a799d0e-7f5e-1099-21ee-2f118a8bd83e",
+		"76329804-5b30-2e2b-0d58-02e78e0389d4",
+		"a8f91680-3212-2514-07d7-726580c7474a",
+		"aaf337fb-90cd-3e98-0a2a-51968eb32b97",
+		"ea2cd150-ea63-9046-e896-85ae5e01ff88",
+		"67f09e11-f2e2-0f77-9c0a-5900659d0c15",
+		"b794966d-652c-b103-6708-bd5a9efd4ae9",
+		"ec979dfe-4084-2ab2-a2e5-8f4e4678b765"
+	],
+	"folders": [],
+	"timestamp": 1473096655233,
+	"owner": 0,
+	"public": false,
+	"published": false,
+	"requests": [
+		{
+			"id": "04308509-84fc-9336-6432-dc1a4792cc51",
+			"headers": "",
+			"url": "http://localhost:8080/rest/portfolio/summary?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"data": null,
+			"dataMode": "params",
+			"name": "PortfolioSummary",
+			"description": "PortfolioSummary",
+			"descriptionFormat": "html",
+			"time": 1473104457880,
+			"version": 2,
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 41,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "[{\"portfolioItemId\":\"INFY\",\"code\":\"INFY\",\"price\":100.0,\"quantity\":100,\"direction\":\"Long\",\"tradeDate\":null,\"remainingQuantity\":100,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":10000.0,\"unrealisedPnl\":-10000.0,\"todaysPnl\":0.0}]",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "e7980f10-526d-5547-2493-b7484f50a90f",
+					"name": "portfolioSummary-res",
+					"request": {
+						"url": "http://localhost:8080/rest/portfolio/summary?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1",
+						"headers": [],
+						"data": null,
+						"method": "GET",
+						"dataMode": "params"
+					}
+				}
+			],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "19d718f3-5823-8246-0f39-1856b33f3ebb",
+			"headers": "",
+			"url": "http://localhost:8080/rest/portfolio?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"data": null,
+			"dataMode": "params",
+			"name": "Portfolio1",
+			"description": "Portfolio1",
+			"descriptionFormat": "html",
+			"time": 1473096932750,
+			"version": 2,
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 123,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"portfolioName\":\"Portfolio1\",\"createDate\":1473107301799,\"updateDate\":1473107301799,\"portfolioItems\":[],\"summaryPortfolioItems\":[]}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "18cdc700-599b-afa8-a7a4-20103de7c1c6",
+					"name": "portfolio1-res",
+					"request": {
+						"url": "http://localhost:8080/rest/portfolio?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1",
+						"headers": [],
+						"data": null,
+						"method": "POST",
+						"dataMode": "params"
+					}
+				}
+			],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "1c75788f-928c-d93c-a081-44e9d5da28b3",
+			"headers": "",
+			"url": "http://localhost:8080/rest/portfolio?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio2",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"data": null,
+			"dataMode": "params",
+			"name": "Portfolio2",
+			"description": "Portfolio2",
+			"descriptionFormat": "html",
+			"time": 1473098818203,
+			"version": 2,
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 93,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"portfolioName\":\"Portfolio2\",\"createDate\":1473107316681,\"updateDate\":1473107316681,\"portfolioItems\":[],\"summaryPortfolioItems\":[]}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "4bcf4c01-be03-b7f8-9c58-8f055996b661",
+					"name": "portfolio2-res",
+					"request": {
+						"url": "http://localhost:8080/rest/portfolio?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio2",
+						"headers": [],
+						"data": null,
+						"method": "GET",
+						"dataMode": "params"
+					}
+				}
+			],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "3a799d0e-7f5e-1099-21ee-2f118a8bd83e",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/portfolioItems?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1473107656952,
+			"name": "PortfolioItems",
+			"description": "PortfolioItems",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 77,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "[{\"portfolioItemId\":\"INFY\",\"code\":\"INFY\",\"price\":140.0,\"quantity\":500,\"direction\":\"Long\",\"tradeDate\":null,\"remainingQuantity\":500,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":70000.0,\"unrealisedPnl\":-70000.0,\"todaysPnl\":0.0}]",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "f3ca9b9a-3397-de27-b534-1a94cd842813",
+					"name": "portfolioItems-res",
+					"request": {
+						"url": "http://localhost:8080/rest/portfolioItems?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "[\n    {\n        \"portfolioItemId\": \"57cdd586028d9606d49dcfdd\",\n          \"code\": \"INFY\",\n          \"price\": 200,\n          \"quantity\": 200,\n          \"direction\": \"Buy\",\n          \"tradeDate\": \"2016-09-05\"\n    },\n    {\n        \"portfolioItemId\": \"57cdd5af028d9606d49dcfe1\",\n          \"code\": \"INFY\",\n          \"price\": 100,\n          \"quantity\": 200,\n          \"direction\": \"Buy\",\n          \"tradeDate\": \"2016-09-05\"\n    }\n]",
+						"method": "PUT",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"rawModeData": "[\n    {\n        \"portfolioItemId\": \"57cdb818028d961c101e9e7d\",\n          \"code\": \"INFY\",\n          \"price\": 200,\n          \"quantity\": 200,\n          \"direction\": \"Buy\",\n          \"tradeDate\": \"2016-09-05\"\n    },\n    {\n        \"portfolioItemId\": \"57cdb827028d961c101e9e7e\",\n          \"code\": \"INFY\",\n          \"price\": 100,\n          \"quantity\": 200,\n          \"direction\": \"Buy\",\n          \"tradeDate\": \"2016-09-05\"\n    }\n]"
+		},
+		{
+			"id": "3d311c49-6eda-f9ac-4d80-aa694ea31f8e",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/portfolioName?userId=raja.rengasamy@gmail.com&oldPortfolioName=Portfolio2&newPortfolioName=Portfolio3",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1473107488885,
+			"name": "PortfolioNameChange",
+			"description": "PortfolioNameChange",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 70,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"portfolioName\":\"Portfolio3\",\"createDate\":1473107316681,\"updateDate\":1473107316681,\"portfolioItems\":[],\"summaryPortfolioItems\":[]}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "46a30b8e-c817-e7e2-c3e4-2b75aa0eb5f4",
+					"name": "portfolioName-res",
+					"request": {
+						"url": "http://localhost:8080/rest/portfolioName?userId=raja.rengasamy@gmail.com&oldPortfolioName=Portfolio2&newPortfolioName=Portfolio3",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "",
+						"method": "PUT",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"rawModeData": ""
+		},
+		{
+			"id": "4d243dff-a691-5e27-8c10-a109990bea22",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/portfolioItem?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1473099241304,
+			"name": "PortfolioItem",
+			"description": "PortfolioItem",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 84,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "[{\"portfolioItemId\":\"INFY\",\"code\":\"INFY\",\"price\":100.0,\"quantity\":100,\"direction\":\"Long\",\"tradeDate\":null,\"remainingQuantity\":100,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":10000.0,\"unrealisedPnl\":-10000.0,\"todaysPnl\":0.0}]",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "c592db9b-de78-8b68-11bf-45f89e192cab",
+					"name": "portfolioItem-res",
+					"request": {
+						"url": "http://localhost:8080/rest/portfolioItem?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "{\n    \"code\":\"INFY\",\n    \"price\":\"100\",\n    \"quantity\":\"100\",\n    \"direction\":\"Buy\",\n    \"tradeDate\":\"2016-09-05\"\n}",
+						"method": "POST",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"rawModeData": "{\n    \"code\":\"INFY\",\n    \"price\":\"100\",\n    \"quantity\":\"100\",\n    \"direction\":\"Buy\",\n    \"tradeDate\":\"2016-09-05\"\n}"
+		},
+		{
+			"id": "52a8c220-6089-ffab-7d2a-7ca35e02782d",
+			"headers": "",
+			"url": "http://localhost:8080/rest/portfolio?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"data": null,
+			"dataMode": "params",
+			"name": "Portfolio1",
+			"description": "Portfolio1",
+			"descriptionFormat": "html",
+			"time": 1473098793073,
+			"version": 2,
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 58,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"portfolioName\":\"Portfolio1\",\"createDate\":1473107301799,\"updateDate\":1473107301799,\"portfolioItems\":[{\"portfolioItemId\":\"57cdd586028d9606d49dcfdd\",\"code\":\"INFY\",\"price\":100.0,\"quantity\":100,\"direction\":\"Buy\",\"tradeDate\":\"2016-09-05\",\"remainingQuantity\":100,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":10000.0,\"unrealisedPnl\":-10000.0,\"todaysPnl\":0.0},{\"portfolioItemId\":\"57cdd5af028d9606d49dcfe0\",\"code\":\"INFY\",\"price\":100.0,\"quantity\":100,\"direction\":\"Buy\",\"tradeDate\":\"2016-09-05\",\"remainingQuantity\":100,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":10000.0,\"unrealisedPnl\":-10000.0,\"todaysPnl\":0.0},{\"portfolioItemId\":\"57cdd5af028d9606d49dcfe1\",\"code\":\"ABAN\",\"price\":100.0,\"quantity\":100,\"direction\":\"Buy\",\"tradeDate\":\"2016-09-05\",\"remainingQuantity\":100,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":10000.0,\"unrealisedPnl\":-10000.0,\"todaysPnl\":0.0}],\"summaryPortfolioItems\":[{\"portfolioItemId\":\"ABAN\",\"code\":\"ABAN\",\"price\":100.0,\"quantity\":100,\"direction\":\"Long\",\"tradeDate\":null,\"remainingQuantity\":100,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":10000.0,\"unrealisedPnl\":-10000.0,\"todaysPnl\":0.0},{\"portfolioItemId\":\"INFY\",\"code\":\"INFY\",\"price\":100.0,\"quantity\":200,\"direction\":\"Long\",\"tradeDate\":null,\"remainingQuantity\":200,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":20000.0,\"unrealisedPnl\":-20000.0,\"todaysPnl\":0.0}]}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "890687c4-eb34-ba25-479b-c3572bbb6b7d",
+					"name": "portfolio1-res",
+					"request": {
+						"url": "http://localhost:8080/rest/portfolio?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1",
+						"headers": [],
+						"data": null,
+						"method": "GET",
+						"dataMode": "params"
+					}
+				}
+			],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "5a2c4711-7383-07ca-1eb6-e3291c55dbef",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/portfolioNames?userId=raja.rengasamy@gmail.com",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"data": [],
+			"dataMode": "raw",
+			"name": "PortfolioNames",
+			"description": "PortfolioNames",
+			"descriptionFormat": "html",
+			"time": 1473098892924,
+			"version": 2,
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 62,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "[\"Portfolio1\",\"Portfolio2\"]",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "e99cae0a-f728-d1d9-812f-672e6a17e398",
+					"name": "portfolioNames-res",
+					"request": {
+						"url": "http://localhost:8080/rest/portfolioNames?userId=raja.rengasamy@gmail.com",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "{\n    \"code\":\"INFY\",\n    \"price\":\"100\",\n    \"quantity\":\"100\",\n    \"direction\":\"Buy\",\n    \"tradeDate\":\"2016-09-05T00:00:00.000 IST\"\n}",
+						"method": "GET",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\n    \"code\":\"INFY\",\n    \"price\":\"100\",\n    \"quantity\":\"100\",\n    \"direction\":\"Buy\",\n    \"tradeDate\":\"2016-09-05T00:00:00.000 IST\"\n}"
+		},
+		{
+			"id": "67f09e11-f2e2-0f77-9c0a-5900659d0c15",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/portfolioItemsInCode?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio2&code=INFY",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "DELETE",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1473108086963,
+			"name": "PortfolioItemsInCode",
+			"description": "PortfolioItemsInCode",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 41,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "[]",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "4ce4e7d5-a9ea-88fa-0a02-d9e3d98ff9e0",
+					"name": "portfolioItemInCode-res",
+					"request": {
+						"url": "http://localhost:8080/rest/portfolioItemsInCode?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio2&code=INFY",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "[\n    {\n      \"portfolioItemId\": \"57cdd708028d9606d49dd027\"\n    }\n]",
+						"method": "DELETE",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"rawModeData": "[\n    {\n      \"portfolioItemId\": \"57cdd708028d9606d49dd027\"\n    }\n]"
+		},
+		{
+			"id": "76329804-5b30-2e2b-0d58-02e78e0389d4",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/portfolio?userId=raja.rengasamy@gmail.com",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1473101757486,
+			"name": "Portfolio",
+			"description": "Portfolio",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 76,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"portfolioName\":\"Portfolio2\",\"createDate\":1473099305228,\"updateDate\":1473099305228,\"portfolioItems\":[{\"portfolioItemId\":\"57cdd708028d9606d49dd027\",\"code\":\"INFY\",\"price\":100.0,\"quantity\":100,\"direction\":\"Buy\",\"tradeDate\":\"2016-09-05\",\"remainingQuantity\":100,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":10000.0,\"unrealisedPnl\":-10000.0,\"todaysPnl\":0.0}],\"summaryPortfolioItems\":[{\"portfolioItemId\":\"INFY\",\"code\":\"INFY\",\"price\":100.0,\"quantity\":100,\"direction\":\"Long\",\"tradeDate\":null,\"remainingQuantity\":100,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":10000.0,\"unrealisedPnl\":-10000.0,\"todaysPnl\":0.0}]}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "c1818e2d-59a5-1e12-bcbd-4288d12e0fc0",
+					"name": "portfolio-res",
+					"request": {
+						"url": "http://localhost:8080/rest/portfolio?userId=raja.rengasamy@gmail.com",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "{\n  \"portfolioName\": \"Portfolio2\",\n  \"createDate\": 1473099305228,\n  \"updateDate\": 1473099305228,\n  \"portfolioItems\": [\n      {\n          \"code\": \"INFY\",\n          \"price\": 100,\n          \"quantity\": 100,\n          \"direction\": \"Buy\",\n          \"tradeDate\": \"2016-09-05\"\n      }\n    ]\n}",
+						"method": "PUT",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"rawModeData": "{\n  \"portfolioName\": \"Portfolio1\",\n  \"createDate\": 1473099305228,\n  \"updateDate\": 1473099305228,\n  \"portfolioItems\": [\n      {\n          \"code\": \"INFY\",\n          \"price\": 100,\n          \"quantity\": 100,\n          \"direction\": \"Buy\",\n          \"tradeDate\": \"2016-09-05\"\n      }\n    ]\n}"
+		},
+		{
+			"id": "8aa1aae5-8848-7513-13c1-736205a8f225",
+			"headers": "",
+			"url": "http://localhost:8080/rest/userPortfolio/summary?userId=raja.rengasamy@gmail.com",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"data": null,
+			"dataMode": "params",
+			"name": "UserPortfolioSummary",
+			"description": "UserPortfolioSummary",
+			"descriptionFormat": "html",
+			"time": 1473104511166,
+			"version": 2,
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 50,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"Portfolio1\":[{\"portfolioItemId\":\"INFY\",\"code\":\"INFY\",\"price\":100.0,\"quantity\":100,\"direction\":\"Long\",\"tradeDate\":null,\"remainingQuantity\":100,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":10000.0,\"unrealisedPnl\":-10000.0,\"todaysPnl\":0.0}],\"Portfolio2\":[{\"portfolioItemId\":\"ABAN\",\"code\":\"ABAN\",\"price\":100.0,\"quantity\":100,\"direction\":\"Long\",\"tradeDate\":null,\"remainingQuantity\":100,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":10000.0,\"unrealisedPnl\":-10000.0,\"todaysPnl\":0.0},{\"portfolioItemId\":\"INFY\",\"code\":\"INFY\",\"price\":100.0,\"quantity\":100,\"direction\":\"Long\",\"tradeDate\":null,\"remainingQuantity\":100,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":10000.0,\"unrealisedPnl\":-10000.0,\"todaysPnl\":0.0}]}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "2e8b9d30-e3f5-f063-1608-925a1943d141",
+					"name": "userPortfolioSummar-res",
+					"request": {
+						"url": "http://localhost:8080/rest/userPortfolio/summary?userId=raja.rengasamy@gmail.com",
+						"headers": [],
+						"data": null,
+						"method": "GET",
+						"dataMode": "params"
+					}
+				}
+			],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "9065e5e6-183c-49cc-3821-15ea04a72992",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/portfolioItem?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio2",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "PUT",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1473100182343,
+			"name": "PortfolioItem",
+			"description": "PortfolioItem",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 76,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "[{\"portfolioItemId\":\"ABAN\",\"code\":\"ABAN\",\"price\":100.0,\"quantity\":100,\"direction\":\"Long\",\"tradeDate\":null,\"remainingQuantity\":100,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":10000.0,\"unrealisedPnl\":-10000.0,\"todaysPnl\":0.0},{\"portfolioItemId\":\"INFY\",\"code\":\"INFY\",\"price\":100.0,\"quantity\":300,\"direction\":\"Long\",\"tradeDate\":null,\"remainingQuantity\":300,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":30000.0,\"unrealisedPnl\":-30000.0,\"todaysPnl\":0.0}]",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "8cc4d73b-4fbe-7d3d-9bea-459bb631aeb1",
+					"name": "portfolioItem-res",
+					"request": {
+						"url": "http://localhost:8080/rest/portfolioItem?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "{\n    \"portfolioItemId\": \"57cdd586028d9606d49dcfdd\",\n      \"code\": \"INFY\",\n      \"price\": 100,\n      \"quantity\": 200,\n      \"direction\": \"Buy\",\n      \"tradeDate\": \"2016-09-05\"\n}",
+						"method": "PUT",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"rawModeData": "{\n    \"portfolioItemId\": \"57cdb818028d961c101e9e7d\",\n      \"code\": \"INFY\",\n      \"price\": 100,\n      \"quantity\": 200,\n      \"direction\": \"Buy\",\n      \"tradeDate\": \"2016-09-05\"\n}"
+		},
+		{
+			"id": "95399fe9-fd66-821b-90aa-25ec6194d106",
+			"headers": "",
+			"url": "http://localhost:8080/rest/userPortfolio?userId=raja.rengasamy@gmail.com",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"data": null,
+			"dataMode": "params",
+			"name": "UserPortfolio",
+			"description": "UserPortfolio",
+			"descriptionFormat": "html",
+			"time": 1473098757399,
+			"version": 2,
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 61,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"userId\":\"raja.rengasamy@gmail.com\",\"portfolios\":[{\"portfolioName\":\"Portfolio1\",\"createDate\":1473107301799,\"updateDate\":1473107301799,\"portfolioItems\":[{\"portfolioItemId\":\"57cdd586028d9606d49dcfdd\",\"code\":\"INFY\",\"price\":100.0,\"quantity\":100,\"direction\":\"Buy\",\"tradeDate\":\"2016-09-05\",\"remainingQuantity\":100,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":10000.0,\"unrealisedPnl\":-10000.0,\"todaysPnl\":0.0},{\"portfolioItemId\":\"57cdd5af028d9606d49dcfe0\",\"code\":\"INFY\",\"price\":100.0,\"quantity\":100,\"direction\":\"Buy\",\"tradeDate\":\"2016-09-05\",\"remainingQuantity\":100,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":10000.0,\"unrealisedPnl\":-10000.0,\"todaysPnl\":0.0},{\"portfolioItemId\":\"57cdd5af028d9606d49dcfe1\",\"code\":\"ABAN\",\"price\":100.0,\"quantity\":100,\"direction\":\"Buy\",\"tradeDate\":\"2016-09-05\",\"remainingQuantity\":100,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":10000.0,\"unrealisedPnl\":-10000.0,\"todaysPnl\":0.0}],\"summaryPortfolioItems\":[{\"portfolioItemId\":\"ABAN\",\"code\":\"ABAN\",\"price\":100.0,\"quantity\":100,\"direction\":\"Long\",\"tradeDate\":null,\"remainingQuantity\":100,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":10000.0,\"unrealisedPnl\":-10000.0,\"todaysPnl\":0.0},{\"portfolioItemId\":\"INFY\",\"code\":\"INFY\",\"price\":100.0,\"quantity\":200,\"direction\":\"Long\",\"tradeDate\":null,\"remainingQuantity\":200,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":20000.0,\"unrealisedPnl\":-20000.0,\"todaysPnl\":0.0}]},{\"portfolioName\":\"Portfolio2\",\"createDate\":1473107316681,\"updateDate\":1473107316681,\"portfolioItems\":[],\"summaryPortfolioItems\":[]}],\"portfolioNames\":[\"Portfolio1\",\"Portfolio2\"]}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "cc9f0ed9-18d8-d614-1b20-6a286467d24b",
+					"name": "UserPortfolio-res",
+					"request": {
+						"url": "http://localhost:8080/rest/userPortfolio?userId=raja.rengasamy@gmail.com",
+						"headers": [],
+						"data": null,
+						"method": "GET",
+						"dataMode": "params"
+					}
+				}
+			],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "9d0bb18b-e9aa-eb6a-8a86-8b0cbdd7dcb5",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/portfolioItems?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1473099262576,
+			"name": "PortfolioItems",
+			"description": "PortfolioItems",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 78,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "[{\"portfolioItemId\":\"ABAN\",\"code\":\"ABAN\",\"price\":100.0,\"quantity\":100,\"direction\":\"Long\",\"tradeDate\":null,\"remainingQuantity\":100,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":10000.0,\"unrealisedPnl\":-10000.0,\"todaysPnl\":0.0},{\"portfolioItemId\":\"INFY\",\"code\":\"INFY\",\"price\":100.0,\"quantity\":200,\"direction\":\"Long\",\"tradeDate\":null,\"remainingQuantity\":200,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":20000.0,\"unrealisedPnl\":-20000.0,\"todaysPnl\":0.0}]",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "b4880b2d-9be1-2441-e6e2-2db9cb7ee4ca",
+					"name": "portfolioItems-res",
+					"request": {
+						"url": "http://localhost:8080/rest/portfolioItems?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "[\n    {\n    \"code\":\"INFY\",\n    \"price\":\"100\",\n    \"quantity\":\"100\",\n    \"direction\":\"Buy\",\n    \"tradeDate\":\"2016-09-05\"\n    },\n    \n    {\n    \"code\":\"ABAN\",\n    \"price\":\"100\",\n    \"quantity\":\"100\",\n    \"direction\":\"Buy\",\n    \"tradeDate\":\"2016-09-05\"\n    }\n]",
+						"method": "POST",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"rawModeData": "[\n    {\n    \"code\":\"INFY\",\n    \"price\":\"100\",\n    \"quantity\":\"100\",\n    \"direction\":\"Buy\",\n    \"tradeDate\":\"2016-09-05\"\n    },\n    \n    {\n    \"code\":\"ABAN\",\n    \"price\":\"100\",\n    \"quantity\":\"100\",\n    \"direction\":\"Buy\",\n    \"tradeDate\":\"2016-09-05\"\n    }\n]"
+		},
+		{
+			"id": "a253b80d-8f90-c7d1-48a0-f537da65a76e",
+			"headers": "",
+			"url": "http://localhost:8080/rest/portfolio?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio2",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"data": null,
+			"dataMode": "params",
+			"name": "Portfolio2",
+			"description": "Portfolio2",
+			"descriptionFormat": "html",
+			"time": 1473096917170,
+			"version": 2,
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 79,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"portfolioName\":\"Portfolio2\",\"createDate\":1473107316681,\"updateDate\":1473107316681,\"portfolioItems\":[],\"summaryPortfolioItems\":[]}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "34b5e137-5bdc-7a40-ec5e-0d4f3abbfdde",
+					"name": "portfolio2-res",
+					"request": {
+						"url": "http://localhost:8080/rest/portfolio?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio2",
+						"headers": [],
+						"data": null,
+						"method": "POST",
+						"dataMode": "params"
+					}
+				}
+			],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "a8f91680-3212-2514-07d7-726580c7474a",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/portfolioItemById?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1&portfolioItemId=57cdc002028d9621b07e8221",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "DELETE",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1473102285454,
+			"name": "PortfolioItemById",
+			"description": "PortfolioItemById",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 78,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "[{\"portfolioItemId\":\"INFY\",\"code\":\"INFY\",\"price\":150.0,\"quantity\":400,\"direction\":\"Long\",\"tradeDate\":null,\"remainingQuantity\":400,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":60000.0,\"unrealisedPnl\":-60000.0,\"todaysPnl\":0.0}]",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "a83d055d-469f-072b-729e-31f623dffb55",
+					"name": "portfolioItemById-res",
+					"request": {
+						"url": "http://localhost:8080/rest/portfolioItemById?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1&portfolioItemId=57cdd5af028d9606d49dcfe0",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "",
+						"method": "DELETE",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"rawModeData": ""
+		},
+		{
+			"id": "aaf337fb-90cd-3e98-0a2a-51968eb32b97",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/portfolioItem?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "DELETE",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1473102466785,
+			"name": "PortfolioItem",
+			"description": "PortfolioItem",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 111,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "[{\"portfolioItemId\":\"INFY\",\"code\":\"INFY\",\"price\":100.0,\"quantity\":200,\"direction\":\"Long\",\"tradeDate\":null,\"remainingQuantity\":200,\"realisedPnl\":0.0,\"cp\":0.0,\"currentPrice\":0.0,\"amount\":0.0,\"totalAmount\":20000.0,\"unrealisedPnl\":-20000.0,\"todaysPnl\":0.0}]",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "64343544-ba56-8737-cfe9-26ea52b963b7",
+					"name": "portfolioItem-res",
+					"request": {
+						"url": "http://localhost:8080/rest/portfolioItem?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "{\n      \"portfolioItemId\": \"57cdd586028d9606d49dcfdd\"\n}",
+						"method": "DELETE",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"rawModeData": "{\n      \"portfolioItemId\": \"57cdc21f028d961810360c64\"\n}"
+		},
+		{
+			"id": "ac5e1d10-ac9b-c8b8-e6a1-2d8335a3e816",
+			"headers": "",
+			"url": "http://localhost:8080/rest/userPortfolio?userId=raja.rengasamy@gmail.com",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"data": null,
+			"dataMode": "params",
+			"name": "UserPortfolio",
+			"description": "UserPortfolio",
+			"descriptionFormat": "html",
+			"time": 1473096961656,
+			"version": 2,
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 171,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"userId\":\"raja.rengasamy@gmail.com\",\"portfolios\":[],\"portfolioNames\":[]}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "ead6e716-ef93-39c3-86a6-839cd25e3d76",
+					"name": "userPortfolio-res",
+					"request": {
+						"url": "http://localhost:8080/rest/userPortfolio?userId=raja.rengasamy@gmail.com",
+						"headers": [],
+						"data": null,
+						"method": "POST",
+						"dataMode": "params"
+					}
+				}
+			],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "b794966d-652c-b103-6708-bd5a9efd4ae9",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/portfolio?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "DELETE",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1473103844198,
+			"name": "Portfolio",
+			"description": "Portfolio",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 113,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"status\":\"SUCCESS\",\"message\":\"\"}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "4c620a65-27e2-d98f-f292-b4cc24b8c287",
+					"name": "portfolio-res",
+					"request": {
+						"url": "http://localhost:8080/rest/portfolio?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "",
+						"method": "DELETE",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"rawModeData": ""
+		},
+		{
+			"id": "ea2cd150-ea63-9046-e896-85ae5e01ff88",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/portfolioItemsByCode?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1&code=INFY",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "DELETE",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1473107839010,
+			"name": "PortfolioItemsByCode",
+			"description": "PortfolioItemsByCode",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 74,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "[]",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "cf179a9d-2c55-445c-d631-d54f30f2e6b8",
+					"name": "portfolioItemByCode",
+					"request": {
+						"url": "http://localhost:8080/rest/portfolioItemsByCode?userId=raja.rengasamy@gmail.com&portfolioName=Portfolio1&code=INFY",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "",
+						"method": "DELETE",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"rawModeData": ""
+		},
+		{
+			"id": "ec979dfe-4084-2ab2-a2e5-8f4e4678b765",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/userPortfolio?userId=raja.rengasamy@gmail.com",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "DELETE",
+			"collectionId": "a064d276-75ab-93a6-1467-36875346d6dc",
+			"data": [],
+			"dataMode": "raw",
+			"name": "UserPortfolio",
+			"description": "UserPortfolio",
+			"descriptionFormat": "html",
+			"time": 1473104008669,
+			"version": 2,
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 44,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"status\":\"SUCCESS\",\"message\":\"\"}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "6f6418ee-f66e-9e30-08bd-4dad64a7463e",
+					"name": "userPortfolio-res",
+					"request": {
+						"url": "http://localhost:8080/rest/userPortfolio?userId=raja.rengasamy@gmail.com",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "",
+						"method": "DELETE",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": ""
+		}
+	]
+}

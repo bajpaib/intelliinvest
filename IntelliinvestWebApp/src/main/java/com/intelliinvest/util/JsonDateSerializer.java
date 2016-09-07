@@ -22,5 +22,7 @@ public class JsonDateSerializer extends JsonSerializer<LocalDate> {
 		String formattedDate = dateFormat.format(date);
 		gen.writeString(formattedDate);
 	}
+	
+	
 
 }

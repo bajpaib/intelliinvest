@@ -1,337 +1,136 @@
 package com.intelliinvest.web.controllers;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.intelliinvest.common.CommonConstParams;
-import com.intelliinvest.common.IntelliinvestException;
-import com.intelliinvest.data.dao.UserPortfolioRepository;
 import com.intelliinvest.data.model.Portfolio;
 import com.intelliinvest.data.model.PortfolioItem;
-import com.intelliinvest.util.Helper;
-import com.intelliinvest.web.bo.PortfolioItemRequest;
-import com.intelliinvest.web.bo.UserPortfolioFormParameters;
-import com.intelliinvest.web.bo.UserPortfolioResponse;
+import com.intelliinvest.data.model.UserPortfolio;
+import com.intelliinvest.response.Status;
+import com.intelliinvest.service.UserPortfolioService;
 
 @Controller
 public class UserPortfolioController {
 
-	private static Logger logger = Logger.getLogger(UserPortfolioController.class);
-	private static final String APPLICATION_JSON = "application/json";
+	private static Logger LOGGER = LoggerFactory.getLogger(UserPortfolioController.class);
+	
+	private final UserPortfolioService userPortfolioService;
+
 	@Autowired
-	private UserPortfolioRepository userPortfolioRepository;
-
-	@RequestMapping(value = "/portfolio/getPortfolioNames", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
-	public @ResponseBody UserPortfolioResponse getPortfolioNames(
-			@RequestBody UserPortfolioFormParameters portfolioFormParameters) {
-		UserPortfolioResponse portfolioResponse = new UserPortfolioResponse();
-		String userId = portfolioFormParameters.getUserId();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
-		boolean error = false;
-		try {
-			if (!Helper.isNotNullAndNonEmpty(userId)) {
-				throw new IntelliinvestException("Invalid input. Please check userId.");
-			}
-			String portfolioNames = userPortfolioRepository.getPortfolioNames(userId);
-			portfolioResponse.setPortfolioName(portfolioNames);
-		} catch (Exception e) {
-			errorMsg = e.getMessage();
-			logger.error("Exception inside getPortfolioNames() " + errorMsg);
-			error = true;
-		}
-		portfolioResponse.setUserId(userId);
-		if (!error) {
-			portfolioResponse.setSuccess(true);
-			portfolioResponse.setMessage("Portfolio Names have been retrieved successfully");
-		} else {
-			portfolioResponse.setSuccess(false);
-			portfolioResponse.setMessage(errorMsg);
-		}
-		return portfolioResponse;
+	public UserPortfolioController(UserPortfolioService userPortfolioService) {
+		this.userPortfolioService = userPortfolioService;
 	}
 
-	@RequestMapping(value = "/portfolio/getPortfolioSummary", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
-	public @ResponseBody UserPortfolioResponse getPortfolioSummary(
-			@RequestBody UserPortfolioFormParameters portfolioFormParameters) {
-
-		UserPortfolioResponse portfolioResponse = new UserPortfolioResponse();
-		String userId = portfolioFormParameters.getUserId();
-		String portfolioName = portfolioFormParameters.getPortfolioName();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
-		boolean error = false;
-
-		try {
-			if (!(Helper.isNotNullAndNonEmpty(userId) && Helper.isNotNullAndNonEmpty(portfolioName))) {
-				throw new IntelliinvestException("Invalid input. Please check userId and portfolio name.");
-			}
-			Portfolio portfolio = userPortfolioRepository.getPortfolio(userId, portfolioName);
-			userPortfolioRepository.populatePnlForPortfolioItems(portfolio.getPortfolioItems());
-			List<PortfolioItem> portfolioSummary = userPortfolioRepository
-					.getPortfolioSummary(portfolio.getPortfolioItems());
-			portfolioResponse.setPortfolioSummaryItems(portfolioSummary);
-		} catch (Exception e) {
-			errorMsg = e.getMessage();
-			logger.error("Exception inside getPortfolioSummary() " + errorMsg);
-			error = true;
-		}
-		portfolioResponse.setUserId(userId);
-		portfolioResponse.setPortfolioName(portfolioName);
-		if (!error) {
-			portfolioResponse.setSuccess(true);
-			portfolioResponse.setMessage("Portfolio Summary has been retrieved successfully");
-		} else {
-			portfolioResponse.setSuccess(false);
-			portfolioResponse.setMessage(errorMsg);
-		}
-		return portfolioResponse;
+	@RequestMapping(value = "/userPortfolio", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody UserPortfolio getUserPortfolio(@RequestParam("userId") String userId) {
+		return userPortfolioService.getUserPortfolio(userId);
 	}
-
-	@RequestMapping(value = "/portfolio/addPortfolioItemsForCode", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
-	public @ResponseBody UserPortfolioResponse addPortfolioItemsForCode(
-			@RequestBody UserPortfolioFormParameters portfolioFormParameters) {
-
-		UserPortfolioResponse portfolioResponse = new UserPortfolioResponse();
-		String userId = portfolioFormParameters.getUserId();
-		String portfolioName = portfolioFormParameters.getPortfolioName();
-		String portfolioItemCode = portfolioFormParameters.getPortfolioItemCode();
-		List<PortfolioItemRequest> requests = portfolioFormParameters.getPortfolioItems();
-
-		List<PortfolioItem> portfolioItems = new ArrayList<PortfolioItem>();
-		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-		for (PortfolioItemRequest request : requests) {
-			PortfolioItem item = new PortfolioItem();
-			item.setPortfolioItemId(request.getPortfolioItemId());
-			item.setPrice(request.getPrice());
-			item.setCode(request.getCode());
-			item.setDirection(request.getDirection());
-			item.setQuantity(request.getQuantity());
-			item.setTradeDate(LocalDate.parse(request.getTradeDate(), dateFormat));
-			portfolioItems.add(item);
-		}
-
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
-		boolean error = false;
-		try {
-			if (!(Helper.isNotNullAndNonEmpty(userId) && Helper.isNotNullAndNonEmpty(portfolioName)
-					&& Helper.isNotNullAndNonEmpty(portfolioItemCode) && Helper.isNotNullAndNonEmpty(portfolioItems))) {
-				throw new IntelliinvestException(
-						"Invalid input. Please check userId, portfolio name, portfolio item code and portfolio items.");
-			}
-			Portfolio portfolio = userPortfolioRepository.addPortfolioItems(userId, portfolioName, portfolioItems);
-			List<PortfolioItem> portfolioItemsForCode = userPortfolioRepository
-					.getPortfolioItemsForCode(portfolioItemCode, portfolio.getPortfolioItems());
-			userPortfolioRepository.populatePnlForPortfolioItems(portfolioItemsForCode);
-			List<PortfolioItem> portfolioSummary = userPortfolioRepository.getPortfolioSummary(portfolioItemsForCode);
-			portfolioResponse.setPortfolioSummaryItems(portfolioSummary);
-		} catch (Exception e) {
-			errorMsg = e.getMessage();
-			logger.error("Exception inside addPortfolioItemsForCode() " + errorMsg);
-			error = true;
-		}
-		portfolioResponse.setUserId(userId);
-		portfolioResponse.setPortfolioName(portfolioName);
-		if (!error) {
-			portfolioResponse.setSuccess(true);
-			portfolioResponse.setMessage("Portfolio Items have been added successfully");
-		} else {
-			portfolioResponse.setSuccess(false);
-			portfolioResponse.setMessage(errorMsg);
-		}
-		return portfolioResponse;
+	
+	@RequestMapping(value = "/portfolio", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Portfolio getPortfolio(@RequestParam("userId") String userId, @RequestParam("portfolioName") String portfolioName) {
+		return userPortfolioService.getPortfolio(userId, portfolioName);
 	}
-
-	@RequestMapping(value = "/portfolio/getPortfolioItemsByCode", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
-	public @ResponseBody UserPortfolioResponse getPortfolioItemsByCode(
-			@RequestBody UserPortfolioFormParameters portfolioFormParameters) {
-
-		UserPortfolioResponse portfolioResponse = new UserPortfolioResponse();
-		String userId = portfolioFormParameters.getUserId();
-		String portfolioName = portfolioFormParameters.getPortfolioName();
-		String portfolioItemCode = portfolioFormParameters.getPortfolioItemCode();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
-		boolean error = false;
-		try {
-			if (!(Helper.isNotNullAndNonEmpty(userId) && Helper.isNotNullAndNonEmpty(portfolioName)
-					&& Helper.isNotNullAndNonEmpty(portfolioItemCode))) {
-				throw new IntelliinvestException(
-						"Invalid input. Please check userId, portfolio name and portfolio item code.");
-			}
-			Portfolio portfolio = userPortfolioRepository.getPortfolio(userId, portfolioName);
-			List<PortfolioItem> portfolioItemsForCode = userPortfolioRepository
-					.getPortfolioItemsForCode(portfolioItemCode, portfolio.getPortfolioItems());
-			if (!Helper.isNotNullAndNonEmpty(portfolioItemsForCode)) {
-				throw new IntelliinvestException("User does not have portfolio items for portfolio " + portfolioName
-						+ " and code " + portfolioItemCode);
-			}
-			userPortfolioRepository.populatePnlForPortfolioItems(portfolioItemsForCode);
-			portfolioResponse.setPortfolioItems(portfolioItemsForCode);
-		} catch (Exception e) {
-			errorMsg = e.getMessage();
-			logger.error("Exception inside getPortfolioItemsByCode() " + errorMsg);
-			error = true;
-		}
-		portfolioResponse.setUserId(userId);
-		portfolioResponse.setPortfolioName(portfolioName);
-		if (!error) {
-			portfolioResponse.setSuccess(true);
-			portfolioResponse.setMessage("Portfolio Items have been retrieved successfully for portfolio "
-					+ portfolioName + " and code " + portfolioItemCode);
-		} else {
-			portfolioResponse.setSuccess(false);
-			portfolioResponse.setMessage(errorMsg);
-		}
-		return portfolioResponse;
+	
+	@RequestMapping(value = "/portfolioNames", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Collection<String> getPortfolioNames(@RequestParam("userId") String userId) {
+		return userPortfolioService.getPortfolioNames(userId);
 	}
-
-	@RequestMapping(value = "/portfolio/updatePortfolioItemsForCode", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
-	public @ResponseBody UserPortfolioResponse updatePortfolioItemsForCode(
-			@RequestBody UserPortfolioFormParameters portfolioFormParameters) {
-		UserPortfolioResponse portfolioResponse = new UserPortfolioResponse();
-		String userId = portfolioFormParameters.getUserId();
-		String portfolioName = portfolioFormParameters.getPortfolioName();
-		String portfolioItemCode = portfolioFormParameters.getPortfolioItemCode();
-		List<PortfolioItemRequest> requests = portfolioFormParameters.getPortfolioItems();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
-		boolean error = false;
-		List<PortfolioItem> portfolioItems = new ArrayList<PortfolioItem>();
-		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-		for (PortfolioItemRequest request : requests) {
-			PortfolioItem item = new PortfolioItem();
-			item.setPortfolioItemId(request.getPortfolioItemId());
-			item.setPrice(request.getPrice());
-			item.setCode(request.getCode());
-			item.setDirection(request.getDirection());
-			item.setQuantity(request.getQuantity());
-			item.setTradeDate(LocalDate.parse(request.getTradeDate(), dateFormat));
-			portfolioItems.add(item);
-		}
-
-		try {
-			if (!(Helper.isNotNullAndNonEmpty(userId) && Helper.isNotNullAndNonEmpty(portfolioName)
-					&& Helper.isNotNullAndNonEmpty(portfolioItemCode) && Helper.isNotNullAndNonEmpty(portfolioItems))) {
-				throw new IntelliinvestException(
-						"Invalid input. Please check userId, portfolio name, portfolio item code and portfolio items.");
-			}
-			Portfolio portfolio = userPortfolioRepository.updatePortfolioItems(userId, portfolioName, portfolioItems);
-			List<PortfolioItem> portfolioItemsForCode = userPortfolioRepository
-					.getPortfolioItemsForCode(portfolioItemCode, portfolio.getPortfolioItems());
-			userPortfolioRepository.populatePnlForPortfolioItems(portfolioItemsForCode);
-			portfolioResponse.setPortfolioItems(portfolioItemsForCode);
-			List<PortfolioItem> portfolioSummary = userPortfolioRepository.getPortfolioSummary(portfolioItemsForCode);
-			portfolioResponse.setPortfolioSummaryItems(portfolioSummary);
-		} catch (Exception e) {
-			errorMsg = e.getMessage();
-			logger.error("Exception inside updatePortfolioItemsForCode() " + errorMsg);
-			error = true;
-		}
-		portfolioResponse.setUserId(userId);
-		portfolioResponse.setPortfolioName(portfolioName);
-		if (!error) {
-			portfolioResponse.setSuccess(true);
-			portfolioResponse.setMessage("Portfolio Items have been updated successfully");
-		} else {
-			portfolioResponse.setSuccess(false);
-			portfolioResponse.setMessage(errorMsg);
-		}
-		return portfolioResponse;
+	
+	@RequestMapping(value = "/portfolioItems", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Collection<PortfolioItem> getPortfolioItems(@RequestParam("userId") String userId, @RequestParam("portfolioName") String portfolioName) {
+		return userPortfolioService.getPortfolioItems(userId, portfolioName);
 	}
-
-	@RequestMapping(value = "/portfolio/deletePortfolio", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
-	public @ResponseBody UserPortfolioResponse deletePortfolio(
-			@RequestBody UserPortfolioFormParameters portfolioFormParameters) {
-		UserPortfolioResponse portfolioResponse = new UserPortfolioResponse();
-		String userId = portfolioFormParameters.getUserId();
-		String portfolioName = portfolioFormParameters.getPortfolioName();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
-		boolean error = false;
-
-		try {
-			if (!(Helper.isNotNullAndNonEmpty(userId) && Helper.isNotNullAndNonEmpty(portfolioName))) {
-				throw new IntelliinvestException("Invalid input. Please check userId and portfolio name.");
-			}
-			userPortfolioRepository.deletePortfolio(userId, portfolioName);
-		} catch (Exception e) {
-			errorMsg = e.getMessage();
-			logger.error("Exception inside deletePortfolio() " + errorMsg);
-			error = true;
-		}
-		portfolioResponse.setUserId(userId);
-		portfolioResponse.setPortfolioName(portfolioName);
-		if (!error) {
-			portfolioResponse.setSuccess(true);
-			portfolioResponse.setMessage("Portfolio has been deleted successfully");
-		} else {
-			portfolioResponse.setSuccess(false);
-			portfolioResponse.setMessage(errorMsg);
-		}
-		return portfolioResponse;
+	
+	@RequestMapping(value = "/userPortfolio", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody UserPortfolio addUserPortfolio(@RequestParam("userId") String userId) {
+		return userPortfolioService.addUserPortfolio(userId);
 	}
-
-	@RequestMapping(value = "/portfolio/deletePortfolioItemsForCode", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
-	public @ResponseBody UserPortfolioResponse deletePortfolioItemsForCode(
-			@RequestBody UserPortfolioFormParameters portfolioFormParameters) {
-		UserPortfolioResponse portfolioResponse = new UserPortfolioResponse();
-		String userId = portfolioFormParameters.getUserId();
-		String portfolioName = portfolioFormParameters.getPortfolioName();
-		String portfolioItemCode = portfolioFormParameters.getPortfolioItemCode();
-		List<PortfolioItemRequest> requests = portfolioFormParameters.getPortfolioItems();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
-		boolean error = false;
-		List<PortfolioItem> portfolioItems = new ArrayList<PortfolioItem>();
-		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-		for (PortfolioItemRequest request : requests) {
-			PortfolioItem item = new PortfolioItem();
-			item.setPortfolioItemId(request.getPortfolioItemId());
-			item.setPrice(request.getPrice());
-			item.setCode(request.getCode());
-			item.setDirection(request.getDirection());
-			item.setQuantity(request.getQuantity());
-			if (request.getTradeDate() != null) {
-				item.setTradeDate(LocalDate.parse(request.getTradeDate(), dateFormat));
-			}
-			portfolioItems.add(item);
-		}
-
-		try {
-			if (!(Helper.isNotNullAndNonEmpty(userId) && Helper.isNotNullAndNonEmpty(portfolioName)
-					&& Helper.isNotNullAndNonEmpty(portfolioItemCode) && Helper.isNotNullAndNonEmpty(portfolioItems))) {
-				throw new IntelliinvestException(
-						"Invalid input. Please check userId, portfolio name, portfolio item code and portfolio items.");
-			}
-			Portfolio portfolio = userPortfolioRepository.deletePortfolioItems(userId, portfolioName, portfolioItems);
-			List<PortfolioItem> portfolioItemsForCode = userPortfolioRepository
-					.getPortfolioItemsForCode(portfolioItemCode, portfolio.getPortfolioItems());
-			userPortfolioRepository.populatePnlForPortfolioItems(portfolioItemsForCode);
-			portfolioResponse.setPortfolioItems(portfolioItemsForCode);
-			List<PortfolioItem> portfolioSummary = userPortfolioRepository.getPortfolioSummary(portfolioItemsForCode);
-			portfolioResponse.setPortfolioSummaryItems(portfolioSummary);
-		} catch (Exception e) {
-			errorMsg = e.getMessage();
-			logger.error("Exception inside deletePortfolioItemsForCode() " + errorMsg);
-			error = true;
-		}
-		portfolioResponse.setUserId(userId);
-		portfolioResponse.setPortfolioName(portfolioName);
-		if (!error) {
-			portfolioResponse.setSuccess(true);
-			portfolioResponse.setMessage("Portfolio Items have been deleted successfully");
-		} else {
-			portfolioResponse.setSuccess(false);
-			portfolioResponse.setMessage(errorMsg);
-		}
-		return portfolioResponse;
+	
+	@RequestMapping(value = "/portfolio", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Portfolio addPortfolio(@RequestParam("userId") String userId, @RequestParam("portfolioName") String portfolioName) {
+		return userPortfolioService.addPortfolio(userId, portfolioName);
+	}
+	
+	@RequestMapping(value = "/portfolioItem", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Collection<PortfolioItem> addPortfolioItem(@RequestParam("userId") String userId, @RequestParam("portfolioName") String portfolioName, @RequestBody PortfolioItem portfolioItem) {
+		return userPortfolioService.addPortfolioItem(userId, portfolioName, portfolioItem);
+	}
+	
+	@RequestMapping(value = "/portfolioItems", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Collection<PortfolioItem> addPortfolioItems(@RequestParam("userId") String userId, @RequestParam("portfolioName") String portfolioName, @RequestBody Collection<PortfolioItem> portfolioItems) {
+		return userPortfolioService.addPortfolioItems(userId, portfolioName, portfolioItems);
+	}
+	
+	@RequestMapping(value = "/portfolioName", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Portfolio updatePortfolioName(@RequestParam("userId") String userId, @RequestParam("oldPortfolioName") String oldPortfolioName, @RequestParam("newPortfolioName") String newPortfolioName) {
+		return userPortfolioService.updatePortfolioName(userId, oldPortfolioName, newPortfolioName);
+	}
+	
+	@RequestMapping(value = "/portfolio", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Portfolio updatePortfolio(@RequestParam("userId") String userId, @RequestBody Portfolio portfolio) {
+		return userPortfolioService.updatePortfolio(userId, portfolio);
+	}
+	
+	@RequestMapping(value = "/portfolioItem", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Collection<PortfolioItem> updatePortfolioItem(@RequestParam("userId") String userId, @RequestParam("portfolioName") String portfolioName, @RequestBody PortfolioItem portfolioItem) {
+		return userPortfolioService.updatePortfolioItem(userId, portfolioName, portfolioItem);
+	}
+	
+	@RequestMapping(value = "/portfolioItems", method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Collection<PortfolioItem> updatePortfolioItems(@RequestParam("userId") String userId, @RequestParam("portfolioName") String portfolioName, @RequestBody Collection<PortfolioItem> portfolioItems) {
+		return userPortfolioService.updatePortfolioItems(userId, portfolioName, portfolioItems);
+	}
+	
+	@RequestMapping(value = "/userPortfolio", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Status deleteUserPortfolio(@RequestParam("userId") String userId) {
+		userPortfolioService.deleteUserPortfolio(userId);
+		return Status.STATUS_SUCCESS;
+	}
+	
+	@RequestMapping(value = "/portfolio", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Status deletePortfolio(@RequestParam("userId") String userId, @RequestParam("portfolioName") String portfolioName) {
+		userPortfolioService.deletePortfolio(userId, portfolioName);
+		return Status.STATUS_SUCCESS;
+	}
+	
+	@RequestMapping(value = "/portfolioItemById", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Collection<PortfolioItem> deletePortfolioItemById(@RequestParam("userId") String userId, @RequestParam("portfolioName") String portfolioName, @RequestParam("portfolioItemId") String portfolioItemId) {
+		return userPortfolioService.deletePortfolioItem(userId, portfolioName, portfolioItemId);
+	}
+	
+	@RequestMapping(value = "/portfolioItem", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Collection<PortfolioItem> deletePortfolioItem(@RequestParam("userId") String userId, @RequestParam("portfolioName") String portfolioName, @RequestBody PortfolioItem portfolioItem) {
+		return userPortfolioService.deletePortfolioItem(userId, portfolioName, portfolioItem);
+	}
+	
+	@RequestMapping(value = "/portfolioItemsByCode", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Collection<PortfolioItem> deletePortfolioItemByCode(@RequestParam("userId") String userId, @RequestParam("portfolioName") String portfolioName, @RequestParam("code") String code) {
+		return userPortfolioService.deletePortfolioItemByCode(userId, portfolioName, code);
+	}
+	
+	@RequestMapping(value = "/portfolioItemsInCode", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Collection<PortfolioItem> deletePortfolioItemsInCode(@RequestParam("userId") String userId, @RequestParam("portfolioName") String portfolioName, @RequestParam("code") String code, @RequestBody Collection<PortfolioItem> portfolioItems) {
+		return userPortfolioService.deletePortfolioItemsInCode(userId, portfolioName, code, portfolioItems);
+	}
+	
+	@RequestMapping(value = "/userPortfolio/summary", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Map<String, Collection<PortfolioItem>> getUserPortfolioSummary(@RequestParam("userId") String userId) {
+		return userPortfolioService.getUserPortfolioSummary(userId);
+	}
+	
+	@RequestMapping(value = "/portfolio/summary", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody Collection<PortfolioItem> getPortfolioSummary(@RequestParam("userId") String userId, @RequestParam("portfolioName") String portfolioName) {
+		return userPortfolioService.getPortfolioSummary(userId, portfolioName);
 	}
 }

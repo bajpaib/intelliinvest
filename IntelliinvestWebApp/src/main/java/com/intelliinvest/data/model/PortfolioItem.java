@@ -3,24 +3,25 @@ package com.intelliinvest.data.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.intelliinvest.util.JsonDateDeserializer;
 import com.intelliinvest.util.JsonDateSerializer;
 
-@JsonAutoDetect
 public class PortfolioItem implements Serializable {
+	private static final long serialVersionUID = 1L;
 	@Id
-	private String portfolioItemId;
+	private String portfolioItemId = new ObjectId().toString();
 	private String code;
 	private double price;
 	private int quantity;
 	private String direction;
-	@DateTimeFormat(iso = ISO.DATE)
+	@JsonSerialize(using=JsonDateSerializer.class)
+	@JsonDeserialize(using=JsonDateDeserializer.class)
 	private LocalDate tradeDate;
 	@Transient
 	private int remainingQuantity;
@@ -42,6 +43,16 @@ public class PortfolioItem implements Serializable {
 	public PortfolioItem() {
 		super();
 	}
+
+	public PortfolioItem(String code, double price, int quantity, String direction, LocalDate tradeDate) {
+		super();
+		this.code = code;
+		this.price = price;
+		this.quantity = quantity;
+		this.direction = direction;
+		this.tradeDate = tradeDate;
+	}
+
 
 	public PortfolioItem(String portfolioItemId, String code, double price, int quantity, int remainingQuantity,
 			String direction, LocalDate tradeDate, double realisedPnl, double cp, double currentPrice, double amount,
@@ -111,7 +122,6 @@ public class PortfolioItem implements Serializable {
 		this.direction = direction;
 	}
 
-	@JsonSerialize(using = JsonDateSerializer.class)
 	public LocalDate getTradeDate() {
 		return tradeDate;
 	}
@@ -176,6 +186,10 @@ public class PortfolioItem implements Serializable {
 		this.todaysPnl = todaysPnl;
 	}
 
+	@Override
+	public int hashCode() {
+		return portfolioItemId.hashCode();
+	}
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

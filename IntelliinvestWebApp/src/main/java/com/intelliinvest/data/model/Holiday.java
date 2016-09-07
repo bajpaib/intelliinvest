@@ -8,11 +8,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.intelliinvest.util.JsonDateSerializer;
+
 @Document(collection = "HOLIDAY_CALENDAR")
 public class Holiday implements Serializable {
 
+	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@DateTimeFormat(iso = ISO.DATE)
+	@JsonSerialize(using=JsonDateSerializer.class)
 	private LocalDate date;
 	private String desc;
 

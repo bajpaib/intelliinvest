@@ -1,0 +1,757 @@
+{
+	"id": "18933bc1-d1ed-392e-1b14-dc828e2b3d5c",
+	"name": "intelliinvest - user",
+	"description": "",
+	"order": [
+		"1cc46677-6011-3f64-d0d8-38d4bd0eca76",
+		"61cffbc1-196e-a36b-1f05-a4f081d5377e",
+		"48c884d3-9a32-d5c7-29b9-f1f15a516c5d",
+		"f9a8db55-04c9-6d6c-e526-91e995057074",
+		"1bdbe9c0-123e-ee8e-df7f-a82ae538ecac",
+		"adfd5140-d861-6042-5732-c2b8e6e90e1c",
+		"601b10d4-3bed-f8b0-5393-2603eb9a25b5",
+		"afb96c45-d2a6-e0d4-47ab-7a3717a129fd"
+	],
+	"folders": [],
+	"timestamp": 1472593173602,
+	"owner": 0,
+	"public": false,
+	"published": false,
+	"requests": [
+		{
+			"id": "1bdbe9c0-123e-ee8e-df7f-a82ae538ecac",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/user/forgot/password?userId=raja.rengasamy@gmail.com",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "18933bc1-d1ed-392e-1b14-dc828e2b3d5c",
+			"data": [],
+			"dataMode": "raw",
+			"name": "forgotPassword",
+			"description": "forgotPassword",
+			"descriptionFormat": "html",
+			"time": 1472594185083,
+			"version": 2,
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 3551,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"status\":\"SUCCESS\",\"message\":\"Reset password for user raja.rengasamy@gmail.com successful. Please chack mail for new password.\"}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "5462d195-2e9b-2856-94ef-74c4fe632377",
+					"name": "forgotPassword-res",
+					"request": {
+						"url": "http://localhost:8080/rest/user/forgot/password?userId=raja.rengasamy@gmail.com",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "{\n    \"userId\":\"raja.rengasamy@gmail.com\",\n    \"username\":\"raja\",\n    \"phone\":\"8898352003\",\n    \"password\":\"raja123\"\n}",
+						"method": "POST",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\n    \"userId\":\"raja.rengasamy@gmail.com\",\n    \"username\":\"raja\",\n    \"phone\":\"8898352003\",\n    \"password\":\"raja123\"\n}"
+		},
+		{
+			"id": "1cc46677-6011-3f64-d0d8-38d4bd0eca76",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/user/register",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "18933bc1-d1ed-392e-1b14-dc828e2b3d5c",
+			"data": [],
+			"dataMode": "raw",
+			"name": "register",
+			"description": "register",
+			"descriptionFormat": "html",
+			"time": 1472593516150,
+			"version": 2,
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 5334,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"status\":\"SUCCESS\",\"message\":\"User with userId raja.rengasamy@gmail.com registered successfully. Please check activation mail before login.\"}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "20f9c7c9-1ef1-21f0-b11b-c1fc47b0f885",
+					"name": "register-res",
+					"request": {
+						"url": "http://localhost:8080/rest/user/register",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "{\n    \"userId\":\"raja.rengasamy@gmail.com\",\n    \"username\":\"raja\",\n    \"phone\":\"8898352003\",\n    \"password\":\"raja123\"\n}",
+						"method": "POST",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\n    \"userId\":\"raja.rengasamy@gmail.com\",\n    \"username\":\"raja\",\n    \"phone\":\"8898352003\",\n    \"password\":\"raja123\"\n}"
+		},
+		{
+			"id": "48c884d3-9a32-d5c7-29b9-f1f15a516c5d",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/user/login?userId=raja.rengasamy@gmail.com&password=raja123",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "18933bc1-d1ed-392e-1b14-dc828e2b3d5c",
+			"data": [],
+			"dataMode": "raw",
+			"name": "login",
+			"description": "login",
+			"descriptionFormat": "html",
+			"time": 1472593938733,
+			"version": 2,
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 56,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"status\":\"SUCCESS\",\"message\":\"Login for user raja.rengasamy@gmail.com successful\"}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "4e198a9c-72c0-ee1e-873e-62093d2e22cf",
+					"name": "login-res",
+					"request": {
+						"url": "http://localhost:8080/rest/user/login?userId=raja.rengasamy@gmail.com&password=raja123",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "{\n    \"userId\":\"raja.rengasamy@gmail.com\",\n    \"username\":\"raja\",\n    \"phone\":\"8898352003\",\n    \"password\":\"raja123\"\n}",
+						"method": "POST",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\n    \"userId\":\"raja.rengasamy@gmail.com\",\n    \"username\":\"raja\",\n    \"phone\":\"8898352003\",\n    \"password\":\"raja123\"\n}"
+		},
+		{
+			"id": "601b10d4-3bed-f8b0-5393-2603eb9a25b5",
+			"headers": "",
+			"url": "http://localhost:8080/rest/user?userId=raja.rengasamy@gmail.com",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "18933bc1-d1ed-392e-1b14-dc828e2b3d5c",
+			"data": [],
+			"dataMode": "raw",
+			"name": "user",
+			"description": "user",
+			"descriptionFormat": "html",
+			"time": 1473096192810,
+			"version": 2,
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 66,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"userId\":\"raja.rengasamy@gmail.com\",\"username\":\"raja\",\"phone\":\"8898352004\",\"password\":\"37f877354f221a13\",\"plan\":\"DEFAULT_10\",\"userType\":\"User\",\"active\":\"Y\",\"activationCode\":\"ACT24644\",\"loggedIn\":true,\"sendNotification\":true,\"renewalDate\":\"2016-09-05\",\"expiryDate\":\"2016-10-05\",\"lastLoginDate\":\"2016-09-05 20:24:08 GMT\",\"createDate\":\"2016-09-05\",\"updateDate\":\"2016-09-05 20:24:14 GMT\"}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "feafd3b7-95c3-acf3-ae66-ac17b24af4ef",
+					"name": "user-res",
+					"request": {
+						"url": "http://localhost:8080/rest/user?userId=raja.rengasamy@gmail.com",
+						"headers": [],
+						"data": "{\n    \"userId\":\"raja.rengasamy@gmail.com\",\n    \"username\":\"raja\",\n    \"phone\":\"8898352003\",\n    \"password\":\"raja123\"\n}",
+						"method": "GET",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\n    \"userId\":\"raja.rengasamy@gmail.com\",\n    \"username\":\"raja\",\n    \"phone\":\"8898352003\",\n    \"password\":\"raja123\"\n}"
+		},
+		{
+			"id": "61cffbc1-196e-a36b-1f05-a4f081d5377e",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/user/activate?userId=raja.rengasamy@gmail.com&activationCode=ACT01294",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1472595060126,
+			"name": "activate",
+			"description": "activate",
+			"collectionId": "18933bc1-d1ed-392e-1b14-dc828e2b3d5c",
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 76,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"status\":\"SUCCESS\",\"message\":\"Activated account for userId raja.rengasamy@gmail.com successfully\"}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "5916cabe-f495-f115-e5b8-fd9ce372205c",
+					"name": "activate-res",
+					"request": {
+						"url": "http://localhost:8080/rest/user/activate?userId=raja.rengasamy@gmail.com&activationCode=ACT24644",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "",
+						"method": "POST",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"rawModeData": ""
+		},
+		{
+			"id": "adfd5140-d861-6042-5732-c2b8e6e90e1c",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/user/update?userId=raja.rengasamy@gmail.com&userName=raja&phone=8898352004&sendNotification=true&oldPassword=INI86863&password=raja123",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "POST",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1473107038481,
+			"name": "update",
+			"description": "update",
+			"collectionId": "18933bc1-d1ed-392e-1b14-dc828e2b3d5c",
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 77,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"status\":\"SUCCESS\",\"message\":\"User details updated successfully\"}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "eee3dae4-e9ee-277f-d260-a42004433fe4",
+					"name": "update-res",
+					"request": {
+						"url": "http://localhost:8080/rest/user/update?userId=raja.rengasamy@gmail.com&userName=raja&phone=8898352004&sendNotification=true&oldPassword=INI86863&password=raja123",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "{\n    \"userId\":\"raja.rengasamy@gmail.com\",\n    \"username\":\"raja\",\n    \"phone\":\"8898352003\",\n    \"password\":\"raja123\"\n}",
+						"method": "POST",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"rawModeData": "{\n    \"userId\":\"raja.rengasamy@gmail.com\",\n    \"username\":\"raja\",\n    \"phone\":\"8898352003\",\n    \"password\":\"raja123\"\n}"
+		},
+		{
+			"id": "afb96c45-d2a6-e0d4-47ab-7a3717a129fd",
+			"headers": "",
+			"url": "http://localhost:8080/rest/users",
+			"preRequestScript": null,
+			"pathVariables": {},
+			"method": "GET",
+			"data": [],
+			"dataMode": "raw",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1472594983678,
+			"name": "users",
+			"description": "users",
+			"collectionId": "18933bc1-d1ed-392e-1b14-dc828e2b3d5c",
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 318,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "[{\"userId\":\"raja.rengasamy@gmail.com\",\"username\":\"raja\",\"phone\":\"8898352004\",\"password\":\"37f877354f221a13\",\"plan\":\"DEFAULT_10\",\"userType\":\"User\",\"active\":\"Y\",\"activationCode\":\"ACT65152\",\"loggedIn\":true,\"sendNotification\":true,\"renewalDate\":\"2016-09-05\",\"expiryDate\":\"2016-10-05\",\"lastLoginDate\":\"2016-09-05 17:27:25 GMT\",\"createDate\":\"2016-09-05\",\"updateDate\":\"2016-09-05 17:27:47 GMT\"}]",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "8c3d1365-37b7-307e-bfbc-8f94017b9873",
+					"name": "users",
+					"request": {
+						"url": "http://localhost:8080/rest/users",
+						"headers": [],
+						"data": "{ \"code\":\"INFY\"}",
+						"method": "GET",
+						"dataMode": "raw"
+					}
+				},
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 293,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "[{\"userId\":\"raja.rengasamy@gmail.com\",\"username\":\"raja\",\"phone\":\"8898352004\",\"password\":\"37f877354f221a13\",\"plan\":\"DEFAULT_10\",\"userType\":\"User\",\"active\":\"Y\",\"activationCode\":\"ACT65152\",\"loggedIn\":true,\"sendNotification\":true,\"renewalDate\":\"2016-09-05\",\"expiryDate\":\"2016-10-05\",\"lastLoginDate\":\"2016-09-05 17:27:25 GMT\",\"createDate\":\"2016-09-05\",\"updateDate\":\"2016-09-05 17:27:47 GMT\"}]",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "847dd36b-6953-bb41-96ea-caab738dfe71",
+					"name": "users",
+					"request": {
+						"url": "http://localhost:8080/rest/users",
+						"headers": [],
+						"data": "{ \"code\":\"INFY\"}",
+						"method": "GET",
+						"dataMode": "raw"
+					}
+				},
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 56,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "[{\"userId\":\"raja.rengasamy@gmail.com\",\"username\":\"raja\",\"phone\":\"8898352004\",\"password\":\"37f877354f221a13\",\"plan\":\"DEFAULT_10\",\"userType\":\"User\",\"active\":\"Y\",\"activationCode\":\"ACT24644\",\"loggedIn\":true,\"sendNotification\":true,\"renewalDate\":\"2016-09-05\",\"expiryDate\":\"2016-10-05\",\"lastLoginDate\":\"2016-09-05 20:24:08 GMT\",\"createDate\":\"2016-09-05\",\"updateDate\":\"2016-09-05 20:24:14 GMT\"}]",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "6494795f-5c35-68ca-4e74-901861530ff8",
+					"name": "users-res",
+					"request": {
+						"url": "http://localhost:8080/rest/users",
+						"headers": [],
+						"data": "{ \"code\":\"INFY\"}",
+						"method": "GET",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"rawModeData": "{ \"code\":\"INFY\"}"
+		},
+		{
+			"id": "f9a8db55-04c9-6d6c-e526-91e995057074",
+			"headers": "Content-Type: application/json\n",
+			"url": "http://localhost:8080/rest/user/logout?userId=raja.rengasamy@gmail.com",
+			"pathVariables": {},
+			"preRequestScript": null,
+			"method": "POST",
+			"collectionId": "18933bc1-d1ed-392e-1b14-dc828e2b3d5c",
+			"data": [],
+			"dataMode": "raw",
+			"name": "logout",
+			"description": "logout",
+			"descriptionFormat": "html",
+			"time": 1472594035437,
+			"version": 2,
+			"responses": [
+				{
+					"status": "",
+					"responseCode": {
+						"code": 200,
+						"name": "OK",
+						"detail": "Standard response for successful HTTP requests. The actual response will depend on the request method used. In a GET request, the response will contain an entity corresponding to the requested resource. In a POST request the response will contain an entity describing or containing the result of the action."
+					},
+					"time": 60,
+					"headers": [
+						{
+							"name": "Content-Type",
+							"key": "Content-Type",
+							"value": "application/json",
+							"description": "The mime type of this content"
+						},
+						{
+							"name": "Server",
+							"key": "Server",
+							"value": "Jetty(8.1.16.v20140903)",
+							"description": "A name for the server"
+						},
+						{
+							"name": "Transfer-Encoding",
+							"key": "Transfer-Encoding",
+							"value": "chunked",
+							"description": "The form of encoding used to safely transfer the entity to the user. Currently defined methods are: chunked, compress, deflate, gzip, identity."
+						}
+					],
+					"cookies": [],
+					"mime": "",
+					"text": "{\"status\":\"SUCCESS\",\"message\":\"Logout for user raja.rengasamy@gmail.com successful\"}",
+					"language": "javascript",
+					"rawDataType": "text",
+					"previewType": "html",
+					"searchResultScrolledTo": -1,
+					"forceNoPretty": false,
+					"write": true,
+					"empty": false,
+					"failed": false,
+					"state": {
+						"size": "normal"
+					},
+					"id": "bd9823a9-714e-2c56-f3a6-ac82cd64e05b",
+					"name": "logout-res",
+					"request": {
+						"url": "http://localhost:8080/rest/user/logout?userId=raja.rengasamy@gmail.com",
+						"headers": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"enabled": true,
+								"description": "The mime type of this content"
+							}
+						],
+						"data": "{\n    \"userId\":\"raja.rengasamy@gmail.com\",\n    \"username\":\"raja\",\n    \"phone\":\"8898352003\",\n    \"password\":\"raja123\"\n}",
+						"method": "POST",
+						"dataMode": "raw"
+					}
+				}
+			],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"rawModeData": "{\n    \"userId\":\"raja.rengasamy@gmail.com\",\n    \"username\":\"raja\",\n    \"phone\":\"8898352003\",\n    \"password\":\"raja123\"\n}"
+		}
+	]
+}

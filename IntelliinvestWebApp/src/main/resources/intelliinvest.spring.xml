@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<mvc:annotation-driven />
+	
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
+		up static resources in the ${webappRoot}/resources directory -->
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+	
+	<import resource="camel-context.xml" />
+
+	<context:component-scan base-package="com.intelliinvest" />
+	
+	<bean id="exporter"
+		class="org.springframework.jmx.export.MBeanExporter">
+		<property name="assembler" ref="assembler" />
+		<property name="namingStrategy" ref="namingStrategy" />
+		<property name="autodetect" value="true" />
+	</bean>
+
+	<bean id="jmxAttributeSource"
+		class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource" />
+
+	<!-- will create management interface using annotation metadata -->
+	<bean id="assembler"
+		class="org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler">
+		<property name="attributeSource" ref="jmxAttributeSource" />
+	</bean>
+
+	<!-- will pick up the ObjectName from the annotation -->
+	<bean id="namingStrategy"
+		class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
+		<property name="attributeSource" ref="jmxAttributeSource" />
+	</bean>
+
+	<bean id="applicationProperties"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreUnresolvablePlaceholders"
+			value="false" />
+		<property name="order" value="1" />
+		<property name="locations">
+			<list>
+				<value>classpath:intelliinvest.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- Seeds -->
+	<bean id="mongoSeedlID" class="com.mongodb.ServerAddress">
+		<constructor-arg type="java.lang.String"
+			name="host" value="${db.host}" />
+		<constructor-arg type="int" name="port"
+			value="${db.port}" />
+	</bean>
+
+	<!-- Credentials -->
+	<bean id="mongoCredentialID" class="com.mongodb.MongoCredential">
+		<constructor-arg name="mechanism"
+			value="#{T(com.mongodb.AuthenticationMechanism).SCRAM_SHA_1}" />
+		<constructor-arg type="java.lang.String"
+			name="userName" value="${db.username}" />
+		<constructor-arg type="java.lang.String"
+			name="source" value="${db.database}" />
+		<constructor-arg type="char[]" name="password"
+			value="${db.password}" />
+	</bean>
+
+	<!-- MongoClient -->
+	<bean id="mongoClientID" class="com.mongodb.MongoClient">
+		<constructor-arg ref="mongoSeedlID" />
+		<constructor-arg ref="mongoCredentialID" />
+	</bean>
+
+	<!-- MongoDbFactory -->
+	<bean id="simpleMongoDbFactoryID"
+		class="org.springframework.data.mongodb.core.SimpleMongoDbFactory">
+		<constructor-arg ref="mongoClientID" />
+		<constructor-arg name="databaseName"
+			value="${db.database}" />
+	</bean>
+
+	<!-- MongoTemplate -->
+	<bean id="mongoTemplate"
+		class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg ref="simpleMongoDbFactoryID" />
+	</bean>
+
+	<!-- Use this post processor to translate any MongoExceptions thrown in 
+		@Repository annotated classes -->
+	<bean
+		class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
+
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<list>
+				<bean
+					class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" />
+			</list>
+		</property>
+	</bean>
+				
+</beans>

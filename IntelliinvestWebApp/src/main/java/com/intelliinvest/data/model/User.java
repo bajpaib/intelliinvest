@@ -6,14 +6,20 @@ import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.intelliinvest.util.JsonDateSerializer;
+import com.intelliinvest.util.JsonDateTimeSerializer;
 
 
-@Document(collection="USER")
+@Document(collection=User.COLLECTION_NAME)
 public class User implements Serializable {
 	
-	@Id private String userId;
+	private static final long serialVersionUID = 1L;
+	public static final String COLLECTION_NAME = "USER";
+	@Id
+	private String userId;
 	private String username;
 	private String phone;
 	private String password;
@@ -23,15 +29,15 @@ public class User implements Serializable {
 	private String activationCode;
 	private boolean loggedIn;
 	private boolean sendNotification;
-	@DateTimeFormat(iso = ISO.DATE)
+	@JsonSerialize(using=JsonDateSerializer.class)
 	private LocalDate renewalDate;
-	@DateTimeFormat(iso = ISO.DATE)
+	@JsonSerialize(using=JsonDateSerializer.class)
 	private LocalDate expiryDate;
-	@DateTimeFormat(iso = ISO.DATE_TIME)
+	@JsonSerialize(using=JsonDateTimeSerializer.class)
 	private LocalDateTime lastLoginDate;
-	@DateTimeFormat(iso = ISO.DATE_TIME)
-	private LocalDateTime createDate;
-	@DateTimeFormat(iso = ISO.DATE_TIME)
+	@JsonSerialize(using=JsonDateSerializer.class)
+	private LocalDate createDate;
+	@JsonSerialize(using=JsonDateTimeSerializer.class)
 	private LocalDateTime updateDate;
 	
 	public User() {
@@ -118,11 +124,11 @@ public class User implements Serializable {
 		this.sendNotification = sendNotification;
 	}
 
-	public LocalDateTime getCreateDate() {
+	public LocalDate getCreateDate() {
 		return createDate;
 	}
 
-	public void setCreateDate(LocalDateTime createDate) {
+	public void setCreateDate(LocalDate createDate) {
 		this.createDate = createDate;
 	}
 

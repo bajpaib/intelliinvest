@@ -5,7 +5,6 @@ import java.util.Properties;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
-import javax.annotation.PostConstruct;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -21,29 +20,35 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimeUtility;
 
-import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
-import com.intelliinvest.common.IntelliInvestStore;
+import com.intelliinvest.common.exception.IntelliInvestException;
+import com.intelliinvest.common.exception.IntelliInvestPropertyHoler;
 import com.sun.mail.util.MailSSLSocketFactory;
 
+@Component
 public class MailUtil {
-	private static Logger logger = Logger.getLogger(MailUtil.class);
+	private static Logger LOGGER = LoggerFactory.getLogger(MailUtil.class);
 	public static final String ERR_INVALID_EMAIL_ADDRESS = "Invalid Email Address: ";
 	public static final String ERR_VALID_BUT_UNSENT_EMAIL_ADDRESS = "Valid but Unsent Email Address: ";
 	public static final String SENT_EMAILED_ADDRESS = "Sent Email Address";
-	@Autowired
-	private DateUtil dateUtil;
+
 	private Session session;
 	private String smptHost;
 	private String sender;
 
-	@PostConstruct
-	public void init() {
+	
+	public MailUtil() {
+		init();
+	}
+	
+	public void init(){
 		try {
-			smptHost = IntelliInvestStore.properties.getProperty("smtp.host");
-			sender = IntelliInvestStore.properties.getProperty("mail.from");
-			String password = IntelliInvestStore.properties.getProperty("mail.password");
+			smptHost = IntelliInvestPropertyHoler.getProperty("smtp.host");
+			sender = IntelliInvestPropertyHoler.getProperty("mail.from");
+			final String password = IntelliInvestPropertyHoler.getProperty("mail.password");
 			MailSSLSocketFactory sf = new MailSSLSocketFactory();
 			sf.setTrustAllHosts(true);
 
@@ -60,14 +65,15 @@ public class MailUtil {
 					try {
 						return new PasswordAuthentication(sender, EncryptUtil.decrypt(password));
 					} catch (Exception e) {
-						logger.error(e.getMessage());
+						LOGGER.error(e.getMessage());
 						throw new RuntimeException("Error while decrypting " + e.getMessage());
 					}
 				}
 			});
 
 		} catch (Exception e) {
-			logger.error("Exception inside MailUtil.init() " + e.getMessage());
+			LOGGER.error("Exception initializing MailUtil " + e.getMessage());
+			throw new IntelliInvestException("Exception initializing MailUtil", e);
 		}
 	}
 
@@ -95,7 +101,7 @@ public class MailUtil {
 			String[] attachment) {
 		boolean returnValue = true;
 		try {
-			// logger.info("Started Sending Email");
+			// LOGGER.info("Started Sending Email");
 			if (session == null) {
 				init();
 			}
@@ -148,21 +154,22 @@ public class MailUtil {
 				}
 			}
 			msg.setContent(mp);
-			msg.setSentDate(dateUtil.getDateFromLocalDateTime());
+			msg.setSentDate(DateUtil.getDateFromLocalDateTime());
 			/*
 			 * Transport trans = session.getTransport("smtp"); trans.connect();
-			 * if (!trans.isConnected()) { logger.error(
+			 * if (!trans.isConnected()) { LOGGER.error(
 			 * "Not able to connect to mail server"); return false; }
 			 */
 			Transport.send(msg);
 			// trans.close();
-			logger.info("Finished Sending Email");
+			LOGGER.info("Finished Sending Email");
+
 		} catch (MessagingException mex) {
-			logger.error("Exception occurred while sending mail ..." + mex.getMessage());
+			LOGGER.error("Exception occurred while sending mail ..." + mex.getMessage());
 			try {
 				Thread.sleep(5);
 			} catch (InterruptedException e) {
-				logger.error("InterruptedException occurred while sending mail ..." + mex.getMessage());
+				LOGGER.error("InterruptedException occurred while sending mail ..." + mex.getMessage());
 				Thread.currentThread().interrupt();
 			}
 			Exception ex = mex;
@@ -178,7 +185,7 @@ public class MailUtil {
 								invalidAddress.append(",");
 							invalidAddress.append(invalid[i]);
 						}
-						logger.error(ERR_INVALID_EMAIL_ADDRESS + ":" + invalidAddress.toString());
+						LOGGER.error(ERR_INVALID_EMAIL_ADDRESS + ":" + invalidAddress.toString());
 					}
 					Address[] validUnsent = sfex.getValidUnsentAddresses();
 					if (validUnsent != null) {
@@ -189,7 +196,7 @@ public class MailUtil {
 								unsentAddress.append(",");
 							unsentAddress.append(validUnsent[i]);
 						}
-						logger.error(ERR_VALID_BUT_UNSENT_EMAIL_ADDRESS + ":" + unsentAddress.toString());
+						LOGGER.error(ERR_VALID_BUT_UNSENT_EMAIL_ADDRESS + ":" + unsentAddress.toString());
 					}
 					Address[] validSent = sfex.getValidSentAddresses();
 					if (validSent != null) {
@@ -199,7 +206,7 @@ public class MailUtil {
 								sentAddress.append(",");
 							sentAddress.append(validSent[i]);
 						}
-						logger.info("Finished Sending Email");
+						LOGGER.info("Finished Sending Email");
 					}
 				}
 				if (ex instanceof MessagingException)
@@ -208,9 +215,9 @@ public class MailUtil {
 					ex = null;
 			} while (ex != null);
 		} catch (UnsupportedEncodingException e) {
-			logger.error("Exception occurred while sending mail ... " + e.getMessage());
+			LOGGER.error("Exception occurred while sending mail ... " + e.getMessage());
 		} catch (Exception e) {
-			logger.error("Error sending mail" + e.getMessage());
+			LOGGER.error("Error sending mail" + e.getMessage());
 		}
 		return returnValue;
 	}

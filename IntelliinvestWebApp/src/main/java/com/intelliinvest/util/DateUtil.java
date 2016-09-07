@@ -7,81 +7,91 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.lang.StringUtils;
 
-import com.intelliinvest.common.IntelliInvestStore;
-import com.intelliinvest.data.dao.HolidayRepository;
+import com.intelliinvest.common.exception.IntelliInvestPropertyHoler;
 
 public class DateUtil {
 
-	@Autowired
-	private HolidayRepository holidayRepository;
-
-	public final ZoneId ZONE_ID = ZoneId.of(IntelliInvestStore.properties.getProperty("default.timezone"));
-
-	public LocalDate getLocalDate() {
+	public static final String DEFAULT_TIME_ZONE = IntelliInvestPropertyHoler.getProperty("default.timezone");
+	public static final ZoneId ZONE_ID = ZoneId.of(DEFAULT_TIME_ZONE);
+	private static String LOCAL_DATE_FORMAT = "yyyy-MM-dd";
+	
+	public static LocalDate getLocalDate(String date){
+		return getLocalDate(date, LOCAL_DATE_FORMAT);
+	}
+	
+	public static LocalDate getLocalDate(String date, String format) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+		if(!StringUtils.isBlank(date)){
+			return LocalDate.parse(date, formatter);
+		}
+		return LocalDate.now(DateUtil.ZONE_ID);
+	}
+	
+	public static LocalDate getLocalDate() {
 		return LocalDate.now(ZONE_ID);
 	}
 
-	public Date getDateFromLocalDate() {
+	public static Date getDateFromLocalDate() {
 		return getDateFromLocalDate(getLocalDate());
 	}
 
-	public LocalDateTime getLocalDateTime() {
+	public static LocalDateTime getLocalDateTime() {
 		return LocalDateTime.now(ZONE_ID);
 	}
 
-	public Date getDateFromLocalDateTime() {
+	public static Date getDateFromLocalDateTime() {
 		return getDateFromLocalDateTime(getLocalDateTime());
 	}
 
-	public DayOfWeek getDayOfWeek() {
+	public static DayOfWeek getDayOfWeek() {
 		return getLocalDate().getDayOfWeek();
 	}
 
-	public LocalDate getNextBusinessDate() {
+	public static LocalDate getNextBusinessDate() {
 		LocalDate localDate = getLocalDate();
 		LocalDate nextBusinessDate = addBusinessDays(localDate, 1);
 		return nextBusinessDate;
 	}
 
-	public LocalDate getLastBusinessDate() {
+	public static LocalDate getLastBusinessDate() {
 		LocalDate localDate = getLocalDate();
 		LocalDate nextBusinessDate = substractBusinessDays(localDate, 1);
 		return nextBusinessDate;
 	}
 
-	public LocalDate getNextBusinessDate(LocalDate date) {
+	public static LocalDate getNextBusinessDate(LocalDate date) {
 		LocalDate nextBusinessDate = addBusinessDays(date, 1);
 		return nextBusinessDate;
 	}
 
-	public LocalDate getLastBusinessDate(LocalDate date) {
+	public static LocalDate getLastBusinessDate(LocalDate date) {
 		LocalDate nextBusinessDate = substractBusinessDays(date, 1);
 		return nextBusinessDate;
 	}
 
 	// Conversion from java.time.LocalDate to java.util.Date
-	public Date getDateFromLocalDate(LocalDate localDate) {
+	public static Date getDateFromLocalDate(LocalDate localDate) {
 		return Date.from(localDate.atStartOfDay().atZone(ZONE_ID).toInstant());
 	}
 
 	// Conversion from java.util.Date to java.time.LocalDate
-	public LocalDate getLocalDateFromDate(Date date) {
+	public static LocalDate getLocalDateFromDate(Date date) {
 		return LocalDateTime.ofInstant(date.toInstant(), ZONE_ID).toLocalDate();
 	}
 
 	// Conversion from java.time.LocalDateTime to java.util.Date
-	public Date getDateFromLocalDateTime(LocalDateTime localDateTime) {
+	public static Date getDateFromLocalDateTime(LocalDateTime localDateTime) {
 		return Date.from(localDateTime.atZone(ZONE_ID).toInstant());
 	}
 
 	// Conversion from java.util.Date to java.time.LocalDateTime
-	public LocalDateTime getLocalDateTimeFromDate(Date date) {
+	public static LocalDateTime getLocalDateTimeFromDate(Date date) {
 		return LocalDateTime.ofInstant(date.toInstant(), ZONE_ID);
 	}
 
-	public LocalDate addBusinessDays(LocalDate date, int workdays) {
+	public static LocalDate addBusinessDays(LocalDate date, int workdays) {
 		if (workdays < 1) {
 			return date;
 		}
@@ -95,7 +105,7 @@ public class DateUtil {
 		return retVal;
 	}
 
-	public LocalDate substractBusinessDays(LocalDate date, int workdays) {
+	public static LocalDate substractBusinessDays(LocalDate date, int workdays) {
 		if (workdays < 1) {
 			return date;
 		}
@@ -109,17 +119,16 @@ public class DateUtil {
 		return retVal;
 	}
 
-	public boolean isBankHoliday(LocalDate date) {
+	public static boolean isBankHoliday(LocalDate date) {
 		// add holiday calendar later
-		if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY
-				|| holidayRepository.isHoliday(date)) {
+		if (date.getDayOfWeek() == DayOfWeek.SATURDAY || date.getDayOfWeek() == DayOfWeek.SUNDAY) {
 			return true;
 		}
 		return false;
 	}
 
 	/* Formatted Date: ddmmyyyy */
-	public int convertToJulian(LocalDate date) {
+	public static int convertToJulian(LocalDate date) {
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("ddMMyyyy");
 		String formattedDate = format.format(date);
 
@@ -164,7 +173,7 @@ public class DateUtil {
 	}
 
 	/*
-	 * public void main(String[] args) { LocalDateTime localDateTime =
+	 * public static void main(String[] args) { LocalDateTime localDateTime =
 	 * getLocalDateTime(); LocalDate localDate = getLocalDate();
 	 * System.out.println("localDateTime:" + localDateTime);
 	 * System.out.println("localDate:" + localDate);
