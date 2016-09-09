@@ -9,6 +9,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.intelliinvest.util.JsonDateSerializer;
+import com.intelliinvest.util.JsonDateTimeSerializer;
+
 @Document(collection = "QUANDL_STOCK_PRICE")
 @CompoundIndexes({
 		@CompoundIndex(name = "QUANDL_STOCK_PRICE_IDX", def = "{'exchange': 1, 'symbol': 1, 'eodDate': -1}") })
@@ -130,6 +134,7 @@ public class QuandlStockPrice {
 		this.tottrdval = tottrdval;
 	}
 
+	@JsonSerialize(using = JsonDateSerializer.class)
 	public LocalDate getEodDate() {
 		return eodDate;
 	}
@@ -138,6 +143,7 @@ public class QuandlStockPrice {
 		this.eodDate = eodDate;
 	}
 
+	@JsonSerialize(using = JsonDateTimeSerializer.class)
 	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
