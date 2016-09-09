@@ -9,6 +9,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.intelliinvest.util.JsonDateSerializer;
+import com.intelliinvest.util.JsonDateTimeSerializer;
+
 /**
  * todayDate (T) dailyForecastDate (T+1) weeklyForecastDate (T+5)
  * monthlyForecastDate (T+20)
@@ -83,6 +87,7 @@ public class ForecastedStockPrice {
 		this.monthlyForecastPrice = monthlyForecastPrice;
 	}
 
+	@JsonSerialize(using = JsonDateSerializer.class)
 	public LocalDate getTodayDate() {
 		return todayDate;
 	}
@@ -91,6 +96,7 @@ public class ForecastedStockPrice {
 		this.todayDate = todayDate;
 	}
 
+	@JsonSerialize(using = JsonDateSerializer.class)
 	public LocalDate getTomorrowForecastDate() {
 		return tomorrowForecastDate;
 	}
@@ -99,6 +105,7 @@ public class ForecastedStockPrice {
 		this.tomorrowForecastDate = tomorrowForecastDate;
 	}
 
+	@JsonSerialize(using = JsonDateSerializer.class)
 	public LocalDate getWeeklyForecastDate() {
 		return weeklyForecastDate;
 	}
@@ -107,6 +114,7 @@ public class ForecastedStockPrice {
 		this.weeklyForecastDate = weeklyForecastDate;
 	}
 
+	@JsonSerialize(using = JsonDateSerializer.class)
 	public LocalDate getMonthlyForecastDate() {
 		return monthlyForecastDate;
 	}
@@ -115,6 +123,7 @@ public class ForecastedStockPrice {
 		this.monthlyForecastDate = monthlyForecastDate;
 	}
 
+	@JsonSerialize(using = JsonDateTimeSerializer.class)
 	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}

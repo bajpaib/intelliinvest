@@ -20,6 +20,7 @@ import com.intelliinvest.data.dao.ForecastedStockPriceRepository;
 import com.intelliinvest.data.dao.QuandlEODStockPriceRepository;
 import com.intelliinvest.data.model.ForecastedStockPrice;
 import com.intelliinvest.data.model.QuandlStockPrice;
+import com.intelliinvest.util.DateUtil;
 import com.intelliinvest.util.Helper;
 import com.intelliinvest.util.MathUtil;
 import com.intelliinvest.web.bo.TimeSeriesResponse;
@@ -32,25 +33,30 @@ public class TimeSeriesController {
 	private QuandlEODStockPriceRepository quandlEODStockPriceRepository;
 	@Autowired
 	private ForecastedStockPriceRepository forecastedStockPriceRepository;
-
+	@Autowired
+	private DateUtil dateUtil;
+	
 	@RequestMapping(value = "/timeseries/getTimeSeriesByCode", method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public @ResponseBody TimeSeriesResponse getTimeSeriesByCode(@RequestParam("code") String code,
-			@RequestParam("date") String dateStr) {
+			@RequestParam("today") String today) {
 		TimeSeriesResponse timeSeriesResponse = new TimeSeriesResponse();
 		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
 		boolean error = false;
-		LocalDate date = null;
-		if (Helper.isNotNullAndNonEmpty(dateStr) && Helper.isNotNullAndNonEmpty(dateStr)) {
+//		LocalDate date = null;
+		if (Helper.isNotNullAndNonEmpty(today) && Helper.isNotNullAndNonEmpty(today)) {
 			try {
 				DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-				date = LocalDate.parse(dateStr, dateFormat);
+				LocalDate date = LocalDate.parse(today, dateFormat);
+				
+				LocalDate lastBusinessDate = dateUtil.substractBusinessDays(date, 1);
+				
 				int years = new Integer(IntelliInvestStore.properties.getProperty("times.series.history.years"))
 						.intValue();
 				int months = new Integer(IntelliInvestStore.properties.getProperty("times.series.history.months"))
 						.intValue();
-				LocalDate startDate = date.minusYears(years).minusMonths(months);
+				LocalDate startDate = lastBusinessDate.minusYears(years).minusMonths(months);
 				List<QuandlStockPrice> stockPrices = quandlEODStockPriceRepository.getStockPricesFromDB(code, startDate,
-						date);
+						lastBusinessDate);
 
 				if (Helper.isNotNullAndNonEmpty(stockPrices)) {
 					stockPrices.sort(new Comparator<QuandlStockPrice>() {
@@ -59,7 +65,7 @@ public class TimeSeriesController {
 
 						}
 					});
-					ForecastedStockPrice price = forecastedStockPriceRepository.getForecastStockPriceFromDB(code, date);
+					ForecastedStockPrice price = forecastedStockPriceRepository.getForecastStockPriceFromDB(code, lastBusinessDate);
 
 					timeSeriesResponse.setCode(code);
 					timeSeriesResponse.setDate(date);

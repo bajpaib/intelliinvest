@@ -99,5 +99,5 @@ Response
 
 5. Retrieve Times Series data for T
 
-http://104.199.186.171/IntelliinvestWebApp/rest/timeseries/getTimeSeriesByCode?code=ACC&date=2016-08-01
+http://104.199.186.171/IntelliinvestWebApp/rest/timeseries/getTimeSeriesByCode?code=ACC&today=2016-08-01
 
