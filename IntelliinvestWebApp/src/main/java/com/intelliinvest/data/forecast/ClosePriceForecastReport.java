@@ -36,7 +36,7 @@ import com.intelliinvest.util.ScheduledThreadPoolHelper;
 @ManagedResource(objectName = "bean:name=ClosePriceForecastReport", description = "ClosePriceForecastReport")
 public class ClosePriceForecastReport {
 
-	private static Logger logger = Logger.getLogger(DailyClosePriceForecaster.class);
+	private static Logger logger = Logger.getLogger(ClosePriceForecastReport.class);
 	@Autowired
 	private StockRepository stockRepository;
 	@Autowired
@@ -85,7 +85,6 @@ public class ClosePriceForecastReport {
 		long initialDelay = duration.getSeconds();
 		ScheduledThreadPoolHelper.getScheduledExecutorService().scheduleAtFixedRate(dailyClosePriceForecastReportTask,
 				initialDelay, 24 * 60 * 60, TimeUnit.SECONDS);
-
 		logger.info("Scheduled dailyClosePriceForecastReportTask");
 	}
 
@@ -154,7 +153,7 @@ public class ClosePriceForecastReport {
 						if (weeklyForecastPrice != null && weeklyForecastPrice.getWeeklyForecastDate().equals(today)) {
 							weeklyForecastedClose = weeklyForecastPrice.getWeeklyForecastPrice();
 							if (!(MathUtil.isNearZero(actualClose) || MathUtil.isNearZero(weeklyForecastedClose))) {
-								weeklyDifference = eodPrice.getClose() - weeklyForecastPrice.getTomorrowForecastPrice();
+								weeklyDifference = eodPrice.getClose() - weeklyForecastPrice.getWeeklyForecastPrice();
 								percentWeeklyDifference = (weeklyDifference * 100) / eodPrice.getClose();
 							}
 						}
@@ -162,17 +161,17 @@ public class ClosePriceForecastReport {
 						double monthlyForecastedClose = 0.0;
 						double monthlyDifference = 0.0;
 						double percentMonthlyDifference = 0.0;
-
 						ForecastedStockPrice monthlyForecastPrice = monthlyForecastedPrices.get(stock.getCode());
 						if (monthlyForecastPrice != null
-								&& monthlyForecastPrice.getWeeklyForecastDate().equals(today)) {
-							monthlyForecastedClose = monthlyForecastPrice.getWeeklyForecastPrice();
+								&& monthlyForecastPrice.getMonthlyForecastDate().equals(today)) {
+							monthlyForecastedClose = monthlyForecastPrice.getMonthlyForecastPrice();
 							if (!(MathUtil.isNearZero(actualClose) || MathUtil.isNearZero(monthlyForecastedClose))) {
 								monthlyDifference = eodPrice.getClose()
-										- monthlyForecastPrice.getTomorrowForecastPrice();
+										- monthlyForecastPrice.getMonthlyForecastPrice();
 								percentMonthlyDifference = (monthlyDifference * 100) / eodPrice.getClose();
 							}
 						}
+
 						LinkedList<String> valuesQueue = new LinkedList<String>();
 						valuesQueue.add(date);
 						valuesQueue.add(stock.getCode());
@@ -188,13 +187,13 @@ public class ClosePriceForecastReport {
 						valuesQueue.add(new Double(MathUtil.round(percentMonthlyDifference)).toString());
 						String valueLine = valuesQueue.toString().replaceAll("\\[|\\]", "");
 						writer.write(valueLine);
-						// System.out.println("Writing Stock Number:" + i + "
-						// valueLine:" + valueLine);
+						// System.out.println("Writing Stock Code valueLine:" +
+						// valueLine);
 						writer.newLine();
 						valuesQueue.clear();
 					} catch (Exception e) {
-						logger.error("Exception while writing DailyClosePriceForecastReportTask for stock:"
-								+ stock.getCode());
+						logger.error(
+								"Exception while writing ClosePriceForecastReportTask for stock:" + stock.getCode());
 					}
 				}
 			} finally {

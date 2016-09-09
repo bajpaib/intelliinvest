@@ -1,4 +1,4 @@
-1. http://130.211.249.92/IntelliinvestWebApp/rest/stock/getStocks
+1. http://localhost/IntelliinvestWebApp/rest/stock/getStocks
 
 Request
 -------
@@ -28,7 +28,7 @@ Response
   }
 ]
 
-2. http://130.211.249.92/IntelliinvestWebApp/rest/stock/getStockPrices
+2. http://localhost/IntelliinvestWebApp/rest/stock/getStockPrices
 
 Request
 -------
@@ -59,7 +59,7 @@ Response
   }
 ]
 
-3. http://130.211.249.92/IntelliinvestWebApp/rest/stock/getStockByCode?stockCode=ACC
+3. http://localhost/IntelliinvestWebApp/rest/stock/getStockByCode?stockCode=ACC
 
 Request
 -------
@@ -78,7 +78,7 @@ Response
   "message": "Stock details have been returned successfully."
 }
 
-4. http://130.211.249.92/IntelliinvestWebApp/rest/stock/getStockPriceByCode?stockCode=ACC
+4. http://localhost/IntelliinvestWebApp/rest/stock/getStockPriceByCode?stockCode=ACC
 Request
 -------
 
@@ -97,7 +97,7 @@ Response
   "message": "StockPrice details have been returned successfully."
 }
 
-5. http://130.211.249.92/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
+5. http://localhost/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
 
 Request
 -------
@@ -137,7 +137,7 @@ Response
   "message": "Portfolio Items have been added successfully"
 }
 
-6. http://130.211.249.92/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
+6. http://localhost/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
 
 Request
 -------
@@ -178,7 +178,7 @@ Response
   "message": "Portfolio Items have been added successfully"
 }
 
-7. http://130.211.249.92/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
+7. http://localhost/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
 
 Request
 -------
@@ -218,7 +218,7 @@ Response
   "message": "Portfolio Items have been added successfully"
 }
 
-8. http://130.211.249.92/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
+8. http://localhost/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
 
 Request
 -------
@@ -259,7 +259,7 @@ Response
   "message": "Portfolio Items have been added successfully"
 }
 
-9. http://130.211.249.92/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
+9. http://localhost/IntelliinvestWebApp/rest/portfolio/addPortfolioItemsForCode
 
 Request
 -------
@@ -299,7 +299,7 @@ Response
   "message": "Portfolio Items have been added successfully"
 }
 
-10. http://130.211.249.92/IntelliinvestWebApp/rest/portfolio/getPortfolioNames
+10. http://localhost/IntelliinvestWebApp/rest/portfolio/getPortfolioNames
 
 Request
 --------
@@ -322,7 +322,7 @@ Response
   "message": "Portfolio Names have been retrieved successfully"
 }
 
-11. http://130.211.249.92/IntelliinvestWebApp/rest/portfolio/getPortfolioItemsByCode
+11. http://localhost/IntelliinvestWebApp/rest/portfolio/getPortfolioItemsByCode
 
 Request
 -------
@@ -377,7 +377,7 @@ Response
   "success": true,
   "message": "Portfolio Items have been retrieved successfully for portfolio portfolio_A and code ACC"
 }
-12. http://130.211.249.92/IntelliinvestWebApp/rest/portfolio/updatePortfolioItemsForCode
+12. http://localhost/IntelliinvestWebApp/rest/portfolio/updatePortfolioItemsForCode
 
 Request
 -------
@@ -451,7 +451,7 @@ Response
   }
   
   
-  13. http://130.211.249.92/IntelliinvestWebApp/rest/portfolio/deletePortfolioItemsForCode
+  13. http://localhost/IntelliinvestWebApp/rest/portfolio/deletePortfolioItemsForCode
   
   Request
   -------
@@ -507,7 +507,7 @@ Response
   "success": true,
   "message": "Portfolio Items have been deleted successfully"
 }
-14. http://130.211.249.92/IntelliinvestWebApp/rest/portfolio/deletePortfolio
+14. http://localhost/IntelliinvestWebApp/rest/portfolio/deletePortfolio
 
 Request
 -------
@@ -529,7 +529,7 @@ Response
   "message": "Portfolio has been deleted successfully"
 }
 
-15. http://130.211.249.92/IntelliinvestWebApp/rest/portfolio/getPortfolioSummary
+15. http://localhost/IntelliinvestWebApp/rest/portfolio/getPortfolioSummary
 
 Request
 -------

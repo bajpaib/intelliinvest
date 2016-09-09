@@ -164,8 +164,7 @@ public class DailyClosePriceForecaster {
 				LocalDate nextBusinessDate = dateUtil.addBusinessDays(today, 1);
 				forecastPrices
 						.add(new ForecastedStockPrice(code, result, 0d, 0d, today, nextBusinessDate, null, null, null));
-				logger.debug("Stock:" + code + ". ForecastPrice:" + result.doubleValue() + ". ForecastDate:"
-						+ nextBusinessDate);
+				logger.debug("Stock:" + code + ". ForecastPrice:" + result.doubleValue() + ". ForecastDate:" + nextBusinessDate);
 			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 				logger.error("InterruptedException in forecastCloseTask for stock:" + code + ". Exception:"

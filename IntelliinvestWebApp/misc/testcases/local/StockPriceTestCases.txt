@@ -1,0 +1,103 @@
+1. http://localhost/IntelliinvestWebApp/rest/stock/getStocks
+
+Request
+-------
+GET
+
+Response
+--------
+
+[
+  {
+    "code": "ACC",
+    "name": "ACC Ltd",
+    "worldStock": false,
+    "niftyStock": true,
+    "updateDate": "2016-07-27",
+    "success": true,
+    "message": null
+  },
+  {
+    "code": "AMBUJACEM",
+    "name": "AMBUJACEM Ltd",
+    "worldStock": false,
+    "niftyStock": true,
+    "updateDate": "2016-07-27",
+    "success": true,
+    "message": null
+  }
+]
+
+2. http://localhost/IntelliinvestWebApp/rest/stock/getStockPrices
+
+Request
+-------
+GET
+
+Response
+--------
+[
+  {
+    "code": "ACC",
+    "cp": 0.3,
+    "currentPrice": 1690.2,
+    "eodPrice": 1685.1,
+    "eodDate": "2016-07-28",
+    "updateDate": "2016-07-29",
+    "success": true,
+    "message": null
+  },
+  {
+    "code": "AMBUJACEM",
+    "cp": -0.06,
+    "currentPrice": 271.4,
+    "eodPrice": 271.55,
+    "eodDate": "2016-07-28",
+    "updateDate": "2016-07-29",
+    "success": true,
+    "message": null
+  }
+]
+
+3. http://localhost/IntelliinvestWebApp/rest/stock/getStockByCode?stockCode=ACC
+
+Request
+-------
+
+GET
+
+Response
+--------
+{
+  "code": "ACC",
+  "name": "ACC Ltd",
+  "worldStock": false,
+  "niftyStock": true,
+  "updateDate": "2016-07-27",
+  "success": true,
+  "message": "Stock details have been returned successfully."
+}
+
+4. http://localhost/IntelliinvestWebApp/rest/stock/getStockPriceByCode?stockCode=ACC
+Request
+-------
+
+GET
+
+Response
+--------
+{
+  "code": "ACC",
+  "cp": 0.3,
+  "currentPrice": 1690.2,
+  "eodPrice": 1685.1,
+  "eodDate": "2016-07-28",
+  "updateDate": "2016-07-29",
+  "success": true,
+  "message": "StockPrice details have been returned successfully."
+}
+
+5. Retrieve Times Series data for T
+
+http://localhost/IntelliinvestWebApp/rest/timeseries/getTimeSeriesByCode?code=ACC&date=2016-08-01
+

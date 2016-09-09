@@ -1,0 +1,25 @@
+PLEASE USE BELOW ONLY IN CASE OF EMERGENCY
+
+1. Generate forecast prices for T+1
+
+http://104.199.186.171/IntelliinvestWebApp/rest/forecast/forecastAndUpdateTomorrowClose?today=2016-08-02
+
+2. Generate forecast prices for T+5
+
+http://104.199.186.171/IntelliinvestWebApp/rest/forecast/forecastAndUpdateWeeklyClose?today=2016-08-02
+
+3. Generate forecast prices for T+20
+
+http://104.199.186.171/IntelliinvestWebApp/rest/forecast/forecastAndUpdateMonthlyClose?today=2016-08-02
+
+4. Retrieve T+1, T+5 and T+5 forecast prices for T for a given stock code
+
+http://104.199.186.171/IntelliinvestWebApp/rest/forecast/getForecastStockPrice?code=ACC&today=2016-08-02
+
+5. Retrieve T+1, T+5 and T+5 forecast prices for T for all stock codes
+
+http://104.199.186.171/IntelliinvestWebApp/rest/forecast/getForecastStockPrice?today=2016-08-02
+
+6. Generate and Email DailyForecastReport for today T
+
+http://104.199.186.171/IntelliinvestWebApp/rest/forecast/generateAndEmailClosePriceForecastReport?today=2016-08-06
