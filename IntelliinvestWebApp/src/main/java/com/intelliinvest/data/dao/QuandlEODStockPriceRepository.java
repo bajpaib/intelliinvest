@@ -28,6 +28,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
+import com.intelliinvest.common.CommonConstParams;
 import com.intelliinvest.common.IntelliinvestException;
 import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.util.DateUtil;
@@ -37,78 +38,16 @@ import com.intelliinvest.util.Helper;
 public class QuandlEODStockPriceRepository {
 	private static Logger logger = Logger.getLogger(QuandlEODStockPriceRepository.class);
 	private static final String COLLECTION_QUANDL_STOCK_PRICE = "QUANDL_STOCK_PRICE";
-	private static final String DEFAULT_EXCHANGE = "NSE";
 
 	@Autowired
 	private MongoTemplate mongoTemplate;
 	@Autowired
 	private DateUtil dateUtil;
-	private Map<QuandlStockPriceKey, QuandlStockPrice> priceCache = new ConcurrentHashMap<QuandlStockPriceKey, QuandlStockPrice>();
+	private Map<String, QuandlStockPrice> priceCache = new ConcurrentHashMap<String, QuandlStockPrice>();
 
 	@PostConstruct
 	public void init() {
 		initialiseCacheFromDB();
-	}
-
-	public class QuandlStockPriceKey {
-		private String exchange;
-		private String symbol;
-
-		QuandlStockPriceKey(String exchange, String symbol) {
-			this.exchange = exchange;
-			this.symbol = symbol;
-		}
-
-		public String getExchange() {
-			return exchange;
-		}
-
-		public String getSymbol() {
-			return symbol;
-		}
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + getOuterType().hashCode();
-			result = prime * result + ((exchange == null) ? 0 : exchange.hashCode());
-			result = prime * result + ((symbol == null) ? 0 : symbol.hashCode());
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			QuandlStockPriceKey other = (QuandlStockPriceKey) obj;
-			if (!getOuterType().equals(other.getOuterType()))
-				return false;
-			if (exchange == null) {
-				if (other.exchange != null)
-					return false;
-			} else if (!exchange.equals(other.exchange))
-				return false;
-			if (symbol == null) {
-				if (other.symbol != null)
-					return false;
-			} else if (!symbol.equals(other.symbol))
-				return false;
-			return true;
-		}
-
-		private QuandlEODStockPriceRepository getOuterType() {
-			return QuandlEODStockPriceRepository.this;
-		}
-
-		@Override
-		public String toString() {
-			return "QuandlStockPriceKey [exchange=" + exchange + ", symbol=" + symbol + "]";
-		}
 	}
 
 	@ManagedOperation(description = "initialiseCacheFromDB")
@@ -116,8 +55,7 @@ public class QuandlEODStockPriceRepository {
 		List<QuandlStockPrice> prices = getLatestStockPricesFromDB();
 		if (Helper.isNotNullAndNonEmpty(prices)) {
 			for (QuandlStockPrice price : prices) {
-				QuandlStockPriceKey key = new QuandlStockPriceKey(price.getExchange(), price.getSymbol());
-				priceCache.put(key, price);
+				priceCache.put(price.getSecurityId(), price);
 			}
 			logger.info("Initialised priceCache from DB in QuandlStockPriceRepository with size " + priceCache.size());
 		} else {
@@ -126,54 +64,39 @@ public class QuandlEODStockPriceRepository {
 		}
 	}
 
-	public QuandlStockPrice getEODStockPrice(String symbol) throws Exception {
-		return getEODStockPrice(symbol, DEFAULT_EXCHANGE);
-	}
-
-	private QuandlStockPrice getEODStockPrice(String symbol, String exchange) throws Exception {
-		QuandlStockPrice price = priceCache.get(new QuandlStockPriceKey(exchange, symbol));
+	public QuandlStockPrice getEODStockPrice(String id) {
+		QuandlStockPrice price = priceCache.get(id);
 		if (price == null) {
-			logger.error("Inside getEODStockPrice() QuandlStockPrice not found in cache for " + symbol);
+			logger.error("Inside getEODStockPrice() QuandlStockPrice not found in cache for " + id);
+			return null;
 		}
 		return price.clone();
 	}
 
-	public QuandlStockPrice getStockPriceFromDB(String symbol, LocalDate eodDate) throws DataAccessException {
-		return getStockPriceFromDB(DEFAULT_EXCHANGE, symbol, eodDate);
+	public Map<String, QuandlStockPrice> getLatestEODStockPrices() throws Exception {
+		Map<String, QuandlStockPrice> retVal = new HashMap<String, QuandlStockPrice>();
+		for (Map.Entry<String, QuandlStockPrice> entry : priceCache.entrySet()) {
+			retVal.put(entry.getKey(), entry.getValue().clone());
+		}
+		return retVal;
 	}
 
-	private QuandlStockPrice getStockPriceFromDB(String exchange, String symbol, LocalDate eodDate)
-			throws DataAccessException {
+	public QuandlStockPrice getStockPriceFromDB(String id, LocalDate eodDate) throws DataAccessException {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("exchange").is(exchange).and("symbol").is(symbol).and("eodDate").is(eodDate));
+		query.addCriteria(Criteria.where("securityId").is(id).and("eodDate").is(eodDate));
 		return mongoTemplate.findOne(query, QuandlStockPrice.class, COLLECTION_QUANDL_STOCK_PRICE);
 	}
 
-	public List<QuandlStockPrice> getStockPricesFromDB(String symbol, LocalDate startDate, LocalDate endDate) {
-		return getStockPricesFromDB(DEFAULT_EXCHANGE, symbol, startDate, endDate);
-	}
-
-	public List<QuandlStockPrice> getStockPricesFromDB(String exchange, String symbol, LocalDate startDate,
-			LocalDate endDate) throws DataAccessException {
-		if (!Helper.isNotNullAndNonEmpty(exchange)) {
-			exchange = DEFAULT_EXCHANGE;
-		}
+	public List<QuandlStockPrice> getStockPricesFromDB(String id, LocalDate startDate, LocalDate endDate)
+			throws DataAccessException {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("exchange").is(exchange).and("symbol").is(symbol).and("eodDate").gte(startDate)
-				.lte(endDate));
+		query.addCriteria(Criteria.where("securityId").is(id).and("eodDate").gte(startDate).lte(endDate));
 		return mongoTemplate.find(query, QuandlStockPrice.class, COLLECTION_QUANDL_STOCK_PRICE);
 	}
 
-	public List<QuandlStockPrice> getStockPricesFromDB(LocalDate eodDate) {
-		return getStockPricesFromDB(DEFAULT_EXCHANGE, eodDate);
-	}
-
-	public List<QuandlStockPrice> getStockPricesFromDB(String exchange, LocalDate eodDate) throws DataAccessException {
-		if (!Helper.isNotNullAndNonEmpty(exchange)) {
-			exchange = DEFAULT_EXCHANGE;
-		}
+	public List<QuandlStockPrice> getStockPricesFromDB(LocalDate eodDate) throws DataAccessException {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("exchange").is(exchange).and("eodDate").is(eodDate));
+		query.addCriteria(Criteria.where("eodDate").is(eodDate));
 		return mongoTemplate.find(query, QuandlStockPrice.class, COLLECTION_QUANDL_STOCK_PRICE);
 	}
 
@@ -181,7 +104,7 @@ public class QuandlEODStockPriceRepository {
 		Map<String, QuandlStockPrice> retVal = new HashMap<String, QuandlStockPrice>();
 		List<QuandlStockPrice> prices = getStockPricesFromDB(date);
 		for (QuandlStockPrice price : prices) {
-			retVal.put(price.getSymbol(), price.clone());
+			retVal.put(price.getSecurityId(), price.clone());
 		}
 		return retVal;
 	}
@@ -190,14 +113,20 @@ public class QuandlEODStockPriceRepository {
 		logger.info("Inside getLatestStockPrices()...");
 		// retrieve record having max eodDate for each stock
 		final Aggregation aggregation = newAggregation(sort(Sort.Direction.DESC, "eodDate"),
-				group("exchange", "symbol").first("eodDate").as("eodDate"))
-						.withOptions(Aggregation.newAggregationOptions().allowDiskUse(true).build());
+				group("securityId").first("securityId").as("securityId").first("eodDate").as("eodDate")
+						.first("exchange").as("exchange").first("series").as("series").first("open").as("open")
+						.first("high").as("high").first("low").as("low").first("close").as("close").first("last")
+						.as("last").first("wap").as("wap").first("tradedQty").as("tradedQty").first("turnover")
+						.as("turnover").first("updateDate").as("updateDate"))
+								.withOptions(Aggregation.newAggregationOptions().allowDiskUse(true).build());
 		AggregationResults<QuandlStockPrice> results = mongoTemplate.aggregate(aggregation,
 				COLLECTION_QUANDL_STOCK_PRICE, QuandlStockPrice.class);
 		List<QuandlStockPrice> retVal = new ArrayList<QuandlStockPrice>();
 
 		for (QuandlStockPrice price : results.getMappedResults()) {
-			retVal.add(getStockPriceFromDB(price.getExchange(), price.getSymbol(), price.getEodDate()));
+			// retVal.add(getStockPriceFromDB(price.getSecurityId(),
+			// price.getEodDate()));
+			retVal.add(price);
 		}
 		return retVal;
 	}
@@ -205,40 +134,53 @@ public class QuandlEODStockPriceRepository {
 	public void updateEODStockPrices(List<QuandlStockPrice> quandlPrices) throws IntelliinvestException {
 		logger.info("Inside updateQuandlStockPrices()...");
 		BulkOperations operation = mongoTemplate.bulkOps(BulkMode.UNORDERED, QuandlStockPrice.class);
-		for (QuandlStockPrice price : quandlPrices) {
-			Query query = new Query();
-			query.addCriteria(Criteria.where("exchange").is(price.getExchange()).and("symbol").is(price.getSymbol())
-					.and("eodDate").is(dateUtil.getDateFromLocalDate(price.getEodDate())));
-			Update update = new Update();
-			update.set("exchange", price.getExchange());
-			update.set("symbol", price.getSymbol());
-			update.set("series", price.getSeries());
-			update.set("open", price.getOpen());
-			update.set("high", price.getHigh());
-			update.set("low", price.getLow());
-			update.set("close", price.getClose());
-			update.set("last", price.getLast());
-			update.set("tottrdqty", price.getTottrdqty());
-			update.set("tottrdval", price.getTottrdval());
-			update.set("eodDate", dateUtil.getDateFromLocalDate(price.getEodDate()));
-			update.set("updateDate", dateUtil.getDateFromLocalDateTime(dateUtil.getLocalDateTime()));
-			operation.upsert(query, update);
+
+		// Batch inserts
+		int start = -1000;
+		int end = 0;
+		while (end < quandlPrices.size()) {
+			start = start + 1000;
+			end = end + 1000;
+			if (end > quandlPrices.size()) {
+				end = quandlPrices.size();
+			}
+			List<QuandlStockPrice> quandlPricesTemp = quandlPrices.subList(start, end);
+
+			for (QuandlStockPrice price : quandlPricesTemp) {
+				Query query = new Query();
+				query.addCriteria(Criteria.where("securityId").is(price.getSecurityId()).and("eodDate")
+						.is(dateUtil.getDateFromLocalDate(price.getEodDate())));
+				Update update = new Update();
+				update.set("securityId", price.getSecurityId());
+				update.set("exchange", price.getExchange());
+				update.set("series", price.getSeries());
+				update.set("open", price.getOpen());
+				update.set("high", price.getHigh());
+				update.set("low", price.getLow());
+				update.set("close", price.getClose());
+				update.set("last", price.getLast());
+				update.set("wap", price.getWap());
+				update.set("tradedQty", price.getTradedQty());
+				update.set("turnover", price.getTurnover());
+				update.set("eodDate", dateUtil.getDateFromLocalDate(price.getEodDate()));
+				update.set("updateDate", dateUtil.getDateFromLocalDateTime(price.getUpdateDate()));
+				operation.upsert(query, update);
+			}
+			operation.execute();
 		}
-		operation.execute();
 	}
 
 	public void updateCache(List<QuandlStockPrice> quandlPrices) {
 		// update priceCache with latest price
 		for (QuandlStockPrice price : quandlPrices) {
-			QuandlStockPriceKey key = new QuandlStockPriceKey(price.getExchange(), price.getSymbol());
-			priceCache.put(key, price);
+			priceCache.put(price.getSecurityId(), price);
 		}
 	}
 
 	@ManagedOperation(description = "getEODStockPriceFromCache")
-	public String getEODStockPriceFromCache(String symbol) {
+	public String getEODStockPriceFromCache(String id) {
 		try {
-			QuandlStockPrice price = getEODStockPrice(symbol);
+			QuandlStockPrice price = getEODStockPrice(id);
 			if (price != null) {
 				return price.toString();
 			} else {
@@ -252,7 +194,7 @@ public class QuandlEODStockPriceRepository {
 	@ManagedOperation(description = "dumpEODPriceCache")
 	public String dumpEODPriceCache() {
 		StringBuilder builder = new StringBuilder();
-		for (Map.Entry<QuandlStockPriceKey, QuandlStockPrice> entry : priceCache.entrySet()) {
+		for (Map.Entry<String, QuandlStockPrice> entry : priceCache.entrySet()) {
 			builder.append(entry.getKey().toString());
 			builder.append("=");
 			builder.append(entry.getValue().toString());

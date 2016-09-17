@@ -1,6 +1,5 @@
 package com.intelliinvest.data.model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
@@ -8,16 +7,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.intelliinvest.util.JsonDateTimeSerializer;
+
 @Document(collection = "STOCK_PRICE")
 public class StockPrice {
-
 	@Id
-	private String code;
+	private String securityId;
+	private String exchange;
 	private double cp;
 	private double currentPrice;
-	private double eodPrice;
-	@DateTimeFormat(iso = ISO.DATE)
-	private LocalDate eodDate;
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDateTime updateDate;
 
@@ -25,22 +24,29 @@ public class StockPrice {
 		super();
 	}
 
-	public StockPrice(String code, double cp, double currentPrice, double eodPrice, LocalDate eodDate, LocalDateTime updateDate) {
+	public StockPrice(String securityId, String exchange, double cp, double currentPrice, LocalDateTime updateDate) {
 		super();
-		this.code = code;
+		this.securityId = securityId;
+		this.exchange = exchange;
 		this.cp = cp;
 		this.currentPrice = currentPrice;
-		this.eodPrice = eodPrice;
-		this.eodDate = eodDate;
 		this.updateDate = updateDate;
 	}
 
-	public String getCode() {
-		return code;
+	public String getSecurityId() {
+		return securityId;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setSecurityId(String securityId) {
+		this.securityId = securityId;
+	}
+
+	public String getExchange() {
+		return exchange;
+	}
+
+	public void setExchange(String exchange) {
+		this.exchange = exchange;
 	}
 
 	public double getCp() {
@@ -59,28 +65,21 @@ public class StockPrice {
 		this.currentPrice = currentPrice;
 	}
 
-	public double getEodPrice() {
-		return eodPrice;
-	}
-
-	public void setEodPrice(double eodPrice) {
-		this.eodPrice = eodPrice;
-	}
-
-	public LocalDate getEodDate() {
-		return eodDate;
-	}
-
-	public void setEodDate(LocalDate eodDate) {
-		this.eodDate = eodDate;
-	}
-
+	@JsonSerialize(using = JsonDateTimeSerializer.class)
 	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
 
 	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((securityId == null) ? 0 : securityId.hashCode());
+		return result;
 	}
 
 	@Override
@@ -92,23 +91,24 @@ public class StockPrice {
 		if (getClass() != obj.getClass())
 			return false;
 		StockPrice other = (StockPrice) obj;
-		if (code == null) {
-			if (other.code != null)
+		if (securityId == null) {
+			if (other.securityId != null)
 				return false;
-		} else if (!code.equals(other.code))
+		} else if (!securityId.equals(other.securityId))
 			return false;
 		return true;
 	}
 
+	
 	@Override
 	public String toString() {
-		return "StockPrice [code=" + code + ", cp=" + cp + ", currentPrice=" + currentPrice + ", eodPrice=" + eodPrice
-				+ ", eodDate=" + eodDate + ", updateDate=" + updateDate + "]";
+		return "StockPrice [securityId=" + securityId + ", exchange=" + exchange + ", cp=" + cp + ", currentPrice="
+				+ currentPrice + ", updateDate=" + updateDate + "]";
 	}
 
 	@Override
-	protected StockPrice clone() throws CloneNotSupportedException {
-		return new StockPrice(code, cp, currentPrice, eodPrice, eodDate, updateDate);
+	protected Object clone() throws CloneNotSupportedException {
+		return new StockPrice(securityId, exchange, cp, currentPrice, updateDate);
 	}
 
 }

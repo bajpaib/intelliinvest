@@ -12,7 +12,7 @@ import com.intelliinvest.util.JsonDateSerializer;
 @JsonAutoDetect
 public class TimeSeriesResponse implements Serializable {
 
-	private String code;
+	private String securityId;
 	private LocalDate date;	
 	private List<String> dateSeries = new ArrayList<String>();
 	private List<Double> priceSeries = new ArrayList<Double>();
@@ -23,12 +23,12 @@ public class TimeSeriesResponse implements Serializable {
 		super();
 	}
 
-	public String getCode() {
-		return code;
+	public String getSecurityId() {
+		return securityId;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setSecurityId(String securityId) {
+		this.securityId = securityId;
 	}
 
 	@JsonSerialize(using = JsonDateSerializer.class)
@@ -74,7 +74,7 @@ public class TimeSeriesResponse implements Serializable {
 
 	@Override
 	public String toString() {
-		return "TimeSeriesResponse [code=" + code + ", date=" + date + ", dateSeries=" + dateSeries + ", priceSeries="
+		return "TimeSeriesResponse [securityId=" + securityId + ", date=" + date + ", dateSeries=" + dateSeries + ", priceSeries="
 				+ priceSeries + ", success=" + success + ", message=" + message + "]";
 	}
 }

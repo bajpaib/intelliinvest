@@ -34,10 +34,10 @@ public class ForecastedStockPriceRepository {
 	@Autowired
 	private DateUtil dateUtil;
 
-	public ForecastedStockPrice getForecastStockPriceFromDB(String code, LocalDate todayDate)
+	public ForecastedStockPrice getForecastStockPriceFromDB(String id, LocalDate todayDate)
 			throws DataAccessException {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("code").is(code).and("todayDate").is(todayDate));
+		query.addCriteria(Criteria.where("securityId").is(id).and("todayDate").is(todayDate));
 		return mongoTemplate.findOne(query, ForecastedStockPrice.class, COLLECTION_STOCK_PRICE_FORECAST);
 	}
 
@@ -52,7 +52,7 @@ public class ForecastedStockPriceRepository {
 		List<ForecastedStockPrice> prices = getForecastStockPricesFromDB(todayDate);
 		Map<String, ForecastedStockPrice> retVal = new HashMap<String, ForecastedStockPrice>();
 		for (ForecastedStockPrice price : prices) {
-			retVal.put(price.getCode(), price);
+			retVal.put(price.getSecurityId(), price);
 		}
 		return retVal;
 	}
@@ -64,10 +64,10 @@ public class ForecastedStockPriceRepository {
 				COLLECTION_STOCK_PRICE_FORECAST);
 		for (ForecastedStockPrice price : forecastPrices) {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("code").is(price.getCode()).and("todayDate")
+			query.addCriteria(Criteria.where("securityId").is(price.getSecurityId()).and("todayDate")
 					.is(dateUtil.getDateFromLocalDate(price.getTodayDate())));
 			Update update = new Update();
-			update.set("code", price.getCode());
+			update.set("securityId", price.getSecurityId());
 			switch (forecastType) {
 			case DAILY:
 				update.set("tomorrowForecastDate", dateUtil.getDateFromLocalDate(price.getTomorrowForecastDate()));
@@ -95,13 +95,13 @@ public class ForecastedStockPriceRepository {
 	}
 
 	@ManagedOperation(description = "getForecastStockPrice")
-	@ManagedOperationParameters({ @ManagedOperationParameter(name = "Stock Code", description = "Stock Code"),
+	@ManagedOperationParameters({ @ManagedOperationParameter(name = "Stock Id", description = "Stock Id"),
 			@ManagedOperationParameter(name = "Today Date(yyyy-MM-dd)", description = "Today Date") })
-	public String getForecastStockPrice(String code, String todayDateStr) {
+	public String getForecastStockPrice(String securityId, String todayDateStr) {
 		try {
 			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 			LocalDate todayDate = LocalDate.parse(todayDateStr, dateFormat);
-			ForecastedStockPrice price = getForecastStockPriceFromDB(code, todayDate);
+			ForecastedStockPrice price = getForecastStockPriceFromDB(securityId, todayDate);
 			if (price != null) {
 				return price.toString();
 			} else {

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
+import com.intelliinvest.common.CommonConstParams;
 import com.intelliinvest.common.IntelliInvestStore;
 import com.intelliinvest.data.dao.StockRepository;
 import com.intelliinvest.data.model.Stock;
@@ -31,8 +32,6 @@ public class GoogleLiveStockPriceImporter {
 	private static Logger logger = Logger.getLogger(GoogleLiveStockPriceImporter.class);
 	@Autowired
 	private StockRepository stockRepository;
-	@Autowired
-	private IntelliInvestStore intelliinvestStore;
 	@Autowired
 	private DateUtil dateUtil;
 	private final static String GOOGLE_QUOTE_URL = "https://www.google.com/finance/info?q=#CODE#";
@@ -156,39 +155,64 @@ public class GoogleLiveStockPriceImporter {
 		}
 	}
 
-	public List<StockPrice> getCurrentNonWorldStockPrices(List<Stock> nonWorldStocks) {
+	public List<StockPrice> getCurrentNonWorldStockPrices(List<Stock> nonWorldStocks) {		
+		List<Stock> nseStocks = new ArrayList<Stock>();
+		List<Stock> nonNseStocks = new ArrayList<Stock>();
+		
+		for(Stock stock: nonWorldStocks){
+			if(stock.isNseStock()){
+				nseStocks.add(stock);
+			}else {
+				nonNseStocks.add(stock);
+			}
+		}
+		
 		ArrayList<StockPrice> stockCurrentPriceList = new ArrayList<StockPrice>();
+		
+		//first fetch prices for NSE stocks
 		int start = -10;
 		int end = 0;
-		while (end < nonWorldStocks.size()) {
+		while (end < nseStocks.size()) {
 			start = start + 10;
 			end = end + 10;
-			if (end > nonWorldStocks.size()) {
-				end = nonWorldStocks.size();
+			if (end > nseStocks.size()) {
+				end = nseStocks.size();
 			}
-			stockCurrentPriceList.addAll(getCurrentNonWorldStockPricesForSubList(nonWorldStocks.subList(start, end)));
+			stockCurrentPriceList.addAll(getCurrentNonWorldStockPricesForSubList(nseStocks.subList(start, end),CommonConstParams.EXCHANGE_NSE));
+		}
+		
+		//then fetch prices for BSE stocks
+		start = -10;
+		end = 0;
+		while (end < nonNseStocks.size()) {
+			start = start + 10;
+			end = end + 10;
+			if (end > nonNseStocks.size()) {
+				end = nonNseStocks.size();
+			}
+			stockCurrentPriceList.addAll(getCurrentNonWorldStockPricesForSubList(nonNseStocks.subList(start, end),CommonConstParams.EXCHANGE_BSE));
 		}
 		return stockCurrentPriceList;
 	}
 
-	public List<StockPrice> getCurrentNonWorldStockPricesForSubList(List<Stock> stockDetailDatas) {
+	public List<StockPrice> getCurrentNonWorldStockPricesForSubList(List<Stock> stocks, String exchange) {
 		List<StockPrice> stockCurrentPriceList = new ArrayList<StockPrice>();
 		String codes = "";
+		
 		try {
-			for (Stock stockDetailData : stockDetailDatas) {
-				String code = stockDetailData.getCode();
-				code = "NSE:" + stockDetailData.getCode();
+			for (Stock stock : stocks) {
+				String code = exchange.equals(CommonConstParams.EXCHANGE_NSE) ? CommonConstParams.EXCHANGE_NSE +":" + stock.getNseCode() : CommonConstParams.EXCHANGE_BOM+":" + stock.getBseCode();
 				codes = codes + code + ",";
 			}
 			if (!codes.isEmpty()) {
 				codes = codes.substring(0, codes.lastIndexOf(","));
+				String response = HttpUtil.getFromHttpUrlAsString(GOOGLE_QUOTE_URL.replace("#CODE#", codes.replace("&", "%26")));
+				// System.out.println("Response:" + response);
+				List <StockPrice> prices = getPriceFromJSON(exchange, codes, response);				
+				stockCurrentPriceList.addAll(prices);
 			}
-
-			String response = HttpUtil
-					.getFromHttpUrlAsString(GOOGLE_QUOTE_URL.replace("#CODE#", codes.replace("&", "%26")));
-			stockCurrentPriceList.addAll(getPriceFromJSON("NSE", codes, response));
 		} catch (Exception e) {
-			logger.error("Error fetching stock price in getStockPrice " + codes);
+			logger.error("Error fetching stock price for " + codes);
 			logger.error(e.getMessage());
 		}
 		return stockCurrentPriceList;
@@ -196,9 +220,11 @@ public class GoogleLiveStockPriceImporter {
 
 	private List<StockPrice> getPriceFromJSON(String exchange, String codes, String response) {
 		// System.out.println("Response:" + response);
+//		logger.info("getPriceFromJSON:" + codes + " and exchange:" + exchange);
 		List<StockPrice> stockCurrentPriceList = new ArrayList<StockPrice>();
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 		JSONArray jsonArray = JSONArray.fromObject(response.replaceFirst("//", "").trim());
+//		logger.info("jsonArray.size():" + jsonArray.size() + " and exchange:" + exchange);
 		try {
 			LocalDateTime localDateTime = dateUtil.getLocalDateTime();
 			LocalDateTime oneMonthBefore = localDateTime.minusMonths(1);
@@ -213,27 +239,29 @@ public class GoogleLiveStockPriceImporter {
 					if (oneMonthBefore.isAfter(ltDate)) {
 						throw new RuntimeException("Stale details for " + code);
 					}
-					if ("BOM".equals(exchange)) {
-						String bseCode = code;
-						code = intelliinvestStore.getNSECode(bseCode);
-						// logger.info("getNSECode: from bseCode:" + bseCode + "
-						// to nseCode:" + code);
+
+					String securityId = CommonConstParams.EXCHANGE_NSE.equals(exchange) ? stockRepository.getSecurityIdFromNSECode(code)
+							: stockRepository.getSecurityIdFromBSECode(code);
+					if (Helper.isNotNullAndNonEmpty(securityId)) {
+						stockCurrentPriceList.add(new StockPrice(securityId, exchange, cp, price, ltDate));
+					} else {
+						logger.error("Error updating price. SecurityId mapping not found for code:" + code
+								+ " and exchange:" + exchange);
 					}
-					// logger.info("Adding stock price for code:" + code + " and exchange:" + exchange);
-					stockCurrentPriceList.add(new StockPrice(code, cp, price, 0, null, ltDate));
 				} catch (Exception e1) {
-					if (exchange.equals("NSE")) {
-						// logger.error("Error fetching stock price from " + exchange + " for " + code + ". Trying from BOM now");
-						String bseCode = intelliinvestStore.getBSECode(code);
+					if (exchange.equals(CommonConstParams.EXCHANGE_NSE)) {
+						logger.error("Error fetching stock price from " + exchange + " for " + code
+								+ ". Trying from BSE now");
+						String bseCode = stockRepository.getBSECodeFromNSECode(code);
 						if (bseCode != null) {
 							response = HttpUtil.getFromHttpUrlAsString(
-									GOOGLE_QUOTE_URL.replace("#CODE#", "BOM:" + bseCode.replace("&", "%26")));
-							stockCurrentPriceList.addAll(getPriceFromJSON("BOM", code, response));
+									GOOGLE_QUOTE_URL.replace("#CODE#", CommonConstParams.EXCHANGE_BOM +":" + bseCode.replace("&", "%26")));
+							stockCurrentPriceList.addAll(getPriceFromJSON(CommonConstParams.EXCHANGE_BSE, code, response));
 						} else {
-							// logger.error("bseToNSse mapping not found for " + code);
+							logger.error("Can't fetch price from BSE. nseToBSE mapping not found for " + code);
 						}
 					} else {
-						// logger.error("Error fetching stock price from " + exchange + " for code " + code);
+						logger.error("Error fetching stock price from " + exchange + " for code " + code);
 					}
 				}
 			}
@@ -248,19 +276,19 @@ public class GoogleLiveStockPriceImporter {
 		List<StockPrice> stockCurrentPriceList = new ArrayList<StockPrice>();
 		try {
 			for (Stock stock : worldStocks) {
-				String stockCode = stock.getCode();
+				String securityId = stock.getSecurityId();
 				String response = HttpUtil
-						.getFromHttpUrlAsString(GOOGLE_QUOTE_URL.replace("#CODE#", stockCode.replace("&", "%26")));
+						.getFromHttpUrlAsString(GOOGLE_QUOTE_URL.replace("#CODE#", securityId.replace("&", "%26")));
 				JSONArray jsonArray = JSONArray.fromObject(response.replaceFirst("//", "").trim());
 				for (int j = 0; j < jsonArray.size(); j++) {
 					try {
 						JSONObject stockObject = (JSONObject) jsonArray.get(j);
 						Double price = new Double(stockObject.getString("l_fix").replaceAll(",", ""));
 						Double cp = new Double(stockObject.getString("cp").replaceAll(",", ""));
-						stockCurrentPriceList
-								.add(new StockPrice(stockCode, cp, price, 0, null, dateUtil.getLocalDateTime()));
+						stockCurrentPriceList.add(
+								new StockPrice(stock.getSecurityId(), CommonConstParams.EXCHANGE_BSE, cp, price, dateUtil.getLocalDateTime()));
 					} catch (Exception e) {
-						logger.error("Error fetching stock price for " + stockCode);
+						logger.error("Error fetching stock price for " + securityId);
 						logger.error(e.getMessage());
 					}
 				}

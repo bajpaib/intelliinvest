@@ -8,17 +8,19 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.intelliinvest.util.JsonDateSerializer;
 import com.intelliinvest.util.JsonDateTimeSerializer;
-import com.intelliinvest.util.MathUtil;
 
 @JsonAutoDetect
 public class StockPriceResponse implements Serializable {
 
-	private String code;
+	private String securityId;
 	private double cp;
 	private double currentPrice;
 	private double eodPrice;
 	private LocalDate eodDate;
-	private LocalDateTime updateDate;
+	private String currentPriceExchange;
+	private String eodPriceExchange;
+	private LocalDateTime currentPriceUpdateDate;
+	private LocalDateTime eodPriceUpdateDate;
 	private boolean success;
 	private String message;
 
@@ -26,12 +28,12 @@ public class StockPriceResponse implements Serializable {
 		super();
 	}
 
-	public String getCode() {
-		return code;
+	public String getSecurityId() {
+		return securityId;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setSecurityId(String securityId) {
+		this.securityId = securityId;
 	}
 
 	public double getCp() {
@@ -47,7 +49,7 @@ public class StockPriceResponse implements Serializable {
 	}
 
 	public void setCurrentPrice(double currentPrice) {
-		this.currentPrice = MathUtil.round(currentPrice);
+		this.currentPrice = currentPrice;
 	}
 
 	public double getEodPrice() {
@@ -55,7 +57,7 @@ public class StockPriceResponse implements Serializable {
 	}
 
 	public void setEodPrice(double eodPrice) {
-		this.eodPrice = MathUtil.round(eodPrice);
+		this.eodPrice = eodPrice;
 	}
 
 	@JsonSerialize(using = JsonDateSerializer.class)
@@ -67,13 +69,38 @@ public class StockPriceResponse implements Serializable {
 		this.eodDate = eodDate;
 	}
 
-	@JsonSerialize(using = JsonDateTimeSerializer.class)
-	public LocalDateTime getUpdateDate() {
-		return updateDate;
+	public String getCurrentPriceExchange() {
+		return currentPriceExchange;
 	}
 
-	public void setUpdateDate(LocalDateTime updateDate) {
-		this.updateDate = updateDate;
+	public void setCurrentPriceExchange(String currentPriceExchange) {
+		this.currentPriceExchange = currentPriceExchange;
+	}
+
+	public String getEodPriceExchange() {
+		return eodPriceExchange;
+	}
+
+	public void setEodPriceExchange(String eodPriceExchange) {
+		this.eodPriceExchange = eodPriceExchange;
+	}
+
+	@JsonSerialize(using = JsonDateTimeSerializer.class)
+	public LocalDateTime getCurrentPriceUpdateDate() {
+		return currentPriceUpdateDate;
+	}
+
+	public void setCurrentPriceUpdateDate(LocalDateTime currentPriceUpdateDate) {
+		this.currentPriceUpdateDate = currentPriceUpdateDate;
+	}
+
+	@JsonSerialize(using = JsonDateTimeSerializer.class)
+	public LocalDateTime getEodPriceUpdateDate() {
+		return eodPriceUpdateDate;
+	}
+
+	public void setEodPriceUpdateDate(LocalDateTime eodPriceUpdateDate) {
+		this.eodPriceUpdateDate = eodPriceUpdateDate;
 	}
 
 	public boolean isSuccess() {
@@ -91,5 +118,4 @@ public class StockPriceResponse implements Serializable {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-
 }

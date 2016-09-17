@@ -9,20 +9,86 @@ Response
 
 [
   {
-    "code": "ACC",
-    "name": "ACC Ltd",
+    "securityId": "ACC",
+    "bseCode": "500410",
+    "nseCode": "ACC",
+    "name": "ACC LTD.",
+    "isin": "INE012A01025",
+    "industry": "Cement & Cement Products",
     "worldStock": false,
-    "niftyStock": true,
-    "updateDate": "2016-07-27",
+    "niftyStock": false,
+    "nseStock": true,
+    "updateDate": "2016-09-15 05:30:00",
     "success": true,
     "message": null
   },
   {
-    "code": "AMBUJACEM",
-    "name": "AMBUJACEM Ltd",
+    "securityId": "ANDHRAPET",
+    "bseCode": "500012",
+    "nseCode": "",
+    "name": "ANDHRA PETROCHEMICALS LTD.",
+    "isin": "INE714B01016",
+    "industry": "Commodity Chemicals",
     "worldStock": false,
-    "niftyStock": true,
-    "updateDate": "2016-07-27",
+    "niftyStock": false,
+    "nseStock": false,
+    "updateDate": "2016-09-15 05:30:00",
+    "success": true,
+    "message": null
+  },
+  {
+    "securityId": "FGP",
+    "bseCode": "500142",
+    "nseCode": "",
+    "name": "FGP LTD.",
+    "isin": "INE512A01016",
+    "industry": "Finance (including NBFCs)",
+    "worldStock": false,
+    "niftyStock": false,
+    "nseStock": false,
+    "updateDate": "2016-09-15 05:30:00",
+    "success": true,
+    "message": null
+  },
+  {
+    "securityId": "INDEXBOM:SENSEX",
+    "bseCode": "",
+    "nseCode": "",
+    "name": "BSE Sensex",
+    "isin": "",
+    "industry": "",
+    "worldStock": true,
+    "niftyStock": false,
+    "nseStock": false,
+    "updateDate": "2016-09-15 05:30:00",
+    "success": true,
+    "message": null
+  },
+  {
+    "securityId": "NSE:NIFTY",
+    "bseCode": "",
+    "nseCode": "",
+    "name": "NIFTY",
+    "isin": "",
+    "industry": "",
+    "worldStock": true,
+    "niftyStock": false,
+    "nseStock": false,
+    "updateDate": "2016-09-15 05:30:00",
+    "success": true,
+    "message": null
+  },
+  {
+    "securityId": "TATAMOTORS",
+    "bseCode": "500570",
+    "nseCode": "TATAMOTORS",
+    "name": "TATA MOTORS LTD.",
+    "isin": "INE155A01022",
+    "industry": "Commercial Vehicles",
+    "worldStock": false,
+    "niftyStock": false,
+    "nseStock": true,
+    "updateDate": "2016-09-15 05:30:00",
     "success": true,
     "message": null
   }
@@ -38,28 +104,86 @@ Response
 --------
 [
   {
-    "code": "ACC",
-    "cp": 0.3,
-    "currentPrice": 1690.2,
-    "eodPrice": 1685.1,
-    "eodDate": "2016-07-28",
-    "updateDate": "2016-07-29",
+    "securityId": "ACC",
+    "cp": 1.34,
+    "currentPrice": 1632.85,
+    "eodPrice": 1611.2,
+    "eodDate": "2016-09-15",
+    "currentPriceExchange": "NSE",
+    "eodPriceExchange": "NSE",
+    "currentPriceUpdateDate": "2016-09-16 13:22:54",
+    "eodPriceUpdateDate": "2016-09-16 13:32:45",
     "success": true,
     "message": null
   },
   {
-    "code": "AMBUJACEM",
-    "cp": -0.06,
-    "currentPrice": 271.4,
-    "eodPrice": 271.55,
-    "eodDate": "2016-07-28",
-    "updateDate": "2016-07-29",
+    "securityId": "ANDHRAPET",
+    "cp": 9.53,
+    "currentPrice": 16.9,
+    "eodPrice": 15.43,
+    "eodDate": "2016-09-15",
+    "currentPriceExchange": "BSE",
+    "eodPriceExchange": "BSE",
+    "currentPriceUpdateDate": "2016-09-16 13:22:54",
+    "eodPriceUpdateDate": "2016-09-16 13:30:59",
+    "success": true,
+    "message": null
+  },
+  {
+    "securityId": "FGP",
+    "cp": -2.63,
+    "currentPrice": 1.85,
+    "eodPrice": 1.9,
+    "eodDate": "2016-09-15",
+    "currentPriceExchange": "BSE",
+    "eodPriceExchange": "BSE",
+    "currentPriceUpdateDate": "2016-09-16 13:22:54",
+    "eodPriceUpdateDate": "2016-09-16 13:31:00",
+    "success": true,
+    "message": null
+  },
+  {
+    "securityId": "INDEXBOM:SENSEX",
+    "cp": 1.07,
+    "currentPrice": 28718.2,
+    "eodPrice": 0,
+    "eodDate": null,
+    "currentPriceExchange": "BSE",
+    "eodPriceExchange": null,
+    "currentPriceUpdateDate": "2016-09-16 13:22:54",
+    "eodPriceUpdateDate": null,
+    "success": true,
+    "message": null
+  },
+  {
+    "securityId": "NSE:NIFTY",
+    "cp": 0.94,
+    "currentPrice": 8824.7,
+    "eodPrice": 0,
+    "eodDate": null,
+    "currentPriceExchange": "BSE",
+    "eodPriceExchange": null,
+    "currentPriceUpdateDate": "2016-09-16 13:22:54",
+    "eodPriceUpdateDate": null,
+    "success": true,
+    "message": null
+  },
+  {
+    "securityId": "TATAMOTORS",
+    "cp": -0.23,
+    "currentPrice": 556.25,
+    "eodPrice": 557.55,
+    "eodDate": "2016-09-15",
+    "currentPriceExchange": "NSE",
+    "eodPriceExchange": "NSE",
+    "currentPriceUpdateDate": "2016-09-16 13:22:54",
+    "eodPriceUpdateDate": "2016-09-16 13:31:01",
     "success": true,
     "message": null
   }
 ]
 
-3. http://104.199.186.171/IntelliinvestWebApp/rest/stock/getStockByCode?stockCode=ACC
+3. http://104.199.186.171/IntelliinvestWebApp/rest/stock/getStockById?id=ACC
 
 Request
 -------
@@ -69,16 +193,21 @@ GET
 Response
 --------
 {
-  "code": "ACC",
-  "name": "ACC Ltd",
+  "securityId": "ACC",
+  "bseCode": "500410",
+  "nseCode": "ACC",
+  "name": "ACC LTD.",
+  "isin": "INE012A01025",
+  "industry": "Cement & Cement Products",
   "worldStock": false,
-  "niftyStock": true,
-  "updateDate": "2016-07-27",
+  "niftyStock": false,
+  "nseStock": true,
+  "updateDate": "2016-09-15 05:30:00",
   "success": true,
   "message": "Stock details have been returned successfully."
 }
 
-4. http://104.199.186.171/IntelliinvestWebApp/rest/stock/getStockPriceByCode?stockCode=ACC
+4. http://104.199.186.171/IntelliinvestWebApp/rest/stock/getStockPriceById?id=ACC
 Request
 -------
 
@@ -87,12 +216,15 @@ GET
 Response
 --------
 {
-  "code": "ACC",
-  "cp": 0.3,
-  "currentPrice": 1690.2,
-  "eodPrice": 1685.1,
-  "eodDate": "2016-07-28",
-  "updateDate": "2016-07-29",
+  "securityId": "ACC",
+  "cp": 1.34,
+  "currentPrice": 1632.85,
+  "eodPrice": 1611.2,
+  "eodDate": "2016-09-15",
+  "currentPriceExchange": "NSE",
+  "eodPriceExchange": "NSE",
+  "currentPriceUpdateDate": "2016-09-16 13:22:54",
+  "eodPriceUpdateDate": "2016-09-16 13:32:45",
   "success": true,
   "message": "StockPrice details have been returned successfully."
 }
@@ -125,12 +257,12 @@ Response
       "tradeDate": null,
       "remainingQuantity": 100,
       "realisedPnl": 0,
-      "cp": 0.3,
-      "currentPrice": 1690.2,
-      "amount": 169020,
+      "cp": 1.34,
+      "currentPrice": 1632.85,
+      "amount": 163285,
       "totalAmount": 168000,
-      "unrealisedPnl": 1020,
-      "todaysPnl": 505.53
+      "unrealisedPnl": -4715,
+      "todaysPnl": 2159.01
     }
   ],
   "success": true,
@@ -145,8 +277,8 @@ Request
 {
 "userId":"prashant.bajpai@gmail.com",
 "portfolioName":"portfolio_A",
-"portfolioItemCode":"BAJAJ-AUTO",
-"portfolioItems":[{"code":"BAJAJ-AUTO","price":"2720", "quantity": "200","direction":"Sell","tradeDate":"2016-07-29"}]
+"portfolioItemCode":"TATAMOTORS",
+"portfolioItems":[{"code":"TATAMOTORS","price":"2720", "quantity": "200","direction":"Sell","tradeDate":"2016-07-29"}]
 }
 
 
@@ -158,20 +290,20 @@ Response
   "portfolioItems": null,
   "portfolioSummaryItems": [
     {
-      "portfolioItemId": "BAJAJ-AUTO",
-      "code": "BAJAJ-AUTO",
+      "portfolioItemId": "TATAMOTORS",
+      "code": "TATAMOTORS",
       "price": 2720,
       "quantity": 0,
       "direction": "Short",
       "tradeDate": null,
       "remainingQuantity": -200,
       "realisedPnl": 0,
-      "cp": 1.56,
-      "currentPrice": 2702,
-      "amount": -540400,
+      "cp": -0.23,
+      "currentPrice": 556.25,
+      "amount": -111250,
       "totalAmount": 0,
-      "unrealisedPnl": 3600,
-      "todaysPnl": -8300.76
+      "unrealisedPnl": 432750,
+      "todaysPnl": 256.47
     }
   ],
   "success": true,
@@ -186,8 +318,8 @@ Request
 {
 "userId":"prashant.bajpai@gmail.com",
 "portfolioName":"portfolio_B",
-"portfolioItemCode":"AXISBANK",
-"portfolioItems":[{"code":"AXISBANK","price":"160", "quantity": "300","direction":"Buy","tradeDate":"2016-07-29"}]
+"portfolioItemCode":"ANDHRAPET",
+"portfolioItems":[{"code":"ANDHRAPET","price":"160", "quantity": "300","direction":"Buy","tradeDate":"2016-07-29"}]
 }
 
 Response
@@ -198,20 +330,20 @@ Response
   "portfolioItems": null,
   "portfolioSummaryItems": [
     {
-      "portfolioItemId": "AXISBANK",
-      "code": "AXISBANK",
+      "portfolioItemId": "ANDHRAPET",
+      "code": "ANDHRAPET",
       "price": 160,
       "quantity": 300,
       "direction": "Long",
       "tradeDate": null,
       "remainingQuantity": 300,
       "realisedPnl": 0,
-      "cp": 0.35,
-      "currentPrice": 545.75,
-      "amount": 163725,
+      "cp": 9.53,
+      "currentPrice": 16.9,
+      "amount": 5070,
       "totalAmount": 48000,
-      "unrealisedPnl": 115725,
-      "todaysPnl": 571.04
+      "unrealisedPnl": -42930,
+      "todaysPnl": 441.14
     }
   ],
   "success": true,
@@ -226,8 +358,8 @@ Request
 {
 "userId":"prashant.bajpai@gmail.com",
 "portfolioName":"portfolio_B",
-"portfolioItemCode":"BANKBARODA",
-"portfolioItems":[{"code":"BANKBARODA","price":"160", "quantity": "400","direction":"Sell","tradeDate":"2016-07-29"}]
+"portfolioItemCode":"FGP",
+"portfolioItems":[{"code":"FGP","price":"160", "quantity": "400","direction":"Sell","tradeDate":"2016-07-29"}]
 }
 
 
@@ -239,20 +371,20 @@ Response
   "portfolioItems": null,
   "portfolioSummaryItems": [
     {
-      "portfolioItemId": "BANKBARODA",
-      "code": "BANKBARODA",
+      "portfolioItemId": "FGP",
+      "code": "FGP",
       "price": 160,
       "quantity": 0,
       "direction": "Short",
       "tradeDate": null,
       "remainingQuantity": -400,
       "realisedPnl": 0,
-      "cp": -1.78,
-      "currentPrice": 151.75,
-      "amount": -60700,
+      "cp": -2.63,
+      "currentPrice": 1.85,
+      "amount": -740,
       "totalAmount": 0,
-      "unrealisedPnl": 3300,
-      "todaysPnl": 1100.04
+      "unrealisedPnl": 63260,
+      "todaysPnl": 19.99
     }
   ],
   "success": true,
@@ -285,14 +417,14 @@ Response
       "quantity": 100,
       "direction": "Long",
       "tradeDate": null,
-      "remainingQuantity": 50,
-      "realisedPnl": 500,
-      "cp": 0.3,
-      "currentPrice": 1690.2,
-      "amount": 84510,
+      "remainingQuantity": 40,
+      "realisedPnl": 1200,
+      "cp": 1.34,
+      "currentPrice": 1632.85,
+      "amount": 65314,
       "totalAmount": 168000,
-      "unrealisedPnl": 510,
-      "todaysPnl": 252.76
+      "unrealisedPnl": -1886,
+      "todaysPnl": 863.6
     }
   ],
   "success": true,
@@ -310,9 +442,6 @@ Request
 
 Response
 --------
-Response
---------
-
 {
   "userId": "prashant.bajpai@gmail.com",
   "portfolioName": "portfolio_A,portfolio_B",
@@ -341,7 +470,7 @@ Response
   "portfolioName": "portfolio_A",
   "portfolioItems": [
     {
-      "portfolioItemId": "9",
+      "portfolioItemId": "26",
       "code": "ACC",
       "price": 1680,
       "quantity": 100,
@@ -349,15 +478,15 @@ Response
       "tradeDate": "2016-07-29",
       "remainingQuantity": 40,
       "realisedPnl": 0,
-      "cp": 0.3,
-      "currentPrice": 1690.2,
-      "amount": 67608,
+      "cp": 1.34,
+      "currentPrice": 1632.85,
+      "amount": 65314,
       "totalAmount": 168000,
-      "unrealisedPnl": 408,
-      "todaysPnl": 202.21
+      "unrealisedPnl": -1886,
+      "todaysPnl": 863.6
     },
     {
-      "portfolioItemId": "13",
+      "portfolioItemId": "30",
       "code": "ACC",
       "price": 1700,
       "quantity": 60,
@@ -365,8 +494,8 @@ Response
       "tradeDate": "2016-07-28",
       "remainingQuantity": 0,
       "realisedPnl": 1200,
-      "cp": 0.3,
-      "currentPrice": 1690.2,
+      "cp": 1.34,
+      "currentPrice": 1632.85,
       "amount": 0,
       "totalAmount": 102000,
       "unrealisedPnl": 0,
@@ -377,6 +506,7 @@ Response
   "success": true,
   "message": "Portfolio Items have been retrieved successfully for portfolio portfolio_A and code ACC"
 }
+
 12. http://104.199.186.171/IntelliinvestWebApp/rest/portfolio/updatePortfolioItemsForCode
 
 Request
@@ -386,7 +516,7 @@ Request
 "userId":"prashant.bajpai@gmail.com",
 "portfolioName":"portfolio_A",
 "portfolioItemCode":"ACC",
-"portfolioItems":[{"portfolioItemId": "13","code":"ACC","price":"1690", "quantity": "50","direction":"Sell","tradeDate":"2016-07-28"}]
+"portfolioItems":[{"portfolioItemId": "30","code":"ACC","price":"1690", "quantity": "50","direction":"Sell","tradeDate":"2016-07-28"}]
 }
 
 Response
@@ -396,7 +526,7 @@ Response
   "portfolioName": "portfolio_A",
   "portfolioItems": [
     {
-      "portfolioItemId": "9",
+      "portfolioItemId": "26",
       "code": "ACC",
       "price": 1680,
       "quantity": 100,
@@ -404,15 +534,15 @@ Response
       "tradeDate": "2016-07-29",
       "remainingQuantity": 50,
       "realisedPnl": 0,
-      "cp": 0.3,
-      "currentPrice": 1690.2,
-      "amount": 84510,
+      "cp": 1.34,
+      "currentPrice": 1632.85,
+      "amount": 81642.5,
       "totalAmount": 168000,
-      "unrealisedPnl": 510,
-      "todaysPnl": 252.76
+      "unrealisedPnl": -2357.5,
+      "todaysPnl": 1079.5
     },
     {
-      "portfolioItemId": "13",
+      "portfolioItemId": "30",
       "code": "ACC",
       "price": 1690,
       "quantity": 50,
@@ -420,8 +550,8 @@ Response
       "tradeDate": "2016-07-28",
       "remainingQuantity": 0,
       "realisedPnl": 500,
-      "cp": 0.3,
-      "currentPrice": 1690.2,
+      "cp": 1.34,
+      "currentPrice": 1632.85,
       "amount": 0,
       "totalAmount": 84500,
       "unrealisedPnl": 0,
@@ -429,26 +559,26 @@ Response
     }
   ],
   "portfolioSummaryItems": [
-      {
-        "portfolioItemId": "ACC",
-        "code": "ACC",
-        "price": 1680,
-        "quantity": 100,
-        "direction": "Long",
-        "tradeDate": null,
-        "remainingQuantity": 50,
-        "realisedPnl": 500,
-        "cp": 0.3,
-        "currentPrice": 1690.2,
-        "amount": 84510,
-        "totalAmount": 168000,
-        "unrealisedPnl": 510,
-        "todaysPnl": 252.76
-      }
-    ],
-    "success": true,
-    "message": "Portfolio Items have been updated successfully"
-  }
+    {
+      "portfolioItemId": "ACC",
+      "code": "ACC",
+      "price": 1680,
+      "quantity": 100,
+      "direction": "Long",
+      "tradeDate": null,
+      "remainingQuantity": 50,
+      "realisedPnl": 500,
+      "cp": 1.34,
+      "currentPrice": 1632.85,
+      "amount": 81642.5,
+      "totalAmount": 168000,
+      "unrealisedPnl": -2357.5,
+      "todaysPnl": 1079.5
+    }
+  ],
+  "success": true,
+  "message": "Portfolio Items have been updated successfully"
+}
   
   
   13. http://104.199.186.171/IntelliinvestWebApp/rest/portfolio/deletePortfolioItemsForCode
@@ -460,7 +590,7 @@ Response
   "userId":"prashant.bajpai@gmail.com",
   "portfolioName":"portfolio_A",
   "portfolioItemCode":"ACC",
-  "portfolioItems":[{"portfolioItemId": "13"}]
+  "portfolioItems":[{"portfolioItemId": "30"}]
   }
   
   Response
@@ -470,7 +600,7 @@ Response
   "portfolioName": "portfolio_A",
   "portfolioItems": [
     {
-      "portfolioItemId": "9",
+      "portfolioItemId": "26",
       "code": "ACC",
       "price": 1680,
       "quantity": 100,
@@ -478,12 +608,12 @@ Response
       "tradeDate": "2016-07-29",
       "remainingQuantity": 100,
       "realisedPnl": 0,
-      "cp": 0.3,
-      "currentPrice": 1690.2,
-      "amount": 169020,
+      "cp": 1.34,
+      "currentPrice": 1632.85,
+      "amount": 163285,
       "totalAmount": 168000,
-      "unrealisedPnl": 1020,
-      "todaysPnl": 505.53
+      "unrealisedPnl": -4715,
+      "todaysPnl": 2159.01
     }
   ],
   "portfolioSummaryItems": [
@@ -496,17 +626,18 @@ Response
       "tradeDate": null,
       "remainingQuantity": 100,
       "realisedPnl": 0,
-      "cp": 0.3,
-      "currentPrice": 1690.2,
-      "amount": 169020,
+      "cp": 1.34,
+      "currentPrice": 1632.85,
+      "amount": 163285,
       "totalAmount": 168000,
-      "unrealisedPnl": 1020,
-      "todaysPnl": 505.53
+      "unrealisedPnl": -4715,
+      "todaysPnl": 2159.01
     }
   ],
   "success": true,
   "message": "Portfolio Items have been deleted successfully"
 }
+
 14. http://104.199.186.171/IntelliinvestWebApp/rest/portfolio/deletePortfolio
 
 Request
@@ -547,36 +678,36 @@ Response
   "portfolioItems": null,
   "portfolioSummaryItems": [
     {
-      "portfolioItemId": "AXISBANK",
-      "code": "AXISBANK",
+      "portfolioItemId": "ANDHRAPET",
+      "code": "ANDHRAPET",
       "price": 160,
       "quantity": 300,
       "direction": "Long",
       "tradeDate": null,
       "remainingQuantity": 300,
       "realisedPnl": 0,
-      "cp": 0.35,
-      "currentPrice": 545.75,
-      "amount": 163725,
+      "cp": 9.53,
+      "currentPrice": 16.9,
+      "amount": 5070,
       "totalAmount": 48000,
-      "unrealisedPnl": 115725,
-      "todaysPnl": 571.04
+      "unrealisedPnl": -42930,
+      "todaysPnl": 441.14
     },
     {
-      "portfolioItemId": "BANKBARODA",
-      "code": "BANKBARODA",
+      "portfolioItemId": "FGP",
+      "code": "FGP",
       "price": 160,
       "quantity": 0,
       "direction": "Short",
       "tradeDate": null,
       "remainingQuantity": -400,
       "realisedPnl": 0,
-      "cp": -1.78,
-      "currentPrice": 151.75,
-      "amount": -60700,
+      "cp": -2.63,
+      "currentPrice": 1.85,
+      "amount": -740,
       "totalAmount": 0,
-      "unrealisedPnl": 3300,
-      "todaysPnl": 1100.04
+      "unrealisedPnl": 63260,
+      "todaysPnl": 19.99
     }
   ],
   "success": true,

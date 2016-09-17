@@ -131,12 +131,12 @@ public class ClosePriceForecastReport {
 						double dailyDifference = 0.0;
 						double percentDailyDifference = 0.0;
 
-						QuandlStockPrice eodPrice = eodPrices.get(stock.getCode());
+						QuandlStockPrice eodPrice = eodPrices.get(stock.getSecurityId());
 						if (eodPrice != null) {
 							actualClose = eodPrice.getClose();
 						}
 
-						ForecastedStockPrice dailyForecastPrice = dailyForecastedPrices.get(stock.getCode());
+						ForecastedStockPrice dailyForecastPrice = dailyForecastedPrices.get(stock.getSecurityId());
 						if (dailyForecastPrice != null && dailyForecastPrice.getTomorrowForecastDate().equals(today)) {
 							dailyForecastedClose = dailyForecastPrice.getTomorrowForecastPrice();
 							if (!(MathUtil.isNearZero(actualClose) || MathUtil.isNearZero(dailyForecastedClose))) {
@@ -149,7 +149,7 @@ public class ClosePriceForecastReport {
 						double weeklyDifference = 0.0;
 						double percentWeeklyDifference = 0.0;
 
-						ForecastedStockPrice weeklyForecastPrice = weeklyForecastedPrices.get(stock.getCode());
+						ForecastedStockPrice weeklyForecastPrice = weeklyForecastedPrices.get(stock.getSecurityId());
 						if (weeklyForecastPrice != null && weeklyForecastPrice.getWeeklyForecastDate().equals(today)) {
 							weeklyForecastedClose = weeklyForecastPrice.getWeeklyForecastPrice();
 							if (!(MathUtil.isNearZero(actualClose) || MathUtil.isNearZero(weeklyForecastedClose))) {
@@ -161,7 +161,7 @@ public class ClosePriceForecastReport {
 						double monthlyForecastedClose = 0.0;
 						double monthlyDifference = 0.0;
 						double percentMonthlyDifference = 0.0;
-						ForecastedStockPrice monthlyForecastPrice = monthlyForecastedPrices.get(stock.getCode());
+						ForecastedStockPrice monthlyForecastPrice = monthlyForecastedPrices.get(stock.getSecurityId());
 						if (monthlyForecastPrice != null
 								&& monthlyForecastPrice.getMonthlyForecastDate().equals(today)) {
 							monthlyForecastedClose = monthlyForecastPrice.getMonthlyForecastPrice();
@@ -174,7 +174,7 @@ public class ClosePriceForecastReport {
 
 						LinkedList<String> valuesQueue = new LinkedList<String>();
 						valuesQueue.add(date);
-						valuesQueue.add(stock.getCode());
+						valuesQueue.add(stock.getSecurityId());
 						valuesQueue.add(new Double(MathUtil.round(actualClose)).toString());
 						valuesQueue.add(new Double(MathUtil.round(dailyForecastedClose)).toString());
 						valuesQueue.add(new Double(MathUtil.round(dailyDifference)).toString());
@@ -193,7 +193,7 @@ public class ClosePriceForecastReport {
 						valuesQueue.clear();
 					} catch (Exception e) {
 						logger.error(
-								"Exception while writing ClosePriceForecastReportTask for stock:" + stock.getCode());
+								"Exception while writing ClosePriceForecastReportTask for stock:" + stock.getSecurityId());
 					}
 				}
 			} finally {
@@ -216,7 +216,7 @@ public class ClosePriceForecastReport {
 	private void writeHeader(BufferedWriter writer) throws Exception {
 		LinkedList<String> valuesQueue = new LinkedList<String>();
 		valuesQueue.add("CloseDate");
-		valuesQueue.add("StockCode");
+		valuesQueue.add("SecurityId");
 		valuesQueue.add("ActualCls");
 		valuesQueue.add("PredDailyCls");
 		valuesQueue.add("PredDailyClsDiff");

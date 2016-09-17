@@ -3,7 +3,9 @@ package com.intelliinvest.util;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
+import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.data.model.Stock;
 import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.data.model.User;
@@ -52,48 +54,59 @@ public class Converter {
 
 		stockResponseList.sort(new Comparator<StockResponse>() {
 			public int compare(StockResponse item1, StockResponse item2) {
-				return item1.getCode().compareTo(item2.getCode());
+				return item1.getSecurityId().compareTo(item2.getSecurityId());
 			}
 		});
 		return stockResponseList;
 	}
-
+	
 	public static StockResponse getStockResponse(Stock stock) {
 		StockResponse stockResponse = new StockResponse();
-		stockResponse.setCode(stock.getCode());
+		stockResponse.setSecurityId(stock.getSecurityId());
+		stockResponse.setBseCode(stock.getBseCode());
+		stockResponse.setNseCode(stock.getNseCode());
 		stockResponse.setName(stock.getName());
-		stockResponse.setNiftyStock(stock.isNiftyStock());
+		stockResponse.setIsin(stock.getIsin());
+		stockResponse.setIndustry(stock.getIndustry());		
 		stockResponse.setWorldStock(stock.isWorldStock());
+		stockResponse.setNiftyStock(stock.isNiftyStock());
+		stockResponse.setNseStock(stock.isNseStock());
 		stockResponse.setUpdateDate(stock.getUpdateDate());
 		stockResponse.setSuccess(true);
 		return stockResponse;
 	}
 
-	public static List<StockPriceResponse> convertStockPriceList(List<StockPrice> prices) {
+	public static List<StockPriceResponse> convertStockPriceList(List<StockPrice> prices, Map<String, QuandlStockPrice> quandlStockPrices) {
 		List<StockPriceResponse> stockResponseList = new ArrayList<StockPriceResponse>();
 		if (prices != null) {
 			for (StockPrice price : prices) {
-				stockResponseList.add(getStockPriceResponse(price));
+				stockResponseList.add(getStockPriceResponse(price, quandlStockPrices.get(price.getSecurityId())));
 			}
 		}
 
 		stockResponseList.sort(new Comparator<StockPriceResponse>() {
 			public int compare(StockPriceResponse item1, StockPriceResponse item2) {
-				return item1.getCode().compareTo(item2.getCode());
+				return item1.getSecurityId().compareTo(item2.getSecurityId());
 			}
 		});
 
 		return stockResponseList;
 	}
 
-	public static StockPriceResponse getStockPriceResponse(StockPrice price) {
+	public static StockPriceResponse getStockPriceResponse(StockPrice price, QuandlStockPrice quandlStockPrice) {
 		StockPriceResponse stockPriceResponse = new StockPriceResponse();
-		stockPriceResponse.setCode(price.getCode());
+		stockPriceResponse.setSecurityId(price.getSecurityId());
 		stockPriceResponse.setCp(price.getCp());
 		stockPriceResponse.setCurrentPrice(price.getCurrentPrice());
-		stockPriceResponse.setEodDate(price.getEodDate());
-		stockPriceResponse.setEodPrice(price.getEodPrice());
-		stockPriceResponse.setUpdateDate(price.getUpdateDate());
+		stockPriceResponse.setCurrentPriceExchange(price.getExchange());
+		stockPriceResponse.setCurrentPriceUpdateDate(price.getUpdateDate());
+		if(quandlStockPrice!=null){
+			stockPriceResponse.setEodPrice(quandlStockPrice.getClose());
+			stockPriceResponse.setEodDate(quandlStockPrice.getEodDate());
+			stockPriceResponse.setEodPriceExchange(quandlStockPrice.getExchange());
+			stockPriceResponse.setEodPriceUpdateDate(quandlStockPrice.getUpdateDate());
+		}
+
 		stockPriceResponse.setSuccess(true);
 		return stockPriceResponse;
 	}

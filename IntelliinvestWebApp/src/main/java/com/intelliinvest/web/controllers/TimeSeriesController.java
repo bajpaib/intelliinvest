@@ -36,8 +36,8 @@ public class TimeSeriesController {
 	@Autowired
 	private DateUtil dateUtil;
 	
-	@RequestMapping(value = "/timeseries/getTimeSeriesByCode", method = RequestMethod.GET, produces = APPLICATION_JSON)
-	public @ResponseBody TimeSeriesResponse getTimeSeriesByCode(@RequestParam("code") String code,
+	@RequestMapping(value = "/timeseries/getTimeSeriesById", method = RequestMethod.GET, produces = APPLICATION_JSON)
+	public @ResponseBody TimeSeriesResponse getTimeSeriesById(@RequestParam("id") String id,
 			@RequestParam("today") String today) {
 		TimeSeriesResponse timeSeriesResponse = new TimeSeriesResponse();
 		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
@@ -55,7 +55,7 @@ public class TimeSeriesController {
 				int months = new Integer(IntelliInvestStore.properties.getProperty("times.series.history.months"))
 						.intValue();
 				LocalDate startDate = lastBusinessDate.minusYears(years).minusMonths(months);
-				List<QuandlStockPrice> stockPrices = quandlEODStockPriceRepository.getStockPricesFromDB(code, startDate,
+				List<QuandlStockPrice> stockPrices = quandlEODStockPriceRepository.getStockPricesFromDB(id, startDate,
 						lastBusinessDate);
 
 				if (Helper.isNotNullAndNonEmpty(stockPrices)) {
@@ -65,9 +65,9 @@ public class TimeSeriesController {
 
 						}
 					});
-					ForecastedStockPrice price = forecastedStockPriceRepository.getForecastStockPriceFromDB(code, lastBusinessDate);
+					ForecastedStockPrice price = forecastedStockPriceRepository.getForecastStockPriceFromDB(id, lastBusinessDate);
 
-					timeSeriesResponse.setCode(code);
+					timeSeriesResponse.setSecurityId(id);
 					timeSeriesResponse.setDate(date);
 
 					List<String> dateSeries = new ArrayList<String>();
@@ -115,7 +115,7 @@ public class TimeSeriesController {
 			timeSeriesResponse.setSuccess(true);
 			timeSeriesResponse.setMessage("Time series has been returned successfully.");
 		} else {
-			timeSeriesResponse.setCode(code);
+			timeSeriesResponse.setSecurityId(id);
 			timeSeriesResponse.setSuccess(false);
 			timeSeriesResponse.setMessage(errorMsg);
 		}

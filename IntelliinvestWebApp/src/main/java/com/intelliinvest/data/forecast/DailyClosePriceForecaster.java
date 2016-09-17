@@ -85,8 +85,8 @@ public class DailyClosePriceForecaster {
 	private DateUtil dateUtil;
 
 	private ExecutorService executorService = null;
-	private static final String LEARNING_DATA_FILE_NAME = "dailyLearningData.csv";
-	private static final String NEURAL_NETWORK_MODEL_FILE_NAME = "dailyStockPredictor.nnet";
+	private static final String LEARNING_DATA_FILE_NAME = "dailyLearningData";
+	private static final String NEURAL_NETWORK_MODEL_FILE_NAME = "dailyStockPredictor";
 	private static final int NUM_INPUTS = 7;
 	private String learningDataFileDir;
 	private int maxIterations;
@@ -151,7 +151,7 @@ public class DailyClosePriceForecaster {
 		for (Stock stock : nonWorldStocks) {
 			ForecastCloseTask forecastCloseTask = new ForecastCloseTask(stock, today);
 			Future<Double> future = executorService.submit(forecastCloseTask);
-			futuresMap.put(stock.getCode(), future);
+			futuresMap.put(stock.getSecurityId(), future);
 		}
 		List<ForecastedStockPrice> forecastPrices = new ArrayList<ForecastedStockPrice>();
 		for (Map.Entry<String, Future<Double>> entry : futuresMap.entrySet()) {
@@ -191,20 +191,20 @@ public class DailyClosePriceForecaster {
 		@Override
 		public Double call() throws Exception {
 			// We need to forecast tomorrow's close using value for today's close
-			QuandlStockPrice price = quandlEODStockPriceRepository.getStockPriceFromDB(stock.getCode(), today);
+			QuandlStockPrice price = quandlEODStockPriceRepository.getStockPriceFromDB(stock.getSecurityId(), today);
 			if (price == null) {
 				throw new Exception("Can't forecast tomorrow close. Today's closing price is not available for stock:"
-						+ stock.getCode() + " and date:" + today.toString());
+						+ stock.getSecurityId() + " and date:" + today.toString());
 			}
 			if (!validateEODPrice(price)) {
 				throw new Exception("Can't forecast tomorrow close. Invalid today's closing price:" + price.toString());
 			}
 			// fetch data from DB
-			ArrayList<QuandlStockPrice> stockPrices = fetchDataFromDB(stock.getCode(), today);
+			ArrayList<QuandlStockPrice> stockPrices = fetchDataFromDB(stock.getSecurityId(), today);
 			// prepare training data
-			double[] minMaxData = prepareTrainingData(stock.getCode(), stockPrices);
+			double[] minMaxData = prepareTrainingData(stock.getSecurityId(), stockPrices);
 			// train network
-			trainNetwork(stock.getCode());
+			trainNetwork(stock.getSecurityId());
 			// forecast close from network
 			return forecastTomorrowClose(price, minMaxData[0], minMaxData[1], minMaxData[2], minMaxData[3],
 					minMaxData[4], minMaxData[5]);
@@ -225,7 +225,7 @@ public class DailyClosePriceForecaster {
 		if (price.getEodDate() == null) {
 			return false;
 		}
-		if (price.getTottrdqty() == 0) {
+		if (MathUtil.isNearZero(price.getTradedQty())) {
 			return false;
 		}
 		if (MathUtil.isNearZero(price.getOpen()) || MathUtil.isNearZero(price.getHigh())
@@ -237,7 +237,7 @@ public class DailyClosePriceForecaster {
 	}
 
 	private ArrayList<QuandlStockPrice> fetchDataFromDB(String stockCode, LocalDate today) {
-		logger.debug("Inside fetchDataFromDB() for stock:" + stockCode + " and date:" + today.toString());
+//		logger.debug("Inside fetchDataFromDB() for stock:" + stockCode + " and date:" + today.toString());
 		int years = new Integer(IntelliInvestStore.properties.getProperty("daily.close.price.forecast.history.years"))
 				.intValue();
 		int months = new Integer(IntelliInvestStore.properties.getProperty("daily.close.price.forecast.history.months"))
@@ -255,14 +255,14 @@ public class DailyClosePriceForecaster {
 	}
 
 	private double[] prepareTrainingData(String stockCode, ArrayList<QuandlStockPrice> stockPrices) throws Exception {
-		logger.debug("Inside prepareTrainingData() for stock:" + stockCode);
+//		logger.debug("Inside prepareTrainingData() for stock:" + stockCode);
 		List<TrainingData> trainingData = new ArrayList<TrainingData>();
 		for (int i = 0; i < stockPrices.size() - 1; ++i) {
 			// Fetch first and second record
 			QuandlStockPrice price1 = stockPrices.get(i);
 			QuandlStockPrice price2 = stockPrices.get(i + 1);
 			trainingData.add(new TrainingData(dateUtil.convertToJulian(price1.getEodDate()), price1.getOpen(),
-					price1.getHigh(), price1.getLow(), price1.getLast(), price1.getClose(), price1.getTottrdqty(),
+					price1.getHigh(), price1.getLow(), price1.getLast(), price1.getClose(), price1.getTradedQty(),
 					price2.getClose()));
 		}
 		// Find the minimum and maximum values for price - needed for
@@ -306,8 +306,11 @@ public class DailyClosePriceForecaster {
 			}
 		}
 
+		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String date = dateFormat.format(dateUtil.getLocalDate());
+		
 		BufferedWriter writer = new BufferedWriter(
-				new FileWriter(learningDataFileDir + "/" + stockCode + "_" + LEARNING_DATA_FILE_NAME));
+				new FileWriter(learningDataFileDir + "/" + stockCode + "_" + LEARNING_DATA_FILE_NAME + date + ".csv"));
 		try {
 			LinkedList<Double> valuesQueue = new LinkedList<Double>();
 			for (TrainingData data : trainingData) {
@@ -333,7 +336,7 @@ public class DailyClosePriceForecaster {
 
 	// train network
 	private void trainNetwork(String stockCode) throws IOException {
-		logger.debug("Inside trainNetwork() for stock:" + stockCode);
+//		logger.debug("Inside trainNetwork() for stock:" + stockCode);
 		NeuralNetwork<BackPropagation> neuralNetwork = new MultiLayerPerceptron(TransferFunctionType.SIGMOID,
 				NUM_INPUTS, 2 * NUM_INPUTS + 1, 1);
 		SupervisedLearning learningRule = neuralNetwork.getLearningRule();
@@ -346,9 +349,12 @@ public class DailyClosePriceForecaster {
 //				logger.debug("Network error for interation " + rule.getCurrentIteration() + ": " + rule.getTotalNetworkError());
 			}
 		});
-		DataSet trainingSet = loadTraininigData(learningDataFileDir + "/" + stockCode + "_" + LEARNING_DATA_FILE_NAME);
+		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String date = dateFormat.format(dateUtil.getLocalDate());
+		DataSet trainingSet = loadTraininigData(learningDataFileDir + "/" + stockCode + "_" + LEARNING_DATA_FILE_NAME+ date + ".csv");
 		neuralNetwork.learn(trainingSet);
-		neuralNetwork.save(learningDataFileDir + "/" + stockCode + "_" + NEURAL_NETWORK_MODEL_FILE_NAME);
+		
+		neuralNetwork.save(learningDataFileDir + "/" + stockCode + "_" + NEURAL_NETWORK_MODEL_FILE_NAME + date + ".nnet");
 	}
 
 	private DataSet loadTraininigData(String filePath) throws IOException {
@@ -375,15 +381,17 @@ public class DailyClosePriceForecaster {
 	private double forecastTomorrowClose(QuandlStockPrice price, double maxPrice, double minPrice, double maxDate,
 			double minDate, double maxTrdVol, double minTrdVol) {
 		double retVal = 0;
-		logger.debug("Inside forecastTomorrowClose() for stock:" + price.getSymbol());
+//		logger.debug("Inside forecastTomorrowClose() for stock:" + price.getSecurityId());
+		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String date = dateFormat.format(dateUtil.getLocalDate());
 		NeuralNetwork neuralNetwork = NeuralNetwork
-				.createFromFile(learningDataFileDir + "/" + price.getSymbol() + "_" + NEURAL_NETWORK_MODEL_FILE_NAME);
+				.createFromFile(learningDataFileDir + "/" + price.getSecurityId() + "_" + NEURAL_NETWORK_MODEL_FILE_NAME + date + ".nnet");
 		neuralNetwork.setInput(normalizeValue(dateUtil.convertToJulian(price.getEodDate()), maxDate, minDate),
 				normalizeValue(price.getOpen(), maxPrice, minPrice),
 				normalizeValue(price.getHigh(), maxPrice, minPrice), normalizeValue(price.getLow(), maxPrice, minPrice),
 				normalizeValue(price.getLast(), maxPrice, minPrice),
 				normalizeValue(price.getClose(), maxPrice, minPrice),
-				normalizeValue(price.getTottrdqty(), maxTrdVol, minTrdVol));
+				normalizeValue(price.getTradedQty(), maxTrdVol, minTrdVol));
 		neuralNetwork.calculate();
 		double[] networkOutput = neuralNetwork.getOutput();
 		retVal = deNormalizeValue(networkOutput[0], maxPrice, minPrice);

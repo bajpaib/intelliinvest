@@ -23,29 +23,29 @@ public class QuandlEODStockPriceController {
 	@Autowired
 	private QuandlEODStockPriceRepository quandlEODStockPriceRepository;
 
-	@RequestMapping(value = "/quandl/backloadLatestEODPricesFromNSE", method = RequestMethod.GET)
-	public @ResponseBody String backloadLatestEODPricesFromNSE() {
-		return quandlEODStockPriceImporter.backloadEODPricesFromNSE();
+	@RequestMapping(value = "/quandl/backloadLatestEODPrices", method = RequestMethod.GET)
+	public @ResponseBody String backloadLatestEODPrices() {
+		return quandlEODStockPriceImporter.backloadLatestEODPrices();
 	}
 
-	@RequestMapping(value = "/quandl/backloadEODPricesFromNSEForStock", method = RequestMethod.GET)
-	public @ResponseBody String backloadEODPricesFromNSEForStock(@RequestParam("stockCode") String stockCode,
+	@RequestMapping(value = "/quandl/backloadEODPricesForStock", method = RequestMethod.GET)
+	public @ResponseBody String backloadEODPricesForStock(@RequestParam("id") String id,
 			@RequestParam("startDate") String startDate, @RequestParam("endDate") String endDate) {
-		return quandlEODStockPriceImporter.backloadEODPricesFromNSEForStock(stockCode, startDate, endDate);
+		return quandlEODStockPriceImporter.backloadEODPricesForStock(id, startDate, endDate);
 	}
 
-	@RequestMapping(value = "/quandl/backloadEODPricesFromNSE", method = RequestMethod.GET)
+	@RequestMapping(value = "/quandl/backloadEODPricesForDateRange", method = RequestMethod.GET)
 	public @ResponseBody String backloadEODPricesFromNSE(@RequestParam("startDate") String startDate,
 			@RequestParam("endDate") String endDate) {
-		return quandlEODStockPriceImporter.backloadEODPricesFromNSE(startDate, endDate);
+		return quandlEODStockPriceImporter.backloadEODPricesForDateRange(startDate, endDate);
 	}
 
 	@RequestMapping(value = "/quandl/getEODStockPriceForDate", method = RequestMethod.GET)
-	public @ResponseBody QuandlStockPrice getEODStockPriceForDate(@RequestParam("stockCode") String stockCode,
+	public @ResponseBody QuandlStockPrice getEODStockPriceForDate(@RequestParam("id") String id,
 			@RequestParam("eodDate") String eodDate) {
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		LocalDate date = LocalDate.parse(eodDate, dateFormat);
-		return quandlEODStockPriceRepository.getStockPriceFromDB(stockCode, date);
+		return quandlEODStockPriceRepository.getStockPriceFromDB(id, date);
 	}
 
 }

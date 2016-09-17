@@ -50,13 +50,13 @@ public class ForecastedStockPriceController {
 	}
 
 	@RequestMapping(value = "/forecast/getForecastStockPrice", method = RequestMethod.GET, produces = APPLICATION_JSON)
-	public @ResponseBody ForecastedStockPrice getForecastStockPrice(@RequestParam("code") String code,
+	public @ResponseBody ForecastedStockPrice getForecastStockPrice(@RequestParam("id") String id,
 			@RequestParam("today") String today) {
 		ForecastedStockPrice price = null;
 		try {
 			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 			LocalDate date = LocalDate.parse(today, dateFormat);
-			price = forecastedStockPriceRepository.getForecastStockPriceFromDB(code, date);
+			price = forecastedStockPriceRepository.getForecastStockPriceFromDB(id, date);
 		} catch (Exception e) {
 			logger.error("Exception inside getDailyForecastStockPrice() " + e.getMessage());
 		}

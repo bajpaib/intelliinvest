@@ -19,6 +19,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import com.intelliinvest.common.IntelliinvestException;
 import com.intelliinvest.data.model.Portfolio;
 import com.intelliinvest.data.model.PortfolioItem;
+import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.data.model.User;
 import com.intelliinvest.data.model.UserPortfolio;
@@ -38,6 +39,8 @@ public class UserPortfolioRepository {
 	private SequenceRepository sequenceRepository;
 	@Autowired
 	private StockRepository stockRepository;
+	@Autowired
+	private QuandlEODStockPriceRepository quandlEODStockPriceRepository;
 	@Autowired
 	private DateUtil dateUtil;
 	private String SEQ_KEY = "SeqKey";
@@ -341,11 +344,14 @@ public class UserPortfolioRepository {
 				double currentPrice = 0;
 				double cp = 0;
 				double eodPrice = 0;
-				StockPrice stockPrice = stockRepository.getStockPriceByCode(code);
+				StockPrice stockPrice = stockRepository.getStockPriceById(code);
+				QuandlStockPrice quandlStockPrice = quandlEODStockPriceRepository.getEODStockPrice(code);
 				if (stockPrice != null) {
 					currentPrice = stockPrice.getCurrentPrice();
 					cp = stockPrice.getCp();
-					eodPrice = stockPrice.getEodPrice();
+				}
+				if (quandlStockPrice != null) {
+					eodPrice = quandlStockPrice.getClose();
 				}
 				portfolioItem.setCp(cp);
 				portfolioItem.setCurrentPrice(currentPrice);
@@ -412,11 +418,14 @@ public class UserPortfolioRepository {
 			double currentPrice = 0;
 			double cp = 0;
 			double eodPrice = 0;
-			StockPrice stockPrice = stockRepository.getStockPriceByCode(summaryData.getCode());
+			StockPrice stockPrice = stockRepository.getStockPriceById(summaryData.getCode());
+			QuandlStockPrice quandlStockPrice = quandlEODStockPriceRepository.getEODStockPrice(summaryData.getCode());
 			if (stockPrice != null) {
 				currentPrice = stockPrice.getCurrentPrice();
 				cp = stockPrice.getCp();
-				eodPrice = stockPrice.getEodPrice();
+			}
+			if (quandlStockPrice != null) {
+				eodPrice = quandlStockPrice.getClose();
 			}
 			summaryData.setCp(cp);
 			summaryData.setCurrentPrice(currentPrice);

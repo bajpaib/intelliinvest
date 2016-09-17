@@ -6,32 +6,37 @@ db.createCollection("USER")
 db.createCollection("USER_PORTFOLIO")
 db.createCollection("STOCK")
 db.createCollection("STOCK_PRICE")
-db.createCollection("NSE_BSE_CODES")
-db.createCollection("SEQUENCE")
-db.SEQUENCE.insert({_id: "SeqKey",seq:0})
 
 db.createCollection("QUANDL_STOCK_PRICE")
-db.QUANDL_STOCK_PRICE.createIndex({ 'exchange': 1, 'symbol': 1, 'eodDate': -1 })
+db.QUANDL_STOCK_PRICE.dropIndexes()
+db.QUANDL_STOCK_PRICE.createIndex({'securityId': 1, 'eodDate': -1 })
+db.QUANDL_STOCK_PRICE.createIndex({ 'eodDate': -1})
+
+db.createCollection("STOCK_PRICE_FORECAST")
+db.STOCK_PRICE_FORECAST.dropIndexes()
+db.STOCK_PRICE_FORECAST.createIndex({ 'securityId': 1, 'todayDate': -1})
+db.STOCK_PRICE_FORECAST.createIndex({ 'todayDate': -1})
 
 db.createCollection("HOLIDAY_CALENDAR")
 
-db.createCollection("STOCK_PRICE_FORECAST")
-db.STOCK_PRICE_FORECAST.createIndex({ 'code': 1, 'todayDate': -1})
-db.STOCK_PRICE_FORECAST.createIndex({ 'todayDate': -1})
+db.createCollection("SEQUENCE")
+db.SEQUENCE.insert({_id: "SeqKey",seq:0})
 
 Other useful commands
 ----------------------
-
+db.QUANDL_STOCK_PRICE.dropIndexes()
 db.USER.find({})
 db.USER_PORTFOLIO.find({})
 db.STOCK.find({})
 db.STOCK_PRICE.find({})
 db.QUANDL_STOCK_PRICE.find({})
-db.NSE_BSE_CODES.find({})
+db.STOCK_PRICE_FORECAST.find({})
+db.HOLIDAY_CALENDAR.find({})
 
 db.USER.remove({})
 db.USER_PORTFOLIO.remove({})
 db.STOCK.remove({})
 db.STOCK_PRICE.remove({})
 db.QUANDL_STOCK_PRICE.remove({})
-db.NSE_BSE_CODES.remove({})
+db.STOCK_PRICE_FORECAST.remove({})
+db.HOLIDAY_CALENDAR.remove({})

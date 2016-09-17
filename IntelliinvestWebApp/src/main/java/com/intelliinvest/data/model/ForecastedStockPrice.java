@@ -3,8 +3,6 @@ package com.intelliinvest.data.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -19,9 +17,8 @@ import com.intelliinvest.util.JsonDateTimeSerializer;
  *
  */
 @Document(collection = "STOCK_PRICE_FORECAST")
-@CompoundIndexes({ @CompoundIndex(name = "STOCK_PRICE_FORECAST_IDX", def = "{'code': 1, 'todayDate': -1}") })
 public class ForecastedStockPrice {
-	private String code;
+	private String securityId;
 	private double tomorrowForecastPrice;
 	private double weeklyForecastPrice;
 	private double monthlyForecastPrice;
@@ -40,11 +37,11 @@ public class ForecastedStockPrice {
 		super();
 	}
 
-	public ForecastedStockPrice(String code, double tomorrowForecastPrice, double weeklyForecastPrice,
+	public ForecastedStockPrice(String securityId, double tomorrowForecastPrice, double weeklyForecastPrice,
 			double monthlyForecastPrice, LocalDate todayDate, LocalDate tomorrowForecastDate,
 			LocalDate weeklyForecastDate, LocalDate monthlyForecastDate, LocalDateTime updateDate) {
 		super();
-		this.code = code;
+		this.securityId = securityId;
 		this.tomorrowForecastPrice = tomorrowForecastPrice;
 		this.weeklyForecastPrice = weeklyForecastPrice;
 		this.monthlyForecastPrice = monthlyForecastPrice;
@@ -55,12 +52,12 @@ public class ForecastedStockPrice {
 		this.updateDate = updateDate;
 	}
 
-	public String getCode() {
-		return code;
+	public String getSecurityId() {
+		return securityId;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setSecurityId(String securityId) {
+		this.securityId = securityId;
 	}
 
 	public double getTomorrowForecastPrice() {
@@ -134,7 +131,7 @@ public class ForecastedStockPrice {
 
 	@Override
 	public String toString() {
-		return "ForecastedStockPrice [code=" + code + ", tomorrowForecastPrice=" + tomorrowForecastPrice
+		return "ForecastedStockPrice [securityId=" + securityId + ", tomorrowForecastPrice=" + tomorrowForecastPrice
 				+ ", weeklyForecastPrice=" + weeklyForecastPrice + ", monthlyForecastPrice=" + monthlyForecastPrice
 				+ ", todayDate=" + todayDate + ", tomorrowForecastDate=" + tomorrowForecastDate
 				+ ", weeklyForecastDate=" + weeklyForecastDate + ", monthlyForecastDate=" + monthlyForecastDate

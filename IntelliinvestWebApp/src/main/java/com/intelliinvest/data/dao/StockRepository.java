@@ -22,7 +22,6 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.data.model.Stock;
 import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.util.DateUtil;
@@ -39,6 +38,9 @@ public class StockRepository {
 	private DateUtil dateUtil;
 	private Map<String, Stock> stockCache = new ConcurrentHashMap<String, Stock>();
 	private Map<String, StockPrice> stockPriceCache = new ConcurrentHashMap<String, StockPrice>();
+	private Map<String, String> nseToSecurityIdMap = new ConcurrentHashMap<String, String>();
+	private Map<String, String> bseToSecurityIdMap = new ConcurrentHashMap<String, String>();
+	private Map<String, String> nseToBSEMap = new ConcurrentHashMap<String, String>();
 
 	@PostConstruct
 	public void init() {
@@ -50,7 +52,18 @@ public class StockRepository {
 		List<Stock> stocks = getStocksFromDB();
 		if (Helper.isNotNullAndNonEmpty(stocks)) {
 			for (Stock stock : stocks) {
-				stockCache.put(stock.getCode(), stock);
+				stockCache.put(stock.getSecurityId(), stock);
+				if (Helper.isNotNullAndNonEmpty(stock.getBseCode())) {
+					bseToSecurityIdMap.put(stock.getBseCode(), stock.getSecurityId());
+				}
+				if (Helper.isNotNullAndNonEmpty(stock.getNseCode())) {
+					nseToSecurityIdMap.put(stock.getNseCode(), stock.getSecurityId());
+				}
+				
+				if (Helper.isNotNullAndNonEmpty(stock.getBseCode()) && Helper.isNotNullAndNonEmpty(stock.getNseCode())) {
+					nseToBSEMap.put(stock.getNseCode(), stock.getBseCode());
+				}
+				
 			}
 			logger.info("Initialised stockCache in StockRepository from DB with size " + stockCache.size());
 		} else {
@@ -60,7 +73,7 @@ public class StockRepository {
 		List<StockPrice> prices = getStockPricesFromDB();
 		if (Helper.isNotNullAndNonEmpty(prices)) {
 			for (StockPrice price : prices) {
-				stockPriceCache.put(price.getCode(), price);
+				stockPriceCache.put(price.getSecurityId(), price);
 			}
 			logger.info("Initialised stockPriceCache in StockRepository from DB with size " + stockPriceCache.size());
 		} else {
@@ -68,12 +81,54 @@ public class StockRepository {
 		}
 	}
 
-	public Stock getStockByCode(String code) throws DataAccessException {
-		logger.debug("Inside getStockByCode()...");
+	public String getSecurityIdFromNSECode(String nseCode) {
+		return nseToSecurityIdMap.get(nseCode);
+	}
+
+	public String getSecurityIdFromBSECode(String bseCode) {
+		return bseToSecurityIdMap.get(bseCode);
+	}
+	
+	public String getBSECodeFromNSECode(String nseCode) {
+		return nseToBSEMap.get(nseCode);
+	}
+
+	public Stock getStockById(String id) throws DataAccessException {
+		logger.debug("Inside getStockById()...");
 		Stock retVal = null;
-		retVal = stockCache.get(code);
+		retVal = stockCache.get(id);
 		if (retVal == null) {
-			logger.error("Inside getStockByCode() Stock not found in cache for " + code);
+			logger.error("Inside getStockById() Stock not found in cache for " + id);
+		}
+		return retVal;
+	}
+
+	public Stock getStockByBseCode(String bseCode) throws DataAccessException {
+		logger.debug("Inside getStockByBseCode()...");
+		Stock retVal = null;
+		for (Stock stock : stockCache.values()) {
+			if (bseCode.equals(stock.getBseCode())) {
+				retVal = stock;
+				break;
+			}
+		}
+		if (retVal == null) {
+			logger.error("Inside getStockByBseCode() Stock not found in cache for " + bseCode);
+		}
+		return retVal;
+	}
+
+	public Stock getStockByNseCode(String nseCode) throws DataAccessException {
+		logger.debug("Inside getStockByNseCode()...");
+		Stock retVal = null;
+		for (Stock stock : stockCache.values()) {
+			if (nseCode.equals(stock.getNseCode())) {
+				retVal = stock;
+				break;
+			}
+		}
+		if (retVal == null) {
+			logger.error("Inside getStockByNseCode() Stock not found in cache for " + nseCode);
 		}
 		return retVal;
 	}
@@ -87,11 +142,11 @@ public class StockRepository {
 		for (Stock stock : stockCache.values()) {
 			retVal.add(stock);
 		}
-		
-		if(Helper.isNotNullAndNonEmpty(retVal)){
+
+		if (Helper.isNotNullAndNonEmpty(retVal)) {
 			retVal.sort(new Comparator<Stock>() {
 				public int compare(Stock stock1, Stock stock2) {
-					return stock1.getCode().compareTo(stock2.getCode());
+					return stock1.getSecurityId().compareTo(stock2.getSecurityId());
 
 				}
 			});
@@ -102,16 +157,16 @@ public class StockRepository {
 	public List<Stock> getStocksFromDB() throws DataAccessException {
 		logger.debug("Inside getStocksFromDB()...");
 		Query query = new Query();
-		query.with(new Sort(Sort.Direction.ASC,"code"));
+		query.with(new Sort(Sort.Direction.ASC, "code"));
 		return mongoTemplate.find(query, Stock.class, COLLECTION_STOCK);
 	}
 
-	public StockPrice getStockPriceByCode(String code) throws DataAccessException {
-		logger.debug("Inside getStockPriceByCode()...");
+	public StockPrice getStockPriceById(String id) throws DataAccessException {
+		logger.debug("Inside getStockPriceById()...");
 		StockPrice retVal = null;
-		retVal = stockPriceCache.get(code);
+		retVal = stockPriceCache.get(id);
 		if (retVal == null) {
-			logger.error("Inside getStockPriceByCode() StockPrice not found in cache for " + code);
+			logger.error("Inside getStockPriceById() StockPrice not found in cache for " + id);
 		}
 		return retVal;
 	}
@@ -125,10 +180,10 @@ public class StockRepository {
 		for (StockPrice price : stockPriceCache.values()) {
 			retVal.add(price);
 		}
-		if(Helper.isNotNullAndNonEmpty(retVal)){
+		if (Helper.isNotNullAndNonEmpty(retVal)) {
 			retVal.sort(new Comparator<StockPrice>() {
 				public int compare(StockPrice price1, StockPrice price2) {
-					return price1.getCode().compareTo(price2.getCode());
+					return price1.getSecurityId().compareTo(price2.getSecurityId());
 
 				}
 			});
@@ -139,8 +194,8 @@ public class StockRepository {
 	public List<StockPrice> getStockPricesFromDB() throws DataAccessException {
 		logger.debug("Inside getStockPricesFromDB()...");
 		Query query = new Query();
-		query.with(new Sort(Sort.Direction.ASC,"code"));
-		return mongoTemplate.find(query,StockPrice.class, COLLECTION_STOCK_PRICE);
+		query.with(new Sort(Sort.Direction.ASC, "code"));
+		return mongoTemplate.find(query, StockPrice.class, COLLECTION_STOCK_PRICE);
 	}
 
 	public List<StockPrice> updateCurrentStockPrices(List<StockPrice> currentPrices) {
@@ -149,58 +204,59 @@ public class StockRepository {
 		for (StockPrice price : currentPrices) {
 			Query query = new Query();
 			Update update = new Update();
-			update.set("code", price.getCode());
+			update.set("securityId", price.getSecurityId());
+			update.set("exchange", price.getExchange());
 			update.set("currentPrice", price.getCurrentPrice());
 			update.set("cp", price.getCp());
 			update.set("updateDate", dateUtil.getLocalDateTime());
-			query.addCriteria(Criteria.where("code").is(price.getCode()));
+			query.addCriteria(Criteria.where("securityId").is(price.getSecurityId()));
 			price = mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true).upsert(true),
 					StockPrice.class, COLLECTION_STOCK_PRICE);
 			retVal.add(price);
 			// update cache
-			stockPriceCache.put(price.getCode(), price);
+			stockPriceCache.put(price.getSecurityId(), price);
 		}
 		return retVal;
 	}
 
-	public List<StockPrice> updateEODStockPrices(List<StockPrice> eodPrices) {
-		logger.debug("Inside updateEODStockPrices()...");
-		List<StockPrice> retVal = new ArrayList<StockPrice>();
-		for (StockPrice price : eodPrices) {
-			Query query = new Query();
-			Update update = new Update();
-			update.set("code", price.getCode());
-			update.set("eodPrice", price.getEodPrice());
-			update.set("eodDate", price.getEodDate());
-			update.set("updateDate", dateUtil.getLocalDateTime());
-			query.addCriteria(Criteria.where("code").is(price.getCode()));
-			price = mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true).upsert(true),
-					StockPrice.class, COLLECTION_STOCK_PRICE);
-			retVal.add(price);
-			// update cache
-			stockPriceCache.put(price.getCode(), price);
-		}
-		return retVal;
-	}
+	/*
+	 * public List<StockPrice> updateEODStockPrices(List<StockPrice> eodPrices)
+	 * { logger.debug("Inside updateEODStockPrices()..."); List<StockPrice>
+	 * retVal = new ArrayList<StockPrice>(); for (StockPrice price : eodPrices)
+	 * { Query query = new Query(); Update update = new Update();
+	 * update.set("securityId", price.getSecurityId()); update.set("eodPrice",
+	 * price.getEodPrice()); update.set("eodDate", price.getEodDate());
+	 * update.set("updateDate", dateUtil.getLocalDateTime());
+	 * query.addCriteria(Criteria.where("code").is(price.getSecurityId()));
+	 * price = mongoTemplate.findAndModify(query, update, new
+	 * FindAndModifyOptions().returnNew(true).upsert(true), StockPrice.class,
+	 * COLLECTION_STOCK_PRICE); retVal.add(price); // update cache
+	 * stockPriceCache.put(price.getSecurityId(), price); } return retVal; }
+	 */
 
 	public void bulkInsertStocks(List<String> stocks) {
 		logger.debug("Inside bulkInsertStocks()...");
 		for (String temp : stocks) {
 			String[] stockValues = temp.split(",");
-			String code = stockValues[0];
-			String name = stockValues[1];
-			boolean worldStock = Boolean.parseBoolean(stockValues[2]);
-			boolean niftyStock = Boolean.parseBoolean(stockValues[2]);
-			Stock stock = new Stock(code, name, worldStock, niftyStock, dateUtil.getLocalDateTime());
+			String securityId = stockValues[0];
+			String bseCode = stockValues[1];
+			String nseCode = stockValues[2];
+			String name = stockValues[3];
+			String isin = stockValues[4];
+			String industry = stockValues[5];
+			boolean worldStock = Boolean.parseBoolean(stockValues[6]);
+			boolean niftyStock = Boolean.parseBoolean(stockValues[7]);
+			boolean nseStock = Boolean.parseBoolean(stockValues[8]);
+			Stock stock = new Stock(securityId, bseCode, nseCode, name, isin, industry, worldStock, niftyStock, nseStock, dateUtil.getLocalDateTime());
 			mongoTemplate.save(stock, COLLECTION_STOCK);
-			stockCache.put(stock.getCode(), stock);
+			stockCache.put(stock.getSecurityId(), stock);
 		}
 	}
 
-	@ManagedOperation(description = "getStockByCode")
-	@ManagedOperationParameters({ @ManagedOperationParameter(name = "code", description = "Stock Code") })
-	public String getStock(String code) throws DataAccessException {
-		Stock stock = getStockByCode(code.trim());
+	@ManagedOperation(description = "getStockById")
+	@ManagedOperationParameters({ @ManagedOperationParameter(name = "id", description = "Stock Id") })
+	public String getStock(String id) throws DataAccessException {
+		Stock stock = getStockById(id.trim());
 		if (stock != null) {
 			return stock.toString();
 		} else {
@@ -208,10 +264,10 @@ public class StockRepository {
 		}
 	}
 
-	@ManagedOperation(description = "getStockPriceByCode")
-	@ManagedOperationParameters({ @ManagedOperationParameter(name = "code", description = "Stock Code") })
-	public String getStockPrice(String code) throws DataAccessException {
-		StockPrice price = getStockPriceByCode(code.trim());
+	@ManagedOperation(description = "getStockPriceById")
+	@ManagedOperationParameters({ @ManagedOperationParameter(name = "id", description = "Stock Id") })
+	public String getStockPrice(String id) throws DataAccessException {
+		StockPrice price = getStockPriceById(id.trim());
 		if (price != null) {
 			return price.toString();
 		} else {

@@ -8,6 +8,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.intelliinvest.util.JsonDateSerializer;
+
 @Document(collection = "HOLIDAY_CALENDAR")
 public class Holiday implements Serializable {
 
@@ -20,6 +23,7 @@ public class Holiday implements Serializable {
 		super();
 	}
 
+	@JsonSerialize(using = JsonDateSerializer.class)
 	public LocalDate getDate() {
 		return date;
 	}

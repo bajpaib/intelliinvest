@@ -9,6 +9,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.intelliinvest.util.JsonDateSerializer;
+import com.intelliinvest.util.JsonDateTimeSerializer;
+
 
 @Document(collection="USER")
 public class User implements Serializable {
@@ -126,6 +130,7 @@ public class User implements Serializable {
 		this.createDate = createDate;
 	}
 
+	@JsonSerialize(using = JsonDateTimeSerializer.class)
 	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
@@ -134,6 +139,7 @@ public class User implements Serializable {
 		this.updateDate = updateDate;
 	}
 	
+	@JsonSerialize(using = JsonDateSerializer.class)
 	public LocalDate getRenewalDate() {
 		return renewalDate;
 	}
@@ -142,6 +148,7 @@ public class User implements Serializable {
 		this.renewalDate = renewalDate;
 	}
 
+	@JsonSerialize(using = JsonDateSerializer.class)
 	public LocalDate getExpiryDate() {
 		return expiryDate;
 	}
@@ -150,6 +157,7 @@ public class User implements Serializable {
 		this.expiryDate = expiryDate;
 	}
 
+	@JsonSerialize(using = JsonDateTimeSerializer.class)
 	public LocalDateTime getLastLoginDate() {
 		return lastLoginDate;
 	}
