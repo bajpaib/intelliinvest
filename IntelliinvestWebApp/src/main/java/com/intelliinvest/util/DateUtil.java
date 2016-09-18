@@ -69,6 +69,13 @@ public class DateUtil {
 		return result;
 	}
 
+
+	public Date getDateAfter(int gap) {
+		ZonedDateTime zonedNow = getZonedDateTimeWithNoTime();
+		ZonedDateTime nextBusinessDate = zonedNow.plusDays(gap);
+		return Date.from(nextBusinessDate.toInstant());
+	}
+	
 	public static ZonedDateTime substractWorkingDays(ZonedDateTime date, int workdays) {
 		if (workdays < 1) {
 			return date;

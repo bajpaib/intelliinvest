@@ -41,7 +41,7 @@ public class MailUtil {
 		try {
 			smptHost = IntelliInvestStore.properties.getProperty("smtp.host");
 			sender = IntelliInvestStore.properties.getProperty("mail.from");
-			String password = IntelliInvestStore.properties.getProperty("mail.password");
+			final String password = IntelliInvestStore.properties.getProperty("mail.password");
 			MailSSLSocketFactory sf = new MailSSLSocketFactory();
 			sf.setTrustAllHosts(true);
 

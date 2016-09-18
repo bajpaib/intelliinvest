@@ -166,12 +166,41 @@ public class QuandlEODStockPriceRepository {
 		return getStockPricesFromDB(DEFAULT_EXCHANGE, eodDate);
 	}
 
+	public Map<String, List<QuandlStockPrice>> getEODStockPricesFromStartDate(Date startDate) throws Exception {
+		logger.info("Inside getEODStockPricesFromStartDate()...");
+		Map <String, List<QuandlStockPrice>> retVal = new HashMap<String, List<QuandlStockPrice>>();		
+		List<QuandlStockPrice> prices =  getStockPricesFromDB(startDate);		
+		for(QuandlStockPrice price: prices){
+			String symbol=price.getSymbol();
+			List<QuandlStockPrice> stocksPricesList = retVal.get(symbol);
+			if(stocksPricesList==null){
+				stocksPricesList =new ArrayList<QuandlStockPrice>();
+			}
+			stocksPricesList.add(price);
+			retVal.put(symbol,stocksPricesList);
+		}
+		return retVal;
+	}
+
+
 	public List<QuandlStockPrice> getStockPricesFromDB(String exchange, Date eodDate) throws DataAccessException {
 		if (!Helper.isNotNullAndNonEmpty(exchange)) {
 			exchange = DEFAULT_EXCHANGE;
 		}
 		Query query = new Query();
+		query.with(new Sort(Sort.Direction.ASC, "eodDate"));
 		query.addCriteria(Criteria.where("exchange").is(exchange).and("eodDate").is(eodDate));
+		return mongoTemplate.find(query, QuandlStockPrice.class, COLLECTION_QUANDL_STOCK_PRICE);
+	}
+
+	public List<QuandlStockPrice> getStockPricesFromDB(String exchange, String symbol)
+			throws DataAccessException {
+		if (!Helper.isNotNullAndNonEmpty(exchange)) {
+			exchange =DEFAULT_EXCHANGE;
+		}
+		Query query = new Query();
+		query.with(new Sort(Sort.Direction.ASC, "eodDate"));
+		query.addCriteria(Criteria.where("exchange").is(exchange).and("symbol").is(symbol));
 		return mongoTemplate.find(query, QuandlStockPrice.class, COLLECTION_QUANDL_STOCK_PRICE);
 	}
 	
