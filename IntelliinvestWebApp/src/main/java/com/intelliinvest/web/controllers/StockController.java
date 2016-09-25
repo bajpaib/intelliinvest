@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.intelliinvest.common.CommonConstParams;
+import com.intelliinvest.common.IntelliinvestConstants;
 import com.intelliinvest.data.dao.QuandlEODStockPriceRepository;
 import com.intelliinvest.data.dao.StockRepository;
 import com.intelliinvest.data.model.QuandlStockPrice;
@@ -36,7 +36,7 @@ public class StockController {
 	@RequestMapping(value = "/stock/getStockById", method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public @ResponseBody StockResponse getStockById(@RequestParam("id") String id) {
 		StockResponse stockResponse = new StockResponse();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		Stock stock = null;
 		boolean error = false;
 		if (Helper.isNotNullAndNonEmpty(id)) {
@@ -71,7 +71,7 @@ public class StockController {
 
 	@RequestMapping(value = "/stock/getStocks", method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public @ResponseBody List<StockResponse> getStocks() {
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		List<Stock> stocks = null;
 		boolean error = false;
 		try {
@@ -96,7 +96,7 @@ public class StockController {
 	@RequestMapping(value = "/stock/getStockPriceById", method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public @ResponseBody StockPriceResponse getStockPriceByCode(@RequestParam("id") String id) {
 		StockPriceResponse stockPriceResponse = new StockPriceResponse();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		StockPrice stockPrice = null;
 		QuandlStockPrice quandlStockPrice = null;
 		boolean error = false;
@@ -133,7 +133,7 @@ public class StockController {
 
 	@RequestMapping(value = "/stock/getStockPrices", method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public @ResponseBody List<StockPriceResponse> getStockPrices() {
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		List<StockPrice> stockPrices = null;
 		Map<String, QuandlStockPrice> quandlStockPrices = null;
 		boolean error = false;

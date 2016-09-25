@@ -27,7 +27,7 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-import com.intelliinvest.common.CommonConstParams;
+import com.intelliinvest.common.IntelliinvestConstants;
 import com.intelliinvest.common.IntelliInvestStore;
 import com.intelliinvest.common.IntelliinvestException;
 import com.intelliinvest.data.dao.QuandlEODStockPriceRepository;
@@ -69,22 +69,22 @@ public class QuandlEODStockPriceImporter {
 				}
 			}
 		};
-		LocalDateTime zonedNow = dateUtil.getLocalDateTime();
+		LocalDateTime timeNow = dateUtil.getLocalDateTime();
 		int dailyEODPriceRefreshStartHour = new Integer(
 				IntelliInvestStore.properties.getProperty("daily.eod.price.refresh.start.hr"));
 		int dailyEODPriceRefreshStartMin = new Integer(
 				IntelliInvestStore.properties.getProperty("daily.eod.price.refresh.start.min"));
-		LocalDateTime zonedNext = zonedNow.withHour(dailyEODPriceRefreshStartHour)
+		LocalDateTime timeNext = timeNow.withHour(dailyEODPriceRefreshStartHour)
 				.withMinute(dailyEODPriceRefreshStartMin).withSecond(0);
-		if (zonedNow.compareTo(zonedNext) > 0) {
-			zonedNext = zonedNext.plusDays(1);
+		if (timeNow.compareTo(timeNext) > 0) {
+			timeNext = timeNext.plusDays(1);
 		}
-		Duration duration = Duration.between(zonedNow, zonedNext);
+		Duration duration = Duration.between(timeNow, timeNext);
 		long initialDelay = duration.getSeconds();
 		ScheduledThreadPoolHelper.getScheduledExecutorService().scheduleAtFixedRate(refreshEODPricesTask, initialDelay,
 				24 * 60 * 60, TimeUnit.SECONDS);
 
-		logger.info("Scheduled refreshEODPricesTask for periodic eod price refresh");
+		logger.info("Scheduled refreshEODPricesTask for periodic eod price refresh. Next refresh scheduled at " + timeNext);
 	}
 
 	public void updateLatestEODPrices() throws Exception {
@@ -194,7 +194,7 @@ public class QuandlEODStockPriceImporter {
 		if (stock.isNseStock()) {
 			try {
 				// first try to fetch stock prices from NSE
-				fetchEODPricesFromQuandl(stock, CommonConstParams.EXCHANGE_NSE, startDate, endDate, quandlStockPriceList);
+				fetchEODPricesFromQuandl(stock, IntelliinvestConstants.EXCHANGE_NSE, startDate, endDate, quandlStockPriceList);
 
 				if (!Helper.isNotNullAndNonEmpty(quandlStockPriceList)) {
 					error = true;
@@ -213,7 +213,7 @@ public class QuandlEODStockPriceImporter {
 		if ((stock.isNseStock() && error) || !stock.isNseStock()) {
 			try {
 				// Now try to fetch stock prices from BSE
-				fetchEODPricesFromQuandl(stock, CommonConstParams.EXCHANGE_BSE, startDate, endDate, quandlStockPriceList);
+				fetchEODPricesFromQuandl(stock, IntelliinvestConstants.EXCHANGE_BSE, startDate, endDate, quandlStockPriceList);
 
 				if (!Helper.isNotNullAndNonEmpty(quandlStockPriceList)) {
 					logger.error("No prices were retrieved for stock: " + stock.getSecurityId()
@@ -263,7 +263,7 @@ public class QuandlEODStockPriceImporter {
 			double turnover = 0d;
 			double wap = 0d;
 
-			if (CommonConstParams.EXCHANGE_BSE.equals(exchange)) {
+			if (IntelliinvestConstants.EXCHANGE_BSE.equals(exchange)) {
 				if (eodPriceAsArray.length < 9) {
 					throw new IntelliinvestException("Error while fetching EOD prices for date: " + eodPriceAsArray[0]
 							+ " for " + stock.getSecurityId() + " from exchange: " + exchange);
@@ -307,7 +307,7 @@ public class QuandlEODStockPriceImporter {
 		String url = null;
 		;
 
-		if (CommonConstParams.EXCHANGE_BSE.equals(exchange)) {
+		if (IntelliinvestConstants.EXCHANGE_BSE.equals(exchange)) {
 			code = getQuandlStockCode(stock.getBseCode());
 			url = QUANDL_BSE_QUOTE_URL.replace("#CODE#", code.replace("&", "%26"))
 					.replace("#START#", dateFormat.format(startDate)).replace("#END#", dateFormat.format(endDate));
@@ -438,7 +438,7 @@ public class QuandlEODStockPriceImporter {
 					double turnover = new Double(eodPriceAsArray[7]);
 
 					String securityId = stockRepository.getSecurityIdFromNSECode(nseCode);
-					QuandlStockPrice quandlStockPrice = new QuandlStockPrice(securityId, CommonConstParams.EXCHANGE_NSE, "EQ", open, high, low,
+					QuandlStockPrice quandlStockPrice = new QuandlStockPrice(securityId, IntelliinvestConstants.EXCHANGE_NSE, "EQ", open, high, low,
 							close, last, 0d, tradedQty, turnover, eodDate, null);
 					quandlStockPriceList.add(quandlStockPrice);
 				} else {
@@ -480,7 +480,7 @@ public class QuandlEODStockPriceImporter {
 					double turnover = new Double(eodPriceAsArray[8]);
 
 					String securityId = stockRepository.getSecurityIdFromBSECode(bseCode);
-					QuandlStockPrice quandlStockPrice = new QuandlStockPrice(securityId, CommonConstParams.EXCHANGE_BSE, "EQ", open, high, low,
+					QuandlStockPrice quandlStockPrice = new QuandlStockPrice(securityId, IntelliinvestConstants.EXCHANGE_BSE, "EQ", open, high, low,
 							close, close, wap, tradedQty, turnover, eodDate, null);
 					quandlStockPriceList.add(quandlStockPrice);
 				} else {

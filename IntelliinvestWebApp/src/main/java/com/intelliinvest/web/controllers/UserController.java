@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.intelliinvest.common.CommonConstParams;
+import com.intelliinvest.common.IntelliinvestConstants;
 import com.intelliinvest.data.dao.UserRepository;
 import com.intelliinvest.data.model.User;
 import com.intelliinvest.util.Converter;
@@ -38,7 +38,7 @@ public class UserController {
 		String password = userFormParameters.getPassword();
 		String phone = userFormParameters.getPhone();
 		String sendNotification = userFormParameters.getSendNotification();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		User user = null;
 		boolean error = false;
 		try {
@@ -70,7 +70,7 @@ public class UserController {
 	public @ResponseBody UserResponse activateUser(@RequestParam("userId") String userId,
 			@RequestParam("activationCode") String activationCode) {
 		UserResponse userResponse = new UserResponse();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		User user = null;
 		boolean error = false;
 		try {
@@ -96,7 +96,7 @@ public class UserController {
 		UserResponse userResponse = new UserResponse();
 		String userId = userFormParameters.getUserId();
 		String password = userFormParameters.getPassword();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		User user = null;
 		boolean error = false;
 		if (Helper.isNotNullAndNonEmpty(userId) && Helper.isNotNullAndNonEmpty(password)) {
@@ -124,7 +124,7 @@ public class UserController {
 	public @ResponseBody UserResponse logout(@RequestBody UserFormParameters userFormParameters) {
 		UserResponse userResponse = new UserResponse();
 		String userId = userFormParameters.getUserId();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		User user = null;
 		boolean error = false;
 		if (Helper.isNotNullAndNonEmpty(userId)) {
@@ -152,7 +152,7 @@ public class UserController {
 	public @ResponseBody UserResponse forgotPassword(@RequestBody UserFormParameters userFormParameters) {
 		UserResponse userResponse = new UserResponse();
 		String userId = userFormParameters.getUserId();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		User user = null;
 		boolean error = false;
 		if (Helper.isNotNullAndNonEmpty(userId)) {
@@ -185,7 +185,7 @@ public class UserController {
 		String password = userFormParameters.getPassword();
 		String phone = userFormParameters.getPhone();
 		String sendNotification = userFormParameters.getSendNotification();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		User user = null;
 		boolean error = false;
 		try {
@@ -211,7 +211,7 @@ public class UserController {
 	public @ResponseBody UserResponse getUserByUserId(@RequestBody UserFormParameters userFormParameters) {
 		UserResponse userResponse = new UserResponse();
 		String userId = userFormParameters.getUserId();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		User user = null;
 		boolean error = false;
 		if (Helper.isNotNullAndNonEmpty(userId)) {
@@ -246,7 +246,7 @@ public class UserController {
 
 	@RequestMapping(value = "/user/getUsers", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
 	public @ResponseBody List<UserResponse> getAllUsers() {
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		List<User> userDetails = null;
 		boolean error = false;
 		try {
@@ -270,7 +270,7 @@ public class UserController {
 
 	@RequestMapping(value = "/user/remove", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
 	public @ResponseBody UserResponse removeUser(@RequestBody UserFormParameters userFormParameters) {
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		String userId = userFormParameters.getUserId();
 		UserResponse userResponse = new UserResponse();
 		User user = null;

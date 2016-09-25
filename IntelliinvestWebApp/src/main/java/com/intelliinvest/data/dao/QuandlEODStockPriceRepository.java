@@ -28,7 +28,6 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-import com.intelliinvest.common.CommonConstParams;
 import com.intelliinvest.common.IntelliinvestException;
 import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.util.DateUtil;
@@ -83,14 +82,14 @@ public class QuandlEODStockPriceRepository {
 
 	public QuandlStockPrice getStockPriceFromDB(String id, LocalDate eodDate) throws DataAccessException {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("securityId").is(id).and("eodDate").is(eodDate));
+		query.addCriteria(Criteria.where("eodDate").is(eodDate).and("securityId").is(id));
 		return mongoTemplate.findOne(query, QuandlStockPrice.class, COLLECTION_QUANDL_STOCK_PRICE);
 	}
 
 	public List<QuandlStockPrice> getStockPricesFromDB(String id, LocalDate startDate, LocalDate endDate)
 			throws DataAccessException {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("securityId").is(id).and("eodDate").gte(startDate).lte(endDate));
+		query.addCriteria(Criteria.where("eodDate").gte(startDate).lte(endDate).and("securityId").is(id));
 		return mongoTemplate.find(query, QuandlStockPrice.class, COLLECTION_QUANDL_STOCK_PRICE);
 	}
 
@@ -124,13 +123,41 @@ public class QuandlEODStockPriceRepository {
 		List<QuandlStockPrice> retVal = new ArrayList<QuandlStockPrice>();
 
 		for (QuandlStockPrice price : results.getMappedResults()) {
-			// retVal.add(getStockPriceFromDB(price.getSecurityId(),
-			// price.getEodDate()));
 			retVal.add(price);
 		}
 		return retVal;
 	}
 
+	public Map<String, List<QuandlStockPrice>> getEODStockPricesFromStartDate(LocalDate startDate) throws Exception {
+		logger.info("Inside getEODStockPricesFromStartDate()..." + startDate);
+		Map<String, List<QuandlStockPrice>> retVal = new HashMap<String, List<QuandlStockPrice>>();
+
+		Query query = new Query();
+		query.with(new Sort(Sort.Direction.ASC, "eodDate"));
+		query.addCriteria(Criteria.where("eodDate").gte(startDate));
+		List<QuandlStockPrice> prices = mongoTemplate.find(query, QuandlStockPrice.class,
+				COLLECTION_QUANDL_STOCK_PRICE);
+
+		for (QuandlStockPrice price : prices) {
+			String securityId = price.getSecurityId();
+			List<QuandlStockPrice> stocksPricesList = retVal.get(securityId);
+			if (stocksPricesList == null) {
+				stocksPricesList = new ArrayList<QuandlStockPrice>();
+				retVal.put(securityId, stocksPricesList);
+			}
+			stocksPricesList.add(price);			
+		}
+		return retVal;
+	}
+
+	public List<QuandlStockPrice> getStockPricesFromDB(String id)
+			throws DataAccessException {
+		Query query = new Query();
+		query.with(new Sort(Sort.Direction.ASC, "eodDate"));
+		query.addCriteria(Criteria.where("securityId").is(id));
+		return mongoTemplate.find(query, QuandlStockPrice.class, COLLECTION_QUANDL_STOCK_PRICE);
+	}
+	
 	public void updateEODStockPrices(List<QuandlStockPrice> quandlPrices) throws IntelliinvestException {
 		logger.info("Inside updateQuandlStockPrices()...");
 		BulkOperations operation = mongoTemplate.bulkOps(BulkMode.UNORDERED, QuandlStockPrice.class);
@@ -148,8 +175,8 @@ public class QuandlEODStockPriceRepository {
 
 			for (QuandlStockPrice price : quandlPricesTemp) {
 				Query query = new Query();
-				query.addCriteria(Criteria.where("securityId").is(price.getSecurityId()).and("eodDate")
-						.is(dateUtil.getDateFromLocalDate(price.getEodDate())));
+				query.addCriteria(Criteria.where("eodDate").is(dateUtil.getDateFromLocalDate(price.getEodDate()))
+						.and("securityId").is(price.getSecurityId()));
 				Update update = new Update();
 				update.set("securityId", price.getSecurityId());
 				update.set("exchange", price.getExchange());

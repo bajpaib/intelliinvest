@@ -40,7 +40,7 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-import com.intelliinvest.common.CommonConstParams.ForecastType;
+import com.intelliinvest.common.IntelliinvestConstants.ForecastType;
 import com.intelliinvest.common.IntelliInvestStore;
 import com.intelliinvest.data.dao.ForecastedStockPriceRepository;
 import com.intelliinvest.data.dao.QuandlEODStockPriceRepository;
@@ -85,8 +85,8 @@ public class DailyClosePriceForecaster {
 	private DateUtil dateUtil;
 
 	private ExecutorService executorService = null;
-	private static final String LEARNING_DATA_FILE_NAME = "dailyLearningData";
-	private static final String NEURAL_NETWORK_MODEL_FILE_NAME = "dailyStockPredictor";
+	private static final String LEARNING_DATA_FILE_NAME = "dailyLearningData.csv";
+	private static final String NEURAL_NETWORK_MODEL_FILE_NAME = "dailyStockPredictor.nnet";
 	private static final int NUM_INPUTS = 7;
 	private String learningDataFileDir;
 	private int maxIterations;
@@ -119,22 +119,22 @@ public class DailyClosePriceForecaster {
 				}
 			}
 		};
-		LocalDateTime zonedNow = dateUtil.getLocalDateTime();
+		LocalDateTime timeNow = dateUtil.getLocalDateTime();
 		int dailyClosePricePredictStartHour = new Integer(
 				IntelliInvestStore.properties.getProperty("daily.close.price.forecast.start.hr"));
 		int dailyClosePricePredictStartMin = new Integer(
 				IntelliInvestStore.properties.getProperty("daily.close.price.forecast.start.min"));
-		LocalDateTime zonedNext = zonedNow.withHour(dailyClosePricePredictStartHour)
+		LocalDateTime timeNext = timeNow.withHour(dailyClosePricePredictStartHour)
 				.withMinute(dailyClosePricePredictStartMin).withSecond(0);
-		if (zonedNow.compareTo(zonedNext) > 0) {
-			zonedNext = zonedNext.plusDays(1);
+		if (timeNow.compareTo(timeNext) > 0) {
+			timeNext = timeNext.plusDays(1);
 		}
-		Duration duration = Duration.between(zonedNow, zonedNext);
+		Duration duration = Duration.between(timeNow, timeNext);
 		long initialDelay = duration.getSeconds();
 		ScheduledThreadPoolHelper.getScheduledExecutorService().scheduleAtFixedRate(dailyClosePricePredictorTask,
 				initialDelay, 24 * 60 * 60, TimeUnit.SECONDS);
 
-		logger.info("Scheduled dailyClosePricePredictorTask for tomorrow close price forecast");
+		logger.info("Scheduled dailyClosePricePredictorTask for tomorrow close price forecast. Next run at " + timeNext);
 	}
 
 	private void forecastTomorrowClose(LocalDate today) throws Exception {
@@ -305,12 +305,9 @@ public class DailyClosePriceForecaster {
 				minTrdVol = tempTradeVol;
 			}
 		}
-
-		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		String date = dateFormat.format(dateUtil.getLocalDate());
 		
 		BufferedWriter writer = new BufferedWriter(
-				new FileWriter(learningDataFileDir + "/" + stockCode + "_" + LEARNING_DATA_FILE_NAME + date + ".csv"));
+				new FileWriter(learningDataFileDir + "/" + stockCode + "_" + LEARNING_DATA_FILE_NAME));
 		try {
 			LinkedList<Double> valuesQueue = new LinkedList<Double>();
 			for (TrainingData data : trainingData) {
@@ -349,12 +346,10 @@ public class DailyClosePriceForecaster {
 //				logger.debug("Network error for interation " + rule.getCurrentIteration() + ": " + rule.getTotalNetworkError());
 			}
 		});
-		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		String date = dateFormat.format(dateUtil.getLocalDate());
-		DataSet trainingSet = loadTraininigData(learningDataFileDir + "/" + stockCode + "_" + LEARNING_DATA_FILE_NAME+ date + ".csv");
+		DataSet trainingSet = loadTraininigData(learningDataFileDir + "/" + stockCode + "_" + LEARNING_DATA_FILE_NAME);
 		neuralNetwork.learn(trainingSet);
 		
-		neuralNetwork.save(learningDataFileDir + "/" + stockCode + "_" + NEURAL_NETWORK_MODEL_FILE_NAME + date + ".nnet");
+		neuralNetwork.save(learningDataFileDir + "/" + stockCode + "_" + NEURAL_NETWORK_MODEL_FILE_NAME);
 	}
 
 	private DataSet loadTraininigData(String filePath) throws IOException {
@@ -382,10 +377,8 @@ public class DailyClosePriceForecaster {
 			double minDate, double maxTrdVol, double minTrdVol) {
 		double retVal = 0;
 //		logger.debug("Inside forecastTomorrowClose() for stock:" + price.getSecurityId());
-		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-		String date = dateFormat.format(dateUtil.getLocalDate());
 		NeuralNetwork neuralNetwork = NeuralNetwork
-				.createFromFile(learningDataFileDir + "/" + price.getSecurityId() + "_" + NEURAL_NETWORK_MODEL_FILE_NAME + date + ".nnet");
+				.createFromFile(learningDataFileDir + "/" + price.getSecurityId() + "_" + NEURAL_NETWORK_MODEL_FILE_NAME);
 		neuralNetwork.setInput(normalizeValue(dateUtil.convertToJulian(price.getEodDate()), maxDate, minDate),
 				normalizeValue(price.getOpen(), maxPrice, minPrice),
 				normalizeValue(price.getHigh(), maxPrice, minPrice), normalizeValue(price.getLow(), maxPrice, minPrice),

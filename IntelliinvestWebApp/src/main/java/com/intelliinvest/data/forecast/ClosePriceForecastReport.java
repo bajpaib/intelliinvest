@@ -71,21 +71,21 @@ public class ClosePriceForecastReport {
 				}
 			}
 		};
-		LocalDateTime zonedNow = dateUtil.getLocalDateTime();
+		LocalDateTime timeNow = dateUtil.getLocalDateTime();
 		int dailyClosePricePredictStartHour = new Integer(
 				IntelliInvestStore.properties.getProperty("close.price.forecast.report.start.hr"));
 		int dailyClosePricePredictStartMin = new Integer(
 				IntelliInvestStore.properties.getProperty("close.price.forecast.report.start.min"));
-		LocalDateTime zonedNext = zonedNow.withHour(dailyClosePricePredictStartHour)
+		LocalDateTime timeNext = timeNow.withHour(dailyClosePricePredictStartHour)
 				.withMinute(dailyClosePricePredictStartMin).withSecond(0);
-		if (zonedNow.compareTo(zonedNext) > 0) {
-			zonedNext = zonedNext.plusDays(1);
+		if (timeNow.compareTo(timeNext) > 0) {
+			timeNext = timeNext.plusDays(1);
 		}
-		Duration duration = Duration.between(zonedNow, zonedNext);
+		Duration duration = Duration.between(timeNow, timeNext);
 		long initialDelay = duration.getSeconds();
 		ScheduledThreadPoolHelper.getScheduledExecutorService().scheduleAtFixedRate(dailyClosePriceForecastReportTask,
 				initialDelay, 24 * 60 * 60, TimeUnit.SECONDS);
-		logger.info("Scheduled dailyClosePriceForecastReportTask");
+		logger.info("Scheduled dailyClosePriceForecastReportTask. Next run at " + timeNext);
 	}
 
 	private void generateAndEmailForecastReport(LocalDate today) {

@@ -1,0 +1,110 @@
+StockSignals Module is prerequisite for this.
+
+All Request are Get Request.
+
+1.	http://localhost:8080/IntelliinvestWebApp/rest/watchList/get?userId=yogeshgulati1984@gmail.com
+
+Response:
+
+{
+  "userId": "yogeshgulati1984@gmail.com",
+  "stocksData": [
+    {
+      "code": "ABAN",
+      "yesterdaySignalType": "Hold",
+      "signalType": "Hold",
+      "signalPrice": 206.55,
+      "signalDate": "2016-09-20"
+    },
+    {
+      "code": "GDL",
+      "yesterdaySignalType": "Wait",
+      "signalType": "Wait",
+      "signalPrice": 261.35,
+      "signalDate": "2016-09-20"
+    }
+  ],
+  "success": true,
+  "message": null
+}
+
+2.	http://localhost:8080/IntelliinvestWebApp/rest/watchList/get?userId=yogeshgulati19845@gmail.com
+
+
+Response:
+{
+  "userId": "yogeshgulati19845@gmail.com",
+  "stocksData": null,
+  "success": false,
+  "message": "User with id: yogeshgulati19845@gmail.com doesn't exist or not logged in..."
+}
+
+3.	http://localhost:8080/IntelliinvestWebApp/rest/watchList/add?userId=yogeshgulati1984@gmail.com&stockCode=GDL
+
+Response:
+{
+  "userId": "yogeshgulati1984@gmail.com",
+  "stocksData": [
+    {
+      "code": "GDL",
+      "yesterdaySignalType": "Wait",
+      "signalType": "Wait",
+      "signalPrice": 261.35,
+      "signalDate": "2016-09-20"
+    }
+  ],
+  "success": true,
+  "message": null
+}
+
+4. http://localhost:8080/IntelliinvestWebApp/rest/watchList/add?userId=yogeshgulati19845@gmail.com&stockCode=GDL
+
+Response:
+{
+  "userId": "yogeshgulati19845@gmail.com",
+  "stocksData": null,
+  "success": false,
+  "message": "User with id: yogeshgulati19845@gmail.com doesn't exist or not logged in..."
+}
+
+5.	http://localhost:8080/IntelliinvestWebApp/rest/watchList/remove?userId=yogeshgulati1984@gmail.com&stockCode=GDL
+
+Response:
+{
+  "userId": "yogeshgulati1984@gmail.com",
+  "stocksData": null,
+  "success": true,
+  "message": null
+}
+
+
+5.	http://localhost:8080/IntelliinvestWebApp/rest/watchList/remove?userId=yogeshgulati1984@gmail.com&stockCode=GDL
+	Note: stock was not under user's watchlist.
+
+Response:	
+{
+  "userId": "yogeshgulati1984@gmail.com",
+  "stocksData": null,
+  "success": false,
+  "message": "Some internal error occurred, so not able to remove code: GDL"
+}
+
+
+6.	http://localhost:8080/IntelliinvestWebApp/rest/watchList/sendDailyMails
+
+Response:
+{
+  "status": "SUCCESS",
+  "message": "Mails has been sent successfully"
+}
+
+7.	http://localhost:8080/IntelliinvestWebApp/rest/watchList/add?userId=yogeshgulati1984@gmail.com&stockCode=GDL11
+
+Note: not a valid stockCode
+Response:
+{
+  "userId": "yogeshgulati1984@gmail.com",
+  "stocksData": null,
+  "success": false,
+  "message": "Some invalid input there in the request, so please check your request..."
+}

@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.intelliinvest.common.CommonConstParams;
+import com.intelliinvest.common.IntelliinvestConstants;
 import com.intelliinvest.common.IntelliinvestException;
 import com.intelliinvest.data.dao.UserPortfolioRepository;
 import com.intelliinvest.data.model.Portfolio;
@@ -36,7 +36,7 @@ public class UserPortfolioController {
 			@RequestBody UserPortfolioFormParameters portfolioFormParameters) {
 		UserPortfolioResponse portfolioResponse = new UserPortfolioResponse();
 		String userId = portfolioFormParameters.getUserId();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		boolean error = false;
 		try {
 			if (!Helper.isNotNullAndNonEmpty(userId)) {
@@ -67,7 +67,7 @@ public class UserPortfolioController {
 		UserPortfolioResponse portfolioResponse = new UserPortfolioResponse();
 		String userId = portfolioFormParameters.getUserId();
 		String portfolioName = portfolioFormParameters.getPortfolioName();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		boolean error = false;
 
 		try {
@@ -120,7 +120,7 @@ public class UserPortfolioController {
 			portfolioItems.add(item);
 		}
 
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		boolean error = false;
 		try {
 			if (!(Helper.isNotNullAndNonEmpty(userId) && Helper.isNotNullAndNonEmpty(portfolioName)
@@ -159,7 +159,7 @@ public class UserPortfolioController {
 		String userId = portfolioFormParameters.getUserId();
 		String portfolioName = portfolioFormParameters.getPortfolioName();
 		String portfolioItemCode = portfolioFormParameters.getPortfolioItemCode();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		boolean error = false;
 		try {
 			if (!(Helper.isNotNullAndNonEmpty(userId) && Helper.isNotNullAndNonEmpty(portfolioName)
@@ -202,7 +202,7 @@ public class UserPortfolioController {
 		String portfolioName = portfolioFormParameters.getPortfolioName();
 		String portfolioItemCode = portfolioFormParameters.getPortfolioItemCode();
 		List<PortfolioItemRequest> requests = portfolioFormParameters.getPortfolioItems();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		boolean error = false;
 		List<PortfolioItem> portfolioItems = new ArrayList<PortfolioItem>();
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -254,7 +254,7 @@ public class UserPortfolioController {
 		UserPortfolioResponse portfolioResponse = new UserPortfolioResponse();
 		String userId = portfolioFormParameters.getUserId();
 		String portfolioName = portfolioFormParameters.getPortfolioName();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		boolean error = false;
 
 		try {
@@ -287,7 +287,7 @@ public class UserPortfolioController {
 		String portfolioName = portfolioFormParameters.getPortfolioName();
 		String portfolioItemCode = portfolioFormParameters.getPortfolioItemCode();
 		List<PortfolioItemRequest> requests = portfolioFormParameters.getPortfolioItems();
-		String errorMsg = CommonConstParams.ERROR_MSG_DEFAULT;
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		boolean error = false;
 		List<PortfolioItem> portfolioItems = new ArrayList<PortfolioItem>();
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");

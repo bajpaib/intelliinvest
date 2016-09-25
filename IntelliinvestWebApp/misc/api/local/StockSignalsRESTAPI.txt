@@ -1,0 +1,147 @@
+All Request are Get Request.
+
+
+1. http://localhost:8080/IntelliinvestWebApp/rest/stockSignals/generateTodaySignals?stockCode=GDL
+
+Response:
+{
+  "status": "SUCCESS",
+  "message": "Signals for GDLStock has been generated successfully"
+}
+
+2. http://localhost:8080/IntelliinvestWebApp/rest/stockSignals/generateTodaySignals?stockCode=GDL11
+
+Note: Not a valid stock code.
+Response:
+{
+  "status": "SUCCESS",
+  "message": "Today Signals for GDL11 Stock has not been generated successfully, some internal error or invalid data. Please Check."
+}
+
+
+3.	http://localhost:8080/IntelliinvestWebApp/rest/stockSignals/generateSignals?stockCode=GDL
+
+Response:
+
+{
+  "status": "SUCCESS",
+  "message": "Signals for GDLStock has been generated successfully"
+}
+
+4	http://localhost:8080/IntelliinvestWebApp/rest/stockSignals/generateSignals?stockCode=GDL111
+
+Note: Not a valid stock code.
+
+Response:
+
+{
+  "status": "SUCCESS",
+  "message": "Signals for GDL11 Stock has not been generated successfully, some internal error or invalid data. Please Check."
+}
+
+5.	http://localhost:8080/IntelliinvestWebApp/rest/stockSignals/getByStockCode?stockCode=ABAN
+
+Response:
+{
+  "symbol": "ABAN",
+  "previousSignalType": "Hold",
+  "signalType": "Hold",
+  "signalDate": "2016-09-20",
+  "signalPresent": "N",
+  "oscillatorSignal": "Hold",
+  "previousOscillatorSignal": "Buy",
+  "signalPresentOscillator": "N",
+  "bollingerSignal": "Sell",
+  "previousBollingerSignal": "Hold",
+  "signalPresentBollinger": "Y"
+}
+
+6.	http://localhost:8080/IntelliinvestWebApp/rest/stockSignals/getByStockCode?stockCode=ABAN11
+
+Note: Not a valid stock code.
+Response:
+{}
+
+7.	http://localhost:8080/IntelliinvestWebApp/rest/stockSignals/getByStockCodeAndDate?stockCode=ABAN&signalDate=2016-08-22
+
+Response:
+{
+  "symbol": "ABAN",
+  "previousSignalType": "Hold",
+  "signalType": "Hold",
+  "signalDate": "2016-08-22",
+  "signalPresent": "N",
+  "oscillatorSignal": "Buy",
+  "previousOscillatorSignal": "Buy",
+  "signalPresentOscillator": "N",
+  "bollingerSignal": "Hold",
+  "previousBollingerSignal": "Hold",
+  "signalPresentBollinger": "N"
+}
+
+8. http://localhost:8080/IntelliinvestWebApp/rest/stockSignals/getArchive?stockCode=ABAN
+
+Response:
+[
+  {
+    "symbol": "ABAN",
+    "previousSignalType": "",
+    "signalType": "Wait",
+    "signalDate": "2014-09-23",
+    "signalPresent": "N",
+    "oscillatorSignal": "Wait",
+    "previousOscillatorSignal": "",
+    "signalPresentOscillator": "N",
+    "bollingerSignal": "Wait",
+    "previousBollingerSignal": "",
+    "signalPresentBollinger": "N"
+  },
+  {
+    "symbol": "ABAN",
+    "previousSignalType": "",
+    "signalType": "Wait",
+    "signalDate": "2014-09-24",
+    "signalPresent": "N",
+    "oscillatorSignal": "Wait",
+    "previousOscillatorSignal": "",
+    "signalPresentOscillator": "N",
+    "bollingerSignal": "Wait",
+    "previousBollingerSignal": "",
+    "signalPresentBollinger": "N"
+  },
+.
+.
+.
+]
+
+9.	http://localhost:8080/IntelliinvestWebApp/rest/stockSignals/getAllLatestSignals
+
+Response:
+[
+  {
+    "symbol": "ABAN",
+    "previousSignalType": "Hold",
+    "signalType": "Hold",
+    "signalDate": "2016-09-20",
+    "signalPresent": "N",
+    "oscillatorSignal": "Hold",
+    "previousOscillatorSignal": "Buy",
+    "signalPresentOscillator": "N",
+    "bollingerSignal": "Sell",
+    "previousBollingerSignal": "Hold",
+    "signalPresentBollinger": "Y"
+  },
+  {
+    "symbol": "GDL",
+    "previousSignalType": "Wait",
+    "signalType": "Wait",
+    "signalDate": "2016-09-20",
+    "signalPresent": "N",
+    "oscillatorSignal": "Hold",
+    "previousOscillatorSignal": "Hold",
+    "signalPresentOscillator": "N",
+    "bollingerSignal": "Sell",
+    "previousBollingerSignal": "Hold",
+    "signalPresentBollinger": "Y"
+  }
+]

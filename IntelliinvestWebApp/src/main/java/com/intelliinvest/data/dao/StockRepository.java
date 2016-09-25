@@ -23,6 +23,7 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.intelliinvest.data.model.Stock;
+import com.intelliinvest.data.model.StockFundamentals;
 import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.util.DateUtil;
 import com.intelliinvest.util.Helper;
@@ -157,7 +158,7 @@ public class StockRepository {
 	public List<Stock> getStocksFromDB() throws DataAccessException {
 		logger.debug("Inside getStocksFromDB()...");
 		Query query = new Query();
-		query.with(new Sort(Sort.Direction.ASC, "code"));
+		query.with(new Sort(Sort.Direction.ASC, "securityId"));
 		return mongoTemplate.find(query, Stock.class, COLLECTION_STOCK);
 	}
 
@@ -194,45 +195,31 @@ public class StockRepository {
 	public List<StockPrice> getStockPricesFromDB() throws DataAccessException {
 		logger.debug("Inside getStockPricesFromDB()...");
 		Query query = new Query();
-		query.with(new Sort(Sort.Direction.ASC, "code"));
+		query.with(new Sort(Sort.Direction.ASC, "securityId"));
 		return mongoTemplate.find(query, StockPrice.class, COLLECTION_STOCK_PRICE);
 	}
 
-	public List<StockPrice> updateCurrentStockPrices(List<StockPrice> currentPrices) {
-		logger.debug("Inside updateCurrentStockPrices()...");
-		List<StockPrice> retVal = new ArrayList<StockPrice>();
-		for (StockPrice price : currentPrices) {
-			Query query = new Query();
-			Update update = new Update();
-			update.set("securityId", price.getSecurityId());
-			update.set("exchange", price.getExchange());
-			update.set("currentPrice", price.getCurrentPrice());
-			update.set("cp", price.getCp());
-			update.set("updateDate", dateUtil.getLocalDateTime());
-			query.addCriteria(Criteria.where("securityId").is(price.getSecurityId()));
-			price = mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true).upsert(true),
-					StockPrice.class, COLLECTION_STOCK_PRICE);
-			retVal.add(price);
-			// update cache
+	public void bulkUploadLatestStockPrices(List<StockPrice> currentPrices) {
+		logger.info("Inside bulkUploadLatestStockPrices()...");		
+		// delete all existing records
+		mongoTemplate.remove(new Query(), StockPrice.class, COLLECTION_STOCK_PRICE);		
+		// batch inserts
+		int start = -1000;
+		int end = 0;
+		while (end < currentPrices.size()) {
+			start = start + 1000;
+			end = end + 1000;
+			if (end > currentPrices.size()) {
+				end = currentPrices.size();
+			}
+			List<StockPrice> currentPricesTemp = currentPrices.subList(start, end);
+			mongoTemplate.insert(currentPricesTemp, COLLECTION_STOCK_PRICE);
+		}
+		
+		for(StockPrice price: currentPrices){
 			stockPriceCache.put(price.getSecurityId(), price);
 		}
-		return retVal;
 	}
-
-	/*
-	 * public List<StockPrice> updateEODStockPrices(List<StockPrice> eodPrices)
-	 * { logger.debug("Inside updateEODStockPrices()..."); List<StockPrice>
-	 * retVal = new ArrayList<StockPrice>(); for (StockPrice price : eodPrices)
-	 * { Query query = new Query(); Update update = new Update();
-	 * update.set("securityId", price.getSecurityId()); update.set("eodPrice",
-	 * price.getEodPrice()); update.set("eodDate", price.getEodDate());
-	 * update.set("updateDate", dateUtil.getLocalDateTime());
-	 * query.addCriteria(Criteria.where("code").is(price.getSecurityId()));
-	 * price = mongoTemplate.findAndModify(query, update, new
-	 * FindAndModifyOptions().returnNew(true).upsert(true), StockPrice.class,
-	 * COLLECTION_STOCK_PRICE); retVal.add(price); // update cache
-	 * stockPriceCache.put(price.getSecurityId(), price); } return retVal; }
-	 */
 
 	public void bulkInsertStocks(List<String> stocks) {
 		logger.debug("Inside bulkInsertStocks()...");
@@ -241,13 +228,14 @@ public class StockRepository {
 			String securityId = stockValues[0];
 			String bseCode = stockValues[1];
 			String nseCode = stockValues[2];
-			String name = stockValues[3];
-			String isin = stockValues[4];
-			String industry = stockValues[5];
-			boolean worldStock = Boolean.parseBoolean(stockValues[6]);
-			boolean niftyStock = Boolean.parseBoolean(stockValues[7]);
-			boolean nseStock = Boolean.parseBoolean(stockValues[8]);
-			Stock stock = new Stock(securityId, bseCode, nseCode, name, isin, industry, worldStock, niftyStock, nseStock, dateUtil.getLocalDateTime());
+			String fundamentalCode = stockValues[3];
+			String name = stockValues[4];
+			String isin = stockValues[5];
+			String industry = stockValues[6];
+			boolean worldStock = Boolean.parseBoolean(stockValues[7]);
+			boolean niftyStock = Boolean.parseBoolean(stockValues[8]);
+			boolean nseStock = Boolean.parseBoolean(stockValues[9]);
+			Stock stock = new Stock(securityId, bseCode, nseCode, fundamentalCode, name, isin, industry, worldStock, niftyStock, nseStock, dateUtil.getLocalDateTime());
 			mongoTemplate.save(stock, COLLECTION_STOCK);
 			stockCache.put(stock.getSecurityId(), stock);
 		}

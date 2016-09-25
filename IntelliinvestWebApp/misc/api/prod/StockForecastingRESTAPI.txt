@@ -1,0 +1,29 @@
+PLEASE USE BELOW ONLY IN CASE OF EMERGENCY
+
+1. Generate forecast prices for T+1
+
+http://104.199.173.131/IntelliinvestWebApp/rest/forecast/forecastAndUpdateTomorrowClose?today=2016-09-22
+
+2. Generate forecast prices for T+5
+
+http://104.199.173.131/IntelliinvestWebApp/rest/forecast/forecastAndUpdateWeeklyClose?today=2016-09-22
+
+3. Generate forecast prices for T+20
+
+http://104.199.173.131/IntelliinvestWebApp/rest/forecast/forecastAndUpdateMonthlyClose?today=2016-09-22
+
+4. If date = T, returns closing prices forecasted yesterday (T-1) for T, T+5 and T+20 days. Price is forecasted after T-1 closing is received.
+
+http://104.199.173.131/IntelliinvestWebApp/rest/forecast/getForecastStockPriceForDate?id=ACC&date=2016-09-23
+
+5. For all stocks, If date = T, returns closing prices forecasted yesterday (T-1) for T, T+5 and T+20 days. Price is forecasted after T-1 closing is received.
+
+http://104.199.173.131/IntelliinvestWebApp/rest/forecast/getForecastStockPricesForDate?date=2016-09-23
+
+6. Generate and Email DailyForecastReport for today T
+
+http://104.199.173.131/IntelliinvestWebApp/rest/forecast/generateAndEmailClosePriceForecastReport?today=2016-09-23
+
+7. If date= T, retrieve Times Series data for T (Return historical close prices until T-1 and closing prices forecasted on T-1 for T, T+5 and T+20)
+
+http://104.199.173.131/IntelliinvestWebApp/rest/timeseries/getTimeSeriesById?id=ACC&date=2016-09-23

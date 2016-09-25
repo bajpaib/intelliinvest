@@ -1,0 +1,684 @@
+1. http://104.199.173.131/IntelliinvestWebApp/rest/stock/getStocks
+
+Request
+-------
+GET
+
+Response
+--------
+
+[
+  {
+    "securityId": "ACC",
+    "bseCode": "500410",
+    "nseCode": "ACC",
+    "name": "ACC LTD.",
+    "isin": "INE012A01025",
+    "industry": "Cement & Cement Products",
+    "worldStock": false,
+    "niftyStock": false,
+    "nseStock": true,
+    "updateDate": "2016-09-15 05:30:00",
+    "success": true,
+    "message": null
+  },
+  {
+    "securityId": "ANDHRAPET",
+    "bseCode": "500012",
+    "nseCode": "",
+    "name": "ANDHRA PETROCHEMICALS LTD.",
+    "isin": "INE714B01016",
+    "industry": "Commodity Chemicals",
+    "worldStock": false,
+    "niftyStock": false,
+    "nseStock": false,
+    "updateDate": "2016-09-15 05:30:00",
+    "success": true,
+    "message": null
+  }
+]
+
+2. http://104.199.173.131/IntelliinvestWebApp/rest/stock/getStockPrices
+
+Request
+-------
+GET
+
+Response
+--------
+[
+  {
+    "securityId": "ACC",
+    "cp": 1.34,
+    "currentPrice": 1632.85,
+    "eodPrice": 1611.2,
+    "eodDate": "2016-09-15",
+    "currentPriceExchange": "NSE",
+    "eodPriceExchange": "NSE",
+    "currentPriceUpdateDate": "2016-09-16 13:22:54",
+    "eodPriceUpdateDate": "2016-09-16 13:32:45",
+    "success": true,
+    "message": null
+  },
+  {
+    "securityId": "ANDHRAPET",
+    "cp": 9.53,
+    "currentPrice": 16.9,
+    "eodPrice": 15.43,
+    "eodDate": "2016-09-15",
+    "currentPriceExchange": "BSE",
+    "eodPriceExchange": "BSE",
+    "currentPriceUpdateDate": "2016-09-16 13:22:54",
+    "eodPriceUpdateDate": "2016-09-16 13:30:59",
+    "success": true,
+    "message": null
+  }
+]
+
+3. http://104.199.173.131/IntelliinvestWebApp/rest/stock/getStockById?id=ACC
+
+Request
+-------
+
+GET
+
+Response
+--------
+{
+  "securityId": "ACC",
+  "bseCode": "500410",
+  "nseCode": "ACC",
+  "name": "ACC LTD.",
+  "isin": "INE012A01025",
+  "industry": "Cement & Cement Products",
+  "worldStock": false,
+  "niftyStock": false,
+  "nseStock": true,
+  "updateDate": "2016-09-15 05:30:00",
+  "success": true,
+  "message": "Stock details have been returned successfully."
+}
+
+4. http://104.199.173.131/IntelliinvestWebApp/rest/stock/getStockPriceById?id=ACC
+Request
+-------
+
+GET
+
+Response
+--------
+{
+  "securityId": "ACC",
+  "cp": 1.34,
+  "currentPrice": 1632.85,
+  "eodPrice": 1611.2,
+  "eodDate": "2016-09-15",
+  "currentPriceExchange": "NSE",
+  "eodPriceExchange": "NSE",
+  "currentPriceUpdateDate": "2016-09-16 13:22:54",
+  "eodPriceUpdateDate": "2016-09-16 13:32:45",
+  "success": true,
+  "message": "StockPrice details have been returned successfully."
+}
+
+5. http://104.199.173.131/IntelliinvestWebApp/rest/stock/getStockFundamentalsById?id=HDFC
+Request
+-------
+
+GET
+
+Response
+--------
+[
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q42015",
+    "annualMarketCap": 0,
+    "annualEarningPerShare": 0,
+    "annualPriceToEarning": 0,
+    "annualCashToDebtRatio": 0,
+    "annualCurrentRatio": 0,
+    "annualEquityToAssetRatio": 0,
+    "annualDebtToCapitalRatio": 0,
+    "annualLeveredBeta": 0,
+    "annualReturnOnEquity": 0,
+    "annualSolvencyRatio": 0,
+    "annualCostOfEquity": 0,
+    "annualCostOfDebt": 0,
+    "quarterlyEBIDTAMargin": 0.9668,
+    "quarterlyOperatingMargin": 0.9652,
+    "quarterlyNetMargin": 0.2078,
+    "quarterlyDividendPercent": 0,
+    "quarterlyUnadjBseClosePrice": 1247.39,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q42014",
+    "annualMarketCap": 0,
+    "annualEarningPerShare": 0,
+    "annualPriceToEarning": 0,
+    "annualCashToDebtRatio": 0,
+    "annualCurrentRatio": 0,
+    "annualEquityToAssetRatio": 0,
+    "annualDebtToCapitalRatio": 0,
+    "annualLeveredBeta": 0,
+    "annualReturnOnEquity": 0,
+    "annualSolvencyRatio": 0,
+    "annualCostOfEquity": 0,
+    "annualCostOfDebt": 0,
+    "quarterlyEBIDTAMargin": 0.9699,
+    "quarterlyOperatingMargin": 0.9682,
+    "quarterlyNetMargin": 0.2075,
+    "quarterlyDividendPercent": 0,
+    "quarterlyUnadjBseClosePrice": 1132.64,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q42013",
+    "annualMarketCap": 0,
+    "annualEarningPerShare": 0,
+    "annualPriceToEarning": 0,
+    "annualCashToDebtRatio": 0,
+    "annualCurrentRatio": 0,
+    "annualEquityToAssetRatio": 0,
+    "annualDebtToCapitalRatio": 0,
+    "annualLeveredBeta": 0,
+    "annualReturnOnEquity": 0,
+    "annualSolvencyRatio": 0,
+    "annualCostOfEquity": 0,
+    "annualCostOfDebt": 0,
+    "quarterlyEBIDTAMargin": 0.9711,
+    "quarterlyOperatingMargin": 0.9693,
+    "quarterlyNetMargin": 0.2123,
+    "quarterlyDividendPercent": 0,
+    "quarterlyUnadjBseClosePrice": 795.97,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q42012",
+    "annualMarketCap": 0,
+    "annualEarningPerShare": 0,
+    "annualPriceToEarning": 0,
+    "annualCashToDebtRatio": 0,
+    "annualCurrentRatio": 0,
+    "annualEquityToAssetRatio": 0,
+    "annualDebtToCapitalRatio": 0,
+    "annualLeveredBeta": 0,
+    "annualReturnOnEquity": 0,
+    "annualSolvencyRatio": 0,
+    "annualCostOfEquity": 0,
+    "annualCostOfDebt": 0,
+    "quarterlyEBIDTAMargin": 0.9676,
+    "quarterlyOperatingMargin": 0.9661,
+    "quarterlyNetMargin": 0.2175,
+    "quarterlyDividendPercent": 0,
+    "quarterlyUnadjBseClosePrice": 828.37,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q32015",
+    "annualMarketCap": 0,
+    "annualEarningPerShare": 0,
+    "annualPriceToEarning": 0,
+    "annualCashToDebtRatio": 0,
+    "annualCurrentRatio": 0,
+    "annualEquityToAssetRatio": 0,
+    "annualDebtToCapitalRatio": 0,
+    "annualLeveredBeta": 0,
+    "annualReturnOnEquity": 0,
+    "annualSolvencyRatio": 0,
+    "annualCostOfEquity": 0,
+    "annualCostOfDebt": 0,
+    "quarterlyEBIDTAMargin": 0.9716,
+    "quarterlyOperatingMargin": 0.9698,
+    "quarterlyNetMargin": 0.2149,
+    "quarterlyDividendPercent": 6.5,
+    "quarterlyUnadjBseClosePrice": 1215.41,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q32014",
+    "annualMarketCap": 0,
+    "annualEarningPerShare": 0,
+    "annualPriceToEarning": 0,
+    "annualCashToDebtRatio": 0,
+    "annualCurrentRatio": 0,
+    "annualEquityToAssetRatio": 0,
+    "annualDebtToCapitalRatio": 0,
+    "annualLeveredBeta": 0,
+    "annualReturnOnEquity": 0,
+    "annualSolvencyRatio": 0,
+    "annualCostOfEquity": 0,
+    "annualCostOfDebt": 0,
+    "quarterlyEBIDTAMargin": 0.9746,
+    "quarterlyOperatingMargin": 0.9693,
+    "quarterlyNetMargin": 0.2046,
+    "quarterlyDividendPercent": 7,
+    "quarterlyUnadjBseClosePrice": 1051.28,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q32013",
+    "annualMarketCap": 0,
+    "annualEarningPerShare": 0,
+    "annualPriceToEarning": 0,
+    "annualCashToDebtRatio": 0,
+    "annualCurrentRatio": 0,
+    "annualEquityToAssetRatio": 0,
+    "annualDebtToCapitalRatio": 0,
+    "annualLeveredBeta": 0,
+    "annualReturnOnEquity": 0,
+    "annualSolvencyRatio": 0,
+    "annualCostOfEquity": 0,
+    "annualCostOfDebt": 0,
+    "quarterlyEBIDTAMargin": 0.9715,
+    "quarterlyOperatingMargin": 0.9701,
+    "quarterlyNetMargin": 0.213,
+    "quarterlyDividendPercent": 0,
+    "quarterlyUnadjBseClosePrice": 770.66,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q22016",
+    "annualMarketCap": 0,
+    "annualEarningPerShare": 0,
+    "annualPriceToEarning": 0,
+    "annualCashToDebtRatio": 0,
+    "annualCurrentRatio": 0,
+    "annualEquityToAssetRatio": 0,
+    "annualDebtToCapitalRatio": 0,
+    "annualLeveredBeta": 0,
+    "annualReturnOnEquity": 0,
+    "annualSolvencyRatio": 0,
+    "annualCostOfEquity": 0,
+    "annualCostOfDebt": 0,
+    "quarterlyEBIDTAMargin": 0.9353,
+    "quarterlyOperatingMargin": 0.934,
+    "quarterlyNetMargin": 0.2232,
+    "quarterlyDividendPercent": 0,
+    "quarterlyUnadjBseClosePrice": 1254.55,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q22015",
+    "annualMarketCap": 0,
+    "annualEarningPerShare": 0,
+    "annualPriceToEarning": 0,
+    "annualCashToDebtRatio": 0,
+    "annualCurrentRatio": 0,
+    "annualEquityToAssetRatio": 0,
+    "annualDebtToCapitalRatio": 0,
+    "annualLeveredBeta": 0,
+    "annualReturnOnEquity": 0,
+    "annualSolvencyRatio": 0,
+    "annualCostOfEquity": 0,
+    "annualCostOfDebt": 0,
+    "quarterlyEBIDTAMargin": 0.9676,
+    "quarterlyOperatingMargin": 0.9661,
+    "quarterlyNetMargin": 0.1928,
+    "quarterlyDividendPercent": 0,
+    "quarterlyUnadjBseClosePrice": 1292.17,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q22014",
+    "annualMarketCap": 0,
+    "annualEarningPerShare": 0,
+    "annualPriceToEarning": 0,
+    "annualCashToDebtRatio": 0,
+    "annualCurrentRatio": 0,
+    "annualEquityToAssetRatio": 0,
+    "annualDebtToCapitalRatio": 0,
+    "annualLeveredBeta": 0,
+    "annualReturnOnEquity": 0,
+    "annualSolvencyRatio": 0,
+    "annualCostOfEquity": 0,
+    "annualCostOfDebt": 0,
+    "quarterlyEBIDTAMargin": 0.9693,
+    "quarterlyOperatingMargin": 0.967,
+    "quarterlyNetMargin": 0.2086,
+    "quarterlyDividendPercent": 0,
+    "quarterlyUnadjBseClosePrice": 982.27,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q22013",
+    "annualMarketCap": 0,
+    "annualEarningPerShare": 0,
+    "annualPriceToEarning": 0,
+    "annualCashToDebtRatio": 0,
+    "annualCurrentRatio": 0,
+    "annualEquityToAssetRatio": 0,
+    "annualDebtToCapitalRatio": 0,
+    "annualLeveredBeta": 0,
+    "annualReturnOnEquity": 0,
+    "annualSolvencyRatio": 0,
+    "annualCostOfEquity": 0,
+    "annualCostOfDebt": 0,
+    "quarterlyEBIDTAMargin": 0.9676,
+    "quarterlyOperatingMargin": 0.9662,
+    "quarterlyNetMargin": 0.2111,
+    "quarterlyDividendPercent": 6.25,
+    "quarterlyUnadjBseClosePrice": 867.98,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q12016",
+    "annualMarketCap": 174734.57,
+    "annualEarningPerShare": 44.9,
+    "annualPriceToEarning": 24.63,
+    "annualCashToDebtRatio": 0.02,
+    "annualCurrentRatio": 15.16,
+    "annualEquityToAssetRatio": 0.12,
+    "annualDebtToCapitalRatio": 0.87,
+    "annualLeveredBeta": 0.8844,
+    "annualReturnOnEquity": 0.2082,
+    "annualSolvencyRatio": 0.03,
+    "annualCostOfEquity": 0.1638382,
+    "annualCostOfDebt": 0.1338,
+    "quarterlyEBIDTAMargin": 0.9256,
+    "quarterlyOperatingMargin": 0.924,
+    "quarterlyNetMargin": 0.2831,
+    "quarterlyDividendPercent": 1.27,
+    "quarterlyUnadjBseClosePrice": 1106.02,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q12015",
+    "annualMarketCap": 205994.12,
+    "annualEarningPerShare": 38.04,
+    "annualPriceToEarning": 34.39,
+    "annualCashToDebtRatio": 0.02,
+    "annualCurrentRatio": 15.81,
+    "annualEquityToAssetRatio": 0.12,
+    "annualDebtToCapitalRatio": 0.87,
+    "annualLeveredBeta": 0.8976,
+    "annualReturnOnEquity": 0.1934,
+    "annualSolvencyRatio": 0.03,
+    "annualCostOfEquity": 0.1650328,
+    "annualCostOfDebt": 0.1438,
+    "quarterlyEBIDTAMargin": 0.9733,
+    "quarterlyOperatingMargin": 0.9722,
+    "quarterlyNetMargin": 0.2501,
+    "quarterlyDividendPercent": 1,
+    "quarterlyUnadjBseClosePrice": 1308.15,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q12014",
+    "annualMarketCap": 137571.91,
+    "annualEarningPerShare": 34.86,
+    "annualPriceToEarning": 25.29,
+    "annualCashToDebtRatio": 0.04,
+    "annualCurrentRatio": 15.56,
+    "annualEquityToAssetRatio": 0.12,
+    "annualDebtToCapitalRatio": 0.87,
+    "annualLeveredBeta": 0.9372,
+    "annualReturnOnEquity": 0.1946,
+    "annualSolvencyRatio": 0.03,
+    "annualCostOfEquity": 0.1686166,
+    "annualCostOfDebt": 0.1438,
+    "quarterlyEBIDTAMargin": 0.9822,
+    "quarterlyOperatingMargin": 0.978,
+    "quarterlyNetMargin": 0.2603,
+    "quarterlyDividendPercent": 0,
+    "quarterlyUnadjBseClosePrice": 865.62,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q12013",
+    "annualMarketCap": 126528.3,
+    "annualEarningPerShare": 31.35,
+    "annualPriceToEarning": 26.1,
+    "annualCashToDebtRatio": 0.04,
+    "annualCurrentRatio": 15.45,
+    "annualEquityToAssetRatio": 0.13,
+    "annualDebtToCapitalRatio": 0.86,
+    "annualLeveredBeta": 0.9966,
+    "annualReturnOnEquity": 0.1953,
+    "annualSolvencyRatio": 0.03,
+    "annualCostOfEquity": 0.1739923,
+    "annualCostOfDebt": 0.1438,
+    "quarterlyEBIDTAMargin": 0.979,
+    "quarterlyOperatingMargin": 0.9769,
+    "quarterlyNetMargin": 0.2745,
+    "quarterlyDividendPercent": 0,
+    "quarterlyUnadjBseClosePrice": 818.24,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q12012",
+    "annualMarketCap": 99448.82,
+    "annualEarningPerShare": 27.91,
+    "annualPriceToEarning": 24.12,
+    "annualCashToDebtRatio": 0.04,
+    "annualCurrentRatio": 16.46,
+    "annualEquityToAssetRatio": 0.11,
+    "annualDebtToCapitalRatio": 0.88,
+    "annualLeveredBeta": 0.9966,
+    "annualReturnOnEquity": 0.2168,
+    "annualSolvencyRatio": 0.03,
+    "annualCostOfEquity": 0.1739923,
+    "annualCostOfDebt": 0.1338,
+    "quarterlyEBIDTAMargin": 0,
+    "quarterlyOperatingMargin": 0,
+    "quarterlyNetMargin": 0,
+    "quarterlyDividendPercent": 0,
+    "quarterlyUnadjBseClosePrice": 0,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q12011",
+    "annualMarketCap": 103422.87,
+    "annualEarningPerShare": 24.1,
+    "annualPriceToEarning": 29.26,
+    "annualCashToDebtRatio": 0.05,
+    "annualCurrentRatio": 18.54,
+    "annualEquityToAssetRatio": 0.12,
+    "annualDebtToCapitalRatio": 0.87,
+    "annualLeveredBeta": 1.0296,
+    "annualReturnOnEquity": 0.2041,
+    "annualSolvencyRatio": 0.03,
+    "annualCostOfEquity": 0.1769788,
+    "annualCostOfDebt": 0.1338,
+    "quarterlyEBIDTAMargin": 0,
+    "quarterlyOperatingMargin": 0,
+    "quarterlyNetMargin": 0,
+    "quarterlyDividendPercent": 0,
+    "quarterlyUnadjBseClosePrice": 0,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q12010",
+    "annualMarketCap": 77373.85,
+    "annualEarningPerShare": 98.45,
+    "annualPriceToEarning": 27.37,
+    "annualCashToDebtRatio": 0.05,
+    "annualCurrentRatio": 21.46,
+    "annualEquityToAssetRatio": 0.13,
+    "annualDebtToCapitalRatio": 0.86,
+    "annualLeveredBeta": 1.0098,
+    "annualReturnOnEquity": 0.186,
+    "annualSolvencyRatio": 0.03,
+    "annualCostOfEquity": 0.1751869,
+    "annualCostOfDebt": 0.1338,
+    "quarterlyEBIDTAMargin": 0,
+    "quarterlyOperatingMargin": 0,
+    "quarterlyNetMargin": 0,
+    "quarterlyDividendPercent": 0,
+    "quarterlyUnadjBseClosePrice": 0,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q12009",
+    "annualMarketCap": 40708.78,
+    "annualEarningPerShare": 80.24,
+    "annualPriceToEarning": 17.83,
+    "annualCashToDebtRatio": 0.02,
+    "annualCurrentRatio": 19.31,
+    "annualEquityToAssetRatio": 0.13,
+    "annualDebtToCapitalRatio": 0.86,
+    "annualLeveredBeta": 1.0164,
+    "annualReturnOnEquity": 0.1737,
+    "annualSolvencyRatio": 0.03,
+    "annualCostOfEquity": 0.1757842,
+    "annualCostOfDebt": 0.1438,
+    "quarterlyEBIDTAMargin": 0,
+    "quarterlyOperatingMargin": 0,
+    "quarterlyNetMargin": 0,
+    "quarterlyDividendPercent": 0,
+    "quarterlyUnadjBseClosePrice": 0,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q12008",
+    "annualMarketCap": 70780,
+    "annualEarningPerShare": 85.77,
+    "annualPriceToEarning": 29.05,
+    "annualCashToDebtRatio": 0.01,
+    "annualCurrentRatio": 22.91,
+    "annualEquityToAssetRatio": 0.14,
+    "annualDebtToCapitalRatio": 0.85,
+    "annualLeveredBeta": 0.9372,
+    "annualReturnOnEquity": 0.2039,
+    "annualSolvencyRatio": 0.04,
+    "annualCostOfEquity": 0.1686166,
+    "annualCostOfDebt": 0.1338,
+    "quarterlyEBIDTAMargin": 0,
+    "quarterlyOperatingMargin": 0,
+    "quarterlyNetMargin": 0,
+    "quarterlyDividendPercent": 0,
+    "quarterlyUnadjBseClosePrice": 0,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q12007",
+    "annualMarketCap": 38421.14,
+    "annualEarningPerShare": 62.07,
+    "annualPriceToEarning": 24.47,
+    "annualCashToDebtRatio": 0.02,
+    "annualCurrentRatio": 21.43,
+    "annualEquityToAssetRatio": 0.08,
+    "annualDebtToCapitalRatio": 0.91,
+    "annualLeveredBeta": 0.9174,
+    "annualReturnOnEquity": 0.2829,
+    "annualSolvencyRatio": 0.03,
+    "annualCostOfEquity": 0.1668247,
+    "annualCostOfDebt": 0.1338,
+    "quarterlyEBIDTAMargin": 0,
+    "quarterlyOperatingMargin": 0,
+    "quarterlyNetMargin": 0,
+    "quarterlyDividendPercent": 0,
+    "quarterlyUnadjBseClosePrice": 0,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q12006",
+    "annualMarketCap": 33645.72,
+    "annualEarningPerShare": 50.38,
+    "annualPriceToEarning": 26.76,
+    "annualCashToDebtRatio": 0.03,
+    "annualCurrentRatio": 21.75,
+    "annualEquityToAssetRatio": 0.08,
+    "annualDebtToCapitalRatio": 0.91,
+    "annualLeveredBeta": 0.8448,
+    "annualReturnOnEquity": 0.2814,
+    "annualSolvencyRatio": 0.03,
+    "annualCostOfEquity": 0.1602544,
+    "annualCostOfDebt": 0.1338,
+    "quarterlyEBIDTAMargin": 0,
+    "quarterlyOperatingMargin": 0,
+    "quarterlyNetMargin": 0,
+    "quarterlyDividendPercent": 0,
+    "quarterlyUnadjBseClosePrice": 0,
+    "updateDate": "2016-09-24 21:05:25"
+  },
+  {
+    "securityId": "HDFC",
+    "quarterYear": "Q12005",
+    "annualMarketCap": 0,
+    "annualEarningPerShare": 41.61,
+    "annualPriceToEarning": 0,
+    "annualCashToDebtRatio": 0,
+    "annualCurrentRatio": 0,
+    "annualEquityToAssetRatio": 0,
+    "annualDebtToCapitalRatio": 0,
+    "annualLeveredBeta": 4.85727,
+    "annualReturnOnEquity": 0.2669,
+    "annualSolvencyRatio": 0.03,
+    "annualCostOfEquity": 0.523382935,
+    "annualCostOfDebt": 0.1438,
+    "quarterlyEBIDTAMargin": 0,
+    "quarterlyOperatingMargin": 0,
+    "quarterlyNetMargin": 0,
+    "quarterlyDividendPercent": 0,
+    "quarterlyUnadjBseClosePrice": 0,
+    "updateDate": "2016-09-24 21:05:25"
+  }
+]
+
+
+6. http://104.199.173.131/IntelliinvestWebApp/rest//stock/getStockFundamentalsByIdAndQuarterYear?id=HDFC&quarterYear=Q12016
+Request
+-------
+
+GET
+
+Response
+--------
+{
+  "securityId": "HDFC",
+  "quarterYear": "Q12016",
+  "annualMarketCap": 174734.57,
+  "annualEarningPerShare": 44.9,
+  "annualPriceToEarning": 24.63,
+  "annualCashToDebtRatio": 0.02,
+  "annualCurrentRatio": 15.16,
+  "annualEquityToAssetRatio": 0.12,
+  "annualDebtToCapitalRatio": 0.87,
+  "annualLeveredBeta": 0.8844,
+  "annualReturnOnEquity": 0.2082,
+  "annualSolvencyRatio": 0.03,
+  "annualCostOfEquity": 0.1638382,
+  "annualCostOfDebt": 0.1338,
+  "quarterlyEBIDTAMargin": 0.9256,
+  "quarterlyOperatingMargin": 0.924,
+  "quarterlyNetMargin": 0.2831,
+  "quarterlyDividendPercent": 1.27,
+  "quarterlyUnadjBseClosePrice": 1106.02,
+  "updateDate": "2016-09-24 21:05:25"
+}
+
+
+7. If date = T, returns closing prices forecasted yesterday (T-1) for T, T+5 and T+20 days. Price is forecasted after T-1 closing is received.
+
+http://104.199.173.131/IntelliinvestWebApp/rest/forecast/getForecastStockPriceForDate?id=ACC&date=2016-09-14
+
+8. For all stocks, If date = T, returns closing prices forecasted yesterday (T-1) for T, T+5 and T+20 days. Price is forecasted after T-1 closing is received.
+
+http://104.199.173.131/IntelliinvestWebApp/rest/forecast/getForecastStockPricesForDate?date=2016-09-14
+
+9. If date= T, retrieve Times Series data for T (Return historical close prices until T-1 and closing prices forecasted on T-1 for T, T+5 and T+20)
+
+http://104.199.173.131/IntelliinvestWebApp/rest/timeseries/getTimeSeriesById?id=ACC&date=2016-09-15

@@ -22,7 +22,7 @@ public class QuandlEODStockPriceController {
 	private QuandlEODStockPriceImporter quandlEODStockPriceImporter;
 	@Autowired
 	private QuandlEODStockPriceRepository quandlEODStockPriceRepository;
-
+	
 	@RequestMapping(value = "/quandl/backloadLatestEODPrices", method = RequestMethod.GET)
 	public @ResponseBody String backloadLatestEODPrices() {
 		return quandlEODStockPriceImporter.backloadLatestEODPrices();

@@ -1,4 +1,4 @@
-package com.intelliinvest.data.convertor;
+package com.intelliinvest.util;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

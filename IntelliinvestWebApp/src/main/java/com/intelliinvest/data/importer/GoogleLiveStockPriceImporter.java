@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-import com.intelliinvest.common.CommonConstParams;
+import com.intelliinvest.common.IntelliinvestConstants;
 import com.intelliinvest.common.IntelliInvestStore;
 import com.intelliinvest.data.dao.StockRepository;
 import com.intelliinvest.data.model.Stock;
@@ -107,31 +107,31 @@ public class GoogleLiveStockPriceImporter {
 		int periodicRefreshStartMin = new Integer(
 				IntelliInvestStore.properties.getProperty("periodic.refresh.start.min"));
 
-		LocalDateTime zonedNow = dateUtil.getLocalDateTime();
-		LocalDateTime zonedNext9 = zonedNow.withHour(periodicRefreshStartHour).withMinute(periodicRefreshStartMin)
+		LocalDateTime timeNow = dateUtil.getLocalDateTime();
+		LocalDateTime timeStart = timeNow.withHour(periodicRefreshStartHour).withMinute(periodicRefreshStartMin)
 				.withSecond(0);
 
-		if (zonedNow.compareTo(zonedNext9) > 0) {
-			zonedNext9 = zonedNext9.plusDays(1);
+		if (timeNow.compareTo(timeStart) > 0) {
+			timeStart = timeStart.plusDays(1);
 		}
 
-		Duration duration9 = Duration.between(zonedNow, zonedNext9);
-		long initialDelay9 = duration9.getSeconds();
+		Duration durationStart = Duration.between(timeNow, timeStart);
+		long initialDelayStart = durationStart.getSeconds();
 		ScheduledThreadPoolHelper.getScheduledExecutorService().scheduleAtFixedRate(enablePeriodicRefreshTask,
-				initialDelay9, 24 * 60 * 60, TimeUnit.SECONDS);
-		logger.info("Scheduled enablePeriodicRefreshTask for periodic price refresh");
+				initialDelayStart, 24 * 60 * 60, TimeUnit.SECONDS);
+		logger.info("Scheduled enablePeriodicRefreshTask for periodic price refresh at " + timeStart);
 		int periodicRefreshEndHour = new Integer(IntelliInvestStore.properties.getProperty("periodic.refresh.end.hr"));
 		int periodicRefreshEndMin = new Integer(IntelliInvestStore.properties.getProperty("periodic.refresh.end.min"));
-		LocalDateTime zonedNext16 = zonedNow.withHour(periodicRefreshEndHour).withMinute(periodicRefreshEndMin)
+		LocalDateTime timeEnd = timeNow.withHour(periodicRefreshEndHour).withMinute(periodicRefreshEndMin)
 				.withSecond(0);
-		if (zonedNow.compareTo(zonedNext16) > 0) {
-			zonedNext16 = zonedNext16.plusDays(1);
+		if (timeNow.compareTo(timeEnd) > 0) {
+			timeEnd = timeEnd.plusDays(1);
 		}
-		Duration duration16 = Duration.between(zonedNow, zonedNext16);
-		long initialDelay16 = duration16.getSeconds();
+		Duration durationEnd = Duration.between(timeNow, timeEnd);
+		long initialDelayEnd = durationEnd.getSeconds();
 		ScheduledThreadPoolHelper.getScheduledExecutorService().scheduleAtFixedRate(disablePeriodicRefreshTask,
-				initialDelay16, 24 * 60 * 60, TimeUnit.SECONDS);
-		logger.info("Scheduled disablePeriodicRefreshTask for periodic price refresh");
+				initialDelayEnd, 24 * 60 * 60, TimeUnit.SECONDS);
+		logger.info("Scheduled disablePeriodicRefreshTask for periodic price refresh at " + timeEnd);
 	}
 
 	public void updateCurrentPrices() {
@@ -147,11 +147,11 @@ public class GoogleLiveStockPriceImporter {
 		}
 		List<StockPrice> nonWorldPrices = getCurrentNonWorldStockPrices(nonWorldStocks);
 		if (Helper.isNotNullAndNonEmpty(nonWorldPrices)) {
-			nonWorldPrices = stockRepository.updateCurrentStockPrices(nonWorldPrices);
+			stockRepository.bulkUploadLatestStockPrices(nonWorldPrices);
 		}
 		List<StockPrice> worldPrices = getCurrentWorldStockPrices(worldStocks);
 		if (Helper.isNotNullAndNonEmpty(worldPrices)) {
-			worldPrices = stockRepository.updateCurrentStockPrices(worldPrices);
+			stockRepository.bulkUploadLatestStockPrices(worldPrices);
 		}
 	}
 
@@ -178,7 +178,7 @@ public class GoogleLiveStockPriceImporter {
 			if (end > nseStocks.size()) {
 				end = nseStocks.size();
 			}
-			stockCurrentPriceList.addAll(getCurrentNonWorldStockPricesForSubList(nseStocks.subList(start, end),CommonConstParams.EXCHANGE_NSE));
+			stockCurrentPriceList.addAll(getCurrentNonWorldStockPricesForSubList(nseStocks.subList(start, end),IntelliinvestConstants.EXCHANGE_NSE));
 		}
 		
 		//then fetch prices for BSE stocks
@@ -190,7 +190,7 @@ public class GoogleLiveStockPriceImporter {
 			if (end > nonNseStocks.size()) {
 				end = nonNseStocks.size();
 			}
-			stockCurrentPriceList.addAll(getCurrentNonWorldStockPricesForSubList(nonNseStocks.subList(start, end),CommonConstParams.EXCHANGE_BSE));
+			stockCurrentPriceList.addAll(getCurrentNonWorldStockPricesForSubList(nonNseStocks.subList(start, end),IntelliinvestConstants.EXCHANGE_BSE));
 		}
 		return stockCurrentPriceList;
 	}
@@ -201,7 +201,7 @@ public class GoogleLiveStockPriceImporter {
 		
 		try {
 			for (Stock stock : stocks) {
-				String code = exchange.equals(CommonConstParams.EXCHANGE_NSE) ? CommonConstParams.EXCHANGE_NSE +":" + stock.getNseCode() : CommonConstParams.EXCHANGE_BOM+":" + stock.getBseCode();
+				String code = exchange.equals(IntelliinvestConstants.EXCHANGE_NSE) ? IntelliinvestConstants.EXCHANGE_NSE +":" + stock.getNseCode() : IntelliinvestConstants.EXCHANGE_BOM+":" + stock.getBseCode();
 				codes = codes + code + ",";
 			}
 			if (!codes.isEmpty()) {
@@ -240,7 +240,7 @@ public class GoogleLiveStockPriceImporter {
 						throw new RuntimeException("Stale details for " + code);
 					}
 
-					String securityId = CommonConstParams.EXCHANGE_NSE.equals(exchange) ? stockRepository.getSecurityIdFromNSECode(code)
+					String securityId = IntelliinvestConstants.EXCHANGE_NSE.equals(exchange) ? stockRepository.getSecurityIdFromNSECode(code)
 							: stockRepository.getSecurityIdFromBSECode(code);
 					if (Helper.isNotNullAndNonEmpty(securityId)) {
 						stockCurrentPriceList.add(new StockPrice(securityId, exchange, cp, price, ltDate));
@@ -249,14 +249,14 @@ public class GoogleLiveStockPriceImporter {
 								+ " and exchange:" + exchange);
 					}
 				} catch (Exception e1) {
-					if (exchange.equals(CommonConstParams.EXCHANGE_NSE)) {
+					if (exchange.equals(IntelliinvestConstants.EXCHANGE_NSE)) {
 						logger.error("Error fetching stock price from " + exchange + " for " + code
 								+ ". Trying from BSE now");
 						String bseCode = stockRepository.getBSECodeFromNSECode(code);
 						if (bseCode != null) {
 							response = HttpUtil.getFromHttpUrlAsString(
-									GOOGLE_QUOTE_URL.replace("#CODE#", CommonConstParams.EXCHANGE_BOM +":" + bseCode.replace("&", "%26")));
-							stockCurrentPriceList.addAll(getPriceFromJSON(CommonConstParams.EXCHANGE_BSE, code, response));
+									GOOGLE_QUOTE_URL.replace("#CODE#", IntelliinvestConstants.EXCHANGE_BOM +":" + bseCode.replace("&", "%26")));
+							stockCurrentPriceList.addAll(getPriceFromJSON(IntelliinvestConstants.EXCHANGE_BSE, code, response));
 						} else {
 							logger.error("Can't fetch price from BSE. nseToBSE mapping not found for " + code);
 						}
@@ -286,7 +286,7 @@ public class GoogleLiveStockPriceImporter {
 						Double price = new Double(stockObject.getString("l_fix").replaceAll(",", ""));
 						Double cp = new Double(stockObject.getString("cp").replaceAll(",", ""));
 						stockCurrentPriceList.add(
-								new StockPrice(stock.getSecurityId(), CommonConstParams.EXCHANGE_BSE, cp, price, dateUtil.getLocalDateTime()));
+								new StockPrice(stock.getSecurityId(), IntelliinvestConstants.EXCHANGE_BSE, cp, price, dateUtil.getLocalDateTime()));
 					} catch (Exception e) {
 						logger.error("Error fetching stock price for " + securityId);
 						logger.error(e.getMessage());
@@ -315,11 +315,11 @@ public class GoogleLiveStockPriceImporter {
 			}
 			List<StockPrice> nonWorldPrices = getCurrentNonWorldStockPrices(nonWorldStocks);
 			if (Helper.isNotNullAndNonEmpty(nonWorldPrices)) {
-				nonWorldPrices = stockRepository.updateCurrentStockPrices(nonWorldPrices);
+				stockRepository.bulkUploadLatestStockPrices(nonWorldPrices);
 			}
 			List<StockPrice> worldPrices = getCurrentWorldStockPrices(worldStocks);
 			if (Helper.isNotNullAndNonEmpty(worldPrices)) {
-				worldPrices = stockRepository.updateCurrentStockPrices(worldPrices);
+				stockRepository.bulkUploadLatestStockPrices(worldPrices);
 			}
 		} catch (Exception e) {
 			return e.getMessage();

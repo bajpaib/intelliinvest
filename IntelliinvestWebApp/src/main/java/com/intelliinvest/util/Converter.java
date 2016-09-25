@@ -8,10 +8,13 @@ import java.util.Map;
 import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.data.model.Stock;
 import com.intelliinvest.data.model.StockPrice;
+import com.intelliinvest.data.model.StockSignals;
+import com.intelliinvest.data.model.StockSignalsComponents;
 import com.intelliinvest.data.model.User;
 import com.intelliinvest.web.bo.StockPriceResponse;
 import com.intelliinvest.web.bo.StockResponse;
 import com.intelliinvest.web.bo.UserResponse;
+import com.intelliinvest.web.dto.StockSignalsDTO;
 
 public class Converter {
 
@@ -59,7 +62,7 @@ public class Converter {
 		});
 		return stockResponseList;
 	}
-	
+
 	public static StockResponse getStockResponse(Stock stock) {
 		StockResponse stockResponse = new StockResponse();
 		stockResponse.setSecurityId(stock.getSecurityId());
@@ -67,7 +70,7 @@ public class Converter {
 		stockResponse.setNseCode(stock.getNseCode());
 		stockResponse.setName(stock.getName());
 		stockResponse.setIsin(stock.getIsin());
-		stockResponse.setIndustry(stock.getIndustry());		
+		stockResponse.setIndustry(stock.getIndustry());
 		stockResponse.setWorldStock(stock.isWorldStock());
 		stockResponse.setNiftyStock(stock.isNiftyStock());
 		stockResponse.setNseStock(stock.isNseStock());
@@ -76,7 +79,8 @@ public class Converter {
 		return stockResponse;
 	}
 
-	public static List<StockPriceResponse> convertStockPriceList(List<StockPrice> prices, Map<String, QuandlStockPrice> quandlStockPrices) {
+	public static List<StockPriceResponse> convertStockPriceList(List<StockPrice> prices,
+			Map<String, QuandlStockPrice> quandlStockPrices) {
 		List<StockPriceResponse> stockResponseList = new ArrayList<StockPriceResponse>();
 		if (prices != null) {
 			for (StockPrice price : prices) {
@@ -100,7 +104,7 @@ public class Converter {
 		stockPriceResponse.setCurrentPrice(price.getCurrentPrice());
 		stockPriceResponse.setCurrentPriceExchange(price.getExchange());
 		stockPriceResponse.setCurrentPriceUpdateDate(price.getUpdateDate());
-		if(quandlStockPrice!=null){
+		if (quandlStockPrice != null) {
 			stockPriceResponse.setEodPrice(quandlStockPrice.getClose());
 			stockPriceResponse.setEodDate(quandlStockPrice.getEodDate());
 			stockPriceResponse.setEodPriceExchange(quandlStockPrice.getExchange());
@@ -111,4 +115,80 @@ public class Converter {
 		return stockPriceResponse;
 	}
 
+	public static void convertDTO2BO(List<StockSignalsDTO> stockSignalsDTOList,
+			List<StockSignalsComponents> stockSignalsComponentsList, List<StockSignals> stockSignalsList) {
+		for (StockSignalsDTO stockSignalsDTO : stockSignalsDTOList) {
+			StockSignalsComponents stockSignalsComponents = new StockSignalsComponents(stockSignalsDTO.getSymbol(),
+					stockSignalsDTO.getTR(), stockSignalsDTO.getPlusDM1(), stockSignalsDTO.getMinusDM1(),
+					stockSignalsDTO.getTRn(), stockSignalsDTO.getPlusDMn(), stockSignalsDTO.getMinusDMn(),
+					stockSignalsDTO.getPlusDIn(), stockSignalsDTO.getMinusDIn(), stockSignalsDTO.getDiffDIn(),
+					stockSignalsDTO.getSumDIn(), stockSignalsDTO.getDX(), stockSignalsDTO.getADXn(),
+					stockSignalsDTO.getSplitMultiplier(), stockSignalsDTO.getSignalDate(),
+					stockSignalsDTO.getHigh10Day(), stockSignalsDTO.getLow10Day(), stockSignalsDTO.getRange10Day(),
+					stockSignalsDTO.getStochastic10Day(), stockSignalsDTO.getPercentKFlow(),
+					stockSignalsDTO.getPercentDFlow(), stockSignalsDTO.getSma(), stockSignalsDTO.getUpperBound(),
+					stockSignalsDTO.getLowerBound(), stockSignalsDTO.getBandwidth());
+			StockSignals stockSignals = new StockSignals(stockSignalsDTO.getSymbol(),
+					stockSignalsDTO.getPreviousSignalType(), stockSignalsDTO.getSignalType(),
+					stockSignalsDTO.getSignalDate(), stockSignalsDTO.getSignalPresent(),
+					stockSignalsDTO.getOscillatorSignal(), stockSignalsDTO.getPreviousOscillatorSignal(),
+					stockSignalsDTO.getSignalPresentOscillator(), stockSignalsDTO.getBollingerSignal(),
+					stockSignalsDTO.getPreviousBollingerSignal(), stockSignalsDTO.getSignalPresentBollinger());
+
+			stockSignalsComponentsList.add(stockSignalsComponents);
+			stockSignalsList.add(stockSignals);
+		}
+	}
+
+	public static List<StockSignalsDTO> convertBO2DTO(List<StockSignalsComponents> stockSignalsComponentsList,
+			List<StockSignals> stockSignalsList) {
+		List<StockSignalsDTO> stockSignalsDTOList = new ArrayList<StockSignalsDTO>();
+		for (int i = 0; i < stockSignalsList.size(); i++) {
+			StockSignals stockSignals = stockSignalsList.get(i);
+			StockSignalsComponents stockSignalsComponents = stockSignalsComponentsList.get(i);
+
+			StockSignalsDTO stockSignalsDTO = new StockSignalsDTO(stockSignals.getSymbol(),
+					stockSignals.getPreviousSignalType(), stockSignals.getSignalType(), stockSignals.getSignalDate(),
+					stockSignals.getSignalPresent(), stockSignals.getOscillatorSignal(),
+					stockSignals.getPreviousOscillatorSignal(), stockSignals.getSignalPresentOscillator(),
+					stockSignals.getBollingerSignal(), stockSignals.getPreviousBollingerSignal(),
+					stockSignals.getSignalPresentBollinger(), stockSignalsComponents.getTR(),
+					stockSignalsComponents.getPlusDM1(), stockSignalsComponents.getMinusDM1(),
+					stockSignalsComponents.getTRn(), stockSignalsComponents.getPlusDMn(),
+					stockSignalsComponents.getMinusDMn(), stockSignalsComponents.getPlusDIn(),
+					stockSignalsComponents.getMinusDIn(), stockSignalsComponents.getDiffDIn(),
+					stockSignalsComponents.getSumDIn(), stockSignalsComponents.getDX(),
+					stockSignalsComponents.getADXn(), stockSignalsComponents.getSplitMultiplier(),
+					stockSignalsComponents.getHigh10Day(), stockSignalsComponents.getLow10Day(),
+					stockSignalsComponents.getRange10Day(), stockSignalsComponents.getStochastic10Day(),
+					stockSignalsComponents.getPercentKFlow(), stockSignalsComponents.getPercentDFlow(),
+					stockSignalsComponents.getSma(), stockSignalsComponents.getUpperBound(),
+					stockSignalsComponents.getLowerBound(), stockSignalsComponents.getBandwidth());
+
+			stockSignalsDTOList.add(stockSignalsDTO);
+		}
+		return stockSignalsDTOList;
+	}
+
+	public static StockSignalsDTO convertBO2DTO(StockSignalsComponents stockSignalsComponents,
+			StockSignals stockSignals) {
+		StockSignalsDTO stockSignalsDTO = new StockSignalsDTO(stockSignals.getSymbol(),
+				stockSignals.getPreviousSignalType(), stockSignals.getSignalType(), stockSignals.getSignalDate(),
+				stockSignals.getSignalPresent(), stockSignals.getOscillatorSignal(),
+				stockSignals.getPreviousOscillatorSignal(), stockSignals.getSignalPresentOscillator(),
+				stockSignals.getBollingerSignal(), stockSignals.getPreviousBollingerSignal(),
+				stockSignals.getSignalPresentBollinger(), stockSignalsComponents.getTR(),
+				stockSignalsComponents.getPlusDM1(), stockSignalsComponents.getMinusDM1(),
+				stockSignalsComponents.getTRn(), stockSignalsComponents.getPlusDMn(),
+				stockSignalsComponents.getMinusDMn(), stockSignalsComponents.getPlusDIn(),
+				stockSignalsComponents.getMinusDIn(), stockSignalsComponents.getDiffDIn(),
+				stockSignalsComponents.getSumDIn(), stockSignalsComponents.getDX(), stockSignalsComponents.getADXn(),
+				stockSignalsComponents.getSplitMultiplier(), stockSignalsComponents.getHigh10Day(),
+				stockSignalsComponents.getLow10Day(), stockSignalsComponents.getRange10Day(),
+				stockSignalsComponents.getStochastic10Day(), stockSignalsComponents.getPercentKFlow(),
+				stockSignalsComponents.getPercentDFlow(), stockSignalsComponents.getSma(),
+				stockSignalsComponents.getUpperBound(), stockSignalsComponents.getLowerBound(),
+				stockSignalsComponents.getBandwidth());
+		return stockSignalsDTO;
+	}
 }

@@ -17,6 +17,7 @@ public class Stock implements Serializable{
 	private String securityId;
 	private String bseCode;
 	private String nseCode;
+	private String fundamentalCode;
 	private String name;	
 	private String isin;
 	private String industry;
@@ -30,12 +31,13 @@ public class Stock implements Serializable{
 		super();
 	}
 
-	public Stock(String securityId, String bseCode, String nseCode, String name, String isin, String industry,
-			boolean worldStock, boolean niftyStock, boolean nseStock, LocalDateTime updateDate) {
+	public Stock(String securityId, String bseCode, String nseCode, String fundamentalCode, String name, String isin,
+			String industry, boolean worldStock, boolean niftyStock, boolean nseStock, LocalDateTime updateDate) {
 		super();
 		this.securityId = securityId;
 		this.bseCode = bseCode;
 		this.nseCode = nseCode;
+		this.fundamentalCode = fundamentalCode;
 		this.name = name;
 		this.isin = isin;
 		this.industry = industry;
@@ -75,6 +77,14 @@ public class Stock implements Serializable{
 
 	public void setNseCode(String nseCode) {
 		this.nseCode = nseCode;
+	}
+
+	public String getFundamentalCode() {
+		return fundamentalCode;
+	}
+
+	public void setFundamentalCode(String fundamentalCode) {
+		this.fundamentalCode = fundamentalCode;
 	}
 
 	public String getName() {
@@ -153,7 +163,7 @@ public class Stock implements Serializable{
 
 	@Override
 	protected Object clone() throws CloneNotSupportedException {
-		return new Stock(securityId, bseCode, nseCode, name, isin, industry, worldStock, niftyStock, nseStock, updateDate);
+		return new Stock(securityId, bseCode, nseCode, fundamentalCode, name, isin, industry, worldStock, niftyStock, nseStock, updateDate);
 	}
 
 }

@@ -20,7 +20,7 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
-import com.intelliinvest.common.CommonConstParams.ForecastType;
+import com.intelliinvest.common.IntelliinvestConstants.ForecastType;
 import com.intelliinvest.common.IntelliinvestException;
 import com.intelliinvest.data.model.ForecastedStockPrice;
 import com.intelliinvest.util.DateUtil;
@@ -37,7 +37,7 @@ public class ForecastedStockPriceRepository {
 	public ForecastedStockPrice getForecastStockPriceFromDB(String id, LocalDate todayDate)
 			throws DataAccessException {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("securityId").is(id).and("todayDate").is(todayDate));
+		query.addCriteria(Criteria.where("todayDate").is(todayDate).and("securityId").is(id));
 		return mongoTemplate.findOne(query, ForecastedStockPrice.class, COLLECTION_STOCK_PRICE_FORECAST);
 	}
 
@@ -64,8 +64,8 @@ public class ForecastedStockPriceRepository {
 				COLLECTION_STOCK_PRICE_FORECAST);
 		for (ForecastedStockPrice price : forecastPrices) {
 			Query query = new Query();
-			query.addCriteria(Criteria.where("securityId").is(price.getSecurityId()).and("todayDate")
-					.is(dateUtil.getDateFromLocalDate(price.getTodayDate())));
+			query.addCriteria(Criteria.where("todayDate")
+					.is(dateUtil.getDateFromLocalDate(price.getTodayDate())).and("securityId").is(price.getSecurityId()));
 			Update update = new Update();
 			update.set("securityId", price.getSecurityId());
 			switch (forecastType) {

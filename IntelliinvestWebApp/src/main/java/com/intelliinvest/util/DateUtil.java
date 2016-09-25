@@ -163,6 +163,11 @@ public class DateUtil {
 		return resultJulian;
 	}
 
+	public LocalDate addBusinessDays(int days) {
+		LocalDate localDate = getLocalDate();
+		return addBusinessDays(localDate, days);
+	}
+	
 	/*
 	 * public void main(String[] args) { LocalDateTime localDateTime =
 	 * getLocalDateTime(); LocalDate localDate = getLocalDate();

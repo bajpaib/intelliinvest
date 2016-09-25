@@ -2,41 +2,79 @@ Go to mongo db installation directory on your machine. Open a command prompt and
 
 mongo intelliinvest --username intelliinvest_user --password Welcome123
 
-db.createCollection("USER")
-db.createCollection("USER_PORTFOLIO")
-db.createCollection("STOCK")
-db.createCollection("STOCK_PRICE")
-
-db.createCollection("QUANDL_STOCK_PRICE")
-db.QUANDL_STOCK_PRICE.dropIndexes()
-db.QUANDL_STOCK_PRICE.createIndex({'securityId': 1, 'eodDate': -1 })
-db.QUANDL_STOCK_PRICE.createIndex({ 'eodDate': -1})
-
-db.createCollection("STOCK_PRICE_FORECAST")
-db.STOCK_PRICE_FORECAST.dropIndexes()
-db.STOCK_PRICE_FORECAST.createIndex({ 'securityId': 1, 'todayDate': -1})
-db.STOCK_PRICE_FORECAST.createIndex({ 'todayDate': -1})
-
 db.createCollection("HOLIDAY_CALENDAR")
 
 db.createCollection("SEQUENCE")
 db.SEQUENCE.insert({_id: "SeqKey",seq:0})
 
+db.createCollection("USER")
+db.createCollection("USER_PORTFOLIO")
+
+db.createCollection("STOCK")
+db.createCollection("STOCK_PRICE")
+
+db.createCollection("QUANDL_STOCK_PRICE")
+#Drop all the indexes other than primary (_id) one.
+db.QUANDL_STOCK_PRICE.dropIndexes()
+db.QUANDL_STOCK_PRICE.createIndex({ 'eodDate': -1, 'securityId': 1})
+
+db.createCollection("STOCK_PRICE_FORECAST")
+db.STOCK_PRICE_FORECAST.dropIndexes()
+db.STOCK_PRICE_FORECAST.createIndex({ 'todayDate': -1, 'securityId': 1})
+
+db.createCollection("STOCK_FUNDAMENTALS_HISTORY")
+db.STOCK_FUNDAMENTALS_HISTORY.dropIndexes()
+db.STOCK_FUNDAMENTALS_HISTORY.createIndex({'quarterYear': -1, 'securityId': 1})
+
+db.createCollection("WATCHLIST")
+db.WATCHLIST.dropIndexes()
+db.WATCHLIST.createIndex({'userId': 1, 'code': 1})
+	
+db.createCollection("STOCK_SIGNALS")
+db.STOCK_SIGNALS.dropIndexes()
+db.STOCK_SIGNALS.createIndex({'symbol': 1, 'signalDate': -1})
+
+db.createCollection("STOCK_SIGNALS_COMPONENTS_10")
+db.STOCK_SIGNALS_COMPONENTS_10.dropIndexes()
+db.STOCK_SIGNALS_COMPONENTS_10.createIndex({'symbol': 1, 'signalDate': -1})
+
+
 Other useful commands
 ----------------------
-db.QUANDL_STOCK_PRICE.dropIndexes()
+#Search
+db.HOLIDAY_CALENDAR.find({})
 db.USER.find({})
 db.USER_PORTFOLIO.find({})
 db.STOCK.find({})
 db.STOCK_PRICE.find({})
 db.QUANDL_STOCK_PRICE.find({})
 db.STOCK_PRICE_FORECAST.find({})
-db.HOLIDAY_CALENDAR.find({})
+db.STOCK_FUNDAMENTALS_HISTORY.find({})
+db.WATCHLIST.find({})
+db.STOCK_SIGNALS.find({})
+db.STOCK_SIGNALS_COMPONENTS_10.find({})
 
+#Count
+db.HOLIDAY_CALENDAR.count({})
+db.USER.count({})
+db.USER_PORTFOLIO.count({})
+db.STOCK.count({})
+db.STOCK_PRICE.count({})
+db.QUANDL_STOCK_PRICE.count({})
+db.STOCK_PRICE_FORECAST.count({})
+db.STOCK_FUNDAMENTALS_HISTORY.count({})
+db.WATCHLIST.count({})
+db.STOCK_SIGNALS.count({})
+db.STOCK_SIGNALS_COMPONENTS_10.count({})
+
+#Delete
 db.USER.remove({})
 db.USER_PORTFOLIO.remove({})
 db.STOCK.remove({})
 db.STOCK_PRICE.remove({})
 db.QUANDL_STOCK_PRICE.remove({})
 db.STOCK_PRICE_FORECAST.remove({})
-db.HOLIDAY_CALENDAR.remove({})
+db.STOCK_FUNDAMENTALS_HISTORY.remove({})
+db.WATCHLIST.remove({})
+db.STOCK_SIGNALS.remove({})
+db.STOCK_SIGNALS_COMPONENTS_10.remove({})
