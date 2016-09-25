@@ -26,4 +26,4 @@ http://localhost:8080/IntelliinvestWebApp/rest/forecast/generateAndEmailClosePri
 
 7. If date= T, retrieve Times Series data for T (Return historical close prices until T-1 and closing prices forecasted on T-1 for T, T+5 and T+20)
 
-http://localhost:8080/IntelliinvestWebApp/rest/timeseries/getTimeSeriesById?id=ACC&date=2016-09-23
+http://localhost:8080/IntelliinvestWebApp/rest/forecast/getTimeSeriesById?id=ACC&date=2016-09-23
