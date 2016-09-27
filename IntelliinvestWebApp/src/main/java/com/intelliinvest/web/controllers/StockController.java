@@ -20,8 +20,8 @@ import com.intelliinvest.data.model.Stock;
 import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.util.Converter;
 import com.intelliinvest.util.Helper;
-import com.intelliinvest.web.bo.StockPriceResponse;
-import com.intelliinvest.web.bo.StockResponse;
+import com.intelliinvest.web.bo.response.StockPriceResponse;
+import com.intelliinvest.web.bo.response.StockResponse;
 
 @Controller
 public class StockController {

@@ -31,7 +31,7 @@ import com.intelliinvest.data.model.WatchListData;
 import com.intelliinvest.data.model.WatchListStockData;
 import com.intelliinvest.util.DateUtil;
 import com.intelliinvest.util.MailUtil;
-import com.intelliinvest.web.bo.WatchListResponse;
+import com.intelliinvest.web.bo.response.WatchListResponse;
 import com.mongodb.WriteResult;
 
 @ManagedResource(objectName = "bean:name=WatchListRepository", description = "WatchListRepository")

@@ -1,4 +1,4 @@
-package com.intelliinvest.web.bo;
+package com.intelliinvest.web.bo.request;
 
 import java.io.Serializable;
 import java.util.List;
@@ -8,7 +8,7 @@ public class UserPortfolioFormParameters implements Serializable {
 	private String userId;
 	private String portfolioName;
 	private String portfolioItemCode;
-	private List<PortfolioItemRequest> portfolioItems;	
+	private List<PortfolioItemFormParameters> portfolioItems;	
 	
 	public UserPortfolioFormParameters() {
 		super();
@@ -38,11 +38,11 @@ public class UserPortfolioFormParameters implements Serializable {
 		this.portfolioItemCode = portfolioItemCode;
 	}
 
-	public List<PortfolioItemRequest> getPortfolioItems() {
+	public List<PortfolioItemFormParameters> getPortfolioItems() {
 		return portfolioItems;
 	}
 
-	public void setPortfolioItems(List<PortfolioItemRequest> portfolioItems) {
+	public void setPortfolioItems(List<PortfolioItemFormParameters> portfolioItems) {
 		this.portfolioItems = portfolioItems;
 	}
 }

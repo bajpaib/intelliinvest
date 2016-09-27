@@ -1,4 +1,4 @@
-package com.intelliinvest.web.bo;
+package com.intelliinvest.web.bo.response;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -11,7 +11,6 @@ import com.intelliinvest.util.JsonDateTimeSerializer;
 
 @JsonAutoDetect
 public class StockPriceResponse implements Serializable {
-
 	private String securityId;
 	private double cp;
 	private double currentPrice;

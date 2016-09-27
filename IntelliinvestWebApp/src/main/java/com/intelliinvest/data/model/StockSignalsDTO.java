@@ -1,4 +1,4 @@
-package com.intelliinvest.web.dto;
+package com.intelliinvest.data.model;
 
 import java.time.LocalDate;
 

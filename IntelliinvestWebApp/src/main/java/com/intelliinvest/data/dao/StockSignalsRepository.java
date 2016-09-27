@@ -27,9 +27,9 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import com.intelliinvest.common.IntelliinvestException;
 import com.intelliinvest.data.model.StockSignals;
 import com.intelliinvest.data.model.StockSignalsComponents;
+import com.intelliinvest.data.model.StockSignalsDTO;
 import com.intelliinvest.util.Converter;
 import com.intelliinvest.util.Helper;
-import com.intelliinvest.web.dto.StockSignalsDTO;
 
 @ManagedResource(objectName = "bean:name=StockSignalsRepository", description = "StockSignalsRepository")
 public class StockSignalsRepository {
@@ -58,7 +58,7 @@ public class StockSignalsRepository {
 
 	}
 
-	private void refreshCache() {
+	public void refreshCache() {
 		logger.debug("refreshing cache.....");
 		List<StockSignals> stockSignals = getLatestStockSignalFromDB();
 		logger.debug("list size is: " + stockSignals.size());
@@ -72,6 +72,7 @@ public class StockSignalsRepository {
 				}
 			}
 			logger.debug("refreshing signalCache from DB in StockSignalRepository with size " + signalCache.size());
+			watchListRepository.refreshCache();
 		} else {
 			logger.error("Could not refresh signalCache from DB in StockSignalRepository. STOCK_SIGNALS is empty.");
 		}
@@ -79,25 +80,6 @@ public class StockSignalsRepository {
 
 	public List<StockSignals> getLatestStockSignalFromDB() {
 		logger.info("Inside getLatestStockSignalFromDB()...");
-		/*
-		 * final Aggregation aggregation = newAggregation(
-		 * sort(Sort.Direction.ASC,"signalDate"),limit(1)) .withOptions(
-		 * Aggregation.newAggregationOptions().allowDiskUse(true) .build());
-		 * 
-		 * AggregationResults<StockSignals> results = mongoTemplate.aggregate(
-		 * aggregation, COLLECTION_STOCK_SIGNALS, StockSignals.class);
-		 */
-		// logger.debug("result from db size is:"
-		// + results.getMappedResults().size());
-		// List<StockSignals> retVal = new ArrayList<StockSignals>();
-		//
-		// Query query = new Query();
-		// query.with(new Sort(Sort.Direction.DESC, "signalDate"));
-		// query.limit(1);
-		// List<StockSignals> list = mongoTemplate.find(query,
-		// StockSignals.class);
-		// logger.debug("result from db size is:"
-		// + list.size());
 
 		final Aggregation aggregation = newAggregation(sort(Sort.Direction.DESC, "signalDate"),
 				group("symbol").first("symbol").as("symbol").first("signalDate").as("signalDate").first("signalType")
@@ -113,7 +95,8 @@ public class StockSignalsRepository {
 		List<StockSignals> retVal = new ArrayList<StockSignals>();
 
 		for (StockSignals stockSignal : results.getMappedResults()) {
-			logger.info("Stock Signals details are: " + stockSignal.toString());
+			// logger.info("Stock Signals details are: " +
+			// stockSignal.toString());
 			retVal.add(stockSignal);
 		}
 		return retVal;
@@ -264,8 +247,8 @@ public class StockSignalsRepository {
 				mongoTemplate.save(stockSignalsComponents,
 						COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, magicNumber + ""));
 			}
-			refreshCache();
-			watchListRepository.refreshCache();
+			// refreshCache();
+			// watchListRepository.refreshCache();
 
 		} else {
 			throw new IntelliinvestException("invalid input data....");

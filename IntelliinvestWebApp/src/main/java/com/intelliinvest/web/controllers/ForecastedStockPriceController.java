@@ -24,10 +24,12 @@ import com.intelliinvest.data.forecast.MonthlyClosePriceForecaster;
 import com.intelliinvest.data.forecast.WeeklyClosePriceForecaster;
 import com.intelliinvest.data.model.ForecastedStockPrice;
 import com.intelliinvest.data.model.QuandlStockPrice;
+import com.intelliinvest.util.Converter;
 import com.intelliinvest.util.DateUtil;
 import com.intelliinvest.util.Helper;
 import com.intelliinvest.util.MathUtil;
-import com.intelliinvest.web.bo.TimeSeriesResponse;
+import com.intelliinvest.web.bo.response.ForecastedStockPriceResponse;
+import com.intelliinvest.web.bo.response.TimeSeriesResponse;
 
 @Controller
 public class ForecastedStockPriceController {
@@ -70,38 +72,78 @@ public class ForecastedStockPriceController {
 	 * @return
 	 */
 	@RequestMapping(value = "/forecast/getForecastStockPriceForDate", method = RequestMethod.GET, produces = APPLICATION_JSON)
-	public @ResponseBody ForecastedStockPrice getForecastStockPriceForToday(@RequestParam("id") String id,
+	public @ResponseBody ForecastedStockPriceResponse getForecastStockPriceForDate(@RequestParam("id") String id,
 			@RequestParam("date") String dateStr) {
+		ForecastedStockPriceResponse response = new ForecastedStockPriceResponse();
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		ForecastedStockPrice price = null;
-		try {
-			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-			LocalDate date = LocalDate.parse(dateStr, dateFormat);			
-			LocalDate lastBusinessDate = dateUtil.substractBusinessDays(date, 1);			
-			price = forecastedStockPriceRepository.getForecastStockPriceFromDB(id, lastBusinessDate);
-		} catch (Exception e) {
-			logger.error("Exception inside getDailyForecastStockPrice() " + e.getMessage());
+		boolean error = false;
+		if (Helper.isNotNullAndNonEmpty(id) && Helper.isNotNullAndNonEmpty(dateStr)) {
+			try {
+				DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				LocalDate date = LocalDate.parse(dateStr, dateFormat);			
+				LocalDate lastBusinessDate = dateUtil.substractBusinessDays(date, 1);			
+				price = forecastedStockPriceRepository.getForecastStockPriceFromDB(id, lastBusinessDate);
+			} catch (Exception e) {
+				errorMsg = e.getMessage();
+				logger.error("Exception inside getDailyForecastStockPrice() " + e.getMessage());
+				error = true;
+			}
+		}else {
+			errorMsg = "Stock Code or Date is null or empty";
+			logger.error("Exception inside getForecastStockPriceForDate() " + errorMsg);
+			error = true;
 		}
-		return price;
+		
+		if (price == null) {
+			errorMsg = "Forecast price not found";
+			logger.error("Inside getForecastStockPriceForDate() " + errorMsg);
+			error = true;
+		}
+		if (price != null && !error) {
+			response = Converter.getForecastedStockPriceResponse(price);
+			response.setSuccess(true);
+			response.setMessage("Forecasted Stock Price has been returned successfully.");
+		} else {
+			response.setSecurityId(id);
+			response.setSuccess(false);
+			response.setMessage(errorMsg);
+		}
+		return response;
 	}
+	
 	
 	/**
 	 * If date = T, returns closing prices forecasted yesterday (T-1) for T, T+5 and T+20 days. Price is forecasted after T-1 closing is received.
-	 * @param id
 	 * @param date
 	 * @return
 	 */
+	
 	@RequestMapping(value = "/forecast/getForecastStockPricesForDate", method = RequestMethod.GET, produces = APPLICATION_JSON)
-	public @ResponseBody List<ForecastedStockPrice> getForecastStockPricesForDate(@RequestParam("date") String dateStr) {
-		List<ForecastedStockPrice> priceList = null;
+	public @ResponseBody List<ForecastedStockPriceResponse> getForecastStockPricesForDate(@RequestParam("date") String dateStr) {
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
+		List<ForecastedStockPrice> prices = null;
+		boolean error = false;
 		try {
 			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 			LocalDate date = LocalDate.parse(dateStr, dateFormat);			
 			LocalDate lastBusinessDate = dateUtil.substractBusinessDays(date, 1);	
-			priceList = forecastedStockPriceRepository.getForecastStockPricesFromDB(lastBusinessDate);
+			prices = forecastedStockPriceRepository.getForecastStockPricesFromDB(lastBusinessDate);
 		} catch (Exception e) {
-			logger.error("Exception inside getLatestDailyForecastStockPrices() " + e.getMessage());
+			errorMsg = e.getMessage();
+			logger.error("Exception inside getForecastStockPricesForDate() " + errorMsg);
+			error = true;
 		}
-		return priceList;
+		if (prices != null && !error) {
+			return Converter.convertForecastedStockPriceList(prices);
+		} else {
+			List<ForecastedStockPriceResponse> list = new ArrayList<ForecastedStockPriceResponse>();
+			ForecastedStockPriceResponse response = new ForecastedStockPriceResponse();
+			response.setSuccess(false);
+			response.setMessage(errorMsg);
+			list.add(response);
+			return list;
+		}
 	}
 
 	@RequestMapping(value = "/forecast/generateAndEmailClosePriceForecastReport", method = RequestMethod.GET)

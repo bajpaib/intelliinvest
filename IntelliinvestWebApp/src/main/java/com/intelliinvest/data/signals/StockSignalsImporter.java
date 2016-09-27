@@ -21,9 +21,9 @@ import com.intelliinvest.data.dao.StockSignalsRepository;
 import com.intelliinvest.data.dao.WatchListRepository;
 import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.data.model.Stock;
+import com.intelliinvest.data.model.StockSignalsDTO;
 import com.intelliinvest.util.DateUtil;
 import com.intelliinvest.util.ScheduledThreadPoolHelper;
-import com.intelliinvest.web.dto.StockSignalsDTO;
 
 @ManagedResource(objectName = "bean:name=StockSignalsImporter", description = "StockSignalsImporter")
 public class StockSignalsImporter {
@@ -109,15 +109,17 @@ public class StockSignalsImporter {
 						return false;
 					}
 				}
+				stockSignalsRepository.refreshCache();
 				// ChartDao.getInstance().insertSignals(ma, "ALL", null);
 			} else {
 				logger.info("Calculating signals for symbol " + symbol);
 				List<StockSignalsDTO> stockSignalsDTOs = getSignals(symbol, ma);
 				logger.info("signals generated for " + symbol);
 				// stockSignalsRepository.deleteStockSignals(ma, symbol);
-				if (stockSignalsDTOs != null)
+				if (stockSignalsDTOs != null) {
 					stockSignalsRepository.updateStockSignals(ma, stockSignalsDTOs);
-				else
+					stockSignalsRepository.refreshCache();
+				} else
 					f = 0;
 				// ChartDao.getInstance().insertSignals(ma, symbol, null);
 			}
@@ -220,13 +222,10 @@ public class StockSignalsImporter {
 						return false;
 					}
 				}
+				stockSignalsRepository.refreshCache();
 				// ChartDao.getInstance().insertSignals(ma, "ALL",
 				// businessDate);
 			} else {
-				/*
-				 * List<StockSignalsDTO> prevSignalComponents =
-				 * stockSignalsRepository .getStockSignalsComplete(symbol, ma);
-				 */
 				StockSignalsDTO stockSignalsDTO = stockSignalsRepository.getStockSignalsComplete(businessDate, symbol,
 						ma);
 				if (stockSignalsDTO != null) {
@@ -239,6 +238,7 @@ public class StockSignalsImporter {
 							stockSignalsDTO);
 					// stockSignalsRepository.deleteStockSignals(ma, symbol);
 					stockSignalsRepository.updateStockSignals(ma, signalComponentsList);
+					stockSignalsRepository.refreshCache();
 				} else {
 					logger.info("not able to generate today signals for:" + symbol);
 					f = 0;

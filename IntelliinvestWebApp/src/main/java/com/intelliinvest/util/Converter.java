@@ -5,16 +5,18 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import com.intelliinvest.data.model.ForecastedStockPrice;
 import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.data.model.Stock;
 import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.data.model.StockSignals;
 import com.intelliinvest.data.model.StockSignalsComponents;
+import com.intelliinvest.data.model.StockSignalsDTO;
 import com.intelliinvest.data.model.User;
-import com.intelliinvest.web.bo.StockPriceResponse;
-import com.intelliinvest.web.bo.StockResponse;
-import com.intelliinvest.web.bo.UserResponse;
-import com.intelliinvest.web.dto.StockSignalsDTO;
+import com.intelliinvest.web.bo.response.ForecastedStockPriceResponse;
+import com.intelliinvest.web.bo.response.StockPriceResponse;
+import com.intelliinvest.web.bo.response.StockResponse;
+import com.intelliinvest.web.bo.response.UserResponse;
 
 public class Converter {
 
@@ -68,6 +70,7 @@ public class Converter {
 		stockResponse.setSecurityId(stock.getSecurityId());
 		stockResponse.setBseCode(stock.getBseCode());
 		stockResponse.setNseCode(stock.getNseCode());
+		stockResponse.setFundamentalCode(stock.getFundamentalCode());
 		stockResponse.setName(stock.getName());
 		stockResponse.setIsin(stock.getIsin());
 		stockResponse.setIndustry(stock.getIndustry());
@@ -100,19 +103,48 @@ public class Converter {
 	public static StockPriceResponse getStockPriceResponse(StockPrice price, QuandlStockPrice quandlStockPrice) {
 		StockPriceResponse stockPriceResponse = new StockPriceResponse();
 		stockPriceResponse.setSecurityId(price.getSecurityId());
-		stockPriceResponse.setCp(price.getCp());
-		stockPriceResponse.setCurrentPrice(price.getCurrentPrice());
+		stockPriceResponse.setCp(MathUtil.round(price.getCp()));
+		stockPriceResponse.setCurrentPrice(MathUtil.round(price.getCurrentPrice()));
 		stockPriceResponse.setCurrentPriceExchange(price.getExchange());
 		stockPriceResponse.setCurrentPriceUpdateDate(price.getUpdateDate());
 		if (quandlStockPrice != null) {
-			stockPriceResponse.setEodPrice(quandlStockPrice.getClose());
+			stockPriceResponse.setEodPrice(MathUtil.round(quandlStockPrice.getClose()));
 			stockPriceResponse.setEodDate(quandlStockPrice.getEodDate());
 			stockPriceResponse.setEodPriceExchange(quandlStockPrice.getExchange());
 			stockPriceResponse.setEodPriceUpdateDate(quandlStockPrice.getUpdateDate());
 		}
-
 		stockPriceResponse.setSuccess(true);
 		return stockPriceResponse;
+	}
+
+	public static List<ForecastedStockPriceResponse> convertForecastedStockPriceList(List<ForecastedStockPrice> prices) {
+		List<ForecastedStockPriceResponse> responseList = new ArrayList<ForecastedStockPriceResponse>();
+		if (prices != null) {
+			for (ForecastedStockPrice price : prices) {
+				responseList.add(getForecastedStockPriceResponse(price));
+			}
+		}
+		responseList.sort(new Comparator<ForecastedStockPriceResponse>() {
+			public int compare(ForecastedStockPriceResponse item1, ForecastedStockPriceResponse item2) {
+				return item1.getSecurityId().compareTo(item2.getSecurityId());
+			}
+		});
+		return responseList;
+	}
+	
+	public static ForecastedStockPriceResponse getForecastedStockPriceResponse(ForecastedStockPrice price) {
+		ForecastedStockPriceResponse response = new ForecastedStockPriceResponse();
+		response.setMonthlyForecastDate(price.getMonthlyForecastDate());
+		response.setMonthlyForecastPrice(MathUtil.round(price.getMonthlyForecastPrice()));
+		response.setSecurityId(price.getSecurityId());
+		response.setTodayDate(price.getTodayDate());
+		response.setTomorrowForecastDate(price.getTomorrowForecastDate());
+		response.setTomorrowForecastPrice(MathUtil.round(price.getTomorrowForecastPrice()));
+		response.setUpdateDate(price.getUpdateDate());
+		response.setWeeklyForecastDate(price.getWeeklyForecastDate());
+		response.setWeeklyForecastPrice(MathUtil.round(price.getWeeklyForecastPrice()));
+		response.setSuccess(true);
+		return response;
 	}
 
 	public static void convertDTO2BO(List<StockSignalsDTO> stockSignalsDTOList,

@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.intelliinvest.data.dao.WatchListRepository;
-import com.intelliinvest.web.bo.Status;
-import com.intelliinvest.web.bo.WatchListResponse;
+import com.intelliinvest.web.bo.response.StatusResponse;
+import com.intelliinvest.web.bo.response.WatchListResponse;
 
 @Controller
 public class WatchListController {
@@ -44,12 +44,12 @@ public class WatchListController {
 	}
 
 	@RequestMapping(value = "/watchList/sendDailyMails", method = RequestMethod.GET, produces = APPLICATION_JSON)
-	public @ResponseBody Status sendDailyMails() {
+	public @ResponseBody StatusResponse sendDailyMails() {
 		boolean b = watchListRepository.sendDailyTradingAccountUpdateMail();
 		if (b)
-			return new Status(Status.SUCCESS, "Mails has been sent successfully");
+			return new StatusResponse(StatusResponse.SUCCESS, "Mails has been sent successfully");
 		else
-			return new Status(Status.FAILED, "Mails has not been sent successfully, some internal error there.");
+			return new StatusResponse(StatusResponse.FAILED, "Mails has not been sent successfully, some internal error there.");
 	}
 
 }

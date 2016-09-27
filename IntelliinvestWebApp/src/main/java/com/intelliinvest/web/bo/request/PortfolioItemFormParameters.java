@@ -1,11 +1,11 @@
-package com.intelliinvest.web.bo;
+package com.intelliinvest.web.bo.request;
 
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 @JsonAutoDetect
-public class PortfolioItemRequest implements Serializable {	
+public class PortfolioItemFormParameters implements Serializable {	
 	private String portfolioItemId;
 	private String code;
 	private double price;
@@ -14,11 +14,11 @@ public class PortfolioItemRequest implements Serializable {
 	private String tradeDate;
 
 	
-	public PortfolioItemRequest() {
+	public PortfolioItemFormParameters() {
 		super();
 	}
 
-	public PortfolioItemRequest(String portfolioItemId, String code, double price, int quantity, String direction,
+	public PortfolioItemFormParameters(String portfolioItemId, String code, double price, int quantity, String direction,
 			String tradeDate) {
 		super();
 		this.portfolioItemId = portfolioItemId;

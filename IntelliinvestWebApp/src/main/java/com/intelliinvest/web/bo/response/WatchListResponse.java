@@ -1,4 +1,4 @@
-package com.intelliinvest.web.bo;
+package com.intelliinvest.web.bo.response;
 
 import java.util.List;
 

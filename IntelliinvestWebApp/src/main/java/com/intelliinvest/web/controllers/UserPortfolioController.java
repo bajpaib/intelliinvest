@@ -19,9 +19,9 @@ import com.intelliinvest.data.dao.UserPortfolioRepository;
 import com.intelliinvest.data.model.Portfolio;
 import com.intelliinvest.data.model.PortfolioItem;
 import com.intelliinvest.util.Helper;
-import com.intelliinvest.web.bo.PortfolioItemRequest;
-import com.intelliinvest.web.bo.UserPortfolioFormParameters;
-import com.intelliinvest.web.bo.UserPortfolioResponse;
+import com.intelliinvest.web.bo.request.PortfolioItemFormParameters;
+import com.intelliinvest.web.bo.request.UserPortfolioFormParameters;
+import com.intelliinvest.web.bo.response.UserPortfolioResponse;
 
 @Controller
 public class UserPortfolioController {
@@ -104,12 +104,12 @@ public class UserPortfolioController {
 		String userId = portfolioFormParameters.getUserId();
 		String portfolioName = portfolioFormParameters.getPortfolioName();
 		String portfolioItemCode = portfolioFormParameters.getPortfolioItemCode();
-		List<PortfolioItemRequest> requests = portfolioFormParameters.getPortfolioItems();
+		List<PortfolioItemFormParameters> requests = portfolioFormParameters.getPortfolioItems();
 
 		List<PortfolioItem> portfolioItems = new ArrayList<PortfolioItem>();
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-		for (PortfolioItemRequest request : requests) {
+		for (PortfolioItemFormParameters request : requests) {
 			PortfolioItem item = new PortfolioItem();
 			item.setPortfolioItemId(request.getPortfolioItemId());
 			item.setPrice(request.getPrice());
@@ -201,13 +201,13 @@ public class UserPortfolioController {
 		String userId = portfolioFormParameters.getUserId();
 		String portfolioName = portfolioFormParameters.getPortfolioName();
 		String portfolioItemCode = portfolioFormParameters.getPortfolioItemCode();
-		List<PortfolioItemRequest> requests = portfolioFormParameters.getPortfolioItems();
+		List<PortfolioItemFormParameters> requests = portfolioFormParameters.getPortfolioItems();
 		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		boolean error = false;
 		List<PortfolioItem> portfolioItems = new ArrayList<PortfolioItem>();
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-		for (PortfolioItemRequest request : requests) {
+		for (PortfolioItemFormParameters request : requests) {
 			PortfolioItem item = new PortfolioItem();
 			item.setPortfolioItemId(request.getPortfolioItemId());
 			item.setPrice(request.getPrice());
@@ -286,13 +286,13 @@ public class UserPortfolioController {
 		String userId = portfolioFormParameters.getUserId();
 		String portfolioName = portfolioFormParameters.getPortfolioName();
 		String portfolioItemCode = portfolioFormParameters.getPortfolioItemCode();
-		List<PortfolioItemRequest> requests = portfolioFormParameters.getPortfolioItems();
+		List<PortfolioItemFormParameters> requests = portfolioFormParameters.getPortfolioItems();
 		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		boolean error = false;
 		List<PortfolioItem> portfolioItems = new ArrayList<PortfolioItem>();
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-		for (PortfolioItemRequest request : requests) {
+		for (PortfolioItemFormParameters request : requests) {
 			PortfolioItem item = new PortfolioItem();
 			item.setPortfolioItemId(request.getPortfolioItemId());
 			item.setPrice(request.getPrice());

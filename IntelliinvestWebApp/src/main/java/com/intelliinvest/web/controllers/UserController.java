@@ -17,8 +17,8 @@ import com.intelliinvest.data.dao.UserRepository;
 import com.intelliinvest.data.model.User;
 import com.intelliinvest.util.Converter;
 import com.intelliinvest.util.Helper;
-import com.intelliinvest.web.bo.UserFormParameters;
-import com.intelliinvest.web.bo.UserResponse;
+import com.intelliinvest.web.bo.request.UserFormParameters;
+import com.intelliinvest.web.bo.response.UserResponse;
 
 @Controller
 public class UserController {

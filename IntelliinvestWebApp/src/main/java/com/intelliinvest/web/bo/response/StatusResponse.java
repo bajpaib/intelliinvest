@@ -1,16 +1,16 @@
-package com.intelliinvest.web.bo;
+package com.intelliinvest.web.bo.response;
 
-public class Status {
+public class StatusResponse {
 	String status = "SUCCESS";
 	String message = "";
 
 	public static final String SUCCESS = "SUCCESS";
 	public static final String FAILED = "FAILED";
 
-	public static final Status STATUS_SUCCESS = new Status(SUCCESS, "");
-	public static final Status STATUS_FAILURE = new Status(FAILED, "");
+	public static final StatusResponse STATUS_SUCCESS = new StatusResponse(SUCCESS, "");
+	public static final StatusResponse STATUS_FAILURE = new StatusResponse(FAILED, "");
 
-	public Status(String status, String message) {
+	public StatusResponse(String status, String message) {
 		this.status = status;
 		this.message = message;
 	}

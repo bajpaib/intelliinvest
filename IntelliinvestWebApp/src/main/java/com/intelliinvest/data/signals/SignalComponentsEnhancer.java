@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 
 import com.intelliinvest.common.IntelliInvestStore;
 import com.intelliinvest.data.model.QuandlStockPrice;
-import com.intelliinvest.web.dto.StockSignalsDTO;
+import com.intelliinvest.data.model.StockSignalsDTO;
 
 public class SignalComponentsEnhancer {
 

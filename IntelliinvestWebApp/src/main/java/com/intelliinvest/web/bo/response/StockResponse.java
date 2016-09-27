@@ -1,4 +1,4 @@
-package com.intelliinvest.web.bo;
+package com.intelliinvest.web.bo.response;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -9,11 +9,11 @@ import com.intelliinvest.util.JsonDateTimeSerializer;
 
 @JsonAutoDetect
 public class StockResponse implements Serializable {
-
 	private String securityId;
 	private String bseCode;
 	private String nseCode;
-	private String name;	
+	private String fundamentalCode;
+	private String name;
 	private String isin;
 	private String industry;
 	private boolean worldStock;
@@ -49,6 +49,14 @@ public class StockResponse implements Serializable {
 
 	public void setNseCode(String nseCode) {
 		this.nseCode = nseCode;
+	}
+
+	public String getFundamentalCode() {
+		return fundamentalCode;
+	}
+
+	public void setFundamentalCode(String fundamentalCode) {
+		this.fundamentalCode = fundamentalCode;
 	}
 
 	public String getName() {

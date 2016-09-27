@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.intelliinvest.data.dao.StockSignalsRepository;
 import com.intelliinvest.data.model.StockSignals;
 import com.intelliinvest.data.signals.StockSignalsImporter;
-import com.intelliinvest.web.bo.Status;
+import com.intelliinvest.web.bo.response.StatusResponse;
 
 @Controller
 public class StockSignalsController {
@@ -54,24 +54,24 @@ public class StockSignalsController {
 	}
 
 	@RequestMapping(value = "/stockSignals/generateSignals", method = RequestMethod.GET)
-	public @ResponseBody Status generateSignals(@RequestParam("stockCode") String stockCode) {
+	public @ResponseBody StatusResponse generateSignals(@RequestParam("stockCode") String stockCode) {
 		boolean b = stockSignalsImporter.generateSignals(stockCode);
 		if (b)
-			return new Status(Status.SUCCESS, "Signals for " + stockCode + " Stock has been generated successfully");
+			return new StatusResponse(StatusResponse.SUCCESS, "Signals for " + stockCode + " Stock has been generated successfully");
 		else
-			return new Status(Status.FAILED, "Signals for " + stockCode
+			return new StatusResponse(StatusResponse.FAILED, "Signals for " + stockCode
 					+ " Stock has not been generated successfully, some internal error or invalid data. Please Check.");
 
 	}
 
 	@RequestMapping(value = "/stockSignals/generateTodaySignals", method = RequestMethod.GET)
-	public @ResponseBody Status generateSignalsToday(@RequestParam("stockCode") String stockCode) {
+	public @ResponseBody StatusResponse generateSignalsToday(@RequestParam("stockCode") String stockCode) {
 		boolean b = stockSignalsImporter.generateTodaySignals(stockCode);
 		if (b)
-			return new Status(Status.SUCCESS,
+			return new StatusResponse(StatusResponse.SUCCESS,
 					"Today Signals for " + stockCode + " Stock has been generated successfully");
 		else
-			return new Status(Status.FAILED, "Today Signals for " + stockCode
+			return new StatusResponse(StatusResponse.FAILED, "Today Signals for " + stockCode
 					+ " Stock has not been generated successfully, some internal error or invalid data. Please Check.");
 
 	}
