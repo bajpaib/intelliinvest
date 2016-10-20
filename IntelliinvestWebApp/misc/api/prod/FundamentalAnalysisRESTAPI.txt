@@ -13,7 +13,7 @@ http://104.199.173.131/IntelliinvestWebApp/rest/stock/getStockFundamentalsById?i
 http://104.199.173.131/IntelliinvestWebApp/rest/stock/getStockFundamentalsByIdAndAttrName?id=SBIN&attrName=alReturnOnEquity
 
 5. Forecast fundamental analysis for a given date
-http://104.199.173.131/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2016-10-17
+http://104.199.173.131/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2016-10-19
 
 AttributeNames
 --------------

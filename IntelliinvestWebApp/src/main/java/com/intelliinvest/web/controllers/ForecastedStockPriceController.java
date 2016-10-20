@@ -181,9 +181,15 @@ public class ForecastedStockPriceController {
 						priceSeries.add(MathUtil.round(temp.getClose()));
 					}
 
+					List <LocalDate> forecastDates = new ArrayList<LocalDate>();
+					// get the dates from lastBusinessDate to lastBusinessDate + 1 to lastBusinessDate + 20
+					for(int i= 1; i < 21; ++i){
+						forecastDates.add(dateUtil.addBusinessDays(lastBusinessDate, i));
+					}
+					
 					List <LocalDate> dates = new ArrayList<LocalDate>();
 					// get the dates from lastBusinessDate to lastBusinessDate - 19
-					for(int i= 0; i<20;++i){
+					for(int i= 0; i < 20; ++i){
 						dates.add(dateUtil.substractBusinessDays(lastBusinessDate, i));
 					}
 					
@@ -191,21 +197,21 @@ public class ForecastedStockPriceController {
 					
 					TreeMap<LocalDate, Double> sorted = new TreeMap<LocalDate, Double>();
 					for(ForecastedStockPrice price:  prices){
-						if(price.getMonthlyForecastDate()!=null && dates.contains(price.getMonthlyForecastDate()) && !MathUtil.isNearZero(price.getMonthlyForecastPrice())){
+						if(price.getMonthlyForecastDate()!=null && forecastDates.contains(price.getMonthlyForecastDate()) && !MathUtil.isNearZero(price.getMonthlyForecastPrice())){
 							sorted.put(price.getMonthlyForecastDate(), price.getMonthlyForecastPrice());
 						}
 						
 					}
 					
 					for(ForecastedStockPrice price:  prices){
-						if(price.getWeeklyForecastDate()!=null && dates.contains(price.getWeeklyForecastDate()) && !MathUtil.isNearZero(price.getWeeklyForecastPrice())){
+						if(price.getWeeklyForecastDate()!=null && forecastDates.contains(price.getWeeklyForecastDate()) && !MathUtil.isNearZero(price.getWeeklyForecastPrice())){
 							sorted.put(price.getWeeklyForecastDate(), price.getWeeklyForecastPrice());
 						}
 						
 					}
 					
 					for(ForecastedStockPrice price:  prices){
-						if(price.getTomorrowForecastDate()!=null && dates.contains(price.getTomorrowForecastDate()) && !MathUtil.isNearZero(price.getTomorrowForecastPrice())){
+						if(price.getTomorrowForecastDate()!=null && forecastDates.contains(price.getTomorrowForecastDate()) && !MathUtil.isNearZero(price.getTomorrowForecastPrice())){
 							sorted.put(price.getTomorrowForecastDate(), price.getTomorrowForecastPrice());
 						}					
 					}

@@ -5,7 +5,7 @@ Fundamental Analysis
 http://104.199.173.131/IntelliinvestWebApp/rest/stock/getLatestFundamentalAnalysis?id=SBIN
 
 2. For a given stock get fundamental analysis for date
-http://104.199.173.131/IntelliinvestWebApp/rest/stock/getFundamentalAnalysisForDate?id=SBIN&date=2016-10-17
+http://104.199.173.131/IntelliinvestWebApp/rest/stock/getFundamentalAnalysisForDate?id=SBIN&date=2016-10-19
 
 3. For a given stock and attribute, return the time series for stock(yearQuarter, attributeValue) 
 and industry average(date, attributeValue).
@@ -16,7 +16,7 @@ http://104.199.173.131/IntelliinvestWebApp/rest/stock/getFundamentalAnalysisTime
 http://104.199.173.131/IntelliinvestWebApp/rest/industry/getLatestIndustryFundamentals?name=BANKING
 
 5. For a given industry and date, get industry analysis
-http://104.199.173.131/IntelliinvestWebApp/rest/industry/getIndustryFundamentalsForDate?name=BANKING&date=2016-10-14
+http://104.199.173.131/IntelliinvestWebApp/rest/industry/getIndustryFundamentalsForDate?name=BANKING&date=2016-10-19
 
 6. For a given industry and attribute, return the time series for industry(date, attributeValue)
 
