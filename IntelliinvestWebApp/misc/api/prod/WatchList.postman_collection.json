@@ -18,7 +18,7 @@
 		{
 			"id": "0ebabe3d-7dea-f478-5138-fba894a4e514",
 			"headers": "",
-			"url": "http://localhost:8080/IntelliinvestWebApp/rest/watchList/get?userId=yogeshgulati1984@gmail.com",
+			"url": "http://104.199.173.131/IntelliinvestWebApp/rest/watchList/get?userId=yogeshgulati1984@gmail.com",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -84,7 +84,7 @@
 					"id": "0a304279-eadb-1b60-1bf1-b07c648eba50",
 					"name": "WatchList_response",
 					"request": {
-						"url": "http://localhost:8080/IntelliinvestWebApp/rest/watchList/get?userId=yogeshgulati1984@gmail.com",
+						"url": "http://104.199.173.131/IntelliinvestWebApp/rest/watchList/get?userId=yogeshgulati1984@gmail.com",
 						"headers": [],
 						"data": null,
 						"method": "GET",
@@ -96,7 +96,7 @@
 		{
 			"id": "5f496802-61e0-062a-ec51-6252b0017fee",
 			"headers": "",
-			"url": "http://localhost:8080/IntelliinvestWebApp/rest/watchList/add?userId=yogeshgulati1984@gmail.com&stockCode=GDL11",
+			"url": "http://104.199.173.131/IntelliinvestWebApp/rest/watchList/add?userId=yogeshgulati1984@gmail.com&stockCode=GDL11",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -115,7 +115,7 @@
 		{
 			"id": "6a7ebe9f-c2cb-044c-3a80-63001f76db5a",
 			"headers": "",
-			"url": "http://localhost:8080/IntelliinvestWebApp/rest/watchList/sendDailyMails",
+			"url": "http://104.199.173.131/IntelliinvestWebApp/rest/watchList/sendDailyMails",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -134,7 +134,7 @@
 		{
 			"id": "6dc295c2-c2c3-dc39-de5a-d4a3b4161bae",
 			"headers": "",
-			"url": "http://localhost:8080/IntelliinvestWebApp/rest/watchList/remove?userId=yogeshgulati1984@gmail.com&stockCode=GDL11",
+			"url": "http://104.199.173.131/IntelliinvestWebApp/rest/watchList/remove?userId=yogeshgulati1984@gmail.com&stockCode=GDL11",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",
@@ -153,7 +153,7 @@
 		{
 			"id": "af6d37cf-d751-d2e9-39eb-1aac77d80967",
 			"headers": "",
-			"url": "http://localhost:8080/IntelliinvestWebApp/rest/watchList/remove?userId=yogeshgulati1984@gmail.com&stockCode=GDL",
+			"url": "http://104.199.173.131/IntelliinvestWebApp/rest/watchList/remove?userId=yogeshgulati1984@gmail.com&stockCode=GDL",
 			"preRequestScript": null,
 			"pathVariables": {},
 			"method": "GET",

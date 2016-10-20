@@ -53,30 +53,35 @@ public class StockSignalsImporter {
 					try {
 						// We need to generate forecast report for today
 						boolean signalGeneratorResponse = generateSignalsForToday();
-						if (signalGeneratorResponse) {
-							watchListRepository.sendDailyTradingAccountUpdateMail();
-						}
+						watchListRepository.sendDailyTradingAccountUpdateMail();
+
 					} catch (Exception e) {
-						logger.error("Error while running StockSignalsImporter for all stocks " + e.getMessage());
+						logger.error("Error while running StockSignalsImporter for all stocks "
+								+ e.getMessage());
 					}
 				}
 			}
 		};
 		LocalDateTime timeNow = dateUtil.getLocalDateTime();
 		int dailyStockSignalsGeneratorStartHour = new Integer(
-				IntelliInvestStore.properties.getProperty("daily.stock.signals.generator.start.hr"));
+				IntelliInvestStore.properties
+						.getProperty("daily.stock.signals.generator.start.hr"));
 		int dailyStockSignalsGeneratorStartMin = new Integer(
-				IntelliInvestStore.properties.getProperty("daily.stock.signals.generator.start.min"));
-		LocalDateTime timeNext = timeNow.withHour(dailyStockSignalsGeneratorStartHour)
+				IntelliInvestStore.properties
+						.getProperty("daily.stock.signals.generator.start.min"));
+		LocalDateTime timeNext = timeNow
+				.withHour(dailyStockSignalsGeneratorStartHour)
 				.withMinute(dailyStockSignalsGeneratorStartMin).withSecond(0);
 		if (timeNow.compareTo(timeNext) > 0) {
 			timeNext = timeNext.plusDays(1);
 		}
 		Duration duration = Duration.between(timeNow, timeNext);
 		long initialDelay = duration.getSeconds();
-		ScheduledThreadPoolHelper.getScheduledExecutorService().scheduleAtFixedRate(dailyStockSignalsGeneratorTask,
-				initialDelay, 24 * 60 * 60, TimeUnit.SECONDS);
-		logger.info("Scheduled dailyStockSignalsGenratorTask . Next run at " + timeNext);
+		ScheduledThreadPoolHelper.getScheduledExecutorService()
+				.scheduleAtFixedRate(dailyStockSignalsGeneratorTask,
+						initialDelay, 24 * 60 * 60, TimeUnit.SECONDS);
+		logger.info("Scheduled dailyStockSignalsGenratorTask . Next run at "
+				+ timeNext);
 	}
 
 	private boolean generateSignalsForToday() {
@@ -84,7 +89,8 @@ public class StockSignalsImporter {
 	}
 
 	public boolean generateSignals(String symbol) {
-		Integer ma = new Integer(IntelliInvestStore.properties.get("ma").toString());
+		Integer ma = new Integer(IntelliInvestStore.properties.get("ma")
+				.toString());
 		return generateSignals(symbol, ma);
 	}
 
@@ -92,39 +98,60 @@ public class StockSignalsImporter {
 		int f = 1;
 		try {
 			if ("ALL".equals(symbol)) {
-
+				Map<String, List<QuandlStockPrice>> eodPrices = quandlEODStockPriceRepository
+						.getEODStockPrices();
 				for (Stock stockDetailData : stockRepository.getStocks()) {
 					try {
-						logger.info("Calculating signals for symbol " + stockDetailData.getSecurityId());
-						List<StockSignalsDTO> stockSignalsDTOs = getSignals(stockDetailData.getSecurityId(), ma);
-						// stockSignalsRepository.deleteStockSignals(ma,
-						// stockDetailData.getSecurityId());
-						if (stockSignalsDTOs != null)
-							stockSignalsRepository.updateStockSignals(ma, stockSignalsDTOs);
-						else
-							f = 0;
+						logger.info("Calculating signals for symbol "
+								+ stockDetailData.getSecurityId());
+						if (eodPrices.get(stockDetailData.getSecurityId()) != null
+								&& eodPrices.get(
+										stockDetailData.getSecurityId()).size() > 0) {
+							List<StockSignalsDTO> stockSignalsDTOs = getSignals(
+									stockDetailData.getSecurityId(), ma,
+									eodPrices.get(stockDetailData
+											.getSecurityId()));
+							// stockSignalsRepository.deleteStockSignals(ma,
+							// stockDetailData.getSecurityId());
+							if (stockSignalsDTOs != null)
+								stockSignalsRepository.updateStockSignalsBulk(
+										ma, stockSignalsDTOs);
+							else
+								f = 0;
+						}
 					} catch (Exception e) {
-						logger.info("Error generating signals for " + stockDetailData.getSecurityId() + " with error "
-								+ e.getMessage(), e);
+						logger.info("Error generating signals for "
+								+ stockDetailData.getSecurityId()
+								+ " with error " + e.getMessage(), e);
 						return false;
 					}
 				}
 				stockSignalsRepository.refreshCache();
+				// watchListRepository.refreshCache();
 				// ChartDao.getInstance().insertSignals(ma, "ALL", null);
 			} else {
+				List<QuandlStockPrice> eodPrices = quandlEODStockPriceRepository
+						.getStockPricesFromDB(symbol);
 				logger.info("Calculating signals for symbol " + symbol);
-				List<StockSignalsDTO> stockSignalsDTOs = getSignals(symbol, ma);
-				logger.info("signals generated for " + symbol);
-				// stockSignalsRepository.deleteStockSignals(ma, symbol);
-				if (stockSignalsDTOs != null) {
-					stockSignalsRepository.updateStockSignals(ma, stockSignalsDTOs);
-					stockSignalsRepository.refreshCache();
-				} else
-					f = 0;
-				// ChartDao.getInstance().insertSignals(ma, symbol, null);
+				if (eodPrices != null && eodPrices.size() > 0) {
+					List<StockSignalsDTO> stockSignalsDTOs = getSignals(symbol,
+							ma, eodPrices);
+					logger.info("signals generated for " + symbol);
+					// stockSignalsRepository.deleteStockSignals(ma, symbol);
+					if (stockSignalsDTOs != null) {
+						stockSignalsRepository.updateStockSignalsBulk(ma,
+								stockSignalsDTOs);
+						stockSignalsRepository.refreshCache();
+						// watchListRepository.refreshCache();
+					} else
+						f = 0;
+				}
+
 			}
+			logger.debug("generate signal method is going to end...");
 		} catch (Exception e) {
-			logger.info("Error generating signal for " + symbol + " with error " + e.getMessage(), e);
+			logger.info("Error generating signal for " + symbol
+					+ " with error " + e.getMessage(), e);
 			return false;
 		}
 		if (f == 1)
@@ -134,44 +161,75 @@ public class StockSignalsImporter {
 		// IntelliInvestStore.refresh();TODO
 	}
 
-	private List<StockSignalsDTO> getSignals(String stockCode, Integer ma) {
+	private List<StockSignalsDTO> getSignals(String stockCode, Integer ma,
+			List<QuandlStockPrice> quandlStockPrices) {
 		Integer magicNumber = 45;
 		// String magicNumberStr = IntelliInvestStore.getMagicNumber(ma,
 		// stockCode);TODO
 		// if(null!=magicNumberStr){
 		// magicNumber = new Integer(magicNumberStr);
 		// }
-		List<QuandlStockPrice> quandlStockPrices = quandlEODStockPriceRepository.getStockPricesFromDB(stockCode);
-		logger.debug("Quandl Stock Price list size is:" + quandlStockPrices.size());
+		// List<QuandlStockPrice> quandlStockPrices =
+		// quandlEODStockPriceRepository
+		// .getStockPricesFromDB(stockCode);
+		// logger.debug("Quandl Stock Price list size is:" +
+		// quandlStockPrices.size());
 
-		if (quandlStockPrices == null || quandlStockPrices.size() == 0) {
-			return null;
-		}
 		QuandlStockPrice quandlStockPrice_1 = new QuandlStockPrice();
-		int count = 0;
+		int count = 0, movingAverageCounter = 0;
 		List<StockSignalsDTO> signals = new ArrayList<StockSignalsDTO>();
 		StockSignalsDTO prevSignalComponents = null;
-		SignalComponentsEnhancer signalComponentsEnhancer = new SignalComponentsEnhancer(ma);
+		SignalComponentsEnhancer signalComponentsEnhancer = new SignalComponentsEnhancer(
+				ma);
 		for (QuandlStockPrice quandlStockPrice : quandlStockPrices) {
 			// logger.debug("in generating signal for :" + stockCode
 			// + " quandl eod date:" + quandlStockPrice.getEodDate());
+			StockSignalsDTO signalComponents = null;
 			if (count != 0) {
-				StockSignalsDTO signalComponents = null;
+
 				if (count <= ma) {
-					signalComponents = signalComponentsEnhancer.init9(quandlStockPrice, quandlStockPrice_1);
+					signalComponents = signalComponentsEnhancer.init9(
+							quandlStockPrice, quandlStockPrice_1);
 				} else if (count == (ma + 1)) {
-					signalComponents = signalComponentsEnhancer.init10(magicNumber,
-							quandlStockPrices.subList(count - ma + 1, count), signals);
+					signalComponents = signalComponentsEnhancer.init10(
+							magicNumber, quandlStockPrices.subList(count - ma
+									+ 1, count + 1), signals);
 				} else {
-					signalComponents = signalComponentsEnhancer.init(magicNumber,
-							quandlStockPrices.subList(count - ma + 1, count), prevSignalComponents, signals);
+					signalComponents = signalComponentsEnhancer.init(
+							magicNumber, quandlStockPrices.subList(count - ma
+									+ 1, count + 1), prevSignalComponents,
+							signals);
 				}
 				if (null != signalComponents) {
 					signals.add(signalComponents);
 					prevSignalComponents = signalComponents;
+
 				}
+				try {
+					if (movingAverageCounter <= 50)
+						signalComponentsEnhancer.generateMovingAverageSignals(
+								quandlStockPrices.subList(0,
+										movingAverageCounter + 1),
+								signalComponents, prevSignalComponents);
+					else {
+
+						signalComponentsEnhancer.generateMovingAverageSignals(
+								quandlStockPrices.subList(
+										movingAverageCounter - 50 + 1,
+										movingAverageCounter + 1),
+								signalComponents, prevSignalComponents);
+					}
+					signalComponentsEnhancer.generateAggregateSignals(
+							signalComponents, prevSignalComponents);
+				} catch (Exception e) {
+					logger.error("unable to generate moving average signals...for stock: "
+							+ stockCode);
+				}
+
 			}
+
 			count++;
+			movingAverageCounter++;
 			quandlStockPrice_1 = quandlStockPrice;
 		}
 
@@ -179,7 +237,8 @@ public class StockSignalsImporter {
 	}
 
 	public boolean generateTodaySignals(String symbol) {
-		Integer ma = new Integer(IntelliInvestStore.properties.get("ma").toString());
+		Integer ma = new Integer(IntelliInvestStore.properties.get("ma")
+				.toString());
 		return generateTodaySignals(symbol, ma);
 	}
 
@@ -187,67 +246,110 @@ public class StockSignalsImporter {
 		int f = 1;
 		try {
 			logger.debug("in generateTodaySignals method...");
-			LocalDate startDate = dateUtil.addBusinessDays(-20);
+			LocalDate startDate = dateUtil.substractBusinessDays(
+					dateUtil.getLocalDate(), 20);
 			LocalDate businessDate = dateUtil.getLastBusinessDate();
 			// IntelliInvestDataDao.getInstance().getQuandlStockPriceMaxDate();
 			// TODO
+			List<StockSignalsDTO> stockSignalsDTOsList = new ArrayList<StockSignalsDTO>();
 			if ("ALL".equals(symbol)) {
 				Map<String, List<QuandlStockPrice>> quandlStockPrices = quandlEODStockPriceRepository
 						.getEODStockPricesFromStartDate(startDate);
-				Map<String, StockSignalsDTO> signalComponents = stockSignalsRepository
-						.getStockSignalsComplete(businessDate, ma);
-				logger.debug("Quandl stock price list size is" + quandlStockPrices.size());
-				logger.debug("stock signal list size is" + signalComponents.size());
+				Map<String, List<StockSignalsDTO>> signalComponents = stockSignalsRepository
+						.getStockSignalsFromStartDate(startDate, ma);
+				logger.debug("Quandl stock price list size is"
+						+ quandlStockPrices.size());
+				logger.debug("stock signal list size is"
+						+ signalComponents.size());
 				for (Stock stockDetailData : stockRepository.getStocks()) {
 					try {
-						if (quandlStockPrices.containsKey(stockDetailData.getSecurityId())
-								&& signalComponents.containsKey(stockDetailData.getSecurityId())) {
-							List<QuandlStockPrice> stockPrices = quandlStockPrices.get(stockDetailData.getSecurityId());
+						if (quandlStockPrices.containsKey(stockDetailData
+								.getSecurityId())
+								&& signalComponents.containsKey(stockDetailData
+										.getSecurityId())) {
+							List<QuandlStockPrice> stockPrices = quandlStockPrices
+									.get(stockDetailData.getSecurityId());
 							// logger.info("Calculating signals for today for
 							// symbol "
 							// + stockDetailData.getSecurityId());
-							List<StockSignalsDTO> signalComponentsList = getTodaysSignals(
-									stockDetailData.getSecurityId(), ma, stockPrices,
-									signalComponents.get(stockDetailData.getSecurityId()));
+							List<StockSignalsDTO> stockSignalsDTOs = signalComponents
+									.get(stockDetailData.getSecurityId());
+							if (stockSignalsDTOs != null
+									&& stockSignalsDTOs.size() > 0
+									&& !stockSignalsDTOs
+											.get(stockSignalsDTOs.size() - 1)
+											.getSignalDate()
+											.equals(businessDate))
+								stockSignalsDTOsList.add(getTodaysSignals(
+										stockDetailData.getSecurityId(), ma,
+										stockPrices, stockSignalsDTOs));
+							else {
+								if (stockSignalsDTOs == null
+										|| stockSignalsDTOs.size() == 0) {
+									logger.debug("Invalid data for stock:"
+											+ stockDetailData.getSecurityId());
+								} else
+									logger.debug("signal for today date for stock: "
+											+ stockDetailData.getSecurityId()
+											+ " already present...");
+							}
 							// stockSignalsRepository.deleteStockSignals(ma,
 							// stockDetailData.getSecurityId());
-							stockSignalsRepository.updateStockSignals(ma, signalComponentsList);
 						} else {
-							logger.info("not able to generate today signals for:" + symbol);
+							logger.info("not able to generate today signals for:"
+									+ stockDetailData.getSecurityId());
 							f = 0;
 						}
 					} catch (Exception e) {
-						logger.info("Error generating signal for " + stockDetailData.getSecurityId() + " with error "
-								+ e.getMessage(), e);
-						return false;
+						logger.error("Error generating signal for "
+								+ stockDetailData.getSecurityId()
+								+ " with error " + e.getMessage(), e);
+						e.printStackTrace();
+						// return false;
 					}
 				}
 				stockSignalsRepository.refreshCache();
-				// ChartDao.getInstance().insertSignals(ma, "ALL",
-				// businessDate);
 			} else {
-				StockSignalsDTO stockSignalsDTO = stockSignalsRepository.getStockSignalsComplete(businessDate, symbol,
-						ma);
-				if (stockSignalsDTO != null) {
-					logger.info("Calculating signals for today for symbol " + symbol);
+				List<StockSignalsDTO> stockSignalsDTOs = stockSignalsRepository
+						.getStockSignalsFromStartDate(startDate, symbol, ma);
+				if (stockSignalsDTOs != null
+						&& stockSignalsDTOs.size() > 0
+						&& !stockSignalsDTOs.get(stockSignalsDTOs.size() - 1)
+								.getSignalDate().equals(businessDate)) {
+					logger.info("Calculating signals for today for symbol "
+							+ symbol);
 					List<QuandlStockPrice> quandlStockPrice = quandlEODStockPriceRepository
 							.getStockPricesFromDB(symbol);
-					logger.debug("stock signals list size is" + stockSignalsDTO);
-					logger.debug("Quandl stock price list size is" + quandlStockPrice.size());
-					List<StockSignalsDTO> signalComponentsList = getTodaysSignals(symbol, ma, quandlStockPrice,
-							stockSignalsDTO);
+					// logger.debug("stock signals list size is" +
+					// stockSignalsDTO);
+					logger.debug("Quandl stock price list size is"
+							+ quandlStockPrice.size());
+					StockSignalsDTO signalComponentsList = getTodaysSignals(
+							symbol, ma, quandlStockPrice, stockSignalsDTOs);
 					// stockSignalsRepository.deleteStockSignals(ma, symbol);
-					stockSignalsRepository.updateStockSignals(ma, signalComponentsList);
+
 					stockSignalsRepository.refreshCache();
+					// watchListRepository.refreshCache();
 				} else {
-					logger.info("not able to generate today signals for:" + symbol);
+					if (stockSignalsDTOs == null
+							|| stockSignalsDTOs.size() == 0)
+						logger.info("not able to generate today signals for:"
+								+ symbol);
+					else {
+						logger.debug("signal for today date for stock: "
+								+ symbol + " already present...");
+					}
 					f = 0;
 				}
-				// ChartDao.getInstance().insertSignals(ma, symbol,
-				// businessDate);
 			}
+
+			stockSignalsRepository.updateStockSignalsBulk(ma,
+					stockSignalsDTOsList);
+			logger.debug("generate signal today method is going to end...");
 		} catch (Exception e) {
-			logger.info("Error generating signal for " + symbol + " with error " + e.getMessage(), e);
+			logger.info("Error generating signal for " + symbol
+					+ " with error " + e.getMessage(), e);
+			e.printStackTrace();
 			return false;
 		}
 		if (f == 1)
@@ -256,19 +358,13 @@ public class StockSignalsImporter {
 			return false;
 	}
 
-	private List<StockSignalsDTO> getTodaysSignals(String symbol, Integer ma,
-			List<QuandlStockPrice> quandlStockPricesTmp, StockSignalsDTO prevSignalComponents) {
-		// List<QuandlStockPrice> QuandlStockPricesTmp =
-		// IntelliInvestDataDao.getInstance().getQuandlStockPrice(symbol, ma-1);
-		// List<QuandlStockPrice> quandlStockPrices = new
-		// ArrayList<QuandlStockPrice>();
-		// for (int i = (quandlStockPricesTmp.size() - 1); i >= 0; i--) {
-		// quandlStockPrices.add(quandlStockPricesTmp.get(i));
-		// }
-		// List<StockSignalsDTO> prevSignalComponents =
-		// stockSignalsRepository.getStockSignalsFromStartDate();
-		List<StockSignalsDTO> stockSignalsDTOs = stockSignalsRepository
-				.getEODStockPriceddFromStartDate(dateUtil.addBusinessDays(-20), symbol, ma);
+	private StockSignalsDTO getTodaysSignals(String symbol, Integer ma,
+			List<QuandlStockPrice> quandlStockPrices,
+			List<StockSignalsDTO> stockSignalsDTOs) {
+		// List<StockSignalsDTO> stockSignalsDTOs = stockSignalsRepository
+		// .getStockSignalsFromStartDate(dateUtil
+		// .substractBusinessDays(dateUtil.getLocalDate(), 20),
+		// symbol, ma);
 		ArrayList<StockSignalsDTO> signalComponentsList = new ArrayList<StockSignalsDTO>();
 		Integer magicNumber = 45;
 		String magicNumberStr = null;
@@ -276,22 +372,32 @@ public class StockSignalsImporter {
 		if (null != magicNumberStr) {
 			magicNumber = new Integer(magicNumberStr);
 		}
-		// logger.debug("StockSignalsDTO list size is:" +
-		// stockSignalsDTOs.size());
-		// logger.debug("in gettoday Signal: "
-		// + quandlStockPricesTmp.get(quandlStockPricesTmp.size() - 2)
-		// .getEodDate());
-		// logger.debug("in gettoday Signal: "
-		// + quandlStockPricesTmp.get(quandlStockPricesTmp.size() - 1)
-		// .getEodDate());
-		SignalComponentsEnhancer signalComponentsEnhancer = new SignalComponentsEnhancer(ma);
-		StockSignalsDTO signalComponents = signalComponentsEnhancer.init(magicNumber, quandlStockPricesTmp,
-				prevSignalComponents, stockSignalsDTOs);
-		// logger.info("Todays signal for " + signalComponents.getSymbol()
-		// + " Signal type " + signalComponents.getSignalType()
-		// + " signal present " + signalComponents.getSignalPresent());
-		signalComponentsList.add(signalComponents);
-		return signalComponentsList;
+		SignalComponentsEnhancer signalComponentsEnhancer = new SignalComponentsEnhancer(
+				ma);
+		logger.debug("Quandl Stock Price list size is:: "
+				+ quandlStockPrices.size());
+		StockSignalsDTO prevSignalComponents = stockSignalsDTOs
+				.get(stockSignalsDTOs.size() - 1);
+		logger.debug("Previous Stock Signal date:"
+				+ prevSignalComponents.getSignalDate() + " and list size is :"
+				+ stockSignalsDTOs.size());
+		StockSignalsDTO signalComponents = signalComponentsEnhancer.init(
+				magicNumber, quandlStockPrices, prevSignalComponents,
+				stockSignalsDTOs);
+		if (quandlStockPrices.size() > 50) {
+			int size = quandlStockPrices.size();
+			signalComponentsEnhancer.generateMovingAverageSignals(
+					quandlStockPrices.subList(size - 50, size),
+					signalComponents, prevSignalComponents);
+		} else {
+			signalComponentsEnhancer.generateMovingAverageSignals(
+					quandlStockPrices, signalComponents, prevSignalComponents);
+
+		}
+
+		signalComponentsEnhancer.generateAggregateSignals(signalComponents,
+				prevSignalComponents);
+		return signalComponents;
 	}
 
 }

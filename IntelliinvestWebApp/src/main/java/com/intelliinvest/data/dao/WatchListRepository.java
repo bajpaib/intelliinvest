@@ -5,8 +5,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
 
@@ -16,7 +14,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.intelliinvest.data.model.Portfolio;
@@ -62,7 +59,8 @@ public class WatchListRepository {
 	@Autowired
 	DateUtil dateUtil;
 
-	private static Map<String, WatchListStockData> watchListStockDataCache = new ConcurrentHashMap<String, WatchListStockData>();
+	// private static Map<String, WatchListStockData> watchListStockDataCache =
+	// new ConcurrentHashMap<String, WatchListStockData>();
 
 	private static final String COLLECTION_WATCHLIST = "WATCHLIST";
 	@Autowired
@@ -70,52 +68,55 @@ public class WatchListRepository {
 
 	@PostConstruct
 	public void init() {
-		logger.debug("in initilaizeCache method....");
-		refreshCache();
+		// refreshCache();
 	}
 
-	@ManagedOperation(description = "initialiseCacheFromDB")
-	public boolean refreshCache() {
-		logger.debug("in refreshCache method....");
-		List<WatchListStockData> watchListStocksDatasList = getAllTradingAccountData();
-		logger.debug("WatchList Data for Cache, size is " + watchListStocksDatasList.size());
-		if (watchListStocksDatasList != null && watchListStocksDatasList.size() > 0)
-			for (WatchListStockData watchListStockData : watchListStocksDatasList) {
-				if (watchListStockData.getCode() != null)
-					watchListStockDataCache.put(watchListStockData.getCode(), watchListStockData);
-			}
-		return true;
-	}
+	// @ManagedOperation(description = "initialiseCacheFromDB")
+	// public boolean refreshCache() {
+	// logger.debug("in refreshCache method....");
+	// List<WatchListStockData> watchListStocksDatasList =
+	// getAllTradingAccountData();
+	// logger.debug("WatchList Data for Cache, size is " +
+	// watchListStocksDatasList.size());
+	// if (watchListStocksDatasList != null && watchListStocksDatasList.size() >
+	// 0)
+	// for (WatchListStockData watchListStockData : watchListStocksDatasList) {
+	// if (watchListStockData.getCode() != null)
+	// watchListStockDataCache.put(watchListStockData.getCode(),
+	// watchListStockData);
+	// }
+	// return true;
+	// }
 
-	private List<WatchListStockData> getAllTradingAccountData() {
+	private WatchListStockData getWatchListData(String stockCode) {
 		logger.debug("in getAllTradingAccountData method....");
-		List<WatchListStockData> retVal = new ArrayList<WatchListStockData>();
-		for (Stock stock : stockRepository.getStocks()) {
+		// WatchListStockData retVal = new WatchListStockData();
+		// for (Stock stock : stockRepository.getStocks()) {
 
-			String symbol = stock.getSecurityId();
-			// QuandlStockPrice priceObj = quandlEODStockPriceRepository
-			// .getEODStockPriceObjFromCache(symbol);
-			StockSignals stockSignals = stockSignalsRepository.getStockSignalsFromCache(symbol);
+		// String symbol = stock.getSecurityId();
+		// QuandlStockPrice priceObj = quandlEODStockPriceRepository
+		// .getEODStockPriceObjFromCache(symbol);
+		StockSignals stockSignals = stockSignalsRepository.getStockSignalsFromCache(stockCode);
 
-			// StockPrice stockPrice =
-			// stockRepository.getStockPriceById(symbol);
-			QuandlStockPrice stockPrice = quandlEODStockPriceRepository.getEODStockPrice(symbol);
-			if (stockPrice != null && stockSignals != null) {
-				retVal.add(getWatchListDataObj(stockPrice.getClose(), stockSignals));
-			}
+		// StockPrice stockPrice =
+		// stockRepository.getStockPriceById(symbol);
+		QuandlStockPrice stockPrice = quandlEODStockPriceRepository.getEODStockPrice(stockCode);
+		if (stockPrice != null && stockSignals != null) {
+			return getWatchListDataObj(stockPrice.getClose(), stockSignals);
 		}
-		return retVal;
+		// }
+		return null;
 	}
 
 	private WatchListStockData getWatchListDataObj(double eodPrice, StockSignals stockSignals) {
-		logger.debug("in getWatchListDataObj method....");
+		// logger.debug("in getWatchListDataObj method....");
 		WatchListStockData watchListStockData = new WatchListStockData();
 		watchListStockData.setSignalPrice(eodPrice);
 		if (stockSignals != null) {
 			watchListStockData.setCode(stockSignals.getSymbol());
 			watchListStockData.setSignalDate(stockSignals.getSignalDate());
 			watchListStockData.setSignalType(stockSignals.getSignalType());
-			watchListStockData.setYesterdaySignalType(stockSignals.getPreviousSignalType());
+			// watchListStockData.setYesterdaySignalType(stockSignals.getPreviousSignalType());
 		}
 		return watchListStockData;
 	}
@@ -159,7 +160,7 @@ public class WatchListRepository {
 
 	private WatchListStockData getWatchListDataForCodeFromCache(String code) {
 		logger.debug("in getWatchListDataForCodeFromCache method....");
-		return watchListStockDataCache.get(code);
+		return getWatchListData(code);
 	}
 
 	public WatchListResponse addTradingAccountData(String userId, String stockCode) {

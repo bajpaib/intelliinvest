@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.intelliinvest.common.IntelliinvestConstants;
+import com.intelliinvest.common.IntelliinvestException;
 import com.intelliinvest.data.dao.StockFundamentalsRepository;
 import com.intelliinvest.data.importer.StockFundamentalsImporter;
 import com.intelliinvest.data.model.StockFundamentals;
@@ -17,7 +19,6 @@ import com.intelliinvest.util.Helper;
 
 @Controller
 public class StockFundamentalsController {
-
 	private static Logger logger = Logger.getLogger(StockFundamentalsController.class);
 	private static final String APPLICATION_JSON = "application/json";
 	@Autowired
@@ -38,15 +39,33 @@ public class StockFundamentalsController {
 		return list;
 	}
 
-	@RequestMapping(value = "/stock/getStockFundamentalsByIdAndQuarterYear", method = RequestMethod.GET, produces = APPLICATION_JSON)
-	public @ResponseBody StockFundamentals getStockFundamentalsByIdAndQuarterYear(@RequestParam("id") String id,
-			@RequestParam("quarterYear") String quarterYear) {
-		StockFundamentals stock = null;
-		if (Helper.isNotNullAndNonEmpty(id)) {
+/*	@RequestMapping(value = "/stock/getStockFundamentalsByYearQuarterAndId", method = RequestMethod.GET, produces = APPLICATION_JSON)
+	public @ResponseBody List<StockFundamentals> getStockFundamentalsByYearQuarterAndId(@RequestParam("id") String id,
+			@RequestParam("yearQuarter") String yearQuarter) {
+		List<StockFundamentals> list = null;
+		if (Helper.isNotNullAndNonEmpty(id) && Helper.isNotNullAndNonEmpty(yearQuarter)) {
 			try {
-				stock = stockFundamentalsRepository.getStockFundamentalsByIdAndQuarterYear(id, quarterYear);
+				list = stockFundamentalsRepository.getStockFundamentalsByYearQuarterAndId(yearQuarter, id);
 			} catch (Exception e) {
-				logger.error("Exception inside getStockFundamentalsByIdAndQuarterYear() " + e.getMessage());
+				logger.error("Exception inside getStockFundamentalsByYearQuarterAndId() " + e.getMessage());
+			}
+		}
+		return list;
+	}*/
+
+	@RequestMapping(value = "/stock/getStockFundamentalsByIdAndAttrName", method = RequestMethod.GET, produces = APPLICATION_JSON)
+	public @ResponseBody StockFundamentals getStockFundamentalsByIdAndAttrName(
+			@RequestParam("id") String id, @RequestParam("attrName") String attrName) {
+		StockFundamentals stock = null;
+		if (Helper.isNotNullAndNonEmpty(id) && Helper.isNotNullAndNonEmpty(attrName)) {
+			try {
+				String attrNameDB = IntelliinvestConstants.stockFundamentalDBAttrMap.get(attrName);
+				if (!Helper.isNotNullAndNonEmpty(attrNameDB)) {
+					throw new IntelliinvestException(" DB attribte mapping not found for attrName:" + attrName);
+				}
+				stock = stockFundamentalsRepository.getStockFundamentalsByIdAndAttrName(id, attrNameDB);
+			} catch (Exception e) {
+				logger.error("Exception inside getStockFundamentalsByYearQuarterAndIdAndAttrName() " + e.getMessage());
 			}
 		}
 		return stock;
@@ -58,6 +77,17 @@ public class StockFundamentalsController {
 			stockFundamentalsImporter.bulkUploadStockFundamentals();
 		} catch (Exception e) {
 			logger.error("Error while backloadStockFundamentals " + e.getMessage());
+			return e.getMessage();
+		}
+		return "Success";
+	}
+	
+	@RequestMapping(value = "/stock/uploadStockFundamentals", method = RequestMethod.GET)
+	public @ResponseBody String uploadStockFundamentals(@RequestParam("filePath") String filePath) {
+		try {
+			stockFundamentalsImporter.uploadStockFundamentals(filePath);
+		} catch (Exception e) {
+			logger.error("Error while uploadStockFundamentals " + e.getMessage());
 			return e.getMessage();
 		}
 		return "Success";

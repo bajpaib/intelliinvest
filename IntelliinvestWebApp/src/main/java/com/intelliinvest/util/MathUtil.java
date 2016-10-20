@@ -11,6 +11,17 @@ public class MathUtil {
 	public static double round(double value) {
 		return round(value, DEFAULT_ROUND_PLACES);
 	}
+	
+	public static String round(String valueStr) {
+		double value = 0; 
+		try {
+			value = new Double(valueStr).doubleValue();
+		}catch (Exception e){
+			//not a double
+		}
+		
+		return new Double(round(value, DEFAULT_ROUND_PLACES)).toString();
+	}
 
 	public static double round(double value, int places) {
 		if (places < 0)

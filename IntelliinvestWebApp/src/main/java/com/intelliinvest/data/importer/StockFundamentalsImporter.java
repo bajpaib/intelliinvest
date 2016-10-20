@@ -8,14 +8,19 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jmx.export.annotation.ManagedOperation;
+import org.springframework.jmx.export.annotation.ManagedOperationParameter;
+import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.intelliinvest.common.IntelliInvestStore;
@@ -86,65 +91,63 @@ public class StockFundamentalsImporter {
 
 		logger.info("Scheduled refreshStockFundamentalsTask for periodic stock fundamentals refresh. Next refresh scheduled at " + timeNext);
 	}
+	
+	private String downloadQuandlDataFile() throws Exception {
+		// download zip file as download.zip
+		String zipName = "download.zip";
+		HttpUtil.downloadZipFile(STOCK_FUDAMENTALS_URL, stockFundamentalsDataDir, zipName);
+		// extract the csv file from zip
+		ZipFilteredReader zipReader = new ZipFilteredReader(stockFundamentalsDataDir + "/" + zipName,
+				stockFundamentalsDataDir);
+		String fileName = zipReader.filteredExpandZipFile(zipEntry -> zipEntry.getName().endsWith(".csv"));
 
+		if (!Helper.isNotNullAndNonEmpty(fileName)) {
+			throw new IntelliinvestException("No Stock Fundamentals data retrieved from Quandl");
+		}		
+		return stockFundamentalsDataDir + "/" + fileName;
+	}
+	
+	
 	public void bulkUploadStockFundamentals() throws Exception {
+		String filePath= downloadQuandlDataFile();
+		uploadStockFundamentals(filePath);
+	}
+
+	@ManagedOperation(description = "uploadStockFundamentals")
+	@ManagedOperationParameters({@ManagedOperationParameter(name = "filePath", description = "filePath")})
+	public void uploadStockFundamentals(String filePath) throws Exception {
 		List<Stock> stockDetails = stockRepository.getStocks();
-		List<Stock> nonWorldStocks = new ArrayList<Stock>();
+		List<Stock> stocks = new ArrayList<Stock>();
 		for (Stock stock : stockDetails) {
 			if (!stock.isWorldStock()) {
-				nonWorldStocks.add(stock);
+				stocks.add(stock);
 			}
 		}
-		List<StockFundamentals> nonWorldStockFundamentals = fetchStockFundamentalsFromQuandl(nonWorldStocks);
-		logger.info("Inside updateStockFundamentals, # of StockFundamentals downloaded are "
-				+ nonWorldStockFundamentals.size());
-		if (Helper.isNotNullAndNonEmpty(nonWorldStockFundamentals)) {
-			stockFundamentalsRepository.bulkUploadStockFundamentals(nonWorldStockFundamentals);
-		}
-	}
-
-	private List<StockFundamentals> fetchStockFundamentalsFromQuandl(List<Stock> stocks) throws Exception {
-		try {
-			Map<String, StockFundamentals> stockFundamentals = getDataFromQuandl(stocks);
-			logger.info("No of distinct entries for quarterYear and Stocks loaded are " + stockFundamentals.size());
-			List<StockFundamentals> retVal = new ArrayList<StockFundamentals>();
-			for(Map.Entry<String, StockFundamentals> entry: stockFundamentals.entrySet()){
-				retVal.add(entry.getValue());
-			}
-			return retVal;
-		} catch (Exception e) {
-			throw new IntelliinvestException("Error while fetching Stock Fundamentals from Quandl " + e.getMessage());
-		}
-	}
-
-	private Map<String, StockFundamentals> getDataFromQuandl(List<Stock> stocks) throws Exception {
-		Map<String, StockFundamentals> stockFundamentals = new HashMap<String, StockFundamentals>();
-
+		
 		Map<String, String> fundamentalCodeToSecurityIdMap = new HashMap<String, String>();
+		Map<String, String> fundamentalCodeToIndustryMap = new HashMap<String, String>();
 		for (Stock stock : stocks) {
 			if (Helper.isNotNullAndNonEmpty(stock.getFundamentalCode())) {
 				fundamentalCodeToSecurityIdMap.put(stock.getFundamentalCode(), stock.getSecurityId());
+				if(Helper.isNotNullAndNonEmpty(stock.getIndustry())) {
+					fundamentalCodeToIndustryMap.put(stock.getFundamentalCode(), stock.getIndustry());
+				}
 			}
 		}
-
+		
 		BufferedReader reader = null;
 		try {
-			// download zip file as download.zip
-			String zipName = "download.zip";
-			HttpUtil.downloadZipFile(STOCK_FUDAMENTALS_URL, stockFundamentalsDataDir, zipName);
-			// extract the csv file from zip
-			ZipFilteredReader zipReader = new ZipFilteredReader(stockFundamentalsDataDir + "/" + zipName,
-					stockFundamentalsDataDir);
-			String fileName = zipReader.filteredExpandZipFile(zipEntry -> zipEntry.getName().endsWith(".csv"));
-
-			if (!Helper.isNotNullAndNonEmpty(fileName)) {
-				throw new IntelliinvestException("No Stock Fundamentals data retrieved from Quandl");
-			}
-
 			DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-			reader = new BufferedReader(new FileReader(stockFundamentalsDataDir + "/" + fileName));
+			reader = new BufferedReader(new FileReader(filePath));
 			LocalDateTime updateDateTime = dateUtil.getLocalDateTime();
+			List<StockFundamentals> dataList = new ArrayList<StockFundamentals>();
 			String line;
+			int size = 0;
+			boolean firstDBCall = true;
+			Set<String> industryNotFound = new HashSet<String>(); 
+			String key = null;
+			String prevKey = "";
+			StockFundamentals stock = null;
 			while ((line = reader.readLine()) != null) {
 				try {
 					String[] stockFundamentalsArray = line.split(",");
@@ -154,11 +157,11 @@ public class StockFundamentalsImporter {
 
 					String code = null;
 					String attrName = null;
-					String key = stockFundamentalsArray[0];
+					key = stockFundamentalsArray[0];
 					int index = key.indexOf("_A_") != -1 ? key.indexOf("_A_") : key.indexOf("_Q_");
 					if (index != -1) {
 						code = key.substring(0, index);
-						attrName = key.substring(index, key.length());
+						attrName = key.substring(index+1, key.length());
 					} else {
 						// desired attribute is not present, continue
 						continue;
@@ -169,7 +172,7 @@ public class StockFundamentalsImporter {
 						// Attribute not desired, continue
 						continue;
 					}
-
+					
 					// filter for desired stock
 					String securityId = fundamentalCodeToSecurityIdMap.get(code);
 					if (!Helper.isNotNullAndNonEmpty(securityId)) {
@@ -178,7 +181,7 @@ public class StockFundamentalsImporter {
 					}
 
 					LocalDate date = LocalDate.parse(stockFundamentalsArray[1], dateFormat);
-					double attrValue = new Double(stockFundamentalsArray[2]);
+					String attrValue = stockFundamentalsArray[2];
 
 					int month = date.getMonthValue();
 					int year = date.getYear();
@@ -202,94 +205,66 @@ public class StockFundamentalsImporter {
 						quarter = IntelliinvestConstants.Quarter.Q3.name();
 						break;
 					case 12:
+						quarter = IntelliinvestConstants.Quarter.Q4.name();
+						break;
 					case 1:
 					case 2:
 						quarter = IntelliinvestConstants.Quarter.Q4.name();
+						year = year - 1;
 						break;
 					default:
 						quarter = IntelliinvestConstants.Quarter.Q1.name();
 					}
 
-					String mapKey = quarter + year + securityId;
-					StockFundamentals stock = stockFundamentals.get(mapKey);
-
-					if (stock == null) {
+					// check for industry
+					String industry = fundamentalCodeToIndustryMap.get(code);
+					if (!Helper.isNotNullAndNonEmpty(industry)) {
+						// industry not found, continue
+//						logger.error("Ignoring Fundamental data. Industry not found for securityId=" + securityId);
+						industryNotFound.add(securityId);
+						continue;
+					}
+					
+					if(!prevKey.equals(key)){
 						stock = new StockFundamentals();
 						stock.setSecurityId(securityId);
-						stock.setQuarterYear(quarter + year);
-						stock.setUpdateDate(updateDateTime);
-						stockFundamentals.put(mapKey, stock);
+						stock.setAttrName(attrName);
+						stock.addYearQuarterAttrVal(year + quarter, attrValue);
+						stock.setUpdateDate(updateDateTime);	
+						dataList.add(stock);
+					}else{
+						stock.addYearQuarterAttrVal(year + quarter, attrValue);
 					}
-
-					switch (attrName) {
-					case IntelliinvestConstants.ANNUAL_MARKETCAP:
-						stock.setAnnualMarketCap(attrValue);
-						break;
-					case IntelliinvestConstants.ANNUAL_EARNING_PER_SHARE:
-						stock.setAnnualEarningPerShare(attrValue);
-						break;
-					case IntelliinvestConstants.ANNUAL_PRICE_TO_EARNING:
-						stock.setAnnualPriceToEarning(attrValue);
-						break;
-					case IntelliinvestConstants.ANNUAL_CASH_TO_DEBT_RATIO:
-						stock.setAnnualCashToDebtRatio(attrValue);
-						break;
-					case IntelliinvestConstants.ANNUAL_CURRENT_RATIO:
-						stock.setAnnualCurrentRatio(attrValue);
-						break;
-					case IntelliinvestConstants.ANNUAL_EQUITY_TO_ASSET_RATIO:
-						stock.setAnnualEquityToAssetRatio(attrValue);
-						break;
-					case IntelliinvestConstants.ANNUAL_DEBT_TO_CAPITAL_RATIO:
-						stock.setAnnualDebtToCapitalRatio(attrValue);
-						break;
-					case IntelliinvestConstants.ANNUAL_LEVERED_BETA:
-						stock.setAnnualLeveredBeta(attrValue);
-						break;
-					case IntelliinvestConstants.ANNUAL_RETURN_ON_EQUITY:
-						stock.setAnnualReturnOnEquity(attrValue);
-						break;
-					case IntelliinvestConstants.ANNUAL_SOLVENCY_RATIO:
-						stock.setAnnualSolvencyRatio(attrValue);
-						break;
-					case IntelliinvestConstants.ANNUAL_COST_OF_EQUITY:
-						stock.setAnnualCostOfEquity(attrValue);
-						break;
-					case IntelliinvestConstants.ANNUAL_COST_OF_DEBT:
-						stock.setAnnualCostOfDebt(attrValue);
-						break;
-					case IntelliinvestConstants.QUARTERLY_EBIDTA_MARGIN:
-						stock.setQuarterlyEBIDTAMargin(attrValue);
-						break;
-					case IntelliinvestConstants.QUARTERLY_OPERATING_MARGIN:
-						stock.setQuarterlyOperatingMargin(attrValue);
-						break;
-					case IntelliinvestConstants.QUARTERLY_NET_MARGIN:
-						stock.setQuarterlyNetMargin(attrValue);
-						break;
-					case IntelliinvestConstants.QUARTERLY_DIVIDEND_PERCENT:
-						stock.setQuarterlyDividendPercent(attrValue);
-						break;
-					case IntelliinvestConstants.QUARTERLY_UNADJ_BSE__CLOSE_PRICE:
-						stock.setQuarterlyUnadjBseClosePrice(attrValue);
-						break;
-					default:
-						break;
+					
+					++size;
+					prevKey = key;
+					if(dataList.size() > 2999){
+						stockFundamentalsRepository.bulkUploadStockFundamentals(dataList, firstDBCall);
+						firstDBCall = false;
+						dataList.clear();
 					}
 
 				} catch (Exception e) {
-					logger.error("Error while fetching Stock Fundamentals data: " + line + "Error: " + e.getMessage());
-					logger.error(line);
+					logger.error("Error while uploadStockFundamentals: " + line + "Error: " + e.getMessage());
 				}
 			}
+			//now update the remaining rows
+			if(dataList.size() > 0){
+				stockFundamentalsRepository.bulkUploadStockFundamentals(dataList, firstDBCall);
+				logger.info("Number of rows uploaded are: "+size);
+				dataList.clear();
+			}		
+			
+			if(!industryNotFound.isEmpty()){
+				logger.error("The stocks not having industry mapping are: "+industryNotFound);
+			}
 		} catch (Exception e) {
-			throw new IntelliinvestException("Error while fetching Stock Fundamentals from Quandl " + e.getMessage());
+			throw new IntelliinvestException("Error while uploadStockFundamentals: " + e.getMessage());
 		} finally {
 			if (reader != null) {
 				reader.close();
 			}
 		}
-		return stockFundamentals;
 	}
 
 }

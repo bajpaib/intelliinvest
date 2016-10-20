@@ -1,5 +1,6 @@
 package com.intelliinvest.data.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
@@ -11,7 +12,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.intelliinvest.util.JsonDateTimeSerializer;
 
 @Document(collection = "STOCK_PRICE")
-public class StockPrice {
+public class StockPrice  implements Serializable {
 	@Id
 	private String securityId;
 	private String exchange;

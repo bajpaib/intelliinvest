@@ -8,18 +8,18 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 public class StockSignalsDTO {
 
 	String symbol;
-	String previousSignalType = "";
+	// String previousSignalType = "";
 	String signalType = "Wait";
 
 	LocalDate signalDate;
 	String signalPresent;
 
 	String oscillatorSignal;
-	String previousOscillatorSignal = "";
+	// String previousOscillatorSignal = "";
 	String signalPresentOscillator;
 
 	String bollingerSignal;
-	String previousBollingerSignal = "";
+	// String previousBollingerSignal = "";
 	String signalPresentBollinger;
 
 	Double TR;
@@ -50,29 +50,39 @@ public class StockSignalsDTO {
 	Double lowerBound;
 	Double bandwidth;
 
-	public StockSignalsDTO() {
-		// TODO Auto-generated constructor stub
-	}
+	MovingAverageComponents movingAverageComponents;
+	MovingAverageSignals movingAverageSignals;
 
-	public StockSignalsDTO(String symbol, String previousSignalType, String signalType, LocalDate signalDate,
-			String signalPresent, String oscillatorSignal, String previousOscillatorSignal,
-			String signalPresentOscillator, String bollingerSignal, String previousBollingerSignal,
-			String signalPresentBollinger, Double tR, Double plusDM1, Double minusDM1, Double tRn, Double plusDMn,
-			Double minusDMn, Double plusDIn, Double minusDIn, Double diffDIn, Double sumDIn, Double dX, Double aDXn,
-			Double splitMultiplier, Double high10Day, Double low10Day, Double range10Day, Double stochastic10Day,
-			Double percentKFlow, Double percentDFlow, Double sma, Double upperBound, Double lowerBound,
-			Double bandwidth) {
+	private String aggSignal;
+	private String aggSignal_present;
+	private String aggSignal_previous;
+
+	public StockSignalsDTO() {
+
+	}
+	
+
+	public StockSignalsDTO(String symbol, String signalType,
+			LocalDate signalDate, String signalPresent,
+			String oscillatorSignal, String signalPresentOscillator,
+			String bollingerSignal, String signalPresentBollinger, Double tR,
+			Double plusDM1, Double minusDM1, Double tRn, Double plusDMn,
+			Double minusDMn, Double plusDIn, Double minusDIn, Double diffDIn,
+			Double sumDIn, Double dX, Double aDXn, Double splitMultiplier,
+			Double high10Day, Double low10Day, Double range10Day,
+			Double stochastic10Day, Double percentKFlow, Double percentDFlow,
+			Double sma, Double upperBound, Double lowerBound, Double bandwidth,
+			MovingAverageComponents movingAverageComponents,
+			MovingAverageSignals movingAverageSignals, String aggSignal,
+			String aggSignal_present, String aggSignal_previous) {
 		super();
 		this.symbol = symbol;
-		this.previousSignalType = previousSignalType;
 		this.signalType = signalType;
 		this.signalDate = signalDate;
 		this.signalPresent = signalPresent;
 		this.oscillatorSignal = oscillatorSignal;
-		this.previousOscillatorSignal = previousOscillatorSignal;
 		this.signalPresentOscillator = signalPresentOscillator;
 		this.bollingerSignal = bollingerSignal;
-		this.previousBollingerSignal = previousBollingerSignal;
 		this.signalPresentBollinger = signalPresentBollinger;
 		TR = tR;
 		this.plusDM1 = plusDM1;
@@ -97,6 +107,60 @@ public class StockSignalsDTO {
 		this.upperBound = upperBound;
 		this.lowerBound = lowerBound;
 		this.bandwidth = bandwidth;
+		this.movingAverageComponents = movingAverageComponents;
+		this.movingAverageSignals = movingAverageSignals;
+		this.aggSignal = aggSignal;
+		this.aggSignal_present = aggSignal_present;
+		this.aggSignal_previous = aggSignal_previous;
+	}
+
+
+	public String getAggSignal() {
+		return aggSignal;
+	}
+
+
+	public void setAggSignal(String aggSignal) {
+		this.aggSignal = aggSignal;
+	}
+
+
+	public String getAggSignal_present() {
+		return aggSignal_present;
+	}
+
+
+	public void setAggSignal_present(String aggSignal_present) {
+		this.aggSignal_present = aggSignal_present;
+	}
+
+
+	public String getAggSignal_previous() {
+		return aggSignal_previous;
+	}
+
+
+	public void setAggSignal_previous(String aggSignal_previous) {
+		this.aggSignal_previous = aggSignal_previous;
+	}
+
+
+	public MovingAverageSignals getMovingAverageSignals() {
+		return movingAverageSignals;
+	}
+
+	public void setMovingAverageSignals(
+			MovingAverageSignals movingAverageSignals) {
+		this.movingAverageSignals = movingAverageSignals;
+	}
+
+	public MovingAverageComponents getMovingAverageComponents() {
+		return movingAverageComponents;
+	}
+
+	public void setMovingAverageComponents(
+			MovingAverageComponents movingAverageComponents) {
+		this.movingAverageComponents = movingAverageComponents;
 	}
 
 	public String getSymbol() {
@@ -107,13 +171,13 @@ public class StockSignalsDTO {
 		this.symbol = symbol;
 	}
 
-	public String getPreviousSignalType() {
-		return previousSignalType;
-	}
-
-	public void setPreviousSignalType(String previousSignalType) {
-		this.previousSignalType = previousSignalType;
-	}
+	// public String getPreviousSignalType() {
+	// return previousSignalType;
+	// }
+	//
+	// public void setPreviousSignalType(String previousSignalType) {
+	// this.previousSignalType = previousSignalType;
+	// }
 
 	public String getSignalType() {
 		return signalType;
@@ -147,13 +211,14 @@ public class StockSignalsDTO {
 		this.oscillatorSignal = oscillatorSignal;
 	}
 
-	public String getPreviousOscillatorSignal() {
-		return previousOscillatorSignal;
-	}
-
-	public void setPreviousOscillatorSignal(String previousOscillatorSignal) {
-		this.previousOscillatorSignal = previousOscillatorSignal;
-	}
+	// public String getPreviousOscillatorSignal() {
+	// return previousOscillatorSignal;
+	// }
+	//
+	// public void setPreviousOscillatorSignal(String previousOscillatorSignal)
+	// {
+	// this.previousOscillatorSignal = previousOscillatorSignal;
+	// }
 
 	public String getSignalPresentOscillator() {
 		return signalPresentOscillator;
@@ -171,13 +236,13 @@ public class StockSignalsDTO {
 		this.bollingerSignal = bollingerSignal;
 	}
 
-	public String getPreviousBollingerSignal() {
-		return previousBollingerSignal;
-	}
-
-	public void setPreviousBollingerSignal(String previousBollingerSignal) {
-		this.previousBollingerSignal = previousBollingerSignal;
-	}
+	// public String getPreviousBollingerSignal() {
+	// return previousBollingerSignal;
+	// }
+	//
+	// public void setPreviousBollingerSignal(String previousBollingerSignal) {
+	// this.previousBollingerSignal = previousBollingerSignal;
+	// }
 
 	public String getSignalPresentBollinger() {
 		return signalPresentBollinger;
@@ -371,20 +436,268 @@ public class StockSignalsDTO {
 		this.bandwidth = bandwidth;
 	}
 
-	@Override
-	public String toString() {
-		return "StockSignalsBO [symbol=" + symbol + ", previousSignalType=" + previousSignalType + ", signalType="
-				+ signalType + ", signalDate=" + signalDate + ", signalPresent=" + signalPresent + ", oscillatorSignal="
-				+ oscillatorSignal + ", previousOscillatorSignal=" + previousOscillatorSignal
-				+ ", signalPresentOscillator=" + signalPresentOscillator + ", bollingerSignal=" + bollingerSignal
-				+ ", previousBollingerSignal=" + previousBollingerSignal + ", signalPresentBollinger="
-				+ signalPresentBollinger + ", TR=" + TR + ", plusDM1=" + plusDM1 + ", minusDM1=" + minusDM1 + ", TRn="
-				+ TRn + ", plusDMn=" + plusDMn + ", minusDMn=" + minusDMn + ", plusDIn=" + plusDIn + ", minusDIn="
-				+ minusDIn + ", diffDIn=" + diffDIn + ", sumDIn=" + sumDIn + ", DX=" + DX + ", ADXn=" + ADXn
-				+ ", splitMultiplier=" + splitMultiplier + ", high10Day=" + high10Day + ", low10Day=" + low10Day
-				+ ", range10Day=" + range10Day + ", stochastic10Day=" + stochastic10Day + ", percentKFlow="
-				+ percentKFlow + ", percentDFlow=" + percentDFlow + ", sma=" + sma + ", upperBound=" + upperBound
-				+ ", lowerBound=" + lowerBound + ", bandwidth=" + bandwidth + "]";
+	public class MovingAverageComponents {
+		private double movingAverage_5;
+		private double movingAverage_10;
+		private double movingAverage_15;
+		private double movingAverage_25;
+		private double movingAverage_50;
+
+		public MovingAverageComponents() {
+			// TODO Auto-generated constructor stub
+		}
+
+		public MovingAverageComponents(double movingAverage_5,
+				double movingAverage_10, double movingAverage_15,
+				double movingAverage_25, double movingAverage_50) {
+			super();
+			this.movingAverage_5 = movingAverage_5;
+			this.movingAverage_10 = movingAverage_10;
+			this.movingAverage_15 = movingAverage_15;
+			this.movingAverage_25 = movingAverage_25;
+			this.movingAverage_50 = movingAverage_50;
+		}
+
+		public double getMovingAverage_5() {
+			return movingAverage_5;
+		}
+
+		public void setMovingAverage_5(double movingAverage_5) {
+			this.movingAverage_5 = movingAverage_5;
+		}
+
+		public double getMovingAverage_10() {
+			return movingAverage_10;
+		}
+
+		public void setMovingAverage_10(double movingAverage_10) {
+			this.movingAverage_10 = movingAverage_10;
+		}
+
+		public double getMovingAverage_15() {
+			return movingAverage_15;
+		}
+
+		public void setMovingAverage_15(double movingAverage_15) {
+			this.movingAverage_15 = movingAverage_15;
+		}
+
+		public double getMovingAverage_25() {
+			return movingAverage_25;
+		}
+
+		public void setMovingAverage_25(double movingAverage_25) {
+			this.movingAverage_25 = movingAverage_25;
+		}
+
+		public double getMovingAverage_50() {
+			return movingAverage_50;
+		}
+
+		public void setMovingAverage_50(double movingAverage_50) {
+			this.movingAverage_50 = movingAverage_50;
+		}
+
+		@Override
+		public String toString() {
+			return "MovingAverageComponents [movingAverage_5="
+					+ movingAverage_5 + ", movingAverage_10="
+					+ movingAverage_10 + ", movingAverage_15="
+					+ movingAverage_15 + ", movingAverage_25="
+					+ movingAverage_25 + ", movingAverage_50="
+					+ movingAverage_50 + "]";
+		}
+
 	}
 
+	public class MovingAverageSignals {
+		private String movingAverageSignal_SmallTerm;
+		private String movingAverageSignal_Main;
+		private String movingAverageSignal_MidTerm;
+		private String movingAverageSignal_LongTerm;
+
+		// private String previousMovingAverageSignal_SmallTerm;
+		// private String previousMovingAverageSignal_Main;
+		// private String previousMovingAverageSignal_MidTerm;
+		// private String previousMovingAverageSignal_LongTerm;
+
+		private String movingAverageSignal_SmallTerm_present;
+		private String movingAverageSignal_Main_present;
+		private String movingAverageSignal_MidTerm_present;
+		private String movingAverageSignal_LongTerm_present;
+
+		public MovingAverageSignals() {
+			// TODO Auto-generated constructor stub
+		}
+
+		public MovingAverageSignals(String movingAverageSignal_SmallTerm,
+				String movingAverageSignal_Main,
+				String movingAverageSignal_MidTerm,
+				String movingAverageSignal_LongTerm,
+				String movingAverageSignal_SmallTerm_present,
+				String movingAverageSignal_Main_present,
+				String movingAverageSignal_MidTerm_present,
+				String movingAverageSignal_LongTerm_present) {
+			super();
+			this.movingAverageSignal_SmallTerm = movingAverageSignal_SmallTerm;
+			this.movingAverageSignal_Main = movingAverageSignal_Main;
+			this.movingAverageSignal_MidTerm = movingAverageSignal_MidTerm;
+			this.movingAverageSignal_LongTerm = movingAverageSignal_LongTerm;
+			this.movingAverageSignal_SmallTerm_present = movingAverageSignal_SmallTerm_present;
+			this.movingAverageSignal_Main_present = movingAverageSignal_Main_present;
+			this.movingAverageSignal_MidTerm_present = movingAverageSignal_MidTerm_present;
+			this.movingAverageSignal_LongTerm_present = movingAverageSignal_LongTerm_present;
+		}
+
+		public String getMovingAverageSignal_SmallTerm() {
+			return movingAverageSignal_SmallTerm;
+		}
+
+		public void setMovingAverageSignal_SmallTerm(
+				String movingAverageSignal_SmallTerm) {
+			this.movingAverageSignal_SmallTerm = movingAverageSignal_SmallTerm;
+		}
+
+		public String getMovingAverageSignal_Main() {
+			return movingAverageSignal_Main;
+		}
+
+		public void setMovingAverageSignal_Main(String movingAverageSignal_Main) {
+			this.movingAverageSignal_Main = movingAverageSignal_Main;
+		}
+
+		public String getMovingAverageSignal_MidTerm() {
+			return movingAverageSignal_MidTerm;
+		}
+
+		public void setMovingAverageSignal_MidTerm(
+				String movingAverageSignal_MidTerm) {
+			this.movingAverageSignal_MidTerm = movingAverageSignal_MidTerm;
+		}
+
+		public String getMovingAverageSignal_LongTerm() {
+			return movingAverageSignal_LongTerm;
+		}
+
+		public void setMovingAverageSignal_LongTerm(
+				String movingAverageSignal_LongTerm) {
+			this.movingAverageSignal_LongTerm = movingAverageSignal_LongTerm;
+		}
+
+		// public String getPreviousMovingAverageSignal_SmallTerm() {
+		// return previousMovingAverageSignal_SmallTerm;
+		// }
+		// public void setPreviousMovingAverageSignal_SmallTerm(
+		// String previousMovingAverageSignal_SmallTerm) {
+		// this.previousMovingAverageSignal_SmallTerm =
+		// previousMovingAverageSignal_SmallTerm;
+		// }
+		// public String getPreviousMovingAverageSignal_Main() {
+		// return previousMovingAverageSignal_Main;
+		// }
+		// public void setPreviousMovingAverageSignal_Main(
+		// String previousMovingAverageSignal_Main) {
+		// this.previousMovingAverageSignal_Main =
+		// previousMovingAverageSignal_Main;
+		// }
+		// public String getPreviousMovingAverageSignal_MidTerm() {
+		// return previousMovingAverageSignal_MidTerm;
+		// }
+		// public void setPreviousMovingAverageSignal_MidTerm(
+		// String previousMovingAverageSignal_MidTerm) {
+		// this.previousMovingAverageSignal_MidTerm =
+		// previousMovingAverageSignal_MidTerm;
+		// }
+		// public String getPreviousMovingAverageSignal_LongTerm() {
+		// return previousMovingAverageSignal_LongTerm;
+		// }
+		// public void setPreviousMovingAverageSignal_LongTerm(
+		// String previousMovingAverageSignal_LongTerm) {
+		// this.previousMovingAverageSignal_LongTerm =
+		// previousMovingAverageSignal_LongTerm;
+		// }
+		public String getMovingAverageSignal_SmallTerm_present() {
+			return movingAverageSignal_SmallTerm_present;
+		}
+
+		public void setMovingAverageSignal_SmallTerm_present(
+				String movingAverageSignal_SmallTerm_present) {
+			this.movingAverageSignal_SmallTerm_present = movingAverageSignal_SmallTerm_present;
+		}
+
+		public String getMovingAverageSignal_Main_present() {
+			return movingAverageSignal_Main_present;
+		}
+
+		public void setMovingAverageSignal_Main_present(
+				String movingAverageSignal_Main_present) {
+			this.movingAverageSignal_Main_present = movingAverageSignal_Main_present;
+		}
+
+		public String getMovingAverageSignal_MidTerm_present() {
+			return movingAverageSignal_MidTerm_present;
+		}
+
+		public void setMovingAverageSignal_MidTerm_present(
+				String movingAverageSignal_MidTerm_present) {
+			this.movingAverageSignal_MidTerm_present = movingAverageSignal_MidTerm_present;
+		}
+
+		public String getMovingAverageSignal_LongTerm_present() {
+			return movingAverageSignal_LongTerm_present;
+		}
+
+		public void setMovingAverageSignal_LongTerm_present(
+				String movingAverageSignal_LongTerm_present) {
+			this.movingAverageSignal_LongTerm_present = movingAverageSignal_LongTerm_present;
+		}
+
+		@Override
+		public String toString() {
+			return "MovingAverageSignals [movingAverageSignal_SmallTerm="
+					+ movingAverageSignal_SmallTerm
+					+ ", movingAverageSignal_Main=" + movingAverageSignal_Main
+					+ ", movingAverageSignal_MidTerm="
+					+ movingAverageSignal_MidTerm
+					+ ", movingAverageSignal_LongTerm="
+					+ movingAverageSignal_LongTerm
+					+ ", movingAverageSignal_SmallTerm_present="
+					+ movingAverageSignal_SmallTerm_present
+					+ ", movingAverageSignal_Main_present="
+					+ movingAverageSignal_Main_present
+					+ ", movingAverageSignal_MidTerm_present="
+					+ movingAverageSignal_MidTerm_present
+					+ ", movingAverageSignal_LongTerm_present="
+					+ movingAverageSignal_LongTerm_present + "]";
+		}
+
+	}
+
+	@Override
+	public String toString() {
+		return "StockSignalsDTO [symbol=" + symbol + ", signalType="
+				+ signalType + ", signalDate=" + signalDate
+				+ ", signalPresent=" + signalPresent + ", oscillatorSignal="
+				+ oscillatorSignal + ", signalPresentOscillator="
+				+ signalPresentOscillator + ", bollingerSignal="
+				+ bollingerSignal + ", signalPresentBollinger="
+				+ signalPresentBollinger + ", TR=" + TR + ", plusDM1="
+				+ plusDM1 + ", minusDM1=" + minusDM1 + ", TRn=" + TRn
+				+ ", plusDMn=" + plusDMn + ", minusDMn=" + minusDMn
+				+ ", plusDIn=" + plusDIn + ", minusDIn=" + minusDIn
+				+ ", diffDIn=" + diffDIn + ", sumDIn=" + sumDIn + ", DX=" + DX
+				+ ", ADXn=" + ADXn + ", splitMultiplier=" + splitMultiplier
+				+ ", high10Day=" + high10Day + ", low10Day=" + low10Day
+				+ ", range10Day=" + range10Day + ", stochastic10Day="
+				+ stochastic10Day + ", percentKFlow=" + percentKFlow
+				+ ", percentDFlow=" + percentDFlow + ", sma=" + sma
+				+ ", upperBound=" + upperBound + ", lowerBound=" + lowerBound
+				+ ", bandwidth=" + bandwidth + ", movingAverageComponents="
+				+ movingAverageComponents + ", movingAverageSignals="
+				+ movingAverageSignals + ", iisignal=" + aggSignal
+				+ ", iisignal_present=" + aggSignal_present
+				+ ", iisignal_previous=" + aggSignal_previous + "]";
+	}
+	
+	
 }

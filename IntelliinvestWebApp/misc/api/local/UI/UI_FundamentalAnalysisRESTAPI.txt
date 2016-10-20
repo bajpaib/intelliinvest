@@ -1,0 +1,44 @@
+Fundamental Analysis
+--------------------
+
+1. For a given stock get latest fundamental analysis
+http://localhost:8080/IntelliinvestWebApp/rest/stock/getLatestFundamentalAnalysis?id=SBIN
+
+2. For a given stock get fundamental analysis for date
+http://localhost:8080/IntelliinvestWebApp/rest/stock/getFundamentalAnalysisForDate?id=SBIN&date=2016-10-17
+
+3. For a given stock and attribute, return the time series for stock(yearQuarter, attributeValue) 
+and industry average(date, attributeValue).
+
+http://localhost:8080/IntelliinvestWebApp/rest/stock/getFundamentalAnalysisTimeSeries?id=SBIN&attrName=alMarketCap
+
+4. For a given industry get latest industry analysis
+http://localhost:8080/IntelliinvestWebApp/rest/industry/getLatestIndustryFundamentals?name=BANKING
+
+5. For a given industry and date, get industry analysis
+http://localhost:8080/IntelliinvestWebApp/rest/industry/getIndustryFundamentalsForDate?name=BANKING&date=2016-10-14
+
+6. For a given industry and attribute, return the time series for industry(date, attributeValue)
+
+http://localhost:8080/IntelliinvestWebApp/rest/industry/getIndustryAnalysisTimeSeries?name=BANKING&attrName=alMarketCap
+
+AttributeNames
+--------------
+alMarketCap
+alBookValuePerShare
+alEarningPerShare
+alEPSPct
+alPriceToEarning
+alCashToDebtRatio
+alCurrentRatio
+alEquityToAssetRatio
+alDebtToCapitalRatio
+alLeveredBeta
+alReturnOnEquity
+alSolvencyRatio
+alCostOfEquity
+alCostOfDebt
+qrEBIDTAMargin
+qrOperatingMargin
+qrNetMargin
+qrDividendPercent

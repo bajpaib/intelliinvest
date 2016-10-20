@@ -1,5 +1,6 @@
 package com.intelliinvest.data.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -12,7 +13,7 @@ import com.intelliinvest.util.JsonDateSerializer;
 import com.intelliinvest.util.JsonDateTimeSerializer;
 
 @Document(collection = "QUANDL_STOCK_PRICE")
-public class QuandlStockPrice {
+public class QuandlStockPrice  implements Serializable {
 	private String securityId;
 	private String exchange;
 	private String series;

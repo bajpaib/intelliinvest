@@ -1,0 +1,85 @@
+1. http://localhost:8080/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/risk/profile/questions?userId=raja
+
+
+Request
+-------
+GET
+
+Response
+--------
+[{"groupId":"0","questionId":"TH","question":"How long do you intend to invest before you need your money?","options":[{"optionId":"0","option":"3 to 5 years"},{"optionId":"1","option":"6 to 10 years"},{"optionId":"2","option":"> 10 years"}]},{"groupId":"2","questionId":"0","question":"Choose the expression which defines your lifestyle the best:","options":[{"optionId":"0","option":"Look before you leap"},{"optionId":"1","option":"All good things come to who waits"},{"optionId":"2","option":"Born lucky"},{"optionId":"3","option":"no guts, no glory"},{"optionId":"4","option":"Just do it"}]},{"groupId":"2","questionId":"1","question":"On days when the stock market jumps way up, you","options":[{"optionId":"0","option":"wish you had invested more"},{"optionId":"1","option":"call your financial advisor and ask for recommendation"},{"optionId":"2","option":"pay little attention"},{"optionId":"3","option":"tell friends that you are glad you're not in the market because it fluctuates too much"},{"optionId":"4","option":"feel glad you’re not in the market because it fluctuates too much"}]},{"groupId":"3","questionId":"0","question":"If you have bought a stock at Rs 200 a week ago & it jumps to Rs 275 today. What is will be your move:","options":[{"optionId":"0","option":"Buy a put"},{"optionId":"1","option":"Think to buy a Put"},{"optionId":"2","option":"Sell the stock"},{"optionId":"3","option":"Discuss with my broker before deciding"},{"optionId":"4","option":"Rely on the my broker"}]},{"groupId":"3","questionId":"1","question":"Your choice of daily news feed & office random conversations is :","options":[{"optionId":"0","option":"Financial / Stock markets"},{"optionId":"1","option":"Financial/Various industry trends"},{"optionId":"2","option":"No preference"},{"optionId":"3","option":"All genre news/ any discussion where you have an opinion"},{"optionId":"4","option":"Not interested/ prefers listening than participating"}]},{"groupId":"4","questionId":"0","question":"If you win Rs 10,000 incentive due to good performance, you would:","options":[{"optionId":"0","option":"Buy an insurance policy"},{"optionId":"1","option":"Open a recurring savings account"},{"optionId":"2","option":"Go shopping"},{"optionId":"3","option":"Buy lottery tickets"},{"optionId":"4","option":"Buy some stocks"}]},{"groupId":"4","questionId":"4","question":"Your attitude toward money is best described as","options":[{"optionId":"0","option":"Wherever possible use other's money"},{"optionId":"1","option":"Dollar saved is dollar earned"},{"optionId":"2","option":"It is OK to get credit sometime"},{"optionId":"3","option":"Cash & Carry"},{"optionId":"4","option":"You have got to spend money to earn money"}]},{"groupId":"5","questionId":"0","question":"You want to take someone out for a special dinner in a city that’s new to you. How do you pick a place?","options":[{"optionId":"0","option":"read restaurant reviews from a reliable source"},{"optionId":"1","option":"ask friends if they knowof a suitable place"},{"optionId":"2","option":"Go to the place nearby"},{"optionId":"3","option":"call the only other person you know in this city, who eats out a lot but only recently moved there"},{"optionId":"4","option":"visit the city sometime before your dinner to check out the restaurants yourself"}]},{"groupId":"5","questionId":"1","question":"How do you buy products when needed","options":[{"optionId":"0","option":"Research about product and price and then buy"},{"optionId":"1","option":"ask people who have knowledge about the product and buy from place suggested by them"},{"optionId":"2","option":"Buy from nearby shop"},{"optionId":"3","option":"Get suggestion from your friend once and decide where to buy based on his feedback"},{"optionId":"4","option":"Go checkout stores yourself and compare and buy"}]},{"groupId":"1","questionId":"FB","question":"Rate your experience with IntelliInvest?","options":[{"optionId":"0","option":"Poor"},{"optionId":"1","option":"Average"},{"optionId":"2","option":"Good"},{"optionId":"3","option":"Excellent"},{"optionId":"4","option":"OutStanding"}]}]
+
+
+
+2.http://localhost:8080/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/risk/profile/questionnaire
+
+Request
+-------
+POST
+
+Get contents from file questinnaire.txt
+
+Response
+--------
+200 OK
+
+
+3.http://localhost:8080/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/risk/investment/profile?userId=raja
+Request
+-------
+POST
+
+[
+{
+	"questionGroupId":"0",
+	"questionId":"TH",
+	"optionId":"2"
+},
+{
+	"questionGroupId":"1",
+	"questionId":"FB",
+	"optionId":"1"
+},
+{
+	"questionGroupId":"2",
+	"questionId":"1",
+	"optionId":"0"
+},	
+....
+]
+
+
+Response
+--------
+{"description":"","investmentDetails":{"Mutual funds":0,"Equity":100,"FD":0}}
+
+
+Case where investment profile already available
+
+4.http://localhost:8080/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/risk/investment/profile?userId=raja
+
+Request
+-------
+GET
+
+
+Response
+--------
+{"description":"description","investmentDetails":{"Mutual funds":0,"Equity":100,"FD":0}}
+
+
+Case where investment profile already available
+
+5.http://localhost:8080/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/risk/investment/profile?userId=xxx
+
+Request
+-------
+GET
+
+
+Response
+--------
+{
+  "description": "No risk investment profile preesent",
+  "investmentDetails": null
+}

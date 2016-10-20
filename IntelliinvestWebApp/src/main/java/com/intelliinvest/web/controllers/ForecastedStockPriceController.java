@@ -5,6 +5,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +28,7 @@ import com.intelliinvest.data.forecast.MonthlyClosePriceForecaster;
 import com.intelliinvest.data.forecast.WeeklyClosePriceForecaster;
 import com.intelliinvest.data.model.ForecastedStockPrice;
 import com.intelliinvest.data.model.QuandlStockPrice;
-import com.intelliinvest.util.Converter;
+import com.intelliinvest.util.IntelliinvestConverter;
 import com.intelliinvest.util.DateUtil;
 import com.intelliinvest.util.Helper;
 import com.intelliinvest.util.MathUtil;
@@ -49,21 +53,6 @@ public class ForecastedStockPriceController {
 	private QuandlEODStockPriceRepository quandlEODStockPriceRepository;
 	@Autowired
 	private DateUtil dateUtil;
-	
-	@RequestMapping(value = "/forecast/forecastAndUpdateTomorrowClose", method = RequestMethod.GET)
-	public @ResponseBody String forecastAndUpdateTomorrowClose(@RequestParam("today") String today) {
-		return dailyClosePriceForecaster.forecastAndUpdateTomorrowClose(today);
-	}
-
-	@RequestMapping(value = "/forecast/forecastAndUpdateWeeklyClose", method = RequestMethod.GET)
-	public @ResponseBody String forecastAndUpdateWeeklyClose(@RequestParam("today") String today) {
-		return weeklyClosePriceForecaster.forecastAndUpdateWeeklyClose(today);
-	}
-
-	@RequestMapping(value = "/forecast/forecastAndUpdateMonthlyClose", method = RequestMethod.GET)
-	public @ResponseBody String forecastAndUpdateMonthlyClose(@RequestParam("today") String today) {
-		return monthlyClosePriceForecaster.forecastAndUpdateMonthlyClose(today);
-	}
 
 	/**
 	 * If date = T, returns closing prices forecasted yesterday (T-1) for T, T+5 and T+20 days. Price is forecasted after T-1 closing is received.
@@ -101,7 +90,7 @@ public class ForecastedStockPriceController {
 			error = true;
 		}
 		if (price != null && !error) {
-			response = Converter.getForecastedStockPriceResponse(price);
+			response = IntelliinvestConverter.getForecastedStockPriceResponse(price);
 			response.setSuccess(true);
 			response.setMessage("Forecasted Stock Price has been returned successfully.");
 		} else {
@@ -135,7 +124,7 @@ public class ForecastedStockPriceController {
 			error = true;
 		}
 		if (prices != null && !error) {
-			return Converter.convertForecastedStockPriceList(prices);
+			return IntelliinvestConverter.convertForecastedStockPriceList(prices);
 		} else {
 			List<ForecastedStockPriceResponse> list = new ArrayList<ForecastedStockPriceResponse>();
 			ForecastedStockPriceResponse response = new ForecastedStockPriceResponse();
@@ -144,11 +133,6 @@ public class ForecastedStockPriceController {
 			list.add(response);
 			return list;
 		}
-	}
-
-	@RequestMapping(value = "/forecast/generateAndEmailClosePriceForecastReport", method = RequestMethod.GET)
-	public @ResponseBody String generateAndEmailClosePriceForecastReport(@RequestParam("today") String today) {
-		return closePriceForecastReport.generateAndEmailClosePriceForecastReport(today);
 	}
 	
 	/**
@@ -184,7 +168,7 @@ public class ForecastedStockPriceController {
 
 						}
 					});
-					ForecastedStockPrice price = forecastedStockPriceRepository.getForecastStockPriceFromDB(id, lastBusinessDate);
+					
 
 					timeSeriesResponse.setSecurityId(id);
 					timeSeriesResponse.setDate(date);
@@ -197,24 +181,40 @@ public class ForecastedStockPriceController {
 						priceSeries.add(MathUtil.round(temp.getClose()));
 					}
 
-					if (price != null) {
-						LocalDate tomorrowForecastDate = price.getTomorrowForecastDate();
-						LocalDate weeklyForecastDate = price.getWeeklyForecastDate();
-						LocalDate monthlyForecastDate = price.getMonthlyForecastDate();
-						if (tomorrowForecastDate != null) {
-							dateSeries.add(dateFormat.format(price.getTomorrowForecastDate()));
-							priceSeries.add(MathUtil.round(price.getTomorrowForecastPrice()));
+					List <LocalDate> dates = new ArrayList<LocalDate>();
+					// get the dates from lastBusinessDate to lastBusinessDate - 19
+					for(int i= 0; i<20;++i){
+						dates.add(dateUtil.substractBusinessDays(lastBusinessDate, i));
+					}
+					
+					List<ForecastedStockPrice> prices = forecastedStockPriceRepository.getForecastStockPricesForDateRangeFromDB(id, dates);
+					
+					TreeMap<LocalDate, Double> sorted = new TreeMap<LocalDate, Double>();
+					for(ForecastedStockPrice price:  prices){
+						if(price.getMonthlyForecastDate()!=null && dates.contains(price.getMonthlyForecastDate()) && !MathUtil.isNearZero(price.getMonthlyForecastPrice())){
+							sorted.put(price.getMonthlyForecastDate(), price.getMonthlyForecastPrice());
 						}
+						
+					}
+					
+					for(ForecastedStockPrice price:  prices){
+						if(price.getWeeklyForecastDate()!=null && dates.contains(price.getWeeklyForecastDate()) && !MathUtil.isNearZero(price.getWeeklyForecastPrice())){
+							sorted.put(price.getWeeklyForecastDate(), price.getWeeklyForecastPrice());
+						}
+						
+					}
+					
+					for(ForecastedStockPrice price:  prices){
+						if(price.getTomorrowForecastDate()!=null && dates.contains(price.getTomorrowForecastDate()) && !MathUtil.isNearZero(price.getTomorrowForecastPrice())){
+							sorted.put(price.getTomorrowForecastDate(), price.getTomorrowForecastPrice());
+						}					
+					}
+					
+					Set<Entry<LocalDate, Double>> priceSet = sorted.entrySet();
 
-						if (weeklyForecastDate != null) {
-							dateSeries.add(dateFormat.format(price.getWeeklyForecastDate()));
-							priceSeries.add(MathUtil.round(price.getWeeklyForecastPrice()));
-						}
-
-						if (monthlyForecastDate != null) {
-							dateSeries.add(dateFormat.format(price.getMonthlyForecastDate()));
-							priceSeries.add(MathUtil.round(price.getMonthlyForecastPrice()));
-						}
+					for (Map.Entry<LocalDate, Double> entry: priceSet) {
+						dateSeries.add(dateFormat.format(entry.getKey()));
+						priceSeries.add(MathUtil.round(entry.getValue()));
 					}
 					timeSeriesResponse.setDateSeries(dateSeries);
 					timeSeriesResponse.setPriceSeries(priceSeries);
@@ -239,5 +239,25 @@ public class ForecastedStockPriceController {
 			timeSeriesResponse.setMessage(errorMsg);
 		}
 		return timeSeriesResponse;
+	}
+	
+	@RequestMapping(value = "/forecast/forecastAndUpdateTomorrowClose", method = RequestMethod.GET)
+	public @ResponseBody String forecastAndUpdateTomorrowClose(@RequestParam("today") String today) {
+		return dailyClosePriceForecaster.forecastAndUpdateTomorrowClose(today);
+	}
+
+	@RequestMapping(value = "/forecast/forecastAndUpdateWeeklyClose", method = RequestMethod.GET)
+	public @ResponseBody String forecastAndUpdateWeeklyClose(@RequestParam("today") String today) {
+		return weeklyClosePriceForecaster.forecastAndUpdateWeeklyClose(today);
+	}
+
+	@RequestMapping(value = "/forecast/forecastAndUpdateMonthlyClose", method = RequestMethod.GET)
+	public @ResponseBody String forecastAndUpdateMonthlyClose(@RequestParam("today") String today) {
+		return monthlyClosePriceForecaster.forecastAndUpdateMonthlyClose(today);
+	}	
+
+	@RequestMapping(value = "/forecast/generateAndEmailClosePriceForecastReport", method = RequestMethod.GET)
+	public @ResponseBody String generateAndEmailClosePriceForecastReport(@RequestParam("today") String today) {
+		return closePriceForecastReport.generateAndEmailClosePriceForecastReport(today);
 	}
 }

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.intelliinvest.common.IntelliinvestConstants;
 import com.intelliinvest.data.dao.UserRepository;
 import com.intelliinvest.data.model.User;
-import com.intelliinvest.util.Converter;
+import com.intelliinvest.util.IntelliinvestConverter;
 import com.intelliinvest.util.Helper;
 import com.intelliinvest.web.bo.request.UserFormParameters;
 import com.intelliinvest.web.bo.response.UserResponse;
@@ -53,7 +53,7 @@ public class UserController {
 			error = true;
 		}
 		if (user != null && !error) {
-			userResponse = Converter.getUserResponse(user);
+			userResponse = IntelliinvestConverter.getUserResponse(user);
 			userResponse.setSuccess(true);
 			userResponse.setMessage("Registration for user " + username + " with userId id " + userId
 					+ " is successful. Please activate your account by clicking link in your activation mail.");
@@ -109,7 +109,7 @@ public class UserController {
 			}
 		}
 		if (user != null && !error) {
-			userResponse = Converter.getUserResponse(user);
+			userResponse = IntelliinvestConverter.getUserResponse(user);
 			userResponse.setSuccess(true);
 			userResponse.setMessage("User has successfully logged in.");
 		} else {
@@ -137,7 +137,7 @@ public class UserController {
 			}
 		}
 		if (user != null && !error) {
-			userResponse = Converter.getUserResponse(user);
+			userResponse = IntelliinvestConverter.getUserResponse(user);
 			userResponse.setSuccess(true);
 			userResponse.setMessage("User has logged out successfully...");
 		} else {
@@ -165,7 +165,7 @@ public class UserController {
 			}
 		}
 		if (user != null && !error) {
-			userResponse = Converter.getUserResponse(user);
+			userResponse = IntelliinvestConverter.getUserResponse(user);
 			userResponse.setSuccess(true);
 			userResponse.setMessage("New password has been sent to your registered mail id.");
 		} else {
@@ -196,7 +196,7 @@ public class UserController {
 			error = true;
 		}
 		if (user != null && !error) {
-			userResponse = Converter.getUserResponse(user);
+			userResponse = IntelliinvestConverter.getUserResponse(user);
 			userResponse.setSuccess(true);
 			userResponse.setMessage("User details have been updated successfully.");
 		} else {
@@ -233,7 +233,7 @@ public class UserController {
 			error = true;
 		}
 		if (user != null && !error) {
-			userResponse = Converter.getUserResponse(user);
+			userResponse = IntelliinvestConverter.getUserResponse(user);
 			userResponse.setSuccess(true);
 			userResponse.setMessage("User details have been returned successfully.");
 		} else {
@@ -257,7 +257,7 @@ public class UserController {
 			error = true;
 		}
 		if (userDetails != null && !error) {
-			return Converter.convertUsersList(userDetails);
+			return IntelliinvestConverter.convertUsersList(userDetails);
 		} else {
 			List<UserResponse> list = new ArrayList<UserResponse>();
 			UserResponse userResponse = new UserResponse();
@@ -285,7 +285,7 @@ public class UserController {
 			}
 		}
 		if (user != null && !error) {
-			userResponse = Converter.getUserResponse(user);
+			userResponse = IntelliinvestConverter.getUserResponse(user);
 			userResponse.setSuccess(true);
 			userResponse.setMessage("User has been removed successfully.");
 		} else {

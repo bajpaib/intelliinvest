@@ -1,0 +1,40 @@
+1. http://104.199.173.131/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/google/intraday/volumeprice?securityId=INFY&exchange=NSE
+
+
+Request
+-------
+GET
+
+Response
+--------
+{
+  "exchange": "NSE",
+  "securityId": "INFY",
+  "priceVolumeDatas": [
+    {
+      "date": "2016-10-17 09:16:00",
+      "price": 1038.25,
+      "volume": 122305
+    },
+    {
+      "date": "2016-10-17 09:18:00",
+      "price": 1034.2,
+      "volume": 69957
+    },
+     ....
+  ],
+  "success": true,
+  "message": "SUCCCESS"
+}
+
+Failure case
+
+2. http://104.199.173.131/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/google/intraday/volumeprice?securityId=aaa&exchange=NSE
+
+{
+  "exchange": "NSE",
+  "securityId": "aaa",
+  "priceVolumeDatas": [],
+  "success": false,
+  "message": "Error fetching Intra Day Price Volume Data"
+}

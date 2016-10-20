@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.BulkOperations.BulkMode;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -39,6 +40,14 @@ public class ForecastedStockPriceRepository {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("todayDate").is(todayDate).and("securityId").is(id));
 		return mongoTemplate.findOne(query, ForecastedStockPrice.class, COLLECTION_STOCK_PRICE_FORECAST);
+	}
+	
+	public List<ForecastedStockPrice> getForecastStockPricesForDateRangeFromDB(String id, List<LocalDate> dates)
+			throws DataAccessException {
+		Query query = new Query();
+		query.with(new Sort(Sort.Direction.DESC, "todayDate"));
+		query.addCriteria(Criteria.where("todayDate").in(dates).and("securityId").is(id));
+		return mongoTemplate.find(query, ForecastedStockPrice.class, COLLECTION_STOCK_PRICE_FORECAST);
 	}
 
 	public List<ForecastedStockPrice> getForecastStockPricesFromDB(LocalDate todayDate) throws DataAccessException {

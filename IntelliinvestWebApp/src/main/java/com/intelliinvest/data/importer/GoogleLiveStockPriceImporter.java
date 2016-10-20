@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -17,6 +18,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import com.intelliinvest.common.IntelliinvestConstants;
 import com.intelliinvest.common.IntelliInvestStore;
 import com.intelliinvest.data.dao.StockRepository;
+import com.intelliinvest.data.model.PriceVolumeData;
 import com.intelliinvest.data.model.Stock;
 import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.util.DateUtil;
@@ -35,6 +37,8 @@ public class GoogleLiveStockPriceImporter {
 	@Autowired
 	private DateUtil dateUtil;
 	private final static String GOOGLE_QUOTE_URL = "https://www.google.com/finance/info?q=#CODE#";
+	private final static String GOOGLE_REALTIME_QUOTE_URL = "http://www.google.com/finance/getprices?q=#CODE#&x=#EXCHANGE#&i=120&p=1d&f=d,c,v&df=cpct";
+
 	private static boolean REFRESH_PERIODICALLY = false;
 
 	@PostConstruct
@@ -147,11 +151,11 @@ public class GoogleLiveStockPriceImporter {
 		}
 		List<StockPrice> nonWorldPrices = getCurrentNonWorldStockPrices(nonWorldStocks);
 		if (Helper.isNotNullAndNonEmpty(nonWorldPrices)) {
-			stockRepository.bulkUploadLatestStockPrices(nonWorldPrices);
+			stockRepository.updateLiveStockPrices(nonWorldPrices);
 		}
 		List<StockPrice> worldPrices = getCurrentWorldStockPrices(worldStocks);
 		if (Helper.isNotNullAndNonEmpty(worldPrices)) {
-			stockRepository.bulkUploadLatestStockPrices(worldPrices);
+			stockRepository.updateLiveStockPrices(worldPrices);
 		}
 	}
 
@@ -315,11 +319,11 @@ public class GoogleLiveStockPriceImporter {
 			}
 			List<StockPrice> nonWorldPrices = getCurrentNonWorldStockPrices(nonWorldStocks);
 			if (Helper.isNotNullAndNonEmpty(nonWorldPrices)) {
-				stockRepository.bulkUploadLatestStockPrices(nonWorldPrices);
+				stockRepository.updateLiveStockPrices(nonWorldPrices);
 			}
 			List<StockPrice> worldPrices = getCurrentWorldStockPrices(worldStocks);
 			if (Helper.isNotNullAndNonEmpty(worldPrices)) {
-				stockRepository.bulkUploadLatestStockPrices(worldPrices);
+				stockRepository.updateLiveStockPrices(worldPrices);
 			}
 		} catch (Exception e) {
 			return e.getMessage();
@@ -327,4 +331,38 @@ public class GoogleLiveStockPriceImporter {
 
 		return "Success";
 	}
+	
+	public List<PriceVolumeData> getIntraDayPriceVolumeData(String exchange, String securityId) {
+		List<PriceVolumeData> volumeChartDataList = new ArrayList<PriceVolumeData>(); 
+		try{
+			String response = HttpUtil.getFromHttpUrlAsString(GOOGLE_REALTIME_QUOTE_URL.replace("#CODE#", securityId.replace("&", "%26")).replace("#EXCHANGE#", exchange));
+			String[] values = response.split("\n");
+			Date baseDate = null;
+			Integer interval = 120;
+			for(String value : values){
+				Date date = null;
+				if(value.startsWith("COLUMNS")){
+					continue;
+				}else if(value.split(",").length==3){
+					String[] datas = value.split(",");
+					if(datas[0].startsWith("a")){
+						baseDate = new Date(new Long(datas[0].replace("a", ""))*1000L);
+						date = baseDate;
+					}else{
+						date = new Date(baseDate.getTime() + (new Long(datas[0])*interval*1000L));
+					}
+					Double price = new Double(datas[1]);
+					Long volume = new Long(datas[2]);
+					volumeChartDataList.add(new PriceVolumeData(dateUtil.getLocalDateTimeFromDate(date), price, volume));
+				}else if(value.startsWith("INTERVAL")){
+					interval = new Integer(value.replace("INTERVAL=", ""));
+				}
+			}
+			return volumeChartDataList;
+		}catch(Exception e){
+			logger.info("Error fetching Intra Day Price Volume Data");
+			return new ArrayList<PriceVolumeData>();
+		}
+	}
+
 }

@@ -1,5 +1,6 @@
 package com.intelliinvest.data.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -17,7 +18,7 @@ import com.intelliinvest.util.JsonDateTimeSerializer;
  *
  */
 @Document(collection = "STOCK_PRICE_FORECAST")
-public class ForecastedStockPrice {
+public class ForecastedStockPrice implements Serializable {
 	private String securityId;
 	private double tomorrowForecastPrice;
 	private double weeklyForecastPrice;

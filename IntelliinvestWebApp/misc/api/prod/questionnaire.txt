@@ -1,0 +1,174 @@
+--RiskProfileQuestionnaire
+
+--QuestionGroup
+TimeHorizon
+
+--Question
+How long do you intend to invest before you need your money?
+3 to 5 years
+6 to 10 years
+> 10 years
+
+
+
+
+--QuestionGroup
+Feedback
+
+--Question
+Rate your experience with IntelliInvest?
+Poor
+Average
+Good
+Excellent
+OutStanding
+
+
+--QuestionGroup
+Comfort with risk
+
+--Question
+Choose the expression which defines your lifestyle the best:				
+Look before you leap
+All good things come to who waits
+Born lucky
+no guts, no glory
+Just do it
+20|15|10|5|0
+
+--Question
+On days when the stock market jumps way up, you				
+wish you had invested more
+call your financial advisor and ask for recommendation
+pay little attention
+tell friends that you are glad you're not in the market because it fluctuates too much
+feel glad you’re not in the market because it fluctuates too much
+20|15|10|5|0
+
+--Question
+I am willing to take substantial financial risk to earn sustantial returns
+Strongly agree
+Agree
+No Strong opinion
+Disagree
+Strongly Disagree
+20|15|10|5|0
+
+--QuestionGroup
+Knowledge
+
+--Question
+If you have bought a stock at Rs 200 a week ago & it jumps to Rs 275 today. What is will be your move:				
+Buy a put
+Think to buy a Put
+Sell the stock
+Discuss with my broker before deciding
+Rely on the my broker
+0|5|10|15|20
+
+--Question
+Your choice of daily news feed & office random conversations is :
+Financial / Stock markets
+Financial/Various industry trends
+No preference
+All genre news/ any discussion where you have an opinion
+Not interested/ prefers listening than participating
+20|15|10|5|0
+
+--QuestionGroup
+Investment choice
+
+--Question
+If you win Rs 10,000 incentive due to good performance, you would:
+Buy an insurance policy
+Open a recurring savings account
+Go shopping
+Buy lottery tickets
+Buy some stocks
+0|5|10|15|20
+
+--Question
+If you had received a bonus of Rs 1,00,000 this year, you would-				
+Not take any action on this money, unless your wife/father reminds you to.
+Wait for your friend to suggest 3 best places to invest/save.
+Depends on your immediate financial needs.
+Start gathering relevant informations before making the investment decision immediately and invest soon.
+Allocate this money to different investment avenues in next 1 week.
+0|5|10|15|20
+
+--Question
+If you had received a bonus of Rs 1,00,000 this year, what would you do with that money?				
+Put the entire amount in a FD
+Put Rs 70,000 in a FD & remaining in PPF.
+Will wait for the right occassion to invest or save.
+Will take advise from my friends and invest in the safest MF.
+Will open a demat account & start trading.
+0|5|10|15|20
+
+--Question
+I have very little experience of investing in stocks & shares.
+Strongly agree
+Agree
+No Strong opinion
+Disagree
+Strongly Disagree
+0|5|10|15|20
+
+--Question
+Your attitude toward money is best described as
+Wherever possible use other's money
+Dollar saved is dollar earned
+It is OK to get credit sometime
+Cash & Carry
+You have got to spend money to earn money
+0|5|10|15|20
+
+--Question
+I am concerned by the uncertainity of the stock market investment
+Strongly agree
+Agree
+No Strong opinion
+Disagree
+Strongly Disagree
+0|5|10|15|20
+
+--QuestionGroup
+Regret
+
+--Question
+You want to take someone out for a special dinner in a city that’s new to you. How do you pick a place?
+read restaurant reviews from a reliable source
+ask friends if they knowof a suitable place
+Go to the place nearby
+call the only other person you know in this city, who eats out a lot but only recently moved there
+visit the city sometime before your dinner to check out the restaurants yourself
+20|15|10|5|0
+
+--Question
+How do you buy products when needed
+Research about product and price and then buy
+ask people who have knowledge about the product and buy from place suggested by them
+Buy from nearby shop
+Get suggestion from your friend once and decide where to buy based on his feedback
+Go checkout stores yourself and compare and buy
+20|15|10|5|0
+
+--ScoreToRiskMap
+119|Low
+139|Moderate
+160|High
+
+--InvestmentTypes
+FD|Mutual funds|Equity
+
+--RiskToInvestment
+0|Low||100|0|0
+0|Moderate||30|50|20
+0|High||10|30|60
+1|Low||30|50|20
+1|Moderate||20|40|40
+1|High||0|20|80
+2|Low||20|40|40
+2|Moderate||10|30|60
+2|High||0|0|100
+

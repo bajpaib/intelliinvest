@@ -10,7 +10,7 @@ http://localhost:8080/IntelliinvestWebApp/rest/quandl/backloadLatestEODPrices
 
 3. Backload EOD prices from Quandl for all stocks for a date range
 
-http://localhost:8080/IntelliinvestWebApp/rest/quandl/backloadEODPricesForDateRange?startDate=2015-01-01&endDate=2016-09-23
+http://localhost:8080/IntelliinvestWebApp/rest/quandl/backloadEODPricesForDateRange?startDate=2015-01-01&endDate=2016-09-27
 
 4. Backload EOD prices from Quandl for a given stock for a date range
 
@@ -20,17 +20,14 @@ http://localhost:8080/IntelliinvestWebApp/rest/quandl/backloadEODPricesForStock?
 
 http://localhost:8080/IntelliinvestWebApp/rest/quandl/getEODStockPriceForDate?id=ACC&eodDate=2016-09-23
 
-6. Backload Stock Fundamentals from Quandl for all stocks
-
-http://localhost:8080/IntelliinvestWebApp/rest/stock/backloadStockFundamentals
-
-7. Fetch EOD stock price from NSE via Quandl
+Quandl API
+----------
+1. Fetch EOD stock price from NSE via Quandl
 
 https://www.quandl.com/api/v3/datasets/NSE/ACC.csv?api_key=yhwhU_RHkVxbTtFTff9t&start_date=2015-01-01&end_date=2016-09-16
 
-8. Fetch EOD stock price from BSE via Quandl
+2. Fetch EOD stock price from BSE via Quandl
 
 https://www.quandl.com/api/v3/datasets/BSE/BOM500410.csv?api_key=yhwhU_RHkVxbTtFTff9t&start_date=2015-01-01&end_date=2016-09-15
 
-9. Fetch Stock Fundamentals via Quandl
-https://www.quandl.com/api/v3/databases/DEB/data?api_key=yhwhU_RHkVxbTtFTff9t
+

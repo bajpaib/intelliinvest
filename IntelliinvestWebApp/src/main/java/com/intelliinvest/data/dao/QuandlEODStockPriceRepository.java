@@ -85,6 +85,17 @@ public class QuandlEODStockPriceRepository {
 		query.addCriteria(Criteria.where("eodDate").is(eodDate).and("securityId").is(id));
 		return mongoTemplate.findOne(query, QuandlStockPrice.class, COLLECTION_QUANDL_STOCK_PRICE);
 	}
+	
+	public Map<String, QuandlStockPrice> getStockPricesFromDB(List<String> ids, LocalDate eodDate) throws DataAccessException {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("eodDate").is(eodDate).and("securityId").in(ids));
+		List<QuandlStockPrice> tempList =  mongoTemplate.find(query, QuandlStockPrice.class, COLLECTION_QUANDL_STOCK_PRICE);
+		Map<String, QuandlStockPrice> retVal = new HashMap<String, QuandlStockPrice>();
+		for (QuandlStockPrice temp : tempList) {
+			retVal.put(temp.getSecurityId(), temp);
+		}
+		return retVal;
+	}
 
 	public List<QuandlStockPrice> getStockPricesFromDB(String id, LocalDate startDate, LocalDate endDate)
 			throws DataAccessException {
@@ -108,7 +119,7 @@ public class QuandlEODStockPriceRepository {
 		return retVal;
 	}
 
-	private List<QuandlStockPrice> getLatestStockPricesFromDB() throws DataAccessException {
+	public List<QuandlStockPrice> getLatestStockPricesFromDB() throws DataAccessException {
 		logger.info("Inside getLatestStockPrices()...");
 		// retrieve record having max eodDate for each stock
 		final Aggregation aggregation = newAggregation(sort(Sort.Direction.DESC, "eodDate"),
@@ -203,6 +214,28 @@ public class QuandlEODStockPriceRepository {
 			priceCache.put(price.getSecurityId(), price);
 		}
 	}
+	
+	public Map<String, List<QuandlStockPrice>> getEODStockPrices() throws Exception {
+		logger.info("Inside getEODStockPrices()...");
+		Map<String, List<QuandlStockPrice>> retVal = new HashMap<String, List<QuandlStockPrice>>();
+
+		Query query = new Query();
+		query.with(new Sort(Sort.Direction.ASC, "eodDate"));
+		List<QuandlStockPrice> prices = mongoTemplate.find(query, QuandlStockPrice.class,
+				COLLECTION_QUANDL_STOCK_PRICE);
+
+		for (QuandlStockPrice price : prices) {
+			String securityId = price.getSecurityId();
+			List<QuandlStockPrice> stocksPricesList = retVal.get(securityId);
+			if (stocksPricesList == null) {
+				stocksPricesList = new ArrayList<QuandlStockPrice>();
+				retVal.put(securityId, stocksPricesList);
+			}
+			stocksPricesList.add(price);			
+		}
+		return retVal;
+	}
+
 
 	@ManagedOperation(description = "getEODStockPriceFromCache")
 	public String getEODStockPriceFromCache(String id) {

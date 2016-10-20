@@ -112,6 +112,22 @@
 				<beans:bean
 					class="com.intelliinvest.util.MongoDBConverters.LocalDateTimeFromDate" />
 			</mongo:converter>
+			<mongo:converter>
+				<beans:bean
+					class="com.intelliinvest.util.MongoDBConverters.StringFromAnswer" />
+			</mongo:converter>
+			<mongo:converter>
+				<beans:bean
+					class="com.intelliinvest.util.MongoDBConverters.AnswerFromString" />
+			</mongo:converter>
+			<mongo:converter>
+				<beans:bean
+					class="com.intelliinvest.util.MongoDBConverters.StringFromRiskInvestmentProfileKey" />
+			</mongo:converter>
+			<mongo:converter>
+				<beans:bean
+					class="com.intelliinvest.util.MongoDBConverters.RiskInvestmentProfileKeyFromString" />
+			</mongo:converter>
 		</mongo:custom-converters>
 	</mongo:mapping-converter>
 
@@ -153,10 +169,12 @@
 		class="com.intelliinvest.data.dao.SequenceRepository"></beans:bean>
 	<beans:bean id="userPortfolioRepository"
 		class="com.intelliinvest.data.dao.UserPortfolioRepository"></beans:bean>
-	<beans:bean id="stockFundamentalsRepository"
-		class="com.intelliinvest.data.dao.StockFundamentalsRepository"></beans:bean>
 	<beans:bean id="forecastedStockPriceRepository"
 		class="com.intelliinvest.data.dao.ForecastedStockPriceRepository"></beans:bean>
+	<beans:bean id="magicNumberRepository"
+		class="com.intelliinvest.data.dao.MagicNumberRepository"></beans:bean>
+	<beans:bean id="riskProfileQuestionnaireRepository"
+		class="com.intelliinvest.data.dao.RiskProfileQuestionnaireRepository"></beans:bean>
 	<beans:bean id="quandlStockPriceImporter"
 		class="com.intelliinvest.data.importer.QuandlEODStockPriceImporter"></beans:bean>
 	<beans:bean id="googleLiveStockPriceImporter"
@@ -171,11 +189,26 @@
 		class="com.intelliinvest.data.forecast.WeeklyClosePriceForecaster"></beans:bean>
 	<beans:bean id="monthlyClosePriceForecaster"
 		class="com.intelliinvest.data.forecast.MonthlyClosePriceForecaster"></beans:bean>
+	<beans:bean id="stockFundamentalsRepository"
+		class="com.intelliinvest.data.dao.StockFundamentalsRepository"></beans:bean>
+	<beans:bean id="industryFundamentalsRepository"
+		class="com.intelliinvest.data.dao.IndustryFundamentalsRepository"></beans:bean>
+	<beans:bean id="stockFundamentalAnalysisRepository"
+		class="com.intelliinvest.data.dao.StockFundamentalAnalysisRepository"></beans:bean>
+	<beans:bean id="stockFundamentalAnalysisForecaster"
+		class="com.intelliinvest.data.forecast.StockFundamentalAnalysisForecaster"></beans:bean>
 	<beans:bean id="watchListRepository"
 		class="com.intelliinvest.data.dao.WatchListRepository"></beans:bean>
 	<beans:bean id="stockSignalsImporter"
 		class="com.intelliinvest.data.signals.StockSignalsImporter"></beans:bean>
 	<beans:bean id="stockSignalsRepository"
 		class="com.intelliinvest.data.dao.StockSignalsRepository"></beans:bean>
+	<beans:bean id="newsFetcherRepository"
+		class="com.intelliinvest.data.dao.NewsFetcherRepository"></beans:bean>
+	<beans:bean id="stockSignalsGenerator"
+		class="com.intelliinvest.data.signals.StockSignalsGenerator"></beans:bean>
+	<beans:bean id="magicNumberGenerator"
+		class="com.intelliinvest.data.signals.MagicNumberGenerator"></beans:bean>
+
 	<context:component-scan base-package="com.intelliinvest.web.controllers" />
 </beans:beans>

@@ -5,7 +5,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -167,7 +171,7 @@ public class DateUtil {
 		LocalDate localDate = getLocalDate();
 		return addBusinessDays(localDate, days);
 	}
-	
+
 	/*
 	 * public void main(String[] args) { LocalDateTime localDateTime =
 	 * getLocalDateTime(); LocalDate localDate = getLocalDate();
@@ -178,4 +182,26 @@ public class DateUtil {
 	 * System.out.println("getDateFromLocalDate:" +
 	 * getDateFromLocalDate(localDate)); }
 	 */
+
+	public static void main(String[] args) {
+
+		List<String> quarterYear = new ArrayList<String>();
+		quarterYear.add("2016Q4");
+		quarterYear.add("2015Q3");
+		quarterYear.add("2016Q2");
+		quarterYear.add("2015Q1");
+		quarterYear.add("2015Q4");
+		quarterYear.add("2016Q3");
+		quarterYear.add("2015Q2");
+		quarterYear.add("2016Q1");
+
+		String minYearQuarter = "2014Q1";
+		String yearQuarter = "2014Q1";
+
+		if (minYearQuarter.compareTo(yearQuarter) > 0) {
+			System.out.println(minYearQuarter + "is greater than" + yearQuarter);
+		} else {
+			System.out.println(minYearQuarter + "is less than" + yearQuarter);
+		}
+	}
 }

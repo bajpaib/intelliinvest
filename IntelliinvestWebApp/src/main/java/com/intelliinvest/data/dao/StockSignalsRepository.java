@@ -16,11 +16,14 @@ import javax.annotation.PostConstruct;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.BulkOperations;
+import org.springframework.data.mongodb.core.BulkOperations.BulkMode;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
@@ -28,8 +31,9 @@ import com.intelliinvest.common.IntelliinvestException;
 import com.intelliinvest.data.model.StockSignals;
 import com.intelliinvest.data.model.StockSignalsComponents;
 import com.intelliinvest.data.model.StockSignalsDTO;
-import com.intelliinvest.util.Converter;
+import com.intelliinvest.util.DateUtil;
 import com.intelliinvest.util.Helper;
+import com.intelliinvest.util.IntelliinvestConverter;
 
 @ManagedResource(objectName = "bean:name=StockSignalsRepository", description = "StockSignalsRepository")
 public class StockSignalsRepository {
@@ -41,7 +45,8 @@ public class StockSignalsRepository {
 	private MongoTemplate mongoTemplate;
 
 	@Autowired
-	WatchListRepository watchListRepository;
+	DateUtil dateUtil;
+
 	private Map<String, StockSignals> signalCache = new ConcurrentHashMap<String, StockSignals>();
 	private static String MAGIC_NUMBER_STR = "#MN#";
 
@@ -72,7 +77,7 @@ public class StockSignalsRepository {
 				}
 			}
 			logger.debug("refreshing signalCache from DB in StockSignalRepository with size " + signalCache.size());
-			watchListRepository.refreshCache();
+			// watchListRepository.refreshCache();
 		} else {
 			logger.error("Could not refresh signalCache from DB in StockSignalRepository. STOCK_SIGNALS is empty.");
 		}
@@ -139,7 +144,7 @@ public class StockSignalsRepository {
 
 		logger.debug("Stock Signals list size is: " + stockSignalsList.size()
 				+ " Stock Signals Components list size is :" + stockSignalsComponentsList.size());
-		return Converter.convertBO2DTO(stockSignalsComponentsList, stockSignalsList);
+		return IntelliinvestConverter.convertBO2DTO(stockSignalsComponentsList, stockSignalsList);
 	}
 
 	/*
@@ -176,7 +181,8 @@ public class StockSignalsRepository {
 				Query.query(Criteria.where("signalDate").is(date)), StockSignalsComponents.class,
 				COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, ma + ""));
 
-		List<StockSignalsDTO> stockSignalsDTO = Converter.convertBO2DTO(stockSignalsComponentsList, stockSignalsList);
+		List<StockSignalsDTO> stockSignalsDTO = IntelliinvestConverter.convertBO2DTO(stockSignalsComponentsList,
+				stockSignalsList);
 
 		for (StockSignalsDTO signalComponent : stockSignalsDTO) {
 			String symbol = signalComponent.getSymbol();
@@ -199,7 +205,7 @@ public class StockSignalsRepository {
 				StockSignalsComponents.class);
 
 		if (stockSignals != null && stockSignalsComponents != null)
-			stockSignalsDTO = Converter.convertBO2DTO(stockSignalsComponents, stockSignals);
+			stockSignalsDTO = IntelliinvestConverter.convertBO2DTO(stockSignalsComponents, stockSignals);
 		return stockSignalsDTO;
 	}
 
@@ -215,7 +221,7 @@ public class StockSignalsRepository {
 				StockSignalsComponents.class, COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, ma + ""));
 		if (stockSignalsList != null && stockSignalsComponentsList != null
 				&& stockSignalsList.size() == stockSignalsComponentsList.size())
-			return Converter.convertBO2DTO(stockSignalsComponentsList, stockSignalsList);
+			return IntelliinvestConverter.convertBO2DTO(stockSignalsComponentsList, stockSignalsList);
 		else
 			return null;
 	}
@@ -227,7 +233,7 @@ public class StockSignalsRepository {
 		List<StockSignalsComponents> stockSignalsComponentsList = new ArrayList<StockSignalsComponents>();
 		List<StockSignals> stockSignalsList = new ArrayList<StockSignals>();
 
-		Converter.convertDTO2BO(stockSignalsDTOList, stockSignalsComponentsList, stockSignalsList);
+		IntelliinvestConverter.convertDTO2BO(stockSignalsDTOList, stockSignalsComponentsList, stockSignalsList);
 		logger.debug("SignalComponentsList size is: " + stockSignalsComponentsList.size()
 				+ " and stocksignals list size is: " + stockSignalsList.size());
 		if (stockSignalsComponentsList.size() == stockSignalsList.size()) {
@@ -261,6 +267,178 @@ public class StockSignalsRepository {
 		mongoTemplate.remove(Query.query(Criteria.where("symbol").is(symbol)),
 				COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, magicNumber + ""));
 
+	}
+
+	public void updateStockSignalsBulk(int ma, List<StockSignalsDTO> stockSignalsDTOList)
+			throws IntelliinvestException {
+		logger.info("Inside updateStockSignals()...");
+		List<StockSignalsComponents> stockSignalsComponentsList = new ArrayList<StockSignalsComponents>();
+		List<StockSignals> stockSignalsList = new ArrayList<StockSignals>();
+
+		IntelliinvestConverter.convertDTO2BO(stockSignalsDTOList, stockSignalsComponentsList, stockSignalsList);
+		logger.debug("SignalComponentsList size is: " + stockSignalsComponentsList.size()
+				+ " and stocksignals list size is: " + stockSignalsList.size());
+		BulkOperations operation = mongoTemplate.bulkOps(BulkMode.UNORDERED, StockSignals.class);
+		BulkOperations operation1 = mongoTemplate.bulkOps(BulkMode.UNORDERED,
+				COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, ma + ""));
+		if (stockSignalsList.size() > 0 && stockSignalsComponentsList.size() == stockSignalsList.size()) {
+			// Batch inserts
+			int start = -1000;
+			int end = 0;
+			while (end < stockSignalsDTOList.size()) {
+				start = start + 1000;
+				end = end + 1000;
+				if (end > stockSignalsDTOList.size()) {
+					end = stockSignalsDTOList.size();
+				}
+				List<StockSignals> stockSignals = stockSignalsList.subList(start, end);
+				List<StockSignalsComponents> stockSignalsComponents = stockSignalsComponentsList.subList(start, end);
+
+				for (int i = 0; i < stockSignals.size(); i++) {
+					StockSignals stockSignal = stockSignals.get(i);
+					StockSignalsComponents stockSignalsComponent = stockSignalsComponents.get(i);
+					Query query = new Query();
+					query.addCriteria(
+							Criteria.where("signalDate").is(dateUtil.getDateFromLocalDate(stockSignal.getSignalDate()))
+									.and("symbol").is(stockSignal.getSymbol()));
+					Update update = new Update();
+					update.set("symbol", stockSignal.getSymbol());
+					update.set("signalType", stockSignal.getSignalType());
+					update.set("signalDate", dateUtil.getDateFromLocalDate(stockSignal.getSignalDate()));
+					update.set("signalPresent", stockSignal.getSignalPresent());
+					update.set("oscillatorSignal", stockSignal.getOscillatorSignal());
+					update.set("signalPresentOscillator", stockSignal.getSignalPresent());
+					update.set("bollingerSignal", stockSignal.getBollingerSignal());
+					update.set("signalPresentBollinger", stockSignal.getSignalPresentBollinger());
+					update.set("movingAverageSignal_SmallTerm", stockSignal.getMovingAverageSignal_SmallTerm());
+					update.set("movingAverageSignal_Main", stockSignal.getMovingAverageSignal_Main());
+					update.set("movingAverageSignal_MidTerm", stockSignal.getMovingAverageSignal_MidTerm());
+					update.set("movingAverageSignal_LongTerm", stockSignal.getMovingAverageSignal_LongTerm());
+					update.set("movingAverageSignal_SmallTerm_present",
+							stockSignal.getMovingAverageSignal_SmallTerm_present());
+					update.set("movingAverageSignal_Main_present", stockSignal.getMovingAverageSignal_Main_present());
+					update.set("movingAverageSignal_MidTerm_present",
+							stockSignal.getMovingAverageSignal_MidTerm_present());
+					update.set("movingAverageSignal_LongTerm_present",
+							stockSignal.getMovingAverageSignal_LongTerm_present());
+					update.set("aggSignal", stockSignal.getAggSignal());
+					update.set("aggSignal_present", stockSignal.getAggSignal_present());
+					update.set("aggSignal_previous", stockSignal.getAggSignal_previous());
+
+					operation.upsert(query, update);
+
+					Query query1 = new Query();
+					query1.addCriteria(Criteria.where("signalDate")
+							.is(dateUtil.getDateFromLocalDate(stockSignalsComponent.getSignalDate())).and("symbol")
+							.is(stockSignalsComponent.getSymbol()));
+					Update update1 = new Update();
+					update1.set("symbol", stockSignalsComponent.getSymbol());
+					update1.set("signalDate", dateUtil.getDateFromLocalDate(stockSignalsComponent.getSignalDate()));
+					update1.set("TR", stockSignalsComponent.getTR());
+					update1.set("plusDM1", stockSignalsComponent.getPlusDM1());
+					update1.set("minusDM1", stockSignalsComponent.getMinusDM1());
+					update1.set("TRn", stockSignalsComponent.getTRn());
+					update1.set("plusDMn", stockSignalsComponent.getPlusDMn());
+					update1.set("minusDMn", stockSignalsComponent.getMinusDMn());
+					update1.set("plusDIn", stockSignalsComponent.getPlusDIn());
+					update1.set("minusDIn", stockSignalsComponent.getMinusDIn());
+					update1.set("diffDIn", stockSignalsComponent.getDiffDIn());
+					update1.set("sumDIn", stockSignalsComponent.getSumDIn());
+					update1.set("DX", stockSignalsComponent.getDX());
+					update1.set("ADXn", stockSignalsComponent.getADXn());
+					update1.set("splitMultiplier", stockSignalsComponent.getSplitMultiplier());
+					update1.set("signalDate", dateUtil.getDateFromLocalDate(stockSignalsComponent.getSignalDate()));
+					update1.set("high10Day", stockSignalsComponent.getHigh10Day());
+					update1.set("low10Day", stockSignalsComponent.getLow10Day());
+					update1.set("range10Day", stockSignalsComponent.getRange10Day());
+					update1.set("stochastic10Day", stockSignalsComponent.getStochastic10Day());
+					update1.set("percentKFlow", stockSignalsComponent.getPercentKFlow());
+					update1.set("percentDFlow", stockSignalsComponent.getPercentDFlow());
+					update1.set("sma", stockSignalsComponent.getSma());
+					update1.set("upperBound", stockSignalsComponent.getUpperBound());
+					update1.set("lowerBound", stockSignalsComponent.getLowerBound());
+					update1.set("bandwidth", stockSignalsComponent.getBandwidth());
+					update1.set("movingAverage_5", stockSignalsComponent.getMovingAverage_5());
+					update1.set("movingAverage_10", stockSignalsComponent.getMovingAverage_10());
+					update1.set("movingAverage_15", stockSignalsComponent.getMovingAverage_15());
+					update1.set("movingAverage_25", stockSignalsComponent.getMovingAverage_25());
+					update1.set("movingAverage_50", stockSignalsComponent.getMovingAverage_50());
+
+					operation1.upsert(query1, update1);
+
+				}
+				com.mongodb.BulkWriteResult result = operation.execute();
+				com.mongodb.BulkWriteResult result1 = operation1.execute();
+
+				logger.debug("Update count:" + result.getModifiedCount() + " Inserted Count:"
+						+ result.getInsertedCount() + " removed count:" + result.getRemovedCount() + " matched count:"
+						+ result.getMatchedCount());
+				logger.debug("Update count:" + result1.getModifiedCount() + " Inserted Count:"
+						+ result1.getInsertedCount() + " removed count:" + result1.getRemovedCount() + " matched count:"
+						+ result1.getMatchedCount());
+
+			}
+		} else {
+			throw new IntelliinvestException("invalid input data....");
+		}
+	}
+
+	public Map<String, List<StockSignalsDTO>> getStockSignalsFromStartDate(LocalDate date, int ma) {
+		logger.debug("getting complete stock Signal from start date " + date + " and ma " + ma);
+		Map<String, List<StockSignalsDTO>> stockSignalsDTOMap = new HashMap<String, List<StockSignalsDTO>>();
+
+		Query query = new Query();
+		query.with(new Sort(Sort.Direction.ASC, "signalDate"));
+		query.addCriteria(Criteria.where("signalDate").gte(date));
+
+		List<StockSignals> stockSignalsList = mongoTemplate.find(query, StockSignals.class, COLLECTION_STOCK_SIGNALS);
+
+		List<StockSignalsComponents> stockSignalsComponentsList = mongoTemplate.find(query,
+				StockSignalsComponents.class, COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, ma + ""));
+
+		List<StockSignalsDTO> stockSignalsDTO = IntelliinvestConverter.convertBO2DTO(stockSignalsComponentsList,
+				stockSignalsList);
+
+		for (StockSignalsDTO signalComponent : stockSignalsDTO) {
+			String symbol = signalComponent.getSymbol();
+			List<StockSignalsDTO> stockSignalsDTOs = stockSignalsDTOMap.get(symbol);
+			if (stockSignalsDTOs == null) {
+				stockSignalsDTOs = new ArrayList<StockSignalsDTO>();
+				stockSignalsDTOMap.put(symbol, stockSignalsDTOs);
+			}
+			stockSignalsDTOs.add(signalComponent);
+		}
+		return stockSignalsDTOMap;
+	}
+
+	public List<StockSignalsDTO> getStockSignalsFromStartDate(LocalDate startDate, String symbol, int ma) {
+		logger.info("Inside getStockSignalsFromStartDate()..." + startDate);
+		Query query = new Query();
+		query.with(new Sort(Sort.Direction.ASC, "signalDate"));
+		query.addCriteria(Criteria.where("signalDate").gte(startDate).and("symbol").is(symbol));
+		List<StockSignals> stockSignalsList = mongoTemplate.find(query, StockSignals.class, COLLECTION_STOCK_SIGNALS);
+
+		List<StockSignalsComponents> stockSignalsComponentsList = mongoTemplate.find(
+				Query.query(Criteria.where("signalDate").gte(startDate).and("symbol").is(symbol)),
+				StockSignalsComponents.class, COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, ma + ""));
+		if (stockSignalsList != null && stockSignalsComponentsList != null
+				&& stockSignalsList.size() == stockSignalsComponentsList.size())
+			return IntelliinvestConverter.convertBO2DTO(stockSignalsComponentsList, stockSignalsList);
+		else
+			return null;
+	}
+
+	public List<StockSignals> getTechnicalAnalysisData() {
+		logger.debug("Inside getTechnicalAnalysisData...");
+		LocalDate date = dateUtil.getLastBusinessDate();
+		logger.debug("last business date is:" + date);
+		Query query = Query.query(Criteria.where("signalDate").is(date).orOperator(
+				Criteria.where("signalPresent").is("Y"), Criteria.where("signalPresentOscillator").is("Y"),
+				Criteria.where("signalPresentBollinger").is("Y"),
+				Criteria.where("movingAverageSignal_Main_present").is("Y")));
+		List<StockSignals> stockSignalsList = mongoTemplate.find(query, StockSignals.class, COLLECTION_STOCK_SIGNALS);
+		logger.debug("Stock Signals list size is: " + stockSignalsList.size());
+		return stockSignalsList;
 	}
 
 }

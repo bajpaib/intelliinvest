@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.intelliinvest.util.JsonDateTimeSerializer;
 
 @Document(collection = "STOCK")
-public class Stock implements Serializable{
+public class Stock implements Serializable {
 	@Id
 	private String securityId;
 	private String bseCode;

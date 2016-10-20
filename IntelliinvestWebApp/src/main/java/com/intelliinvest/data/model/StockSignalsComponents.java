@@ -12,7 +12,7 @@ import com.intelliinvest.util.JsonDateSerializer;
 
 @Document(collection = "STOCK_SIGNALS_COMPONENTS_10")
 public class StockSignalsComponents implements Serializable {
-	
+
 	String symbol;
 	Double TR;
 	Double plusDM1 = 0D;
@@ -44,28 +44,39 @@ public class StockSignalsComponents implements Serializable {
 	Double lowerBound;
 	Double bandwidth;
 
+	double movingAverage_5;
+	double movingAverage_10;
+	double movingAverage_15;
+	double movingAverage_25;
+	double movingAverage_50;
+
 	public StockSignalsComponents() {
 	}
 
-	public StockSignalsComponents(String symbol, Double tR, Double plusDM1, Double minusDM1, Double tRn, Double plusDMn,
-			Double minusDMn, Double plusDIn, Double minusDIn, Double diffDIn, Double sumDIn, Double dX, Double aDXn,
-			Double splitMultiplier, LocalDate signalDate, Double high10Day, Double low10Day, Double range10Day,
-			Double stochastic10Day, Double percentKFlow, Double percentDFlow, Double sma, Double upperBound,
-			Double lowerBound, Double bandwidth) {
+	public StockSignalsComponents(String symbol, Double tR, Double plusDM1,
+			Double minusDM1, Double tRn, Double plusDMn, Double minusDMn,
+			Double plusDIn, Double minusDIn, Double diffDIn, Double sumDIn,
+			Double dX, Double aDXn, Double splitMultiplier,
+			LocalDate signalDate, Double high10Day, Double low10Day,
+			Double range10Day, Double stochastic10Day, Double percentKFlow,
+			Double percentDFlow, Double sma, Double upperBound,
+			Double lowerBound, Double bandwidth, double movingAverage_5,
+			double movingAverage_10, double movingAverage_15,
+			double movingAverage_25, double movingAverage_50) {
 		super();
 		this.symbol = symbol;
-		this.TR = tR;
+		TR = tR;
 		this.plusDM1 = plusDM1;
 		this.minusDM1 = minusDM1;
-		this.TRn = tRn;
+		TRn = tRn;
 		this.plusDMn = plusDMn;
 		this.minusDMn = minusDMn;
 		this.plusDIn = plusDIn;
 		this.minusDIn = minusDIn;
 		this.diffDIn = diffDIn;
 		this.sumDIn = sumDIn;
-		this.DX = dX;
-		this.ADXn = aDXn;
+		DX = dX;
+		ADXn = aDXn;
 		this.splitMultiplier = splitMultiplier;
 		this.signalDate = signalDate;
 		this.high10Day = high10Day;
@@ -78,6 +89,51 @@ public class StockSignalsComponents implements Serializable {
 		this.upperBound = upperBound;
 		this.lowerBound = lowerBound;
 		this.bandwidth = bandwidth;
+		this.movingAverage_5 = movingAverage_5;
+		this.movingAverage_10 = movingAverage_10;
+		this.movingAverage_15 = movingAverage_15;
+		this.movingAverage_25 = movingAverage_25;
+		this.movingAverage_50 = movingAverage_50;
+	}
+
+	public double getMovingAverage_5() {
+		return movingAverage_5;
+	}
+
+	public void setMovingAverage_5(double movingAverage_5) {
+		this.movingAverage_5 = movingAverage_5;
+	}
+
+	public double getMovingAverage_10() {
+		return movingAverage_10;
+	}
+
+	public void setMovingAverage_10(double movingAverage_10) {
+		this.movingAverage_10 = movingAverage_10;
+	}
+
+	public double getMovingAverage_15() {
+		return movingAverage_15;
+	}
+
+	public void setMovingAverage_15(double movingAverage_15) {
+		this.movingAverage_15 = movingAverage_15;
+	}
+
+	public double getMovingAverage_25() {
+		return movingAverage_25;
+	}
+
+	public void setMovingAverage_25(double movingAverage_25) {
+		this.movingAverage_25 = movingAverage_25;
+	}
+
+	public double getMovingAverage_50() {
+		return movingAverage_50;
+	}
+
+	public void setMovingAverage_50(double movingAverage_50) {
+		this.movingAverage_50 = movingAverage_50;
 	}
 
 	public Double getHigh10Day() {
@@ -283,13 +339,18 @@ public class StockSignalsComponents implements Serializable {
 
 	@Override
 	public String toString() {
-		return "StockSignalsComponents [symbol=" + symbol + ", TR=" + TR + ", plusDM1=" + plusDM1 + ", minusDM1="
-				+ minusDM1 + ", TRn=" + TRn + ", plusDMn=" + plusDMn + ", minusDMn=" + minusDMn + ", plusDIn=" + plusDIn
-				+ ", minusDIn=" + minusDIn + ", diffDIn=" + diffDIn + ", sumDIn=" + sumDIn + ", DX=" + DX + ", ADXn="
-				+ ADXn + ", splitMultiplier=" + splitMultiplier + ", signalDate=" + signalDate + ", high10Day="
-				+ high10Day + ", low10Day=" + low10Day + ", range10Day=" + range10Day + ", stochastic10Day="
-				+ stochastic10Day + ", percentKFlow=" + percentKFlow + ", percentDFlow=" + percentDFlow + ", sma=" + sma
-				+ ", upperBound=" + upperBound + ", lowerBound=" + lowerBound + ", bandwidth=" + bandwidth + "]";
+		return "StockSignalsComponents [symbol=" + symbol + ", TR=" + TR
+				+ ", plusDM1=" + plusDM1 + ", minusDM1=" + minusDM1 + ", TRn="
+				+ TRn + ", plusDMn=" + plusDMn + ", minusDMn=" + minusDMn
+				+ ", plusDIn=" + plusDIn + ", minusDIn=" + minusDIn
+				+ ", diffDIn=" + diffDIn + ", sumDIn=" + sumDIn + ", DX=" + DX
+				+ ", ADXn=" + ADXn + ", splitMultiplier=" + splitMultiplier
+				+ ", signalDate=" + signalDate + ", high10Day=" + high10Day
+				+ ", low10Day=" + low10Day + ", range10Day=" + range10Day
+				+ ", stochastic10Day=" + stochastic10Day + ", percentKFlow="
+				+ percentKFlow + ", percentDFlow=" + percentDFlow + ", sma="
+				+ sma + ", upperBound=" + upperBound + ", lowerBound="
+				+ lowerBound + ", bandwidth=" + bandwidth + "]";
 	}
 
 }

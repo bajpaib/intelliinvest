@@ -2,8 +2,10 @@ package com.intelliinvest.data.dao;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
@@ -23,7 +25,6 @@ import org.springframework.jmx.export.annotation.ManagedOperationParameters;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.intelliinvest.data.model.Stock;
-import com.intelliinvest.data.model.StockFundamentals;
 import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.util.DateUtil;
 import com.intelliinvest.util.Helper;
@@ -103,6 +104,17 @@ public class StockRepository {
 		}
 		return retVal;
 	}
+	
+	public Set<String> getSecurityIdsForIndustry(String industry) throws DataAccessException {
+		logger.debug("Inside getSecurityIdsForIndustry() for industry "+industry);
+		Set<String> retVal = new HashSet<String>();
+		for(Stock stock: getStocks()){
+			if(industry.equals(stock.getIndustry())){
+				retVal.add(stock.getSecurityId());
+			}
+		}
+		return retVal;
+	}
 
 	public Stock getStockByBseCode(String bseCode) throws DataAccessException {
 		logger.debug("Inside getStockByBseCode()...");
@@ -135,7 +147,7 @@ public class StockRepository {
 	}
 
 	public List<Stock> getStocks() {
-		logger.debug("Inside getStocks()...");
+		logger.debug("Inside getStocksFromCache()...");
 		List<Stock> retVal = new ArrayList<Stock>();
 		if (stockCache.size() == 0) {
 			logger.error("Inside getStocks() stockCache is empty");
@@ -185,7 +197,6 @@ public class StockRepository {
 			retVal.sort(new Comparator<StockPrice>() {
 				public int compare(StockPrice price1, StockPrice price2) {
 					return price1.getSecurityId().compareTo(price2.getSecurityId());
-
 				}
 			});
 		}
@@ -199,26 +210,25 @@ public class StockRepository {
 		return mongoTemplate.find(query, StockPrice.class, COLLECTION_STOCK_PRICE);
 	}
 
-	public void bulkUploadLatestStockPrices(List<StockPrice> currentPrices) {
-		logger.info("Inside bulkUploadLatestStockPrices()...");		
-		// delete all existing records
-		mongoTemplate.remove(new Query(), StockPrice.class, COLLECTION_STOCK_PRICE);		
-		// batch inserts
-		int start = -1000;
-		int end = 0;
-		while (end < currentPrices.size()) {
-			start = start + 1000;
-			end = end + 1000;
-			if (end > currentPrices.size()) {
-				end = currentPrices.size();
-			}
-			List<StockPrice> currentPricesTemp = currentPrices.subList(start, end);
-			mongoTemplate.insert(currentPricesTemp, COLLECTION_STOCK_PRICE);
-		}
-		
-		for(StockPrice price: currentPrices){
+	public List<StockPrice> updateLiveStockPrices(List<StockPrice> currentPrices) {
+		logger.debug("Inside updateCurrentStockPrices()...");
+		List<StockPrice> retVal = new ArrayList<StockPrice>();
+		for (StockPrice price : currentPrices) {
+			Query query = new Query();
+			Update update = new Update();
+			update.set("securityId", price.getSecurityId());
+			update.set("exchange", price.getExchange());
+			update.set("currentPrice", price.getCurrentPrice());
+			update.set("cp", price.getCp());
+			update.set("updateDate", dateUtil.getLocalDateTime());
+			query.addCriteria(Criteria.where("securityId").is(price.getSecurityId()));
+			price = mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true).upsert(true),
+					StockPrice.class, COLLECTION_STOCK_PRICE);
+			retVal.add(price);
+			// update cache
 			stockPriceCache.put(price.getSecurityId(), price);
 		}
+		return retVal;
 	}
 
 	public void bulkInsertStocks(List<String> stocks) {

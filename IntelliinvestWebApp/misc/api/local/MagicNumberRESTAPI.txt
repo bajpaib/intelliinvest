@@ -1,0 +1,68 @@
+GET Request
+
+1. http://localhost:8080/IntelliinvestWebApp/rest/magicNumbers?userId=123
+
+Response:
+[
+  {
+    "securityId": "ABAN",
+    "movingAverage": 10,
+    "magicNumberADX": 49,
+    "magicNumberBollinger": 0.23000000000000007,
+    "magicNumberOscillator": 22,
+    "pnlADX": 32.85000000000002,
+    "pnlBollinger": 27.650000000000006,
+    "pnlOscillator": 46.50000000000006
+  },
+  {
+    "securityId": "INFY",
+    "movingAverage": 10,
+    "magicNumberADX": 49,
+    "magicNumberBollinger": 0.17,
+    "magicNumberOscillator": 15,
+    "pnlADX": 0,
+    "pnlBollinger": 0,
+    "pnlOscillator": 38.95000000000027
+  }
+]
+
+2. http://localhost:8080/IntelliinvestWebApp/rest/magicNumber/INFY?userId=123
+
+Response:
+{
+  "securityId": "INFY",
+  "movingAverage": 10,
+  "magicNumberADX": 49,
+  "magicNumberBollinger": 0.17,
+  "magicNumberOscillator": 15,
+  "pnlADX": 0,
+  "pnlBollinger": 0,
+  "pnlOscillator": 38.95000000000027
+}
+
+
+
+POST Request
+
+1.http://localhost:8080/IntelliinvestWebApp/rest/magicNumber/INFY?userId=123
+
+Response:
+{
+  "securityId": "INFY",
+  "movingAverage": 10,
+  "magicNumberADX": 49,
+  "magicNumberBollinger": 0.17,
+  "magicNumberOscillator": 15,
+  "pnlADX": 0,
+  "pnlBollinger": 0,
+  "pnlOscillator": 38.95000000000027
+}
+
+2. http://localhost:8080/IntelliinvestWebApp/rest/magicNumbers?userId=123
+
+Note: Not a valid stock code.
+Response:
+{
+  "status": "SUCCESS",
+  "message": "Today Signals for GDL11 Stock has not been generated successfully, some internal error or invalid data. Please Check."
+}

@@ -2,7 +2,6 @@ package com.intelliinvest.web.bo.response;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -14,8 +13,8 @@ public class TimeSeriesResponse implements Serializable {
 
 	private String securityId;
 	private LocalDate date;	
-	private List<String> dateSeries = new ArrayList<String>();
-	private List<Double> priceSeries = new ArrayList<Double>();
+	private List<String> dateSeries;
+	private List<Double> priceSeries;
 	private boolean success;
 	private String message;
 
