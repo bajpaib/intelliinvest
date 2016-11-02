@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.format.annotation.DateTimeFormat.ISO;
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.intelliinvest.util.JsonDateSerializer;
 import com.intelliinvest.util.JsonDateTimeSerializer;
@@ -29,6 +26,7 @@ public class StockFundamentalAnalysisResponse implements Serializable {
 	private String qrNetMargin;
 	private String qrDividendPercent;
 	private String summary;
+	private int points;
 	private LocalDate todayDate;
 	private LocalDateTime updateDate;
 	private boolean success;
@@ -172,6 +170,14 @@ public class StockFundamentalAnalysisResponse implements Serializable {
 
 	public void setSummary(String summary) {
 		this.summary = summary;
+	}
+
+	public int getPoints() {
+		return points;
+	}
+
+	public void setPoints(int points) {
+		this.points = points;
 	}
 
 	@JsonSerialize(using = JsonDateSerializer.class)

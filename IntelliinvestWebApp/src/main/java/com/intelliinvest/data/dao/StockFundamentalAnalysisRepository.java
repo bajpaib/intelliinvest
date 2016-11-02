@@ -51,8 +51,7 @@ public class StockFundamentalAnalysisRepository {
 		List<StockFundamentalAnalysis> stockFundamentalAnalysisList = getLatestStockFundamentalAnalysisFromDB();
 		if (Helper.isNotNullAndNonEmpty(stockFundamentalAnalysisList)) {
 			for (StockFundamentalAnalysis stockFundamentalAnalysis : stockFundamentalAnalysisList) {
-				stockFundamentalAnalysisCache.put(stockFundamentalAnalysis.getSecurityId(),
-						stockFundamentalAnalysis);
+				stockFundamentalAnalysisCache.put(stockFundamentalAnalysis.getSecurityId(), stockFundamentalAnalysis);
 			}
 			logger.info(
 					"Initialised stockFundamentalAnalysisCache from DB in StockFundamentalAnalysisRepository with size "
@@ -66,8 +65,7 @@ public class StockFundamentalAnalysisRepository {
 	public StockFundamentalAnalysis getLatestStockFundamentalAnalysis(String id) {
 		StockFundamentalAnalysis stockFundamentalAnalysis = stockFundamentalAnalysisCache.get(id);
 		if (stockFundamentalAnalysis == null) {
-			logger.error(
-					"Inside getStockFundamentalAnalysis() StockFundamentalAnalysis not found in cache for " + id);
+			logger.error("Inside getStockFundamentalAnalysis() StockFundamentalAnalysis not found in cache for " + id);
 			return null;
 		}
 		return stockFundamentalAnalysis.clone();
@@ -86,8 +84,8 @@ public class StockFundamentalAnalysisRepository {
 						.first("alCostOfDebt").as("alCostOfDebt").first("qrEBIDTAMargin").as("qrEBIDTAMargin")
 						.first("qrOperatingMargin").as("qrOperatingMargin").first("qrNetMargin").as("qrNetMargin")
 						.first("qrDividendPercent").as("qrDividendPercent").first("summary").as("summary")
-						.first("todayDate").as("todayDate").first("updateDate").as("updateDate"))
-								.withOptions(Aggregation.newAggregationOptions().allowDiskUse(true).build());
+						.first("points").as("points").first("todayDate").as("todayDate").first("updateDate")
+						.as("updateDate")).withOptions(Aggregation.newAggregationOptions().allowDiskUse(true).build());
 		AggregationResults<StockFundamentalAnalysis> results = mongoTemplate.aggregate(aggregation,
 				COLLECTION_STOCK_FUNDAMENTAL_ANALYSIS, StockFundamentalAnalysis.class);
 		List<StockFundamentalAnalysis> retVal = new ArrayList<StockFundamentalAnalysis>();
@@ -129,7 +127,8 @@ public class StockFundamentalAnalysisRepository {
 					end);
 
 			for (StockFundamentalAnalysis stockFundamentalAnalysis : stockFundamentalAnalysisTemp) {
-//				logger.info("stockFundamentalAnalysis: "+ stockFundamentalAnalysis);
+				// logger.info("stockFundamentalAnalysis: "+
+				// stockFundamentalAnalysis);
 				Query query = new Query();
 				Update update = new Update();
 				update.set("securityId", stockFundamentalAnalysis.getSecurityId());
@@ -149,10 +148,12 @@ public class StockFundamentalAnalysisRepository {
 				update.set("qrNetMargin", stockFundamentalAnalysis.getQrNetMargin());
 				update.set("qrDividendPercent", stockFundamentalAnalysis.getQrDividendPercent());
 				update.set("summary", stockFundamentalAnalysis.getSummary());
+				update.set("points", stockFundamentalAnalysis.getPoints());
 				update.set("todayDate", dateUtil.getDateFromLocalDate(stockFundamentalAnalysis.getTodayDate()));
 				update.set("updateDate", dateUtil.getDateFromLocalDateTime(stockFundamentalAnalysis.getUpdateDate()));
-				query.addCriteria(Criteria.where("todayDate").is(dateUtil.getDateFromLocalDate(stockFundamentalAnalysis.getTodayDate()))
-						.and("securityId").is(stockFundamentalAnalysis.getSecurityId()));
+				query.addCriteria(Criteria.where("todayDate")
+						.is(dateUtil.getDateFromLocalDate(stockFundamentalAnalysis.getTodayDate())).and("securityId")
+						.is(stockFundamentalAnalysis.getSecurityId()));
 				operation.upsert(query, update);
 			}
 			operation.execute();
@@ -161,14 +162,17 @@ public class StockFundamentalAnalysisRepository {
 	}
 
 	public void updateCache(List<StockFundamentalAnalysis> stockFundamentalAnalysisList) {
-		// update stockFundamentalAnalysisCache with latest stockFundamentalAnalysis
+		// update stockFundamentalAnalysisCache with latest
+		// stockFundamentalAnalysis
 		for (StockFundamentalAnalysis stockFundamentalAnalysis : stockFundamentalAnalysisList) {
-			StockFundamentalAnalysis cacheValue = stockFundamentalAnalysisCache.get(stockFundamentalAnalysis.getSecurityId());
-			if(cacheValue!=null){
-				if(cacheValue.getTodayDate().isBefore(stockFundamentalAnalysis.getTodayDate())){
-					stockFundamentalAnalysisCache.put(stockFundamentalAnalysis.getSecurityId(), stockFundamentalAnalysis);
+			StockFundamentalAnalysis cacheValue = stockFundamentalAnalysisCache
+					.get(stockFundamentalAnalysis.getSecurityId());
+			if (cacheValue != null) {
+				if (cacheValue.getTodayDate().isBefore(stockFundamentalAnalysis.getTodayDate())) {
+					stockFundamentalAnalysisCache.put(stockFundamentalAnalysis.getSecurityId(),
+							stockFundamentalAnalysis);
 				}
-			}else {
+			} else {
 				stockFundamentalAnalysisCache.put(stockFundamentalAnalysis.getSecurityId(), stockFundamentalAnalysis);
 			}
 		}

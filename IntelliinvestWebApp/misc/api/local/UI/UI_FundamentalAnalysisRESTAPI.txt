@@ -22,6 +22,9 @@ http://localhost:8080/IntelliinvestWebApp/rest/industry/getIndustryFundamentalsF
 
 http://localhost:8080/IntelliinvestWebApp/rest/industry/getIndustryAnalysisTimeSeries?name=BANKING&attrName=alMarketCap
 
+7. For a given industry get top 10 stocks
+http://localhost:8080/IntelliinvestWebApp/rest/stock/getTopStocksForIndustry?name=BANKING
+
 AttributeNames
 --------------
 alMarketCap

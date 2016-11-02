@@ -111,22 +111,13 @@ public class StockFundamentalAnalysisForecaster {
 		LocalDateTime timeNow = dateUtil.getLocalDateTime();
 		Runnable forecastFundamentalAnalysisTask = new Runnable() {
 			public void run() {
-				try {
-					// If the task is being run between 20 - 24 hrs, run for
-					// today's date, else run for last business date
-					LocalDate localDate = dateUtil.getLocalDate();
-					int hour = timeNow.getHour();
-					if (hour > 0 && hour < 20) {
-						// run task for last business day
-						forecastFundamentalAnalysis(dateUtil.getLastBusinessDate());
-					} else {
-						// run task for today
-						forecastFundamentalAnalysis(localDate);
+				if (!dateUtil.isBankHoliday(dateUtil.getLocalDate())) {
+					try {
+						forecastFundamentalAnalysis(dateUtil.getLocalDate());
+					} catch (Exception e) {
+						logger.error("Error while forecasting fundamental analysis for stocks " + e.getMessage());
 					}
-				} catch (Exception e) {
-					logger.error("Error while forecasting fundamental analysis for stocks " + e.getMessage());
 				}
-
 			}
 		};
 
@@ -161,10 +152,15 @@ public class StockFundamentalAnalysisForecaster {
 		}
 		return retVal;
 	}
-
-	private Set<String> filterStocksForMissingAttributes(Set<String> securityIds, Map<String, Double> presentStocks) {
-		Set<String> retainSet = new HashSet<String>(securityIds);
-		retainSet.retainAll(presentStocks.keySet());
+	
+	private Set<String> filterStocksForZeroValues(Map<String, Double> presentStocks) {
+		Set<String> retainSet = new HashSet<String>();
+		for (Map.Entry<String, Double> entry : presentStocks.entrySet()) {
+			String securityId = entry.getKey();
+			if (!MathUtil.isNearZero(entry.getValue())) {
+				retainSet.add(securityId);
+			}
+		}
 		return retainSet;
 	}
 
@@ -196,18 +192,12 @@ public class StockFundamentalAnalysisForecaster {
 		return retVal;
 	}
 
-	private boolean isValidAttribute(String attrVal, boolean filterZeroValue) {
+	private boolean isValidAttribute(String attrVal) {
 		if (!Helper.isNotNullAndNonEmpty(attrVal)) {
 			return false;
 		}
 		try {
 			double value = new Double(attrVal).doubleValue();
-			if (filterZeroValue) {
-				if (MathUtil.isNearZero(value)) {
-					return false;
-				}
-			}
-
 		} catch (Exception e) {
 			return false;
 		}
@@ -215,7 +205,7 @@ public class StockFundamentalAnalysisForecaster {
 	}
 
 	public Map<String, Double> findStockFundamentalsForYearQuarterAndIdAndAttrName(String yearQuarter, List<String> ids,
-			String attrName, boolean filterZeroValue) {
+			String attrName) {
 		Map<String, Double> retVal = new HashMap<String, Double>();
 		Map<String, StockFundamentals> stockFundamentals = stockFundamentalsRepository
 				.getStockFundamentalsByIdAndAttrName(ids, attrName);
@@ -223,22 +213,26 @@ public class StockFundamentalAnalysisForecaster {
 		Set<String> missingSet = new HashSet<String>(ids);
 		missingSet.removeAll(stockFundamentals.keySet());
 		if(missingSet.size()>0){
-			logger.error("Filtering stock: attrName:" + attrName +" not found in DB for "+ missingSet);
+			logger.error("Setting Attr value to 0. AttrName:" + attrName +" not found in DB for "+ missingSet);
+		}
+		
+		for(String id: missingSet){
+			retVal.put(id, new Double(0));
 		}		
 	
 		for (Map.Entry<String, StockFundamentals> entry : stockFundamentals.entrySet()) {
 			StockFundamentals stock = entry.getValue();
 			Map<String, String> yearQuarterAttrVal = stock.getYearQuarterAttrVal();
 			String prevYearQuarter = yearQuarter;
-
 			while (true) {
 				if (minYearQuarter.compareTo(prevYearQuarter) > 0) {
-					logger.error("Filtering stock. Exiting search at yearQuarter:" + prevYearQuarter
+					logger.error("Setting Attr value to 0. Exiting search at yearQuarter:" + prevYearQuarter
 							+ ", for id:" + entry.getKey() + " and attrName:" + attrName);
+					retVal.put(entry.getKey(), new Double(0));
 					break;
 				}
 				String attrVal = yearQuarterAttrVal.get(prevYearQuarter);
-				if (isValidAttribute(attrVal, filterZeroValue)) {
+				if (isValidAttribute(attrVal)) {
 					retVal.put(entry.getKey(), new Double(attrVal).doubleValue());
 					break;
 				} else {
@@ -337,90 +331,70 @@ public class StockFundamentalAnalysisForecaster {
 		logger.info(" Starting fundamentals forcast for industry:" + industry + " and date:" + date
 				+ " and yearQuarter:" + yearQuarter);
 		// find stocks of a particular industry
-		Set<String> securityIds = stockRepository.getSecurityIdsForIndustry(industry);
-		if (!Helper.isNotNullAndNonEmpty(securityIds)) {
+		Set<String> originalSecurityIds = stockRepository.getSecurityIdsForIndustry(industry);
+		if (!Helper.isNotNullAndNonEmpty(originalSecurityIds)) {
 			logger.error("No stocks found for industry " + industry);
 			throw new IntelliinvestException("No stocks found for industry " + industry);
 		}
-		Set<String> originalSecurityIds = stockRepository.getSecurityIdsForIndustry(industry);
+		Set<String> securityIds = new HashSet<String>(originalSecurityIds);
 		try {
 			// Get stock fundamentals
 			Map<String, Double> alBookValuePerShareMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(
-					year + "Q1", new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_BOOK_VALUE_PER_SHARE,
-					true);
-			securityIds = filterStocksForMissingAttributes(securityIds, alBookValuePerShareMap);
+					year + "Q1", new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_BOOK_VALUE_PER_SHARE);
 
 			Map<String, Double> alEarningPerShareMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(year + "Q1",
-					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_EARNING_PER_SHARE, true);
-			securityIds = filterStocksForMissingAttributes(securityIds, alEarningPerShareMap);
+					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_EARNING_PER_SHARE);
 
 			Map<String, Double> alPriceToEarningMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(year + "Q1",
-					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_PRICE_TO_EARNING, true);
-			securityIds = filterStocksForMissingAttributes(securityIds, alPriceToEarningMap);
+					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_PRICE_TO_EARNING);
 
 			Map<String, Double> alCashToDebtRatioMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(year + "Q1",
-					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_CASH_TO_DEBT_RATIO, true);
-			securityIds = filterStocksForMissingAttributes(securityIds, alCashToDebtRatioMap);
+					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_CASH_TO_DEBT_RATIO);
 
 			Map<String, Double> alCurrentRatioMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(year + "Q1",
-					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_CURRENT_RATIO, true);
-			securityIds = filterStocksForMissingAttributes(securityIds, alCurrentRatioMap);
+					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_CURRENT_RATIO);
 
 			Map<String, Double> alEquityToAssetRatioMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(
 					year + "Q1", new ArrayList<String>(securityIds),
-					IntelliinvestConstants.ANNUAL_EQUITY_TO_ASSET_RATIO, true);
-			securityIds = filterStocksForMissingAttributes(securityIds, alEquityToAssetRatioMap);
+					IntelliinvestConstants.ANNUAL_EQUITY_TO_ASSET_RATIO);
 
 			Map<String, Double> alDebtToCapitalRatioMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(
 					year + "Q1", new ArrayList<String>(securityIds),
-					IntelliinvestConstants.ANNUAL_DEBT_TO_CAPITAL_RATIO, true);
-			securityIds = filterStocksForMissingAttributes(securityIds, alDebtToCapitalRatioMap);
+					IntelliinvestConstants.ANNUAL_DEBT_TO_CAPITAL_RATIO);
 
 			Map<String, Double> alLeveredBetaMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(year + "Q1",
-					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_LEVERED_BBETA, true);
-			securityIds = filterStocksForMissingAttributes(securityIds, alLeveredBetaMap);
+					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_LEVERED_BBETA);
 
 			Map<String, Double> alReturnOnEquityMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(year + "Q1",
-					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_RETURN_ON_EQUITY, true);
-			securityIds = filterStocksForMissingAttributes(securityIds, alReturnOnEquityMap);
+					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_RETURN_ON_EQUITY);
 
 			Map<String, Double> alSolvencyRatioMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(year + "Q1",
-					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_SOLVENCY_RATIO, true);
-			securityIds = filterStocksForMissingAttributes(securityIds, alSolvencyRatioMap);
+					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_SOLVENCY_RATIO);
 
 			Map<String, Double> alCostOfEquityMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(year + "Q1",
-					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_COST_OF_EQUITY, true);
-			securityIds = filterStocksForMissingAttributes(securityIds, alCostOfEquityMap);
+					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_COST_OF_EQUITY);
 
 			Map<String, Double> alCostOfDebtMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(year + "Q1",
-					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_COST_OF_DEBT, true);
-			securityIds = filterStocksForMissingAttributes(securityIds, alCostOfDebtMap);
+					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_COST_OF_DEBT);
 
 			Map<String, Double> qrEBIDTAMarginMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(yearQuarter,
-					new ArrayList<String>(securityIds), IntelliinvestConstants.QUARTER_EBIDTA_MARGIN, true);
-			securityIds = filterStocksForMissingAttributes(securityIds, qrEBIDTAMarginMap);
+					new ArrayList<String>(securityIds), IntelliinvestConstants.QUARTER_EBIDTA_MARGIN);
 
 			Map<String, Double> qrOperatingMarginMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(yearQuarter,
-					new ArrayList<String>(securityIds), IntelliinvestConstants.QUARTER_OPERATING_MARGIN, true);
-			securityIds = filterStocksForMissingAttributes(securityIds, qrOperatingMarginMap);
+					new ArrayList<String>(securityIds), IntelliinvestConstants.QUARTER_OPERATING_MARGIN);
 
 			Map<String, Double> qrNetMarginMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(yearQuarter,
-					new ArrayList<String>(securityIds), IntelliinvestConstants.QUARTER_NET_MARGIN, true);
-			securityIds = filterStocksForMissingAttributes(securityIds, qrNetMarginMap);
+					new ArrayList<String>(securityIds), IntelliinvestConstants.QUARTER_NET_MARGIN);
 
 			Map<String, Double> qrDividendPercentMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(yearQuarter,
-					new ArrayList<String>(securityIds), IntelliinvestConstants.QUARTER_DIVIDEND_PERCENT, false);
-			securityIds = filterStocksForMissingAttributes(securityIds, qrDividendPercentMap);
+					new ArrayList<String>(securityIds), IntelliinvestConstants.QUARTER_DIVIDEND_PERCENT);
 
 			Map<String, Double> qrUnadjBseClsPriceMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(year + "Q1",
-					new ArrayList<String>(securityIds), IntelliinvestConstants.QUARTER_UNADJUSTED_BSE_CLOSE_PRICE,
-					true);
-			securityIds = filterStocksForMissingAttributes(securityIds, qrUnadjBseClsPriceMap);
+					new ArrayList<String>(securityIds), IntelliinvestConstants.QUARTER_UNADJUSTED_BSE_CLOSE_PRICE);
 
 			Map<String, Double> qrOutstandingSharesMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(
-					yearQuarter, new ArrayList<String>(securityIds), IntelliinvestConstants.QUARTER_OUTSTANDING_SHARES,
-					true);
-			securityIds = filterStocksForMissingAttributes(securityIds, qrOutstandingSharesMap);
+					yearQuarter, new ArrayList<String>(securityIds), IntelliinvestConstants.QUARTER_OUTSTANDING_SHARES);
+			securityIds = filterStocksForZeroValues(qrOutstandingSharesMap);
 
 			Map<String, QuandlStockPrice> closePriceMap = findClosingPrices(new ArrayList<String>(securityIds), date);
 			securityIds = closePriceMap.keySet();
@@ -442,8 +416,13 @@ public class StockFundamentalAnalysisForecaster {
 			filteredSecurityIds.removeAll(securityIds);
 
 			if (filteredSecurityIds.size() > 0) {
-				logger.error("Stocks filtered for missing or zero attributes for industry " + industry + " are "
+				logger.error("Stocks filtered for missing or zero QUARTER_OUTSTANDING_SHARES or CLOSING_PRICE for industry " + industry + " are "
 						+ filteredSecurityIds.toString());
+			}
+			
+			if (securityIds.size() == 0) {
+				logger.error("No stocks present for carrying out fundamental analysis for industry " + industry);
+				throw new IntelliinvestException("No stocks present for carrying out fundamental analysis for industry " + industry);
 			}
 
 			// Now filter attribute maps for zero or null attributes
@@ -638,7 +617,10 @@ public class StockFundamentalAnalysisForecaster {
 				double alEarningPerShare = fundamental.getValue();
 				double qrUnadjBseClsPrice = qrUnadjBseClsPriceMap.get(fundamental.getKey());
 
-				double alEPSPct = alEarningPerShare / qrUnadjBseClsPrice;
+				double alEPSPct = 0;
+				if(!MathUtil.isNearZero(qrUnadjBseClsPrice)){
+					alEPSPct = alEarningPerShare / qrUnadjBseClsPrice;
+				}
 				alEPSPctMap.put(fundamental.getKey(), alEPSPct);
 				Double alMarketCapRatio = alMarketCapRatioMap.get(fundamental.getKey());
 				if (alMarketCapRatio != null) {
@@ -947,6 +929,7 @@ public class StockFundamentalAnalysisForecaster {
 			}
 
 			// calculate overall stock forecast
+			
 			double avgPoints = totalPoints / stockForecasts.size();
 			for (StockFundamentalAnalysis stockForecast : stockForecasts) {
 				if (stockForecast.getPoints() > avgPoints) {

@@ -171,6 +171,7 @@ public class IntelliinvestConverter {
 		response.setQrNetMargin(MathUtil.round(stock.getQrNetMargin()));
 		response.setQrDividendPercent(MathUtil.round(stock.getQrDividendPercent()));
 		response.setSummary(stock.getSummary());
+		response.setPoints(stock.getPoints());
 		response.setTodayDate(stock.getTodayDate());
 		response.setUpdateDate(stock.getUpdateDate());
 		response.setSuccess(true);

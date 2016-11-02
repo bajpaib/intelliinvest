@@ -36,7 +36,6 @@ public class StockFundamentalAnalysis implements Serializable {
 	private LocalDate todayDate;
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDateTime updateDate;
-	@Transient
 	private int points = 0;
 
 	public StockFundamentalAnalysis() {
@@ -47,7 +46,7 @@ public class StockFundamentalAnalysis implements Serializable {
 			String alCurrentRatio, String alEquityToAssetRatio, String alDebtToCapitalRatio, String alLeveredBeta,
 			String alReturnOnEquity, String alSolvencyRatio, String alCostOfEquity, String alCostOfDebt,
 			String qrEBIDTAMargin, String qrOperatingMargin, String qrNetMargin, String qrDividendPercent,
-			String summary, LocalDate todayDate, LocalDateTime updateDate) {
+			String summary, int points, LocalDate todayDate, LocalDateTime updateDate) {
 		super();
 		this.securityId = securityId;
 		this.yearQuarter = yearQuarter;
@@ -66,6 +65,7 @@ public class StockFundamentalAnalysis implements Serializable {
 		this.qrNetMargin = qrNetMargin;
 		this.qrDividendPercent = qrDividendPercent;
 		this.summary = summary;
+		this.points = points;
 		this.todayDate = todayDate;
 		this.updateDate = updateDate;
 	}
@@ -272,14 +272,14 @@ public class StockFundamentalAnalysis implements Serializable {
 				+ alSolvencyRatio + ", alCostOfEquity=" + alCostOfEquity + ", alCostOfDebt=" + alCostOfDebt
 				+ ", qrEBIDTAMargin=" + qrEBIDTAMargin + ", qrOperatingMargin=" + qrOperatingMargin + ", qrNetMargin="
 				+ qrNetMargin + ", qrDividendPercent=" + qrDividendPercent + ", qrUnadjBseClosePrice=" + ", summary="
-				+ summary + ", todayDate=" + todayDate +", updateDate=" + updateDate + "]";
+				+ summary + ", points=" + points + ", todayDate=" + todayDate +", updateDate=" + updateDate + "]";
 	}
 
 	public StockFundamentalAnalysis clone() {
 		return new StockFundamentalAnalysis(securityId, yearQuarter, alEPSPct, alCashToDebtRatio, alCurrentRatio,
 				alEquityToAssetRatio, alDebtToCapitalRatio, alLeveredBeta, alReturnOnEquity, alSolvencyRatio,
 				alCostOfEquity, alCostOfDebt, qrEBIDTAMargin, qrOperatingMargin, qrNetMargin, qrDividendPercent,
-				summary, todayDate, updateDate);
+				summary, points, todayDate, updateDate);
 	}
 
 }

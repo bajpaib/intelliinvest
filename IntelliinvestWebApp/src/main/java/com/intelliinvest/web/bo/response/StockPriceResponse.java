@@ -12,6 +12,7 @@ import com.intelliinvest.util.JsonDateTimeSerializer;
 @JsonAutoDetect
 public class StockPriceResponse implements Serializable {
 	private String securityId;
+	private String name;
 	private double cp;
 	private double currentPrice;
 	private double eodPrice;
@@ -20,6 +21,7 @@ public class StockPriceResponse implements Serializable {
 	private String eodPriceExchange;
 	private LocalDateTime currentPriceUpdateDate;
 	private LocalDateTime eodPriceUpdateDate;
+	private double pctChange;
 	private boolean success;
 	private String message;
 
@@ -33,6 +35,14 @@ public class StockPriceResponse implements Serializable {
 
 	public void setSecurityId(String securityId) {
 		this.securityId = securityId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public double getCp() {
@@ -100,6 +110,14 @@ public class StockPriceResponse implements Serializable {
 
 	public void setEodPriceUpdateDate(LocalDateTime eodPriceUpdateDate) {
 		this.eodPriceUpdateDate = eodPriceUpdateDate;
+	}
+	
+	public double getPctChange() {
+		return pctChange;
+	}
+
+	public void setPctChange(double pctChange) {
+		this.pctChange = pctChange;
 	}
 
 	public boolean isSuccess() {
