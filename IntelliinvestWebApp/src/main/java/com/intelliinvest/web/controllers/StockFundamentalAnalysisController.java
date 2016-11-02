@@ -338,7 +338,7 @@ public class StockFundamentalAnalysisController {
 					StockPriceResponse res = new StockPriceResponse();
 					res.setSecurityId(stockAnalysis.getSecurityId());
 					if (stock != null) {
-						res.setName(name);
+						res.setName(stock.getName());
 					}
 
 					res.setCurrentPrice(MathUtil.round(stockPrice != null ? stockPrice.getCurrentPrice() : 0));
