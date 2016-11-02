@@ -199,8 +199,6 @@
 		class="com.intelliinvest.data.forecast.StockFundamentalAnalysisForecaster"></beans:bean>
 	<beans:bean id="watchListRepository"
 		class="com.intelliinvest.data.dao.WatchListRepository"></beans:bean>
-	<beans:bean id="stockSignalsImporter"
-		class="com.intelliinvest.data.signals.StockSignalsImporter"></beans:bean>
 	<beans:bean id="stockSignalsRepository"
 		class="com.intelliinvest.data.dao.StockSignalsRepository"></beans:bean>
 	<beans:bean id="newsFetcherRepository"
@@ -209,6 +207,10 @@
 		class="com.intelliinvest.data.signals.StockSignalsGenerator"></beans:bean>
 	<beans:bean id="magicNumberGenerator"
 		class="com.intelliinvest.data.signals.MagicNumberGenerator"></beans:bean>
+
+	<beans:bean id="bubbleDataFetcher"
+		class="com.intelliinvest.data.bubbleData.BubbleDataFetcher"></beans:bean>
+
 
 	<context:component-scan base-package="com.intelliinvest.web.controllers" />
 </beans:beans>

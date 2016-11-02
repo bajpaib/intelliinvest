@@ -112,6 +112,16 @@ public class DateUtil {
 		}
 		return retVal;
 	}
+	
+	public LocalDate substractDays(LocalDate date, int workdays) {
+		if (workdays < 1) {
+			return date;
+		}
+		LocalDate retVal = date;
+		retVal = retVal.minusDays(workdays);
+		return retVal;
+	}
+
 
 	public boolean isBankHoliday(LocalDate date) {
 		// add holiday calendar later

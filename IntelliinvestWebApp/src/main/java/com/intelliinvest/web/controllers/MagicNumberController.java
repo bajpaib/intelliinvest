@@ -6,7 +6,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,28 +29,28 @@ public class MagicNumberController {
 	
 	private static Integer MOVING_AVERAGE = new Integer(IntelliInvestStore.properties.get("ma").toString());;
 
-	@RequestMapping(value = "/magicNumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<MagicNumberData> getMagicNumberDatas(@RequestParam("userId") String userId) {
+	@RequestMapping(value = "/magicNumber/getMagicNumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<MagicNumberData> getMagicNumberDatas() {
 		logger.info("in getMagicNumberDatas method...");
 		return magicNumberRepository.getMagicNumbers();
 	}
 
-	@RequestMapping(value = "/magicNumber/{securityId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody MagicNumberData getMagicNumberData(@RequestParam("userId") String userId, @PathVariable("securityId") String securityId) {
+	@RequestMapping(value = "/magicNumber/getMagicNumber", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody MagicNumberData getMagicNumberData(@RequestParam("securityId") String securityId) {
 		logger.info("in getMagicNumberData method for securityId " + securityId);
 		return magicNumberRepository.getMagicNumber(securityId);
 
 	}
 	
-	@RequestMapping(value = "/magicNumber/{securityId}", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody MagicNumberData generateMagicNumberData(@RequestParam("userId") String userId, @PathVariable("securityId") String securityId) {
+	@RequestMapping(value = "/magicNumber/generateMagicNumber", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody MagicNumberData generateMagicNumberData(@RequestParam("securityId") String securityId) {
 		logger.info("in generateMagicNumberData method for securityId " + securityId);
 		return magicNumberGenerator.generateMagicNumber(MOVING_AVERAGE, securityId);
 
 	}
 
-	@RequestMapping(value = "/magicNumbers", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public @ResponseBody List<MagicNumberData> generateMagicNumberDatas(@RequestParam("userId") String userId) {
+	@RequestMapping(value = "/magicNumber/generateMagicNumbers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+	public @ResponseBody List<MagicNumberData> generateMagicNumberDatas() {
 		logger.info("in generateMagicNumberDatas method...");
 		return magicNumberGenerator.generateMagicNumbers(MOVING_AVERAGE);
 	}

@@ -22,7 +22,6 @@ import com.intelliinvest.util.IntelliinvestConverter;
 import com.intelliinvest.util.MathUtil;
 import com.intelliinvest.web.bo.response.FundamentalAnalysisTimeSeriesResponse;
 import com.intelliinvest.web.bo.response.IndustryFundamentalsResponse;
-import com.intelliinvest.web.bo.response.StockPriceResponse;
 
 @Controller
 public class IndustryFundamentalsController {

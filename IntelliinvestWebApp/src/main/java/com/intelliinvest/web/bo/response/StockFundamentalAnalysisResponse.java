@@ -31,7 +31,7 @@ public class StockFundamentalAnalysisResponse implements Serializable {
 	private LocalDateTime updateDate;
 	private boolean success;
 	private String message;
-	
+
 	public StockFundamentalAnalysisResponse() {
 		super();
 	}

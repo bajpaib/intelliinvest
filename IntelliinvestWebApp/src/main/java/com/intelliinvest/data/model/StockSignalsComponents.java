@@ -13,47 +13,47 @@ import com.intelliinvest.util.JsonDateSerializer;
 @Document(collection = "STOCK_SIGNALS_COMPONENTS_10")
 public class StockSignalsComponents implements Serializable {
 
-	String symbol;
-	Double TR;
-	Double plusDM1 = 0D;
-	Double minusDM1 = 0D;
-	Double TRn = 0D;
-	Double plusDMn = 0D;
-	Double minusDMn = 0D;
-	Double plusDIn = 0D;
-	Double minusDIn = 0D;
-	Double diffDIn = 0D;
-	Double sumDIn = 0D;
-	Double DX = 0D;
-	Double ADXn = 0D;
-	Double splitMultiplier = 0D;
+	private String securityId;
+	private Double TR;
+	private Double plusDM1 = 0D;
+	private Double minusDM1 = 0D;
+	private Double TRn = 0D;
+	private Double plusDMn = 0D;
+	private Double minusDMn = 0D;
+	private Double plusDIn = 0D;
+	private Double minusDIn = 0D;
+	private Double diffDIn = 0D;
+	private Double sumDIn = 0D;
+	private Double DX = 0D;
+	private Double ADXn = 0D;
+	private Double splitMultiplier = 0D;
 
 	@DateTimeFormat(iso = ISO.DATE)
-	LocalDate signalDate;
+	private LocalDate signalDate;
 
 	// Oscillator Algo Parameters
-	Double high10Day = -1D;
-	Double low10Day = -1D;
-	Double range10Day = -1D;
-	Double stochastic10Day = -1D;
-	Double percentKFlow = -1D;
-	Double percentDFlow = -1D;
+	private Double high10Day = -1D;
+	private Double low10Day = -1D;
+	private Double range10Day = -1D;
+	private Double stochastic10Day = -1D;
+	private Double percentKFlow = -1D;
+	private Double percentDFlow = -1D;
 	// Bollinger Algo Parameters
-	Double sma;
-	Double upperBound;
-	Double lowerBound;
-	Double bandwidth;
+	private Double sma;
+	private Double upperBound;
+	private Double lowerBound;
+	private Double bandwidth;
 
-	double movingAverage_5;
-	double movingAverage_10;
-	double movingAverage_15;
-	double movingAverage_25;
-	double movingAverage_50;
+	private double movingAverage_5;
+	private double movingAverage_10;
+	private double movingAverage_15;
+	private double movingAverage_25;
+	private double movingAverage_50;
 
 	public StockSignalsComponents() {
 	}
 
-	public StockSignalsComponents(String symbol, Double tR, Double plusDM1,
+	public StockSignalsComponents(String securityId, Double tR, Double plusDM1,
 			Double minusDM1, Double tRn, Double plusDMn, Double minusDMn,
 			Double plusDIn, Double minusDIn, Double diffDIn, Double sumDIn,
 			Double dX, Double aDXn, Double splitMultiplier,
@@ -64,7 +64,7 @@ public class StockSignalsComponents implements Serializable {
 			double movingAverage_10, double movingAverage_15,
 			double movingAverage_25, double movingAverage_50) {
 		super();
-		this.symbol = symbol;
+		this.securityId = securityId;
 		TR = tR;
 		this.plusDM1 = plusDM1;
 		this.minusDM1 = minusDM1;
@@ -216,12 +216,12 @@ public class StockSignalsComponents implements Serializable {
 		this.bandwidth = bandwidth;
 	}
 
-	public String getSymbol() {
-		return symbol;
+	public String getSecurityId() {
+		return securityId;
 	}
 
-	public void setSymbol(String symbol) {
-		this.symbol = symbol;
+	public void setSecurityId(String securityId) {
+		this.securityId = securityId;
 	}
 
 	public Double getTR() {
@@ -339,7 +339,7 @@ public class StockSignalsComponents implements Serializable {
 
 	@Override
 	public String toString() {
-		return "StockSignalsComponents [symbol=" + symbol + ", TR=" + TR
+		return "StockSignalsComponents [symbol=" + securityId + ", TR=" + TR
 				+ ", plusDM1=" + plusDM1 + ", minusDM1=" + minusDM1 + ", TRn="
 				+ TRn + ", plusDMn=" + plusDMn + ", minusDMn=" + minusDMn
 				+ ", plusDIn=" + plusDIn + ", minusDIn=" + minusDIn

@@ -1,5 +1,6 @@
 package com.intelliinvest.data.signals;
 
+import com.intelliinvest.common.IntelliinvestConstants;
 import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.data.model.StockSignalsDTO;
 
@@ -50,38 +51,38 @@ public class ADXSignalComponentBuilder implements SignalComponentBuilder {
 			String signal = "";
 			if (stockSignalsDTO.getADXn() > signalComponentHolder.getMagicNumberADX()
 					&& (stockSignalsDTO.getPlusDIn() - stockSignalsDTO.getMinusDIn()) > delta) {
-				signal = "Buy";
+				signal = IntelliinvestConstants.BUY;
 			} else if (stockSignalsDTO.getADXn() > signalComponentHolder.getMagicNumberADX()
 					&& (stockSignalsDTO.getPlusDIn() - stockSignalsDTO.getMinusDIn()) < (-1 * delta)) {
-				signal = "Sell";
+				signal = IntelliinvestConstants.SELL;
 			} else {
-				if (stockSignalsDTO_1.getSignalType().equals("Buy")
-						|| stockSignalsDTO_1.getSignalType().equals("Hold")) {
-					signal = "Hold";
+				if (stockSignalsDTO_1.getAdxSignal().equals(IntelliinvestConstants.BUY)
+						|| stockSignalsDTO_1.getAdxSignal().equals(IntelliinvestConstants.HOLD)) {
+					signal = IntelliinvestConstants.HOLD;
 				} else {
-					signal = "Wait";
+					signal = IntelliinvestConstants.WAIT;
 				}
 			}
 
-			stockSignalsDTO.setSignalType(signal);
+			stockSignalsDTO.setAdxSignal(signal);
 
-			String signalPresent = "Y";
-			if (signal.equals("Buy") && (stockSignalsDTO_1.getSignalType().equals("Buy")
-					|| stockSignalsDTO_1.getSignalType().equals("Hold"))) {
-				signalPresent = "N";
-			} else if (signal.equals("Hold") && (stockSignalsDTO_1.getSignalType().equals("Buy")
-					|| stockSignalsDTO_1.getSignalType().equals("Hold"))) {
-				signalPresent = "N";
-			} else if (signal.equals("Sell") && (stockSignalsDTO_1.getSignalType().equals("Sell")
-					|| stockSignalsDTO_1.getSignalType().equals("Wait"))) {
-				signalPresent = "N";
-			} else if (signal.equals("Wait") && (stockSignalsDTO_1.getSignalType().equals("Sell")
-					|| stockSignalsDTO_1.getSignalType().equals("Wait"))) {
-				signalPresent = "N";
+			String signalPresent = IntelliinvestConstants.SIGNAL_PRESENT;
+			if (signal.equals(IntelliinvestConstants.BUY) && (stockSignalsDTO_1.getAdxSignal().equals(IntelliinvestConstants.BUY)
+					|| stockSignalsDTO_1.getAdxSignal().equals(IntelliinvestConstants.HOLD))) {
+				signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
+			} else if (signal.equals(IntelliinvestConstants.HOLD) && (stockSignalsDTO_1.getAdxSignal().equals(IntelliinvestConstants.BUY)
+					|| stockSignalsDTO_1.getAdxSignal().equals(IntelliinvestConstants.HOLD))) {
+				signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
+			} else if (signal.equals(IntelliinvestConstants.SELL) && (stockSignalsDTO_1.getAdxSignal().equals(IntelliinvestConstants.SELL)
+					|| stockSignalsDTO_1.getAdxSignal().equals(IntelliinvestConstants.WAIT))) {
+				signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
+			} else if (signal.equals(IntelliinvestConstants.WAIT) && (stockSignalsDTO_1.getAdxSignal().equals(IntelliinvestConstants.SELL)
+					|| stockSignalsDTO_1.getAdxSignal().equals(IntelliinvestConstants.WAIT))) {
+				signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
 			}
 
 //			stockSignalsDTO.setPreviousSignalType(stockSignalsDTO_1.getSignalType());
-			stockSignalsDTO.setSignalPresent(signalPresent);
+			stockSignalsDTO.setAdxSignalPresent(signalPresent);
 		}
 	}
 	

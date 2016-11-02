@@ -152,7 +152,7 @@ public class StockFundamentalAnalysisForecaster {
 		}
 		return retVal;
 	}
-	
+
 	private Set<String> filterStocksForZeroValues(Map<String, Double> presentStocks) {
 		Set<String> retainSet = new HashSet<String>();
 		for (Map.Entry<String, Double> entry : presentStocks.entrySet()) {
@@ -212,14 +212,14 @@ public class StockFundamentalAnalysisForecaster {
 
 		Set<String> missingSet = new HashSet<String>(ids);
 		missingSet.removeAll(stockFundamentals.keySet());
-		if(missingSet.size()>0){
-			logger.error("Setting Attr value to 0. AttrName:" + attrName +" not found in DB for "+ missingSet);
+		if (missingSet.size() > 0) {
+			logger.error("Setting Attr value to 0. AttrName:" + attrName + " not found in DB for " + missingSet);
 		}
-		
-		for(String id: missingSet){
+
+		for (String id : missingSet) {
 			retVal.put(id, new Double(0));
-		}		
-	
+		}
+
 		for (Map.Entry<String, StockFundamentals> entry : stockFundamentals.entrySet()) {
 			StockFundamentals stock = entry.getValue();
 			Map<String, String> yearQuarterAttrVal = stock.getYearQuarterAttrVal();
@@ -269,8 +269,8 @@ public class StockFundamentalAnalysisForecaster {
 			}
 
 			if (price == null || MathUtil.isNearZero(price.getClose())) {
-				logger.error("Exiting search for closing prices. Stock filtered for missing or zero closing price:"
-						+ id);
+				logger.error(
+						"Exiting search for closing prices. Stock filtered for missing or zero closing price:" + id);
 				continue;
 			}
 		}
@@ -308,18 +308,17 @@ public class StockFundamentalAnalysisForecaster {
 	public void forecastFundamentalAnalysis(LocalDate date) throws Exception {
 		// for each industry, get the stocks and do the analysis
 		for (String industry : IntelliinvestConstants.stockIndustryList) {
-			if("MISCELLANEOUS".equals(industry)){		
+			if ("MISCELLANEOUS".equals(industry)) {
 				continue;
 			}
 			try {
 				forecastFundamentalAnalysisForIndustry(industry, date);
-			}catch (Exception e){
-				logger.error("Exception in forecastFundamentalAnalysisForIndustry for " + industry +" and date:"+date);
+			} catch (Exception e) {
+				logger.error(
+						"Exception in forecastFundamentalAnalysisForIndustry for " + industry + " and date:" + date);
 			}
 		}
 	}
-	
-
 
 	private void forecastFundamentalAnalysisForIndustry(String industry, LocalDate date) throws Exception {
 		String quarter = getQuarterFromDate(date);
@@ -340,7 +339,8 @@ public class StockFundamentalAnalysisForecaster {
 		try {
 			// Get stock fundamentals
 			Map<String, Double> alBookValuePerShareMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(
-					year + "Q1", new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_BOOK_VALUE_PER_SHARE);
+					year + "Q1", new ArrayList<String>(securityIds),
+					IntelliinvestConstants.ANNUAL_BOOK_VALUE_PER_SHARE);
 
 			Map<String, Double> alEarningPerShareMap = findStockFundamentalsForYearQuarterAndIdAndAttrName(year + "Q1",
 					new ArrayList<String>(securityIds), IntelliinvestConstants.ANNUAL_EARNING_PER_SHARE);
@@ -416,13 +416,15 @@ public class StockFundamentalAnalysisForecaster {
 			filteredSecurityIds.removeAll(securityIds);
 
 			if (filteredSecurityIds.size() > 0) {
-				logger.error("Stocks filtered for missing or zero QUARTER_OUTSTANDING_SHARES or CLOSING_PRICE for industry " + industry + " are "
-						+ filteredSecurityIds.toString());
+				logger.error(
+						"Stocks filtered for missing or zero QUARTER_OUTSTANDING_SHARES or CLOSING_PRICE for industry "
+								+ industry + " are " + filteredSecurityIds.toString());
 			}
-			
+
 			if (securityIds.size() == 0) {
 				logger.error("No stocks present for carrying out fundamental analysis for industry " + industry);
-				throw new IntelliinvestException("No stocks present for carrying out fundamental analysis for industry " + industry);
+				throw new IntelliinvestException(
+						"No stocks present for carrying out fundamental analysis for industry " + industry);
 			}
 
 			// Now filter attribute maps for zero or null attributes
@@ -618,7 +620,7 @@ public class StockFundamentalAnalysisForecaster {
 				double qrUnadjBseClsPrice = qrUnadjBseClsPriceMap.get(fundamental.getKey());
 
 				double alEPSPct = 0;
-				if(!MathUtil.isNearZero(qrUnadjBseClsPrice)){
+				if (!MathUtil.isNearZero(qrUnadjBseClsPrice)) {
 					alEPSPct = alEarningPerShare / qrUnadjBseClsPrice;
 				}
 				alEPSPctMap.put(fundamental.getKey(), alEPSPct);
@@ -929,7 +931,7 @@ public class StockFundamentalAnalysisForecaster {
 			}
 
 			// calculate overall stock forecast
-			
+
 			double avgPoints = totalPoints / stockForecasts.size();
 			for (StockFundamentalAnalysis stockForecast : stockForecasts) {
 				if (stockForecast.getPoints() > avgPoints) {

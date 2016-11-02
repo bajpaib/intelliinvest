@@ -21,6 +21,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.intelliinvest.data.model.MagicNumberData;
 import com.intelliinvest.util.Helper;
+import com.mongodb.WriteResult;
 
 @ManagedResource(objectName = "bean:name=MagicNumberRepository", description = "MagicNumberRepository")
 public class MagicNumberRepository {
@@ -39,15 +40,13 @@ public class MagicNumberRepository {
 	public void initialiseCacheFromDB() {
 		List<MagicNumberData> magicNumbers = getMagicNumbersFromDB();
 		if (Helper.isNotNullAndNonEmpty(magicNumbers)) {
-			for (MagicNumberData magicNumberData : magicNumbers) {
-
+			for (MagicNumberData magicNumberData : magicNumbers) {	
 				magicNumberCache.put(magicNumberData.getSecurityId(), magicNumberData);
 			}
-			logger.info(
-					"Initialised magic numbers in MagicNumberRepository from DB with size " + magicNumberCache.size());
+			logger.info("Initialised magic numbers in MagicNumberRepository from DB with size " + magicNumberCache.size());
+//			logger.info(magicNumberCache.toString());
 		} else {
-			logger.error(
-					"Could not initialise magicNumberCache from DB in MagicNumberRepository. MagicNumbers are empty.");
+			logger.error("Could not initialise magicNumberCache from DB in MagicNumberRepository. MagicNumbers are empty.");
 		}
 	}
 
@@ -58,37 +57,25 @@ public class MagicNumberRepository {
 	public List<MagicNumberData> getMagicNumbers() {
 		return new ArrayList<MagicNumberData>(magicNumberCache.values());
 	}
-
+	
 	public List<MagicNumberData> getMagicNumbersFromDB() {
 		logger.debug("Inside getMagicNumbersFromDB()...");
 		Query query = new Query();
 		query.with(new Sort(Sort.Direction.ASC, "securityId"));
 		return mongoTemplate.find(query, MagicNumberData.class, COLLECTION_MAGIC_NUMBER_DATA);
 	}
-
-	public void updateMagicNumber(MagicNumberData magicNumberData) {
-		Query query = new Query();
-		query.addCriteria(Criteria.where("securityId").is(magicNumberData.getSecurityId()).and("movingAverage")
-				.is(magicNumberData.getMovingAverage()));
-		Update update = new Update();
-		update.set("magicNumberADX", magicNumberData.getMagicNumberADX());
-		update.set("magicNumberBollinger", magicNumberData.getMagicNumberBollinger());
-		update.set("magicNumberOscillator", magicNumberData.getMagicNumberOscillator());
-		update.set("pnlADX", magicNumberData.getPnlADX());
-		update.set("pnlBollinger", magicNumberData.getPnlBollinger());
-		update.set("pnlOscillator", magicNumberData.getPnlOscillator());
-		mongoTemplate.updateFirst(query, update, MagicNumberData.class);
-		magicNumberCache.put(magicNumberData.getSecurityId(), magicNumberData);
-	}
-
+	
 	public void updateMagicNumbers(List<MagicNumberData> magicNumberDatas) {
+		logger.info("in updateMagicNumbers method...");
 		Map<String, MagicNumberData> tmpMap = new ConcurrentHashMap<String, MagicNumberData>();
 		BulkOperations operation = mongoTemplate.bulkOps(BulkMode.UNORDERED, MagicNumberData.class);
-		for (MagicNumberData magicNumberData : magicNumberDatas) {
+		for(MagicNumberData magicNumberData : magicNumberDatas){
 			Query query = new Query();
-			query.addCriteria(Criteria.where("securityId").is(magicNumberData.getSecurityId()).and("movingAverage")
-					.is(magicNumberData.getMovingAverage()));
+			query.addCriteria(Criteria.where("securityId").is(magicNumberData.getSecurityId())
+					.and("movingAverage").is(magicNumberData.getMovingAverage()));
 			Update update = new Update();
+			update.set("_id", magicNumberData.getSecurityId());
+			update.set("securityId", magicNumberData.getSecurityId());
 			update.set("magicNumberADX", magicNumberData.getMagicNumberADX());
 			update.set("magicNumberBollinger", magicNumberData.getMagicNumberBollinger());
 			update.set("magicNumberOscillator", magicNumberData.getMagicNumberOscillator());

@@ -15,6 +15,10 @@ public class MagicNumberData{
 	Double pnlBollinger = 0D;
 	Double pnlOscillator = 0D;
 	
+	public MagicNumberData() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	public MagicNumberData(String securityId, Integer movingAverage) {
 		this.securityId = securityId;
 		this.movingAverage = movingAverage;

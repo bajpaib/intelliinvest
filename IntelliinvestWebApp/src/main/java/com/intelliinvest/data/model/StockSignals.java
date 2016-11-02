@@ -12,31 +12,27 @@ import com.intelliinvest.util.JsonDateSerializer;
 
 @Document(collection = "STOCK_SIGNALS")
 public class StockSignals implements Serializable {
-	String symbol;
-	// String previousSignalType = "";
-	String signalType = "Wait";
+	private String securityId;
+
+	private String adxSignal = "Wait";
 
 	@DateTimeFormat(iso = ISO.DATE)
-	LocalDate signalDate;
-	String signalPresent;
+	private LocalDate signalDate;
 
-	String oscillatorSignal;
-	// String previousOscillatorSignal = "";
-	String signalPresentOscillator;
+	private String adxSignalPresent;
 
-	String bollingerSignal;
-	// String previousBollingerSignal = "";
-	String signalPresentBollinger;
+	private String oscillatorSignal;
+
+	private String signalPresentOscillator;
+
+	private String bollingerSignal;
+
+	private String signalPresentBollinger;
 
 	private String movingAverageSignal_SmallTerm;
 	private String movingAverageSignal_Main;
 	private String movingAverageSignal_MidTerm;
 	private String movingAverageSignal_LongTerm;
-
-	// private String previousMovingAverageSignal_SmallTerm;
-	// private String previousMovingAverageSignal_Main;
-	// private String previousMovingAverageSignal_MidTerm;
-	// private String previousMovingAverageSignal_LongTerm;
 
 	private String movingAverageSignal_SmallTerm_present;
 	private String movingAverageSignal_Main_present;
@@ -50,25 +46,18 @@ public class StockSignals implements Serializable {
 	public StockSignals() {
 	}
 
-	
-	public StockSignals(String symbol, String signalType, LocalDate signalDate,
-			String signalPresent, String oscillatorSignal,
-			String signalPresentOscillator, String bollingerSignal,
-			String signalPresentBollinger,
-			String movingAverageSignal_SmallTerm,
-			String movingAverageSignal_Main,
-			String movingAverageSignal_MidTerm,
-			String movingAverageSignal_LongTerm,
-			String movingAverageSignal_SmallTerm_present,
-			String movingAverageSignal_Main_present,
-			String movingAverageSignal_MidTerm_present,
-			String movingAverageSignal_LongTerm_present, String aggSignal,
+	public StockSignals(String securityId, String adxSignal, LocalDate signalDate, String adxSignalPresent,
+			String oscillatorSignal, String signalPresentOscillator, String bollingerSignal,
+			String signalPresentBollinger, String movingAverageSignal_SmallTerm, String movingAverageSignal_Main,
+			String movingAverageSignal_MidTerm, String movingAverageSignal_LongTerm,
+			String movingAverageSignal_SmallTerm_present, String movingAverageSignal_Main_present,
+			String movingAverageSignal_MidTerm_present, String movingAverageSignal_LongTerm_present, String aggSignal,
 			String aggSignal_present, String aggSignal_previous) {
 		super();
-		this.symbol = symbol;
-		this.signalType = signalType;
+		this.securityId = securityId;
+		this.adxSignal = adxSignal;
 		this.signalDate = signalDate;
-		this.signalPresent = signalPresent;
+		this.adxSignalPresent = adxSignalPresent;
 		this.oscillatorSignal = oscillatorSignal;
 		this.signalPresentOscillator = signalPresentOscillator;
 		this.bollingerSignal = bollingerSignal;
@@ -85,7 +74,6 @@ public class StockSignals implements Serializable {
 		this.aggSignal_present = aggSignal_present;
 		this.aggSignal_previous = aggSignal_previous;
 	}
-
 
 	public String getAggSignal() {
 		return aggSignal;
@@ -115,8 +103,7 @@ public class StockSignals implements Serializable {
 		return movingAverageSignal_SmallTerm;
 	}
 
-	public void setMovingAverageSignal_SmallTerm(
-			String movingAverageSignal_SmallTerm) {
+	public void setMovingAverageSignal_SmallTerm(String movingAverageSignal_SmallTerm) {
 		this.movingAverageSignal_SmallTerm = movingAverageSignal_SmallTerm;
 	}
 
@@ -132,8 +119,7 @@ public class StockSignals implements Serializable {
 		return movingAverageSignal_MidTerm;
 	}
 
-	public void setMovingAverageSignal_MidTerm(
-			String movingAverageSignal_MidTerm) {
+	public void setMovingAverageSignal_MidTerm(String movingAverageSignal_MidTerm) {
 		this.movingAverageSignal_MidTerm = movingAverageSignal_MidTerm;
 	}
 
@@ -141,8 +127,7 @@ public class StockSignals implements Serializable {
 		return movingAverageSignal_LongTerm;
 	}
 
-	public void setMovingAverageSignal_LongTerm(
-			String movingAverageSignal_LongTerm) {
+	public void setMovingAverageSignal_LongTerm(String movingAverageSignal_LongTerm) {
 		this.movingAverageSignal_LongTerm = movingAverageSignal_LongTerm;
 	}
 
@@ -150,8 +135,7 @@ public class StockSignals implements Serializable {
 		return movingAverageSignal_SmallTerm_present;
 	}
 
-	public void setMovingAverageSignal_SmallTerm_present(
-			String movingAverageSignal_SmallTerm_present) {
+	public void setMovingAverageSignal_SmallTerm_present(String movingAverageSignal_SmallTerm_present) {
 		this.movingAverageSignal_SmallTerm_present = movingAverageSignal_SmallTerm_present;
 	}
 
@@ -159,8 +143,7 @@ public class StockSignals implements Serializable {
 		return movingAverageSignal_Main_present;
 	}
 
-	public void setMovingAverageSignal_Main_present(
-			String movingAverageSignal_Main_present) {
+	public void setMovingAverageSignal_Main_present(String movingAverageSignal_Main_present) {
 		this.movingAverageSignal_Main_present = movingAverageSignal_Main_present;
 	}
 
@@ -168,8 +151,7 @@ public class StockSignals implements Serializable {
 		return movingAverageSignal_MidTerm_present;
 	}
 
-	public void setMovingAverageSignal_MidTerm_present(
-			String movingAverageSignal_MidTerm_present) {
+	public void setMovingAverageSignal_MidTerm_present(String movingAverageSignal_MidTerm_present) {
 		this.movingAverageSignal_MidTerm_present = movingAverageSignal_MidTerm_present;
 	}
 
@@ -177,8 +159,7 @@ public class StockSignals implements Serializable {
 		return movingAverageSignal_LongTerm_present;
 	}
 
-	public void setMovingAverageSignal_LongTerm_present(
-			String movingAverageSignal_LongTerm_present) {
+	public void setMovingAverageSignal_LongTerm_present(String movingAverageSignal_LongTerm_present) {
 		this.movingAverageSignal_LongTerm_present = movingAverageSignal_LongTerm_present;
 	}
 
@@ -214,12 +195,12 @@ public class StockSignals implements Serializable {
 		this.bollingerSignal = bollingerSignal;
 	}
 
-	public String getSymbol() {
-		return symbol;
+	public String getSecurityId() {
+		return securityId;
 	}
 
-	public void setSymbol(String symbol) {
-		this.symbol = symbol;
+	public void setSecurityId(String securityId) {
+		this.securityId = securityId;
 	}
 
 	// public String getPreviousSignalType() {
@@ -230,20 +211,20 @@ public class StockSignals implements Serializable {
 	// this.previousSignalType = previousSignalType;
 	// }
 
-	public String getSignalType() {
-		return signalType;
+	public String getAdxSignal() {
+		return adxSignal;
 	}
 
-	public void setSignalType(String signalType) {
-		this.signalType = signalType;
+	public void setAdxSignal(String adxSignal) {
+		this.adxSignal = adxSignal;
 	}
 
-	public String getSignalPresent() {
-		return signalPresent;
+	public String getAdxSignalPresent() {
+		return adxSignalPresent;
 	}
 
-	public void setSignalPresent(String signalPresent) {
-		this.signalPresent = signalPresent;
+	public void setAdxSignalPresent(String adxSignalPresent) {
+		this.adxSignalPresent = adxSignalPresent;
 	}
 
 	@JsonSerialize(using = JsonDateSerializer.class)
@@ -257,28 +238,18 @@ public class StockSignals implements Serializable {
 
 	@Override
 	public String toString() {
-		return "StockSignals [symbol=" + symbol + ", signalType=" + signalType
-				+ ", signalDate=" + signalDate + ", signalPresent="
-				+ signalPresent + ", oscillatorSignal=" + oscillatorSignal
-				+ ", signalPresentOscillator=" + signalPresentOscillator
-				+ ", bollingerSignal=" + bollingerSignal
-				+ ", signalPresentBollinger=" + signalPresentBollinger
-				+ ", movingAverageSignal_SmallTerm="
-				+ movingAverageSignal_SmallTerm + ", movingAverageSignal_Main="
-				+ movingAverageSignal_Main + ", movingAverageSignal_MidTerm="
-				+ movingAverageSignal_MidTerm
-				+ ", movingAverageSignal_LongTerm="
-				+ movingAverageSignal_LongTerm
-				+ ", movingAverageSignal_SmallTerm_present="
-				+ movingAverageSignal_SmallTerm_present
-				+ ", movingAverageSignal_Main_present="
-				+ movingAverageSignal_Main_present
-				+ ", movingAverageSignal_MidTerm_present="
-				+ movingAverageSignal_MidTerm_present
-				+ ", movingAverageSignal_LongTerm_present="
-				+ movingAverageSignal_LongTerm_present + ", iisignal="
-				+ aggSignal + ", iisignal_present=" + aggSignal_present
-				+ ", iisignal_previous=" + aggSignal_previous + "]";
+		return "StockSignals [securityId=" + securityId + ", adxSignal=" + adxSignal + ", signalDate=" + signalDate
+				+ ", adxSignalPresent=" + adxSignalPresent + ", oscillatorSignal=" + oscillatorSignal
+				+ ", signalPresentOscillator=" + signalPresentOscillator + ", bollingerSignal=" + bollingerSignal
+				+ ", signalPresentBollinger=" + signalPresentBollinger + ", movingAverageSignal_SmallTerm="
+				+ movingAverageSignal_SmallTerm + ", movingAverageSignal_Main=" + movingAverageSignal_Main
+				+ ", movingAverageSignal_MidTerm=" + movingAverageSignal_MidTerm + ", movingAverageSignal_LongTerm="
+				+ movingAverageSignal_LongTerm + ", movingAverageSignal_SmallTerm_present="
+				+ movingAverageSignal_SmallTerm_present + ", movingAverageSignal_Main_present="
+				+ movingAverageSignal_Main_present + ", movingAverageSignal_MidTerm_present="
+				+ movingAverageSignal_MidTerm_present + ", movingAverageSignal_LongTerm_present="
+				+ movingAverageSignal_LongTerm_present + ", aggSignal=" + aggSignal + ", aggSignal_present="
+				+ aggSignal_present + ", aggSignal_previous=" + aggSignal_previous + "]";
 	}
 
 }

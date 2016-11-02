@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -214,7 +213,7 @@ public class StockFundamentalAnalysis implements Serializable {
 	public void setTodayDate(LocalDate todayDate) {
 		this.todayDate = todayDate;
 	}
-	
+
 	@JsonSerialize(using = JsonDateTimeSerializer.class)
 	public LocalDateTime getUpdateDate() {
 		return updateDate;
@@ -272,7 +271,7 @@ public class StockFundamentalAnalysis implements Serializable {
 				+ alSolvencyRatio + ", alCostOfEquity=" + alCostOfEquity + ", alCostOfDebt=" + alCostOfDebt
 				+ ", qrEBIDTAMargin=" + qrEBIDTAMargin + ", qrOperatingMargin=" + qrOperatingMargin + ", qrNetMargin="
 				+ qrNetMargin + ", qrDividendPercent=" + qrDividendPercent + ", qrUnadjBseClosePrice=" + ", summary="
-				+ summary + ", points=" + points + ", todayDate=" + todayDate +", updateDate=" + updateDate + "]";
+				+ summary + ", points=" + points + ", todayDate=" + todayDate + ", updateDate=" + updateDate + "]";
 	}
 
 	public StockFundamentalAnalysis clone() {

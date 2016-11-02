@@ -20,6 +20,7 @@ import com.intelliinvest.web.bo.response.IndustryFundamentalsResponse;
 import com.intelliinvest.web.bo.response.StockFundamentalAnalysisResponse;
 import com.intelliinvest.web.bo.response.StockPriceResponse;
 import com.intelliinvest.web.bo.response.StockResponse;
+import com.intelliinvest.web.bo.response.StockSignalsResponse;
 import com.intelliinvest.web.bo.response.UserResponse;
 
 public class IntelliinvestConverter {
@@ -209,7 +210,7 @@ public class IntelliinvestConverter {
 	public static void convertDTO2BO(List<StockSignalsDTO> stockSignalsDTOList,
 			List<StockSignalsComponents> stockSignalsComponentsList, List<StockSignals> stockSignalsList) {
 		for (StockSignalsDTO stockSignalsDTO : stockSignalsDTOList) {
-			StockSignalsComponents stockSignalsComponents = new StockSignalsComponents(stockSignalsDTO.getSymbol(),
+			StockSignalsComponents stockSignalsComponents = new StockSignalsComponents(stockSignalsDTO.getSecurityId(),
 					stockSignalsDTO.getTR(), stockSignalsDTO.getPlusDM1(), stockSignalsDTO.getMinusDM1(),
 					stockSignalsDTO.getTRn(), stockSignalsDTO.getPlusDMn(), stockSignalsDTO.getMinusDMn(),
 					stockSignalsDTO.getPlusDIn(), stockSignalsDTO.getMinusDIn(), stockSignalsDTO.getDiffDIn(),
@@ -224,9 +225,9 @@ public class IntelliinvestConverter {
 					stockSignalsDTO.getMovingAverageComponents().getMovingAverage_15(),
 					stockSignalsDTO.getMovingAverageComponents().getMovingAverage_25(),
 					stockSignalsDTO.getMovingAverageComponents().getMovingAverage_50());
-			StockSignals stockSignals = new StockSignals(stockSignalsDTO.getSymbol(),
-					/* stockSignalsDTO.getPreviousSignalType(), */stockSignalsDTO.getSignalType(),
-					stockSignalsDTO.getSignalDate(), stockSignalsDTO.getSignalPresent(),
+			StockSignals stockSignals = new StockSignals(stockSignalsDTO.getSecurityId(),
+					/* stockSignalsDTO.getPreviousSignalType(), */stockSignalsDTO.getAdxSignal(),
+					stockSignalsDTO.getSignalDate(), stockSignalsDTO.getAdxSignalPresent(),
 					stockSignalsDTO.getOscillatorSignal(), /*
 															 * stockSignalsDTO.
 															 * getPreviousOscillatorSignal
@@ -270,29 +271,24 @@ public class IntelliinvestConverter {
 					stockSignalsComponents.getMovingAverage_15(), stockSignalsComponents.getMovingAverage_25(),
 					stockSignalsComponents.getMovingAverage_50());
 
-			stockSignalsDTO = new StockSignalsDTO(stockSignals.getSymbol(),
-					/* stockSignals.getPreviousSignalType(), */stockSignals.getSignalType(),
-					stockSignals.getSignalDate(), stockSignals.getSignalPresent(), stockSignals.getOscillatorSignal(),
-					/* stockSignals.getPreviousOscillatorSignal(), */stockSignals.getSignalPresentOscillator(),
-					stockSignals.getBollingerSignal(), /*
-														 * stockSignals.
-														 * getPreviousBollingerSignal
-														 * (),
-														 */
-					stockSignals.getSignalPresentBollinger(), stockSignalsComponents.getTR(),
-					stockSignalsComponents.getPlusDM1(), stockSignalsComponents.getMinusDM1(),
-					stockSignalsComponents.getTRn(), stockSignalsComponents.getPlusDMn(),
-					stockSignalsComponents.getMinusDMn(), stockSignalsComponents.getPlusDIn(),
-					stockSignalsComponents.getMinusDIn(), stockSignalsComponents.getDiffDIn(),
-					stockSignalsComponents.getSumDIn(), stockSignalsComponents.getDX(),
-					stockSignalsComponents.getADXn(), stockSignalsComponents.getSplitMultiplier(),
-					stockSignalsComponents.getHigh10Day(), stockSignalsComponents.getLow10Day(),
-					stockSignalsComponents.getRange10Day(), stockSignalsComponents.getStochastic10Day(),
-					stockSignalsComponents.getPercentKFlow(), stockSignalsComponents.getPercentDFlow(),
-					stockSignalsComponents.getSma(), stockSignalsComponents.getUpperBound(),
-					stockSignalsComponents.getLowerBound(), stockSignalsComponents.getBandwidth(),
-					movingAverageComponents, movingAverageSignals, stockSignals.getAggSignal(),
-					stockSignals.getAggSignal_present(), stockSignals.getAggSignal_previous());
+			stockSignalsDTO = new StockSignalsDTO(stockSignals.getSecurityId(), stockSignals.getAdxSignal(),
+					stockSignals.getSignalDate(), stockSignals.getAdxSignalPresent(),
+					stockSignals.getOscillatorSignal(), stockSignals.getSignalPresentOscillator(),
+					stockSignals.getBollingerSignal(), stockSignals.getSignalPresentBollinger(),
+					stockSignalsComponents.getTR(), stockSignalsComponents.getPlusDM1(),
+					stockSignalsComponents.getMinusDM1(), stockSignalsComponents.getTRn(),
+					stockSignalsComponents.getPlusDMn(), stockSignalsComponents.getMinusDMn(),
+					stockSignalsComponents.getPlusDIn(), stockSignalsComponents.getMinusDIn(),
+					stockSignalsComponents.getDiffDIn(), stockSignalsComponents.getSumDIn(),
+					stockSignalsComponents.getDX(), stockSignalsComponents.getADXn(),
+					stockSignalsComponents.getSplitMultiplier(), stockSignalsComponents.getHigh10Day(),
+					stockSignalsComponents.getLow10Day(), stockSignalsComponents.getRange10Day(),
+					stockSignalsComponents.getStochastic10Day(), stockSignalsComponents.getPercentKFlow(),
+					stockSignalsComponents.getPercentDFlow(), stockSignalsComponents.getSma(),
+					stockSignalsComponents.getUpperBound(), stockSignalsComponents.getLowerBound(),
+					stockSignalsComponents.getBandwidth(), movingAverageComponents, movingAverageSignals,
+					stockSignals.getAggSignal(), stockSignals.getAggSignal_present(),
+					stockSignals.getAggSignal_previous());
 
 			stockSignalsDTOList.add(stockSignalsDTO);
 		}
@@ -316,9 +312,9 @@ public class IntelliinvestConverter {
 				stockSignalsComponents.getMovingAverage_15(), stockSignalsComponents.getMovingAverage_25(),
 				stockSignalsComponents.getMovingAverage_50());
 
-		stockSignalsDTO = new StockSignalsDTO(stockSignals.getSymbol(),
-				/* stockSignals.getPreviousSignalType(), */stockSignals.getSignalType(), stockSignals.getSignalDate(),
-				stockSignals.getSignalPresent(), stockSignals.getOscillatorSignal(),
+		stockSignalsDTO = new StockSignalsDTO(stockSignals.getSecurityId(),
+				/* stockSignals.getPreviousSignalType(), */stockSignals.getAdxSignal(), stockSignals.getSignalDate(),
+				stockSignals.getAdxSignalPresent(), stockSignals.getOscillatorSignal(),
 				/* stockSignals.getPreviousOscillatorSignal(), */stockSignals.getSignalPresentOscillator(),
 				stockSignals
 						.getBollingerSignal(), /*
@@ -339,6 +335,56 @@ public class IntelliinvestConverter {
 				stockSignalsComponents.getBandwidth(), movingAverageComponents, movingAverageSignals,
 				stockSignals.getAggSignal(), stockSignals.getAggSignal_present(), stockSignals.getAggSignal_previous());
 		return stockSignalsDTO;
+	}
+
+	public static StockSignalsResponse convertToStockSignalReponse(StockPrice stockPrice,
+			QuandlStockPrice quandlStockPrice, StockSignals signals) {
+		StockSignalsResponse stockSignalsResponse = new StockSignalsResponse();
+
+		if (stockPrice != null) {
+			stockSignalsResponse.setCurrentPrice(stockPrice.getCurrentPrice());
+			stockSignalsResponse.setCp(stockPrice.getCp());
+			stockSignalsResponse.setCurrentPriceExchange(stockPrice.getExchange());
+			stockSignalsResponse.setCurrentPriceUpdateDate(stockPrice.getUpdateDate());
+		}
+
+		if (quandlStockPrice != null) {
+			stockSignalsResponse.setEodDate(quandlStockPrice.getEodDate());
+			stockSignalsResponse.setEodPrice(quandlStockPrice.getClose());
+			stockSignalsResponse.setEodPriceExchange(quandlStockPrice.getExchange());
+			stockSignalsResponse.setEodPriceUpdateDate(quandlStockPrice.getUpdateDate());
+		}
+
+		if (signals != null) {
+			stockSignalsResponse.setAdxSignal(signals.getAdxSignal());
+			stockSignalsResponse.setBollingerSignal(signals.getBollingerSignal());
+			stockSignalsResponse.setOscillatorSignal(signals.getOscillatorSignal());
+
+			stockSignalsResponse.setMovingAverageSignal_SmallTerm(signals.getMovingAverageSignal_SmallTerm());
+			stockSignalsResponse.setMovingAverageSignal_Main(signals.getMovingAverageSignal_Main());
+			stockSignalsResponse.setMovingAverageSignal_MidTerm(signals.getMovingAverageSignal_MidTerm());
+			stockSignalsResponse.setMovingAverageSignal_LongTerm(signals.getMovingAverageSignal_LongTerm());
+
+			stockSignalsResponse.setAdxSignalPresent(signals.getAdxSignalPresent());
+			stockSignalsResponse.setSignalPresentBollinger(signals.getSignalPresentBollinger());
+			stockSignalsResponse.setSignalPresentOscillator(signals.getSignalPresentOscillator());
+
+			stockSignalsResponse
+					.setMovingAverageSignal_SmallTerm_present(signals.getMovingAverageSignal_SmallTerm_present());
+			stockSignalsResponse.setMovingAverageSignal_Main_present(signals.getMovingAverageSignal_Main_present());
+			stockSignalsResponse
+					.setMovingAverageSignal_MidTerm_present(signals.getMovingAverageSignal_MidTerm_present());
+			stockSignalsResponse
+					.setMovingAverageSignal_LongTerm_present(signals.getMovingAverageSignal_LongTerm_present());
+
+			stockSignalsResponse.setAggSignal(signals.getAggSignal());
+			stockSignalsResponse.setAggSignal_present(signals.getAggSignal_present());
+			stockSignalsResponse.setAggSignal_previous(signals.getAggSignal_previous());
+
+			stockSignalsResponse.setSecurityId(signals.getSecurityId());
+			stockSignalsResponse.setSignalDate(signals.getSignalDate());
+		}
+		return stockSignalsResponse;
 	}
 
 }

@@ -139,7 +139,7 @@ public class QuandlEODStockPriceRepository {
 		return retVal;
 	}
 
-	public Map<String, List<QuandlStockPrice>> getEODStockPricesFromStartDate(LocalDate startDate) throws Exception {
+	public Map<String, List<QuandlStockPrice>> getEODStockPricesFromStartDate(LocalDate startDate){
 		logger.info("Inside getEODStockPricesFromStartDate()..." + startDate);
 		Map<String, List<QuandlStockPrice>> retVal = new HashMap<String, List<QuandlStockPrice>>();
 
@@ -214,28 +214,6 @@ public class QuandlEODStockPriceRepository {
 			priceCache.put(price.getSecurityId(), price);
 		}
 	}
-	
-	public Map<String, List<QuandlStockPrice>> getEODStockPrices() throws Exception {
-		logger.info("Inside getEODStockPrices()...");
-		Map<String, List<QuandlStockPrice>> retVal = new HashMap<String, List<QuandlStockPrice>>();
-
-		Query query = new Query();
-		query.with(new Sort(Sort.Direction.ASC, "eodDate"));
-		List<QuandlStockPrice> prices = mongoTemplate.find(query, QuandlStockPrice.class,
-				COLLECTION_QUANDL_STOCK_PRICE);
-
-		for (QuandlStockPrice price : prices) {
-			String securityId = price.getSecurityId();
-			List<QuandlStockPrice> stocksPricesList = retVal.get(securityId);
-			if (stocksPricesList == null) {
-				stocksPricesList = new ArrayList<QuandlStockPrice>();
-				retVal.put(securityId, stocksPricesList);
-			}
-			stocksPricesList.add(price);			
-		}
-		return retVal;
-	}
-
 
 	@ManagedOperation(description = "getEODStockPriceFromCache")
 	public String getEODStockPriceFromCache(String id) {
@@ -261,5 +239,42 @@ public class QuandlEODStockPriceRepository {
 			builder.append("\n");
 		}
 		return builder.toString();
+	}
+	
+	public Map<String, List<QuandlStockPrice>> getEODStockPrices() {
+		logger.info("Inside getEODStockPrices()...");
+		Map<String, List<QuandlStockPrice>> retVal = new HashMap<String, List<QuandlStockPrice>>();
+		try {
+			Query query = new Query();
+			query.with(new Sort(Sort.Direction.ASC, "eodDate"));
+			List<QuandlStockPrice> prices = mongoTemplate.find(query,
+					QuandlStockPrice.class, COLLECTION_QUANDL_STOCK_PRICE);
+
+			for (QuandlStockPrice price : prices) {
+				String securityId = price.getSecurityId();
+				List<QuandlStockPrice> stocksPricesList = retVal
+						.get(securityId);
+				if (stocksPricesList == null) {
+					stocksPricesList = new ArrayList<QuandlStockPrice>();
+					retVal.put(securityId, stocksPricesList);
+				}
+				stocksPricesList.add(price);
+			}
+		} catch (Exception e) {
+			logger.info("Exception while getting complete stock prices..."
+					+ e.getMessage());
+
+		}
+		return retVal;
+	}
+	
+	public List<QuandlStockPrice> getStockPricesFromStartDate(String id,
+			LocalDate date) throws DataAccessException {
+		Query query = new Query();
+		query.with(new Sort(Sort.Direction.ASC, "eodDate"));
+		query.addCriteria(Criteria.where("securityId").is(id).and("eodDate")
+				.gte(date));
+		return mongoTemplate.find(query, QuandlStockPrice.class,
+				COLLECTION_QUANDL_STOCK_PRICE);
 	}
 }

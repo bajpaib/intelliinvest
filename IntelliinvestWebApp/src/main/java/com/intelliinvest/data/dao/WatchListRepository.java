@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.PostConstruct;
 
@@ -14,6 +16,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.intelliinvest.data.model.Portfolio;
@@ -59,8 +62,10 @@ public class WatchListRepository {
 	@Autowired
 	DateUtil dateUtil;
 
-	// private static Map<String, WatchListStockData> watchListStockDataCache =
-	// new ConcurrentHashMap<String, WatchListStockData>();
+	@Autowired
+	MailUtil mailUtil;
+	
+//	private static Map<String, WatchListStockData> watchListStockDataCache = new ConcurrentHashMap<String, WatchListStockData>();
 
 	private static final String COLLECTION_WATCHLIST = "WATCHLIST";
 	@Autowired
@@ -68,55 +73,51 @@ public class WatchListRepository {
 
 	@PostConstruct
 	public void init() {
-		// refreshCache();
+//		refreshCache();
 	}
 
-	// @ManagedOperation(description = "initialiseCacheFromDB")
-	// public boolean refreshCache() {
-	// logger.debug("in refreshCache method....");
-	// List<WatchListStockData> watchListStocksDatasList =
-	// getAllTradingAccountData();
-	// logger.debug("WatchList Data for Cache, size is " +
-	// watchListStocksDatasList.size());
-	// if (watchListStocksDatasList != null && watchListStocksDatasList.size() >
-	// 0)
-	// for (WatchListStockData watchListStockData : watchListStocksDatasList) {
-	// if (watchListStockData.getCode() != null)
-	// watchListStockDataCache.put(watchListStockData.getCode(),
-	// watchListStockData);
-	// }
-	// return true;
-	// }
+//	@ManagedOperation(description = "initialiseCacheFromDB")
+//	public boolean refreshCache() {
+//		logger.debug("in refreshCache method....");
+//		List<WatchListStockData> watchListStocksDatasList = getAllTradingAccountData();
+//		logger.debug("WatchList Data for Cache, size is " + watchListStocksDatasList.size());
+//		if (watchListStocksDatasList != null && watchListStocksDatasList.size() > 0)
+//			for (WatchListStockData watchListStockData : watchListStocksDatasList) {
+//				if (watchListStockData.getCode() != null)
+//					watchListStockDataCache.put(watchListStockData.getCode(), watchListStockData);
+//			}
+//		return true;
+//	}
 
 	private WatchListStockData getWatchListData(String stockCode) {
 		logger.debug("in getAllTradingAccountData method....");
-		// WatchListStockData retVal = new WatchListStockData();
-		// for (Stock stock : stockRepository.getStocks()) {
+//		WatchListStockData retVal = new WatchListStockData();
+//		for (Stock stock : stockRepository.getStocks()) {
 
-		// String symbol = stock.getSecurityId();
-		// QuandlStockPrice priceObj = quandlEODStockPriceRepository
-		// .getEODStockPriceObjFromCache(symbol);
-		StockSignals stockSignals = stockSignalsRepository.getStockSignalsFromCache(stockCode);
+//			String symbol = stock.getSecurityId();
+			// QuandlStockPrice priceObj = quandlEODStockPriceRepository
+			// .getEODStockPriceObjFromCache(symbol);
+			StockSignals stockSignals = stockSignalsRepository.getStockSignalsFromCache(stockCode);
 
-		// StockPrice stockPrice =
-		// stockRepository.getStockPriceById(symbol);
-		QuandlStockPrice stockPrice = quandlEODStockPriceRepository.getEODStockPrice(stockCode);
-		if (stockPrice != null && stockSignals != null) {
-			return getWatchListDataObj(stockPrice.getClose(), stockSignals);
-		}
-		// }
+			// StockPrice stockPrice =
+			// stockRepository.getStockPriceById(symbol);
+			QuandlStockPrice stockPrice = quandlEODStockPriceRepository.getEODStockPrice(stockCode);
+			if (stockPrice != null && stockSignals != null) {
+				return getWatchListDataObj(stockPrice.getClose(), stockSignals);
+			}
+//		}
 		return null;
 	}
 
 	private WatchListStockData getWatchListDataObj(double eodPrice, StockSignals stockSignals) {
-		// logger.debug("in getWatchListDataObj method....");
+//		logger.debug("in getWatchListDataObj method....");
 		WatchListStockData watchListStockData = new WatchListStockData();
 		watchListStockData.setSignalPrice(eodPrice);
 		if (stockSignals != null) {
-			watchListStockData.setCode(stockSignals.getSymbol());
+			watchListStockData.setCode(stockSignals.getSecurityId());
 			watchListStockData.setSignalDate(stockSignals.getSignalDate());
-			watchListStockData.setSignalType(stockSignals.getSignalType());
-			// watchListStockData.setYesterdaySignalType(stockSignals.getPreviousSignalType());
+			watchListStockData.setSignalType(stockSignals.getAggSignal());
+			watchListStockData.setYesterdaySignalType(stockSignals.getAggSignal_previous());
 		}
 		return watchListStockData;
 	}
@@ -140,6 +141,7 @@ public class WatchListRepository {
 				}
 			response.setStocksData(stocksData);
 			response.setSuccess(true);
+			response.setMessage("Data successfully returned...");
 			return response;
 		} else {
 			response.setSuccess(false);
@@ -191,6 +193,7 @@ public class WatchListRepository {
 				}
 				response.setStocksData(stocksData);
 				response.setSuccess(true);
+				response.setMessage("Stock code: "+stockCode+" has been added successfully...");
 				return response;
 			} else {
 				return null;
@@ -223,8 +226,10 @@ public class WatchListRepository {
 			if (no == 0) {
 				response.setSuccess(false);
 				response.setMessage("Some internal error occurred, so not able to remove code: " + stockCode);
-			} else
+			} else{
+				response.setMessage("Stock code: "+stockCode+" has been removed successfully...");
 				response.setSuccess(true);
+			}
 		} else {
 			response.setSuccess(false);
 			response.setMessage("User with id: " + userId + " doesn't exist or not logged in...");
@@ -287,10 +292,8 @@ public class WatchListRepository {
 				message = message + "<tr>";
 				message = message + getPNLInfo(user);
 				message = message + "</tr>";
-
+				logger.info("Sending mail to user: "+user);
 				message = message + "</table><br>Regards,<br>IntelliInvest Team.";
-				MailUtil mailUtil = new MailUtil();
-
 				mailUtil.sendMail(new String[] { user }, "Daily signal update from IntelliInvest for " + date, message);
 				return true;
 			} catch (Exception e) {

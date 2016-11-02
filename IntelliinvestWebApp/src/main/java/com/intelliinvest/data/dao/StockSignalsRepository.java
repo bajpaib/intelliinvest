@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
@@ -20,6 +21,7 @@ import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.BulkOperations.BulkMode;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -27,13 +29,19 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
+import com.intelliinvest.common.IntelliinvestConstants;
 import com.intelliinvest.common.IntelliinvestException;
+import com.intelliinvest.data.model.QuandlStockPrice;
+import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.data.model.StockSignals;
 import com.intelliinvest.data.model.StockSignalsComponents;
 import com.intelliinvest.data.model.StockSignalsDTO;
+import com.intelliinvest.data.signals.MagicNumberGenerator;
 import com.intelliinvest.util.DateUtil;
 import com.intelliinvest.util.Helper;
 import com.intelliinvest.util.IntelliinvestConverter;
+import com.intelliinvest.web.bo.response.StockSignalsArchiveResponse;
+import com.intelliinvest.web.bo.response.StockSignalsResponse;
 
 @ManagedResource(objectName = "bean:name=StockSignalsRepository", description = "StockSignalsRepository")
 public class StockSignalsRepository {
@@ -46,6 +54,15 @@ public class StockSignalsRepository {
 
 	@Autowired
 	DateUtil dateUtil;
+
+	@Autowired
+	QuandlEODStockPriceRepository quandlEODStockPriceRepository;
+
+	@Autowired
+	StockRepository stockRepository;
+
+	@Autowired
+	MagicNumberGenerator magicNumberGenerator;
 
 	private Map<String, StockSignals> signalCache = new ConcurrentHashMap<String, StockSignals>();
 	private static String MAGIC_NUMBER_STR = "#MN#";
@@ -71,7 +88,7 @@ public class StockSignalsRepository {
 			for (StockSignals stockSignal : stockSignals) {
 				if (stockSignal != null) {
 					// logger.debug("stcok signals : " + stockSignal);
-					signalCache.put(stockSignal.getSymbol(), stockSignal);
+					signalCache.put(stockSignal.getSecurityId(), stockSignal);
 				} else {
 					logger.debug("null stock signals....");
 				}
@@ -83,18 +100,32 @@ public class StockSignalsRepository {
 		}
 	}
 
+	public void refreshCachefromTodaySignals(List<StockSignals> stockSignals) {
+		logger.debug("refreshing cache for today signals.....");
+		// List<StockSignals> stockSignals = getLatestStockSignalFromDB();
+		logger.debug("list size is: " + stockSignals.size());
+		if (Helper.isNotNullAndNonEmpty(stockSignals)) {
+			for (StockSignals stockSignal : stockSignals) {
+				if (stockSignal != null) {
+					// logger.debug("stcok signals : " + stockSignal);
+					signalCache.put(stockSignal.getSecurityId(), stockSignal);
+				} else {
+					logger.debug("null stock signals....");
+				}
+			}
+			logger.debug("refreshing signalCache for today signals is done with size " + stockSignals.size());
+			// watchListRepository.refreshCache();
+		} else {
+			logger.error(
+					"Could not refresh signalCache from todays signals in StockSignalRepository. STOCK_SIGNALS is empty.");
+		}
+	}
+
 	public List<StockSignals> getLatestStockSignalFromDB() {
 		logger.info("Inside getLatestStockSignalFromDB()...");
 
-		final Aggregation aggregation = newAggregation(sort(Sort.Direction.DESC, "signalDate"),
-				group("symbol").first("symbol").as("symbol").first("signalDate").as("signalDate").first("signalType")
-						.as("signalType").first("previousSignalType").as("previousSignalType").first("open").as("open")
-						.first("signalPresent").as("signalPresent").first("oscillatorSignal").as("oscillatorSignal")
-						.first("previousOscillatorSignal").as("previousOscillatorSignal")
-						.first("signalPresentOscillator").as("signalPresentOscillator").first("bollingerSignal")
-						.as("bollingerSignal").first("previousBollingerSignal").as("previousBollingerSignal")
-						.first("signalPresentBollinger").as("signalPresentBollinger"))
-								.withOptions(Aggregation.newAggregationOptions().allowDiskUse(true).build());
+		final Aggregation aggregation = newAggregation(sort(Sort.Direction.DESC, "signalDate"), getGroupObj())
+				.withOptions(Aggregation.newAggregationOptions().allowDiskUse(true).build());
 		AggregationResults<StockSignals> results = mongoTemplate.aggregate(aggregation, COLLECTION_STOCK_SIGNALS,
 				StockSignals.class);
 		List<StockSignals> retVal = new ArrayList<StockSignals>();
@@ -107,171 +138,79 @@ public class StockSignalsRepository {
 		return retVal;
 	}
 
+	private AggregationOperation getGroupObj() {
+		return group("securityId").first("securityId").as("securityId").first("signalDate").as("signalDate")
+				.first("adxSignal").as("adxSignal").first("adxSignalPresent").as("adxSignalPresent")
+				.first("oscillatorSignal").as("oscillatorSignal").first("signalPresentOscillator")
+				.as("signalPresentOscillator").first("bollingerSignal").as("bollingerSignal")
+				.first("signalPresentBollinger").as("signalPresentBollinger").first("movingAverageSignal_SmallTerm")
+				.as("movingAverageSignal_SmallTerm").first("movingAverageSignal_Main").as("movingAverageSignal_Main")
+				.first("movingAverageSignal_MidTerm").as("movingAverageSignal_MidTerm")
+				.first("movingAverageSignal_LongTerm").as("movingAverageSignal_LongTerm")
+				.first("movingAverageSignal_SmallTerm_present").as("movingAverageSignal_SmallTerm_present")
+				.first("movingAverageSignal_Main_present").as("movingAverageSignal_Main_present")
+				.first("movingAverageSignal_MidTerm_present").as("movingAverageSignal_MidTerm_present")
+				.first("movingAverageSignal_LongTerm_present").as("movingAverageSignal_LongTerm_present")
+				.first("aggSignal").as("aggSignal").first("aggSignal_present").as("aggSignal_present")
+				.first("aggSignal_previous").as("aggSignal_previous");
+	}
+
 	/*
 	 * public static void main(String[] args) { FileSystemXmlApplicationContext
-	 * context=new FileSystemXmlApplicationContext(
+	 * context = new FileSystemXmlApplicationContext(
 	 * "src/main/webapp/WEB-INF/mvc-dispatcher-servlet.xml");
 	 * 
 	 * StockSignalsRepository repository = new StockSignalsRepository();
-	 * System.out.println(repository.getLatestStockSignalFromDB()); }
+	 * System.out.println(repository.getStockSignalsFromStartDateUsingJoin(
+	 * "ABAN", 10)); }
 	 */
-	public List<StockSignals> getStockSignals(String symbol) {
-		logger.debug("Inside getStockSignalDetails...");
-		return mongoTemplate.find(Query.query(Criteria.where("symbol").is(symbol)), StockSignals.class,
-				COLLECTION_STOCK_SIGNALS);
-	}
+	public StockSignalsArchiveResponse getStockSignalsArchive(int ma, String securityId, int timePeriod) {
+		logger.debug("Inside getStockSignalDetails...from time:::" + timePeriod);
+		LocalDate date = getLastDate(timePeriod);
 
-	public StockSignals getStockSignalsFromCache(String symbol) {
-		// logger.debug("Inside getStockSignalDetails from cache...");
-		return signalCache.get(symbol);
-	}
-
-	public StockSignals getStockSignals(String symbol, LocalDate signalDate) {
-		logger.debug("Inside getStockSignalDetails, date & symbol..." + symbol + " and date: " + signalDate);
-		return mongoTemplate.findOne(Query.query(Criteria.where("symbol").is(symbol).and("signalDate").is(signalDate)),
-				StockSignals.class, COLLECTION_STOCK_SIGNALS);
-	}
-
-	public List<StockSignalsDTO> getStockSignalsComplete(String symbol, int magicnumber) throws IntelliinvestException {
-		logger.debug("Inside getStockSignalComplete...");
-		Query query = Query.query(Criteria.where("symbol").is(symbol));
-		query.with(new Sort(Sort.Direction.DESC, "signalDate"));
-
-		List<StockSignals> stockSignalsList = mongoTemplate.find(query, StockSignals.class, COLLECTION_STOCK_SIGNALS);
-		List<StockSignalsComponents> stockSignalsComponentsList = mongoTemplate.find(
-				Query.query(Criteria.where("symbol").is(symbol)), StockSignalsComponents.class,
-				COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, magicnumber + ""));
-
-		logger.debug("Stock Signals list size is: " + stockSignalsList.size()
-				+ " Stock Signals Components list size is :" + stockSignalsComponentsList.size());
-		return IntelliinvestConverter.convertBO2DTO(stockSignalsComponentsList, stockSignalsList);
-	}
-
-	/*
-	 * public Map<String, StockSignalsDTO> getStockSignalsComplete(Date date,
-	 * int ma) { logger.debug("getting complete stock Signal for date " + date +
-	 * " and ma " + ma); Map<String, StockSignalsDTO> stockSignalsDTOMap = new
-	 * HashMap<String, StockSignalsDTO>();
-	 * 
-	 * List<StockSignals> stockSignalsList = mongoTemplate.find(
-	 * Query.query(Criteria.where("signalDate").is(date)), StockSignals.class,
-	 * COLLECTION_STOCK_SIGNALS);
-	 * 
-	 * List<StockSignalsComponents> stockSignalsComponentsList = mongoTemplate
-	 * .find(Query.query(Criteria.where("signalDate").is(date)),
-	 * StockSignalsComponents.class,
-	 * COLLECTION_STOCK_SIGNALS_COMPONENTS.replace( MAGIC_NUMBER_STR, ma + ""));
-	 * 
-	 * List<StockSignalsDTO> stockSignalsDTO = Converter.convertBO2DTO(
-	 * stockSignalsComponentsList, stockSignalsList);
-	 * 
-	 * for (StockSignalsDTO signalComponent : stockSignalsDTO) { String symbol =
-	 * signalComponent.getSymbol(); if (!stockSignalsDTOMap.containsKey(symbol))
-	 * { stockSignalsDTOMap.put(symbol, signalComponent); } } return
-	 * stockSignalsDTOMap; }
-	 */
-	public Map<String, StockSignalsDTO> getStockSignalsComplete(LocalDate date, int ma) {
-		logger.debug("getting complete stock Signal for date " + date + " and ma " + ma);
-		Map<String, StockSignalsDTO> stockSignalsDTOMap = new HashMap<String, StockSignalsDTO>();
-
-		List<StockSignals> stockSignalsList = mongoTemplate.find(Query.query(Criteria.where("signalDate").is(date)),
+		logger.debug("from date:" + date);
+		List<StockSignals> stockSignals = mongoTemplate.find(
+				Query.query(Criteria.where("securityId").is(securityId).and("signalDate").gte(date)),
 				StockSignals.class, COLLECTION_STOCK_SIGNALS);
 
-		List<StockSignalsComponents> stockSignalsComponentsList = mongoTemplate.find(
-				Query.query(Criteria.where("signalDate").is(date)), StockSignalsComponents.class,
-				COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, ma + ""));
-
-		List<StockSignalsDTO> stockSignalsDTO = IntelliinvestConverter.convertBO2DTO(stockSignalsComponentsList,
-				stockSignalsList);
-
-		for (StockSignalsDTO signalComponent : stockSignalsDTO) {
-			String symbol = signalComponent.getSymbol();
-			if (!stockSignalsDTOMap.containsKey(symbol)) {
-				stockSignalsDTOMap.put(symbol, signalComponent);
-			}
-		}
-		return stockSignalsDTOMap;
-	}
-
-	public StockSignalsDTO getStockSignalsComplete(LocalDate date, String symbol, int ma) {
-		logger.debug("getting complete stock Signal for date " + date + " and ma " + ma + " symbol:" + symbol);
-		StockSignalsDTO stockSignalsDTO = null;
-
-		StockSignals stockSignals = mongoTemplate.findOne(
-				Query.query(Criteria.where("signalDate").is(date).and("symbol").is(symbol)), StockSignals.class);
-
-		StockSignalsComponents stockSignalsComponents = mongoTemplate.findOne(
-				Query.query(Criteria.where("signalDate").is(date).and("symbol").is(symbol)),
-				StockSignalsComponents.class);
-
-		if (stockSignals != null && stockSignalsComponents != null)
-			stockSignalsDTO = IntelliinvestConverter.convertBO2DTO(stockSignalsComponents, stockSignals);
-		return stockSignalsDTO;
-	}
-
-	public List<StockSignalsDTO> getEODStockPriceddFromStartDate(LocalDate startDate, String symbol, int ma) {
-		logger.info("Inside getEODStockPricesFromStartDate()..." + startDate);
-		Query query = new Query();
-		query.with(new Sort(Sort.Direction.ASC, "eodDate"));
-		query.addCriteria(Criteria.where("signalDate").gte(startDate).and("symbol").is(symbol));
-		List<StockSignals> stockSignalsList = mongoTemplate.find(query, StockSignals.class, COLLECTION_STOCK_SIGNALS);
-
-		List<StockSignalsComponents> stockSignalsComponentsList = mongoTemplate.find(
-				Query.query(Criteria.where("signalDate").gte(startDate).and("symbol").is(symbol)),
+		List<StockSignalsComponents> stockSignalsComponents = mongoTemplate.find(
+				Query.query(Criteria.where("securityId").is(securityId).and("signalDate").gte(date)),
 				StockSignalsComponents.class, COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, ma + ""));
-		if (stockSignalsList != null && stockSignalsComponentsList != null
-				&& stockSignalsList.size() == stockSignalsComponentsList.size())
-			return IntelliinvestConverter.convertBO2DTO(stockSignalsComponentsList, stockSignalsList);
-		else
-			return null;
-	}
 
-	public void updateStockSignals(int magicNumber, List<StockSignalsDTO> stockSignalsDTOList)
-			throws IntelliinvestException {
-		logger.debug("Inside updateStockSignals..." + stockSignalsDTOList.size());
-
-		List<StockSignalsComponents> stockSignalsComponentsList = new ArrayList<StockSignalsComponents>();
-		List<StockSignals> stockSignalsList = new ArrayList<StockSignals>();
-
-		IntelliinvestConverter.convertDTO2BO(stockSignalsDTOList, stockSignalsComponentsList, stockSignalsList);
-		logger.debug("SignalComponentsList size is: " + stockSignalsComponentsList.size()
-				+ " and stocksignals list size is: " + stockSignalsList.size());
-		if (stockSignalsComponentsList.size() == stockSignalsList.size()) {
-			for (int i = 0; i < stockSignalsList.size(); i++) {
-				StockSignals stockSignals = stockSignalsList.get(i);
-				StockSignalsComponents stockSignalsComponents = stockSignalsComponentsList.get(i);
-
-				// logger.debug("Stock Signals Object being iserted: "
-				// + stockSignals.toString());
-				//
-				mongoTemplate.remove(Query.query(Criteria.where("symbol").is(stockSignals.getSymbol()).and("signalDate")
-						.is(stockSignals.getSignalDate())), StockSignals.class);
-				mongoTemplate.save(stockSignals, COLLECTION_STOCK_SIGNALS);
-
-				mongoTemplate.remove(Query.query(Criteria.where("symbol").is(stockSignals.getSymbol()).and("signalDate")
-						.is(stockSignals.getSignalDate())), StockSignalsComponents.class);
-				mongoTemplate.save(stockSignalsComponents,
-						COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, magicNumber + ""));
-			}
-			// refreshCache();
-			// watchListRepository.refreshCache();
-
-		} else {
-			throw new IntelliinvestException("invalid input data....");
+		if (stockSignals != null && stockSignalsComponents != null
+				&& stockSignals.size() == stockSignalsComponents.size())
+			return getArchiveResponse(date, securityId, stockSignals, stockSignalsComponents, null);
+		else {
+			StockSignalsArchiveResponse response = new StockSignalsArchiveResponse();
+			response.setMessage("Some internal data error...");
+			response.setSuccess(false);
+			return response;
 		}
-	}
-
-	public void deleteStockSignals(int magicNumber, String symbol) throws IntelliinvestException {
-		logger.debug("Inside deleteStockSignals()...");
-		mongoTemplate.remove(Query.query(Criteria.where("symbol").is(symbol)), COLLECTION_STOCK_SIGNALS);
-		mongoTemplate.remove(Query.query(Criteria.where("symbol").is(symbol)),
-				COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, magicNumber + ""));
 
 	}
 
-	public void updateStockSignalsBulk(int ma, List<StockSignalsDTO> stockSignalsDTOList)
+	public StockSignalsResponse getStockSignalsBySecurityId(String securityId) {
+		StockPrice stockPrice = stockRepository.getStockPriceById(securityId);
+		StockSignals stockSignals = signalCache.get(securityId);
+		QuandlStockPrice quandlStockPrice = quandlEODStockPriceRepository.getEODStockPrice(securityId);
+		return IntelliinvestConverter.convertToStockSignalReponse(stockPrice, quandlStockPrice, stockSignals);
+
+	}
+
+	public StockSignals getStockSignalsFromCache(String securityId) {
+		return signalCache.get(securityId);
+	}
+
+	public StockSignals getStockSignals(String securityId, LocalDate signalDate) {
+		logger.debug("Inside getStockSignalDetails, date & securityId..." + securityId + " and date: " + signalDate);
+		return mongoTemplate.findOne(
+				Query.query(Criteria.where("securityId").is(securityId).and("signalDate").is(signalDate)),
+				StockSignals.class, COLLECTION_STOCK_SIGNALS);
+	}
+
+	public void updateStockSignals(int ma, List<StockSignalsDTO> stockSignalsDTOList, boolean isTodaySignalsUpdate)
 			throws IntelliinvestException {
-		logger.info("Inside updateStockSignals()...");
+		// logger.info("Inside updateStockSignals()...");
 		List<StockSignalsComponents> stockSignalsComponentsList = new ArrayList<StockSignalsComponents>();
 		List<StockSignals> stockSignalsList = new ArrayList<StockSignals>();
 
@@ -279,7 +218,7 @@ public class StockSignalsRepository {
 		logger.debug("SignalComponentsList size is: " + stockSignalsComponentsList.size()
 				+ " and stocksignals list size is: " + stockSignalsList.size());
 		BulkOperations operation = mongoTemplate.bulkOps(BulkMode.UNORDERED, StockSignals.class);
-		BulkOperations operation1 = mongoTemplate.bulkOps(BulkMode.UNORDERED,
+		BulkOperations operation1 = mongoTemplate.bulkOps(BulkMode.UNORDERED, StockSignalsComponents.class,
 				COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, ma + ""));
 		if (stockSignalsList.size() > 0 && stockSignalsComponentsList.size() == stockSignalsList.size()) {
 			// Batch inserts
@@ -300,14 +239,14 @@ public class StockSignalsRepository {
 					Query query = new Query();
 					query.addCriteria(
 							Criteria.where("signalDate").is(dateUtil.getDateFromLocalDate(stockSignal.getSignalDate()))
-									.and("symbol").is(stockSignal.getSymbol()));
+									.and("securityId").is(stockSignal.getSecurityId()));
 					Update update = new Update();
-					update.set("symbol", stockSignal.getSymbol());
-					update.set("signalType", stockSignal.getSignalType());
+					update.set("securityId", stockSignal.getSecurityId());
+					update.set("adxSignal", stockSignal.getAdxSignal());
 					update.set("signalDate", dateUtil.getDateFromLocalDate(stockSignal.getSignalDate()));
-					update.set("signalPresent", stockSignal.getSignalPresent());
+					update.set("adxSignalPresent", stockSignal.getAdxSignalPresent());
 					update.set("oscillatorSignal", stockSignal.getOscillatorSignal());
-					update.set("signalPresentOscillator", stockSignal.getSignalPresent());
+					update.set("signalPresentOscillator", stockSignal.getAdxSignalPresent());
 					update.set("bollingerSignal", stockSignal.getBollingerSignal());
 					update.set("signalPresentBollinger", stockSignal.getSignalPresentBollinger());
 					update.set("movingAverageSignal_SmallTerm", stockSignal.getMovingAverageSignal_SmallTerm());
@@ -329,10 +268,10 @@ public class StockSignalsRepository {
 
 					Query query1 = new Query();
 					query1.addCriteria(Criteria.where("signalDate")
-							.is(dateUtil.getDateFromLocalDate(stockSignalsComponent.getSignalDate())).and("symbol")
-							.is(stockSignalsComponent.getSymbol()));
+							.is(dateUtil.getDateFromLocalDate(stockSignalsComponent.getSignalDate())).and("securityId")
+							.is(stockSignalsComponent.getSecurityId()));
 					Update update1 = new Update();
-					update1.set("symbol", stockSignalsComponent.getSymbol());
+					update1.set("securityId", stockSignalsComponent.getSecurityId());
 					update1.set("signalDate", dateUtil.getDateFromLocalDate(stockSignalsComponent.getSignalDate()));
 					update1.set("TR", stockSignalsComponent.getTR());
 					update1.set("plusDM1", stockSignalsComponent.getPlusDM1());
@@ -370,13 +309,19 @@ public class StockSignalsRepository {
 				com.mongodb.BulkWriteResult result = operation.execute();
 				com.mongodb.BulkWriteResult result1 = operation1.execute();
 
-				logger.debug("Update count:" + result.getModifiedCount() + " Inserted Count:"
-						+ result.getInsertedCount() + " removed count:" + result.getRemovedCount() + " matched count:"
-						+ result.getMatchedCount());
-				logger.debug("Update count:" + result1.getModifiedCount() + " Inserted Count:"
-						+ result1.getInsertedCount() + " removed count:" + result1.getRemovedCount() + " matched count:"
-						+ result1.getMatchedCount());
-
+				// logger.debug("Update count:" + result.getModifiedCount() + "
+				// Inserted Count:"
+				// + result.getInsertedCount() + " removed count:" +
+				// result.getRemovedCount() + " matched count:"
+				// + result.getMatchedCount());
+				// logger.debug("Update count:" + result1.getModifiedCount() + "
+				// Inserted Count:"
+				// + result1.getInsertedCount() + " removed count:" +
+				// result1.getRemovedCount() + " matched count:"
+				// + result1.getMatchedCount());
+			}
+			if (isTodaySignalsUpdate) {
+				refreshCachefromTodaySignals(stockSignalsList);
 			}
 		} else {
 			throw new IntelliinvestException("invalid input data....");
@@ -384,61 +329,183 @@ public class StockSignalsRepository {
 	}
 
 	public Map<String, List<StockSignalsDTO>> getStockSignalsFromStartDate(LocalDate date, int ma) {
-		logger.debug("getting complete stock Signal from start date " + date + " and ma " + ma);
-		Map<String, List<StockSignalsDTO>> stockSignalsDTOMap = new HashMap<String, List<StockSignalsDTO>>();
+		// logger.debug("getting complete stock Signal from start date " + date
+		// + " and ma " + ma);
+		Map<String, List<StockSignalsDTO>> stockSignalsDTOMap = null;
+		try {
+			stockSignalsDTOMap = new HashMap<String, List<StockSignalsDTO>>();
+			Query query = new Query();
+			query.with(new Sort(Sort.Direction.ASC, "signalDate"));
+			query.addCriteria(Criteria.where("signalDate").gte(date));
 
-		Query query = new Query();
-		query.with(new Sort(Sort.Direction.ASC, "signalDate"));
-		query.addCriteria(Criteria.where("signalDate").gte(date));
+			List<StockSignals> stockSignalsList = mongoTemplate.find(query, StockSignals.class,
+					COLLECTION_STOCK_SIGNALS);
 
-		List<StockSignals> stockSignalsList = mongoTemplate.find(query, StockSignals.class, COLLECTION_STOCK_SIGNALS);
+			List<StockSignalsComponents> stockSignalsComponentsList = mongoTemplate.find(query,
+					StockSignalsComponents.class,
+					COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, ma + ""));
 
-		List<StockSignalsComponents> stockSignalsComponentsList = mongoTemplate.find(query,
-				StockSignalsComponents.class, COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, ma + ""));
+			List<StockSignalsDTO> stockSignalsDTO = IntelliinvestConverter.convertBO2DTO(stockSignalsComponentsList,
+					stockSignalsList);
 
-		List<StockSignalsDTO> stockSignalsDTO = IntelliinvestConverter.convertBO2DTO(stockSignalsComponentsList,
-				stockSignalsList);
-
-		for (StockSignalsDTO signalComponent : stockSignalsDTO) {
-			String symbol = signalComponent.getSymbol();
-			List<StockSignalsDTO> stockSignalsDTOs = stockSignalsDTOMap.get(symbol);
-			if (stockSignalsDTOs == null) {
-				stockSignalsDTOs = new ArrayList<StockSignalsDTO>();
-				stockSignalsDTOMap.put(symbol, stockSignalsDTOs);
+			for (StockSignalsDTO signalComponent : stockSignalsDTO) {
+				String securityId = signalComponent.getSecurityId();
+				List<StockSignalsDTO> stockSignalsDTOs = stockSignalsDTOMap.get(securityId);
+				if (stockSignalsDTOs == null) {
+					stockSignalsDTOs = new ArrayList<StockSignalsDTO>();
+					stockSignalsDTOMap.put(securityId, stockSignalsDTOs);
+				}
+				stockSignalsDTOs.add(signalComponent);
 			}
-			stockSignalsDTOs.add(signalComponent);
+		} catch (Exception e) {
+			logger.info("Exception while getting stock signals for all stocks...");
 		}
 		return stockSignalsDTOMap;
 	}
 
-	public List<StockSignalsDTO> getStockSignalsFromStartDate(LocalDate startDate, String symbol, int ma) {
-		logger.info("Inside getStockSignalsFromStartDate()..." + startDate);
+	public List<StockSignalsDTO> getStockSignalsFromStartDate(LocalDate startDate, String securityId, int ma) {
+		// logger.info("Inside getStockSignalsFromStartDate()..." + startDate);
 		Query query = new Query();
 		query.with(new Sort(Sort.Direction.ASC, "signalDate"));
-		query.addCriteria(Criteria.where("signalDate").gte(startDate).and("symbol").is(symbol));
+		query.addCriteria(Criteria.where("signalDate").gte(startDate).and("securityId").is(securityId));
 		List<StockSignals> stockSignalsList = mongoTemplate.find(query, StockSignals.class, COLLECTION_STOCK_SIGNALS);
 
-		List<StockSignalsComponents> stockSignalsComponentsList = mongoTemplate.find(
-				Query.query(Criteria.where("signalDate").gte(startDate).and("symbol").is(symbol)),
+		List<StockSignalsComponents> stockSignalsComponentsList = mongoTemplate.find(query,
 				StockSignalsComponents.class, COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, ma + ""));
 		if (stockSignalsList != null && stockSignalsComponentsList != null
 				&& stockSignalsList.size() == stockSignalsComponentsList.size())
 			return IntelliinvestConverter.convertBO2DTO(stockSignalsComponentsList, stockSignalsList);
-		else
+		else {
+			logger.info("Stock list size :" + stockSignalsList.size() + " and components list size is : "
+					+ stockSignalsComponentsList.size());
 			return null;
+		}
 	}
 
 	public List<StockSignals> getTechnicalAnalysisData() {
-		logger.debug("Inside getTechnicalAnalysisData...");
-		LocalDate date = dateUtil.getLastBusinessDate();
-		logger.debug("last business date is:" + date);
-		Query query = Query.query(Criteria.where("signalDate").is(date).orOperator(
-				Criteria.where("signalPresent").is("Y"), Criteria.where("signalPresentOscillator").is("Y"),
-				Criteria.where("signalPresentBollinger").is("Y"),
-				Criteria.where("movingAverageSignal_Main_present").is("Y")));
-		List<StockSignals> stockSignalsList = mongoTemplate.find(query, StockSignals.class, COLLECTION_STOCK_SIGNALS);
-		logger.debug("Stock Signals list size is: " + stockSignalsList.size());
-		return stockSignalsList;
+		List<StockSignals> signalList = new ArrayList<StockSignals>(signalCache.values());
+		List<StockSignals> retList = signalList.parallelStream().filter(s -> ((s.getAdxSignalPresent() != null
+				&& s.getAdxSignalPresent().equals(IntelliinvestConstants.SIGNAL_PRESENT))
+				|| (s.getSignalPresentBollinger() != null
+						&& s.getSignalPresentBollinger().equals(IntelliinvestConstants.SIGNAL_PRESENT))
+				|| (s.getSignalPresentOscillator() != null
+						&& s.getSignalPresentOscillator().equals(IntelliinvestConstants.SIGNAL_PRESENT))
+				|| (s.getMovingAverageSignal_Main_present() != null
+						&& s.getMovingAverageSignal_Main_present().equals(IntelliinvestConstants.SIGNAL_PRESENT))))
+				.collect(Collectors.toList());
+
+		List<String> nullList = signalList.stream()
+				.filter(s -> (s.getAdxSignalPresent() == null || s.getSignalPresentBollinger() == null
+						|| s.getSignalPresentOscillator() == null || s.getMovingAverageSignal_Main_present() == null))
+				.map(StockSignals::getSecurityId).collect(Collectors.toList());
+
+		logger.info("Null Signals list size is :" + nullList.size());
+		logger.info("Signals with some null signals are: " + nullList.toString());
+		logger.debug("Stock-Signals list size is: " + retList.size());
+		return retList;
+
 	}
 
+	private LocalDate getLastDate(int timePeriod) {
+		return dateUtil.substractDays(dateUtil.getLocalDate(), 365 * timePeriod);
+	}
+
+	private StockSignalsArchiveResponse getArchiveResponse(LocalDate date, String securityId,
+			List<StockSignals> stockSignalsList, List<StockSignalsComponents> stockSignalsComponentsList,
+			List<StockSignalsDTO> stockSignalsDTOs) {
+
+		StockSignalsArchiveResponse stockSignalsArchiveResponse = new StockSignalsArchiveResponse();
+		stockSignalsArchiveResponse.setStockSignalsList(stockSignalsList);
+		stockSignalsArchiveResponse.setSecurityId(securityId);
+
+		if (stockSignalsDTOs == null)
+			stockSignalsDTOs = IntelliinvestConverter.convertBO2DTO(stockSignalsComponentsList, stockSignalsList);
+
+		List<QuandlStockPrice> quandlStockPrices = quandlEODStockPriceRepository.getStockPricesFromStartDate(securityId,
+				date);
+
+		Map<LocalDate, Double> priceMap = new HashMap<LocalDate, Double>();
+		QuandlStockPrice lastQuandlStockPrice = null;
+		for (QuandlStockPrice quandlStockPrice : quandlStockPrices) {
+			priceMap.put(quandlStockPrice.getEodDate(), quandlStockPrice.getClose());
+			lastQuandlStockPrice = quandlStockPrice;
+		}
+
+		// logger.info(priceMap.toString());
+		List<StockSignalsDTO> stockSignalsDTOsWithADXSignalPresnt = new ArrayList<StockSignalsDTO>();
+		List<StockSignalsDTO> stockSignalsDTOsWithOscSignalPresnt = new ArrayList<StockSignalsDTO>();
+		List<StockSignalsDTO> stockSignalsDTOsWithBollSignalPresnt = new ArrayList<StockSignalsDTO>();
+		List<StockSignalsDTO> stockSignalsDTOsWithMovingAveragePresnt = new ArrayList<StockSignalsDTO>();
+
+		logger.info("Stock Signals list size is :" + stockSignalsDTOs.size());
+		StockSignalsDTO lastStockSignalsDTO = null;
+		for (StockSignalsDTO stockSignalsDTO : stockSignalsDTOs) {
+			if (IntelliinvestConstants.SIGNAL_PRESENT.equals(stockSignalsDTO.getAdxSignalPresent())) {
+				stockSignalsDTOsWithADXSignalPresnt.add(stockSignalsDTO);
+			}
+
+			if (IntelliinvestConstants.SIGNAL_PRESENT.equals(stockSignalsDTO.getSignalPresentBollinger())) {
+				stockSignalsDTOsWithBollSignalPresnt.add(stockSignalsDTO);
+			}
+
+			if (IntelliinvestConstants.SIGNAL_PRESENT.equals(stockSignalsDTO.getSignalPresentOscillator())) {
+				stockSignalsDTOsWithOscSignalPresnt.add(stockSignalsDTO);
+			}
+			if (IntelliinvestConstants.SIGNAL_PRESENT
+					.equals(stockSignalsDTO.getMovingAverageSignals().getMovingAverageSignal_Main_present())) {
+				stockSignalsDTOsWithMovingAveragePresnt.add(stockSignalsDTO);
+			}
+			// logger.debug("Stock Signals object: " +
+			// stockSignalsDTO.toString());
+			lastStockSignalsDTO = stockSignalsDTO;
+		}
+
+		stockSignalsArchiveResponse.setAdxPnl(Helper.formatDecimalNumber(magicNumberGenerator.getPnlADX(priceMap,
+				stockSignalsDTOsWithADXSignalPresnt, lastQuandlStockPrice, lastStockSignalsDTO)));
+
+		stockSignalsArchiveResponse
+				.setOscillatorPnl(Helper.formatDecimalNumber(magicNumberGenerator.getPnlOscillator(priceMap,
+						stockSignalsDTOsWithOscSignalPresnt, lastQuandlStockPrice, lastStockSignalsDTO)));
+
+		stockSignalsArchiveResponse
+				.setBollingerPnl(Helper.formatDecimalNumber(magicNumberGenerator.getPnlBollinger(priceMap,
+						stockSignalsDTOsWithBollSignalPresnt, lastQuandlStockPrice, lastStockSignalsDTO)));
+
+		stockSignalsArchiveResponse
+				.setMovingAveragePnl(Helper.formatDecimalNumber(magicNumberGenerator.getPnlMovingAverage(priceMap,
+						stockSignalsDTOsWithMovingAveragePresnt, lastQuandlStockPrice, lastStockSignalsDTO)));
+
+		QuandlStockPrice stockPrice_first = quandlStockPrices.get(0);
+		QuandlStockPrice stockPrice_last = quandlStockPrices.get(quandlStockPrices.size() - 1);
+
+		double holdBuyPnl = ((stockPrice_last.getClose() - stockPrice_first.getClose()) / stockPrice_first.getClose())
+				* 100;
+
+		stockSignalsArchiveResponse.setHoldBuyPnl(Helper.formatDecimalNumber(holdBuyPnl));
+		stockSignalsArchiveResponse.setSuccess(true);
+		stockSignalsArchiveResponse.setMessage("Data has been returned successfully...");
+
+		QuandlStockPrice quandlStockPrice = quandlEODStockPriceRepository.getEODStockPrice(securityId);
+		StockPrice stockPrice = stockRepository.getStockPriceById(securityId);
+
+		setPriceInformation(stockSignalsArchiveResponse, quandlStockPrice, stockPrice);
+
+		return stockSignalsArchiveResponse;
+	}
+
+	private void setPriceInformation(StockSignalsArchiveResponse stockSignalsArchiveResponse,
+			QuandlStockPrice quandlStockPrice, StockPrice stockPrice) {
+		if (stockPrice != null) {
+			stockSignalsArchiveResponse.setCurrentPrice(stockPrice.getCurrentPrice());
+			stockSignalsArchiveResponse.setCp(stockPrice.getCp());
+			stockSignalsArchiveResponse.setCurrentPriceExchange(stockPrice.getExchange());
+			stockSignalsArchiveResponse.setCurrentPriceUpdateDate(stockPrice.getUpdateDate());
+		}
+		if (quandlStockPrice != null) {
+			stockSignalsArchiveResponse.setEodDate(quandlStockPrice.getEodDate());
+			stockSignalsArchiveResponse.setEodPrice(quandlStockPrice.getClose());
+			stockSignalsArchiveResponse.setEodPriceExchange(quandlStockPrice.getExchange());
+			stockSignalsArchiveResponse.setEodPriceUpdateDate(quandlStockPrice.getUpdateDate());
+		}
+	}
 }

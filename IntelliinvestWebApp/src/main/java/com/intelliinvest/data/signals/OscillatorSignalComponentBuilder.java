@@ -2,22 +2,26 @@ package com.intelliinvest.data.signals;
 
 import org.apache.log4j.Logger;
 
+import com.intelliinvest.common.IntelliinvestConstants;
 import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.data.model.StockSignalsDTO;
 
-public class OscillatorSignalComponentBuilder implements SignalComponentBuilder{
-	private static Logger logger = Logger.getLogger(OscillatorSignalComponentBuilder.class);
+public class OscillatorSignalComponentBuilder implements SignalComponentBuilder {
+	private static Logger logger = Logger
+			.getLogger(OscillatorSignalComponentBuilder.class);
 
 	public void generateSignal(SignalComponentHolder signalComponentHolder) {
 		double max_high = 0;
 		double lowest = Double.MAX_VALUE;
 
-		QuandlStockPrice QuandlStockPrice = signalComponentHolder.getQuandlStockPrices().getLast();
+		QuandlStockPrice QuandlStockPrice = signalComponentHolder
+				.getQuandlStockPrices().getLast();
 
 		double today_close_price = QuandlStockPrice.getClose();
 
 		// getting max high and lowest of all
-		for (QuandlStockPrice QuandlStockPriceTemp : signalComponentHolder.getQuandlStockPrices()) {
+		for (QuandlStockPrice QuandlStockPriceTemp : signalComponentHolder
+				.getQuandlStockPrices()) {
 			double high = QuandlStockPriceTemp.getHigh();
 			double low = QuandlStockPriceTemp.getLow();
 
@@ -34,82 +38,110 @@ public class OscillatorSignalComponentBuilder implements SignalComponentBuilder{
 
 		double stochastic10Day = 100 * (today_close_price - lowest) / range;
 
-		StockSignalsDTO stockSignalsDTO = signalComponentHolder.getStockSignalsDTOs().getLast();
-		
+		StockSignalsDTO stockSignalsDTO = signalComponentHolder
+				.getStockSignalsDTOs().getLast();
+
 		stockSignalsDTO.setHigh10Day(max_high);
 		stockSignalsDTO.setLow10Day(lowest);
 		stockSignalsDTO.setRange10Day(range);
 		stockSignalsDTO.setStochastic10Day(stochastic10Day);
-		
+
+		if (stockSignalsDTO.getSplitMultiplier() == 0)
+			stockSignalsDTO.setSplitMultiplier(1D);
 		int size = signalComponentHolder.getStockSignalsDTOs().size();
-		if(size<signalComponentHolder.getStockSignalsDTOSize()){
+		if (size < signalComponentHolder.getStockSignalsDTOSize()) {
 			return;
 		}
-		StockSignalsDTO stockSignalsDTO_1 = signalComponentHolder.getStockSignalsDTOs().get(size-2);
-		StockSignalsDTO stockSignalsDTO_2 = signalComponentHolder.getStockSignalsDTOs().get(size-3);
-		
-		if(signalComponentHolder.getStockSignalsDTOs().size()>=3){
-			Double percentKFlow = getPercentKFlow(stockSignalsDTO_1.getStochastic10Day(),
+		StockSignalsDTO stockSignalsDTO_1 = signalComponentHolder
+				.getStockSignalsDTOs().get(size - 2);
+		StockSignalsDTO stockSignalsDTO_2 = signalComponentHolder
+				.getStockSignalsDTOs().get(size - 3);
+
+		if (signalComponentHolder.getStockSignalsDTOs().size() >= 3) {
+			Double percentKFlow = getPercentKFlow(
+					stockSignalsDTO_1.getStochastic10Day(),
 					stockSignalsDTO_2.getStochastic10Day(), stochastic10Day);
-	
+
 			Double percentDFlow = null;
 			if (percentKFlow != null) {
-				percentDFlow = getPercentDFlow(stockSignalsDTO_1.getPercentKFlow(),
+				percentDFlow = getPercentDFlow(
+						stockSignalsDTO_1.getPercentKFlow(),
 						stockSignalsDTO_2.getPercentKFlow(), percentKFlow);
 			}
 			stockSignalsDTO.setPercentDFlow(percentDFlow);
 			stockSignalsDTO.setPercentKFlow(percentKFlow);
 			if (percentDFlow != null) {
 				String signal = "";
-				String signalPresent = "Y";
-				if (percentDFlow > signalComponentHolder.getMagicNumberOscillator() && percentKFlow > percentDFlow)
-					signal = "Buy";
-				else if (percentDFlow > (100 - signalComponentHolder.getMagicNumberOscillator()) && percentKFlow < percentDFlow)
-					signal = "Sell";
+				String signalPresent = IntelliinvestConstants.SIGNAL_PRESENT;
+				if (percentDFlow > signalComponentHolder
+						.getMagicNumberOscillator()
+						&& percentKFlow > percentDFlow)
+					signal = IntelliinvestConstants.BUY;
+				else if (percentDFlow > (100 - signalComponentHolder
+						.getMagicNumberOscillator())
+						&& percentKFlow < percentDFlow)
+					signal = IntelliinvestConstants.SELL;
 				else {
 					if (stockSignalsDTO_1.getOscillatorSignal() != null
-							&& (stockSignalsDTO_1.getOscillatorSignal().equals("Buy")
-									|| stockSignalsDTO_1.getOscillatorSignal().equals("Hold"))) {
-						signal = "Hold";
+							&& (stockSignalsDTO_1.getOscillatorSignal().equals(
+									IntelliinvestConstants.BUY) || stockSignalsDTO_1
+									.getOscillatorSignal().equals(
+											IntelliinvestConstants.HOLD))) {
+						signal = IntelliinvestConstants.HOLD;
 					} else {
-						signal = "Wait";
+						signal = IntelliinvestConstants.WAIT;
 					}
 				}
-	
-				if (signal.equals("Buy") && (stockSignalsDTO_1.getOscillatorSignal() != null
-						&& (stockSignalsDTO_1.getOscillatorSignal().equals("Buy")
-								|| stockSignalsDTO_1.getOscillatorSignal().equals("Hold")))) {
-					signalPresent = "N";
-				} else if (signal.equals("Hold") && (stockSignalsDTO_1.getOscillatorSignal() != null
-						&& (stockSignalsDTO_1.getOscillatorSignal().equals("Buy")
-								|| stockSignalsDTO_1.getOscillatorSignal().equals("Hold")))) {
-					signalPresent = "N";
-				} else if (signal.equals("Sell") && (stockSignalsDTO_1.getOscillatorSignal() != null
-						&& (stockSignalsDTO_1.getOscillatorSignal().equals("Sell")
-								|| stockSignalsDTO_1.getOscillatorSignal().equals("Wait")))) {
-					signalPresent = "N";
-				} else if (signal.equals("Wait") && (stockSignalsDTO_1.getOscillatorSignal() != null
-						&& (stockSignalsDTO_1.getOscillatorSignal().equals("Sell")
-								|| stockSignalsDTO_1.getOscillatorSignal().equals("Wait")))) {
-					signalPresent = "N";
+
+				if (signal.equals(IntelliinvestConstants.BUY)
+						&& (stockSignalsDTO_1.getOscillatorSignal() != null && (stockSignalsDTO_1
+								.getOscillatorSignal().equals(
+										IntelliinvestConstants.BUY) || stockSignalsDTO_1
+								.getOscillatorSignal().equals(
+										IntelliinvestConstants.HOLD)))) {
+					signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
+				} else if (signal.equals(IntelliinvestConstants.HOLD)
+						&& (stockSignalsDTO_1.getOscillatorSignal() != null && (stockSignalsDTO_1
+								.getOscillatorSignal().equals(
+										IntelliinvestConstants.BUY) || stockSignalsDTO_1
+								.getOscillatorSignal().equals(
+										IntelliinvestConstants.HOLD)))) {
+					signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
+				} else if (signal.equals(IntelliinvestConstants.SELL)
+						&& (stockSignalsDTO_1.getOscillatorSignal() != null && (stockSignalsDTO_1
+								.getOscillatorSignal().equals(
+										IntelliinvestConstants.SELL) || stockSignalsDTO_1
+								.getOscillatorSignal().equals(
+										IntelliinvestConstants.WAIT)))) {
+					signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
+				} else if (signal.equals(IntelliinvestConstants.WAIT)
+						&& (stockSignalsDTO_1.getOscillatorSignal() != null && (stockSignalsDTO_1
+								.getOscillatorSignal().equals(
+										IntelliinvestConstants.SELL) || stockSignalsDTO_1
+								.getOscillatorSignal().equals(
+										IntelliinvestConstants.WAIT)))) {
+					signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
 				}
 				stockSignalsDTO.setOscillatorSignal(signal);
 				stockSignalsDTO.setSignalPresentOscillator(signalPresent);
-//				stockSignalsDTO.setPreviousOscillatorSignal(stockSignalsDTO_1.getOscillatorSignal());
+				// stockSignalsDTO.setPreviousOscillatorSignal(stockSignalsDTO_1.getOscillatorSignal());
 			}
 		}
 	}
-	
-	private Double getPercentKFlow(Double stochastic10Day_1, Double stochastic10Day_2, double stochastic10Day_3) {
+
+	private Double getPercentKFlow(Double stochastic10Day_1,
+			Double stochastic10Day_2, double stochastic10Day_3) {
 		if (stochastic10Day_1 == null || stochastic10Day_2 == null) {
 			logger.info("Null entry for stochastic, so returning null for percentkflow....");
 			return null;
 		} else
-			return average(stochastic10Day_1, stochastic10Day_2, stochastic10Day_3);
+			return average(stochastic10Day_1, stochastic10Day_2,
+					stochastic10Day_3);
 
 	}
 
-	private Double getPercentDFlow(Double percentKFlow_1, Double percentKFlow_2, double percentKFlow_3) {
+	private Double getPercentDFlow(Double percentKFlow_1,
+			Double percentKFlow_2, double percentKFlow_3) {
 		if (percentKFlow_1 == null || percentKFlow_2 == null)
 			return null;
 		else
@@ -120,5 +152,5 @@ public class OscillatorSignalComponentBuilder implements SignalComponentBuilder{
 	private Double average(Double value1, Double value2, Double value3) {
 		return (value1 + value2 + value3) / 3;
 	}
-	
+
 }

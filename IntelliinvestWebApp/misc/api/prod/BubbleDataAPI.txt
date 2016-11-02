@@ -1,0 +1,46 @@
+
+1.  Request URL: http://localhost:8080/IntelliinvestWebApp/rest/bubbleData/technical
+
+Response:
+
+[
+  {
+    "date": "2014-01-01",
+    "noOfBuyHold": 0,
+    "noOfSellWait": 285,
+    "totalNo": 285,
+    "percentageBuyHold": 0,
+    "percentageSellWait": 100
+  },
+  {
+    "date": "2014-01-02",
+    "noOfBuyHold": 0,
+    "noOfSellWait": 296,
+    "totalNo": 296,
+    "percentageBuyHold": 0,
+    "percentageSellWait": 100
+  },
+  {
+    "date": "2014-01-03",
+    "noOfBuyHold": 0,
+    "noOfSellWait": 296,
+    "totalNo": 296,
+    "percentageBuyHold": 0,
+    "percentageSellWait": 100
+  },
+  {
+    "date": "2014-01-06",
+    "noOfBuyHold": 0,
+    "noOfSellWait": 291,
+    "totalNo": 291,
+    "percentageBuyHold": 0,
+    "percentageSellWait": 100
+  }
+  
+  .
+  .
+  .
+  .
+  . 
+  upto the current date
+ ]

@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import org.apache.log4j.Logger;
 
+import com.intelliinvest.common.IntelliinvestConstants;
 import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.data.model.StockSignalsDTO;
 
@@ -44,46 +45,46 @@ public class BollingerSignalComponentBuilder implements SignalComponentBuilder{
 		
 		if (bandwidth != null && bandwidth != -1) {
 			String signal = "";
-			String signalPresent = "Y";
+			String signalPresent = IntelliinvestConstants.SIGNAL_PRESENT;
 			if (bandwidth > signalComponentHolder.getMagicNumberBolliger() && plusDIn > minusDIn)
-				signal = "Buy";
+				signal = IntelliinvestConstants.BUY;
 			else if (bandwidth > signalComponentHolder.getMagicNumberBolliger() && plusDIn < minusDIn)
-				signal = "Sell";
+				signal = IntelliinvestConstants.SELL;
 			else {
 				if (previousStockSignalsDTO.getBollingerSignal() != null
-						&& (previousStockSignalsDTO.getBollingerSignal().equals("Buy")
-								|| previousStockSignalsDTO.getBollingerSignal().equals("Hold"))) {
-					signal = "Hold";
+						&& (previousStockSignalsDTO.getBollingerSignal().equals(IntelliinvestConstants.BUY)
+								|| previousStockSignalsDTO.getBollingerSignal().equals(IntelliinvestConstants.HOLD))) {
+					signal = IntelliinvestConstants.HOLD;
 				} else {
-					signal = "Wait";
+					signal = IntelliinvestConstants.WAIT;
 				}
 			}
 
-			if (signal.equals("Buy") && (previousStockSignalsDTO.getBollingerSignal() != null
-					&& (previousStockSignalsDTO.getBollingerSignal().equals("Buy")
-							|| previousStockSignalsDTO.getBollingerSignal().equals("Hold")))) {
-				signalPresent = "N";
-			} else if (signal.equals("Hold") && (previousStockSignalsDTO.getBollingerSignal() != null
-					&& (previousStockSignalsDTO.getBollingerSignal().equals("Buy")
-							|| previousStockSignalsDTO.getBollingerSignal().equals("Hold")))) {
-				signalPresent = "N";
-			} else if (signal.equals("Sell") && (previousStockSignalsDTO.getBollingerSignal() != null
-					&& (previousStockSignalsDTO.getBollingerSignal().equals("Sell")
-							|| previousStockSignalsDTO.getBollingerSignal().equals("Wait")))) {
-				signalPresent = "N";
-			} else if (signal.equals("Wait") && (previousStockSignalsDTO.getBollingerSignal() != null
-					&& (previousStockSignalsDTO.getBollingerSignal().equals("Sell")
-							|| previousStockSignalsDTO.getBollingerSignal().equals("Wait")))) {
-				signalPresent = "N";
+			if (signal.equals(IntelliinvestConstants.BUY) && (previousStockSignalsDTO.getBollingerSignal() != null
+					&& (previousStockSignalsDTO.getBollingerSignal().equals(IntelliinvestConstants.BUY)
+							|| previousStockSignalsDTO.getBollingerSignal().equals(IntelliinvestConstants.HOLD)))) {
+				signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
+			} else if (signal.equals(IntelliinvestConstants.HOLD) && (previousStockSignalsDTO.getBollingerSignal() != null
+					&& (previousStockSignalsDTO.getBollingerSignal().equals(IntelliinvestConstants.BUY)
+							|| previousStockSignalsDTO.getBollingerSignal().equals(IntelliinvestConstants.HOLD)))) {
+				signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
+			} else if (signal.equals(IntelliinvestConstants.SELL) && (previousStockSignalsDTO.getBollingerSignal() != null
+					&& (previousStockSignalsDTO.getBollingerSignal().equals(IntelliinvestConstants.SELL)
+							|| previousStockSignalsDTO.getBollingerSignal().equals(IntelliinvestConstants.WAIT)))) {
+				signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
+			} else if (signal.equals(IntelliinvestConstants.WAIT) && (previousStockSignalsDTO.getBollingerSignal() != null
+					&& (previousStockSignalsDTO.getBollingerSignal().equals(IntelliinvestConstants.SELL)
+							|| previousStockSignalsDTO.getBollingerSignal().equals(IntelliinvestConstants.WAIT)))) {
+				signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
 			}
 			stockSignalsDTO.setBollingerSignal(signal);
 			stockSignalsDTO.setSignalPresentBollinger(signalPresent);
 //			stockSignalsDTO.setPreviousBollingerSignal(previousStockSignalsDTO.getBollingerSignal());
 		} else {
-			logger.info("No bollinger signals has been generating for code:" + stockSignalsDTO.getSymbol() + "--"
+			logger.info("No bollinger signals has been generating for code:" + stockSignalsDTO.getSecurityId() + "--"
 					+ stockSignalsDTO.getSignalDate());
-			stockSignalsDTO.setBollingerSignal("Wait");
-			stockSignalsDTO.setSignalPresentBollinger("N");
+			stockSignalsDTO.setBollingerSignal(IntelliinvestConstants.WAIT);
+			stockSignalsDTO.setSignalPresentBollinger(IntelliinvestConstants.SIGNAL_NOT_PRESENT);
 		}
 	}
 	

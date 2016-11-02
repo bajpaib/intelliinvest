@@ -8,7 +8,7 @@ public class SignalComponentInitilaizer{
 	public void init(SignalComponentHolder signalComponentHolder, QuandlStockPrice quandlStockPrice){
 		signalComponentHolder.addQuandlStockPrice(quandlStockPrice);
 		StockSignalsDTO stockSignalsDTO = new StockSignalsDTO();
-		stockSignalsDTO.setSymbol(quandlStockPrice.getSecurityId());
+		stockSignalsDTO.setSecurityId(quandlStockPrice.getSecurityId());
 		stockSignalsDTO.setSignalDate(quandlStockPrice.getEodDate());
 		signalComponentHolder.addStockSignalsDTO(stockSignalsDTO);
 	}

@@ -19,11 +19,11 @@ http://104.199.173.131/IntelliinvestWebApp/rest/industry/getLatestIndustryFundam
 http://104.199.173.131/IntelliinvestWebApp/rest/industry/getIndustryFundamentalsForDate?name=BANKING&date=2016-10-19
 
 6. For a given industry and attribute, return the time series for industry(date, attributeValue)
+
 http://104.199.173.131/IntelliinvestWebApp/rest/industry/getIndustryAnalysisTimeSeries?name=BANKING&attrName=alMarketCap
 
 7. For a given industry get top 10 stocks
 http://104.199.173.131/IntelliinvestWebApp/rest/stock/getTopStocksForIndustry?name=BANKING
-
 
 AttributeNames
 --------------

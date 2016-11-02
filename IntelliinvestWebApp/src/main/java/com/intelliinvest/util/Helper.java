@@ -1,5 +1,6 @@
 package com.intelliinvest.util;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Set;
 
@@ -24,6 +25,11 @@ public class Helper {
 			return true;
 		else
 			return false;
+	}
+
+	public static String formatDecimalNumber(Double doubleNum){
+		DecimalFormat df = new DecimalFormat("###.##");
+		return df.format(doubleNum);
 	}
 
 }

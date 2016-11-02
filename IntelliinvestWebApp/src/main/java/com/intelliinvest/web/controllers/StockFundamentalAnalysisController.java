@@ -28,7 +28,6 @@ import com.intelliinvest.data.dao.StockFundamentalsRepository;
 import com.intelliinvest.data.dao.StockRepository;
 import com.intelliinvest.data.forecast.StockFundamentalAnalysisForecaster;
 import com.intelliinvest.data.model.IndustryFundamentals;
-import com.intelliinvest.data.model.PortfolioItem;
 import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.data.model.Stock;
 import com.intelliinvest.data.model.StockFundamentalAnalysis;
@@ -318,9 +317,9 @@ public class StockFundamentalAnalysisController {
 				for (String id : securityIds) {
 					StockFundamentalAnalysis stockAnalysis = stockFundamentalAnalysisRepository
 							.getLatestStockFundamentalAnalysis(id);
-					if(stockAnalysis!=null){
+					if (stockAnalysis != null) {
 						stockAnalysisList.add(stockAnalysis);
-					}					
+					}
 				}
 				// sort the list by points in desc order
 				stockAnalysisList.sort(new Comparator<StockFundamentalAnalysis>() {
@@ -333,23 +332,24 @@ public class StockFundamentalAnalysisController {
 					StockFundamentalAnalysis stockAnalysis = stockAnalysisList.get(i);
 					Stock stock = stockRepository.getStockById(stockAnalysis.getSecurityId());
 					StockPrice stockPrice = stockRepository.getStockPriceById(stockAnalysis.getSecurityId());
-					QuandlStockPrice quandlStockPrice = quandlEODStockPriceRepository.getEODStockPrice(stockAnalysis.getSecurityId());
-					
+					QuandlStockPrice quandlStockPrice = quandlEODStockPriceRepository
+							.getEODStockPrice(stockAnalysis.getSecurityId());
+
 					StockPriceResponse res = new StockPriceResponse();
 					res.setSecurityId(stockAnalysis.getSecurityId());
-					if(stock!=null){
+					if (stock != null) {
 						res.setName(name);
 					}
-					
-					res.setCurrentPrice(MathUtil.round(stockPrice!=null ? stockPrice.getCurrentPrice() : 0));
-					res.setEodPrice(MathUtil.round(quandlStockPrice!=null ? quandlStockPrice.getClose() : 0));
 
-					if(!MathUtil.isNearZero(res.getCurrentPrice()) && !MathUtil.isNearZero(res.getEodPrice())){
-						double pctChange = ((res.getCurrentPrice() - res.getEodPrice())/res.getEodPrice())*100;
+					res.setCurrentPrice(MathUtil.round(stockPrice != null ? stockPrice.getCurrentPrice() : 0));
+					res.setEodPrice(MathUtil.round(quandlStockPrice != null ? quandlStockPrice.getClose() : 0));
+
+					if (!MathUtil.isNearZero(res.getCurrentPrice()) && !MathUtil.isNearZero(res.getEodPrice())) {
+						double pctChange = ((res.getCurrentPrice() - res.getEodPrice()) / res.getEodPrice()) * 100;
 						res.setPctChange(MathUtil.round(pctChange));
-					}else{
+					} else {
 						res.setPctChange(0);
-					}	
+					}
 					res.setSuccess(true);
 					response.add(res);
 				}
