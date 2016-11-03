@@ -1,0 +1,35 @@
+1. Copy the files from your local machine to google cloud
+
+gcloud compute copy-files --zone asia-east1-c HOLIDAY_CALENDAR.json mongodb-1-vm:/home/intelliinvest_org1
+gcloud compute copy-files --zone asia-east1-c SEQUENCE.json mongodb-1-vm:/home/intelliinvest_org1
+gcloud compute copy-files --zone asia-east1-c USER.json mongodb-1-vm:/home/intelliinvest_org1
+gcloud compute copy-files --zone asia-east1-c USER_PORTFOLIO.json mongodb-1-vm:/home/intelliinvest_org1
+gcloud compute copy-files --zone asia-east1-c STOCK.json mongodb-1-vm:/home/intelliinvest_org1
+gcloud compute copy-files --zone asia-east1-c STOCK_PRICE.json mongodb-1-vm:/home/intelliinvest_org1
+gcloud compute copy-files --zone asia-east1-c QUANDL_STOCK_PRICE.json mongodb-1-vm:/home/intelliinvest_org1
+gcloud compute copy-files --zone asia-east1-c STOCK_PRICE_FORECAST.json mongodb-1-vm:/home/intelliinvest_org1
+gcloud compute copy-files --zone asia-east1-c STOCK_FUNDAMENTALS.json mongodb-1-vm:/home/intelliinvest_org1
+gcloud compute copy-files --zone asia-east1-c INDUSTRY_FUNDAMENTALS.json mongodb-1-vm:/home/intelliinvest_org1
+gcloud compute copy-files --zone asia-east1-c STOCK_FUNDAMENTAL_ANALYSIS.json mongodb-1-vm:/home/intelliinvest_org1
+gcloud compute copy-files --zone asia-east1-c WATCHLIST.json mongodb-1-vm:/home/intelliinvest_org1
+gcloud compute copy-files --zone asia-east1-c STOCK_SIGNALS.json mongodb-1-vm:/home/intelliinvest_org1
+gcloud compute copy-files --zone asia-east1-c STOCK_SIGNALS_COMPONENTS_10.json mongodb-1-vm:/home/intelliinvest_org1
+gcloud compute copy-files --zone asia-east1-c MAGIC_NUMBER_DATA.json mongodb-1-vm:/home/intelliinvest_org1
+
+2. Open command prompt on mongodb server and and run the following 
+
+mongoimport --db intelliinvest --username intelliinvest_user --password Welcome123 --collection HOLIDAY_CALENDAR --file HOLIDAY_CALENDAR.json
+mongoimport --db intelliinvest --username intelliinvest_user --password Welcome123 --collection SEQUENCE --file SEQUENCE.json
+mongoimport --db intelliinvest --username intelliinvest_user --password Welcome123 --collection USER --file USER.json
+mongoimport --db intelliinvest --username intelliinvest_user --password Welcome123 --collection USER_PORTFOLIO --file USER_PORTFOLIO.json
+mongoimport --db intelliinvest --username intelliinvest_user --password Welcome123 --collection STOCK --file STOCK.json
+mongoimport --db intelliinvest --username intelliinvest_user --password Welcome123 --collection STOCK_PRICE --file STOCK_PRICE.json
+mongoimport --db intelliinvest --username intelliinvest_user --password Welcome123 --collection QUANDL_STOCK_PRICE --file QUANDL_STOCK_PRICE.json
+mongoimport --db intelliinvest --username intelliinvest_user --password Welcome123 --collection STOCK_PRICE_FORECAST --file STOCK_PRICE_FORECAST.json
+mongoimport --db intelliinvest --username intelliinvest_user --password Welcome123 --collection STOCK_FUNDAMENTALS --file STOCK_FUNDAMENTALS.json
+mongoimport --db intelliinvest --username intelliinvest_user --password Welcome123 --collection INDUSTRY_FUNDAMENTALS --file INDUSTRY_FUNDAMENTALS.json
+mongoimport --db intelliinvest --username intelliinvest_user --password Welcome123 --collection STOCK_FUNDAMENTAL_ANALYSIS --file STOCK_FUNDAMENTAL_ANALYSIS.json
+mongoimport --db intelliinvest --username intelliinvest_user --password Welcome123 --collection WATCHLIST --file WATCHLIST.json
+mongoimport --db intelliinvest --username intelliinvest_user --password Welcome123 --collection STOCK_SIGNALS --file STOCK_SIGNALS.json
+mongoimport --db intelliinvest --username intelliinvest_user --password Welcome123 --collection STOCK_SIGNALS_COMPONENTS_10 --file STOCK_SIGNALS_COMPONENTS_10.json
+mongoimport --db intelliinvest --username intelliinvest_user --password Welcome123 --collection MAGIC_NUMBER_DATA --file MAGIC_NUMBER_DATA.json

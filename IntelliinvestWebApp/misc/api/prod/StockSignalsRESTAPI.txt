@@ -1,7 +1,7 @@
 All Request are Get Request.
 
 
-1. http://104.199.173.131/IntelliinvestWebApp/rest/stockSignals/generateTodaySignals?securityId=GDL
+1. http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/generateTodaySignals?securityId=GDL
 
 Response:
 {
@@ -9,7 +9,7 @@ Response:
   "message": "Signals for GDLStock has been generated successfully"
 }
 
-2. http://104.199.173.131/IntelliinvestWebApp/rest/stockSignals/generateAllTodaySignals
+2. http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/generateAllTodaySignals
 
 Note: Not a valid stock code.
 Response:
@@ -19,7 +19,7 @@ Response:
 }
 
 
-3.	http://104.199.173.131/IntelliinvestWebApp/rest/stockSignals/generateSignals?securityId=GDL
+3.	http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/generateSignals?securityId=GDL
 
 Response:
 
@@ -28,7 +28,7 @@ Response:
   "message": "Signals for GDLStock has been generated successfully"
 }
 
-4	http://104.199.173.131/IntelliinvestWebApp/rest/stockSignals/generateAllSignals
+4	http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/generateAllSignals
 
 Note: Not a valid stock code.
 
@@ -39,7 +39,7 @@ Response:
   "message": "Signals for GDL11 Stock has not been generated successfully, some internal error or invalid data. Please Check."
 }
 
-5.	http://104.199.173.131/IntelliinvestWebApp/rest/stockSignals/getBySecurityId?securityId=COSCO
+5.	http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/getBySecurityId?securityId=COSCO
 
 Response:
 {
@@ -72,13 +72,13 @@ Response:
     "eodPriceUpdateDate": "2016-10-24 20:41:18"
 }
 
-6.	http://104.199.173.131/IntelliinvestWebApp/rest/stockSignals/getBySecurityId?securityId=COSCO11
+6.	http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/getBySecurityId?securityId=COSCO11
 
 Note: Not a valid stock code.
 Response:
 {}
 
-7.	http://104.199.173.131/IntelliinvestWebApp/rest/stockSignals/getBySecurityIdAndDate?securityId=ABAN&signalDate=2016-10-07
+7.	http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/getBySecurityIdAndDate?securityId=ABAN&signalDate=2016-10-07
 
 Response:
 {
@@ -103,7 +103,7 @@ Response:
     "aggSignal_previous": "Buy"
 }
 
-8. http://104.199.173.131/IntelliinvestWebApp/rest/stockSignals/getArchive?securityId=COSCO
+8. http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/getArchive?securityId=COSCO
 
 Response:
 {
@@ -170,7 +170,7 @@ Response:
 	]
 }
 
-9.	http://104.199.173.131/IntelliinvestWebApp/rest/stockSignals/getAllLatestSignals
+9.	http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/getAllLatestSignals
 
 Response:
 [
@@ -218,7 +218,7 @@ Response:
   }
 ]
 
-10. http://104.199.173.131/intelliinvestWebApp/rest/stockSignals/getTechnicalAnalysisData
+10. http://107.167.183.167/intelliinvestWebApp/rest/stockSignals/getTechnicalAnalysisData
 
 Response: Last day stocks having either of signal as "Y".
 

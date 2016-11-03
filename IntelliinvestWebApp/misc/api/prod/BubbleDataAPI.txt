@@ -1,5 +1,5 @@
 
-1.  Request URL: http://localhost:8080/IntelliinvestWebApp/rest/bubbleData/technical
+1.  Request URL: http://107.167.183.167/IntelliinvestWebApp/rest/bubbleData/technical
 
 Response:
 

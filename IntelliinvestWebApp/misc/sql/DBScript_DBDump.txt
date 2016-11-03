@@ -1,0 +1,36 @@
+1. Open command prompt on mongodb server and and run the following 
+
+mongoexport --db intelliinvest --username intelliinvest_user --password Welcome123--collection HOLIDAY_CALENDAR --out HOLIDAY_CALENDAR.json
+mongoexport --db intelliinvest --username intelliinvest_user --password Welcome123--collection SEQUENCE --out SEQUENCE.json
+mongoexport --db intelliinvest --username intelliinvest_user --password Welcome123--collection USER --out USER.json
+mongoexport --db intelliinvest --username intelliinvest_user --password Welcome123--collection USER_PORTFOLIO --out USER_PORTFOLIO.json
+mongoexport --db intelliinvest --username intelliinvest_user --password Welcome123--collection STOCK --out STOCK.json
+mongoexport --db intelliinvest --username intelliinvest_user --password Welcome123--collection STOCK_PRICE --out STOCK_PRICE.json
+mongoexport --db intelliinvest --username intelliinvest_user --password Welcome123--collection QUANDL_STOCK_PRICE --out QUANDL_STOCK_PRICE.json
+mongoexport --db intelliinvest --username intelliinvest_user --password Welcome123--collection STOCK_PRICE_FORECAST --out STOCK_PRICE_FORECAST.json
+mongoexport --db intelliinvest --username intelliinvest_user --password Welcome123--collection STOCK_FUNDAMENTALS --out STOCK_FUNDAMENTALS.json
+mongoexport --db intelliinvest --username intelliinvest_user --password Welcome123--collection INDUSTRY_FUNDAMENTALS --out INDUSTRY_FUNDAMENTALS.json
+mongoexport --db intelliinvest --username intelliinvest_user --password Welcome123--collection STOCK_FUNDAMENTAL_ANALYSIS --out STOCK_FUNDAMENTAL_ANALYSIS.json
+mongoexport --db intelliinvest --username intelliinvest_user --password Welcome123--collection WATCHLIST --out WATCHLIST.json
+mongoexport --db intelliinvest --username intelliinvest_user --password Welcome123--collection STOCK_SIGNALS --out STOCK_SIGNALS.json
+mongoexport --db intelliinvest --username intelliinvest_user --password Welcome123--collection STOCK_SIGNALS_COMPONENTS_10 --out STOCK_SIGNALS_COMPONENTS_10.json
+mongoexport --db intelliinvest --username intelliinvest_user --password Welcome123--collection MAGIC_NUMBER_DATA --out MAGIC_NUMBER_DATA.json
+
+2. Copy the files to your local machine
+
+gcloud compute copy-files --zone asia-east1-a mongodb-1-vm:/home/intelliinvest_org/HOLIDAY_CALENDAR.json .
+gcloud compute copy-files --zone asia-east1-a mongodb-1-vm:/home/intelliinvest_org/SEQUENCE.json .
+gcloud compute copy-files --zone asia-east1-a mongodb-1-vm:/home/intelliinvest_org/USER.json .
+gcloud compute copy-files --zone asia-east1-a mongodb-1-vm:/home/intelliinvest_org/USER_PORTFOLIO.json .
+gcloud compute copy-files --zone asia-east1-a mongodb-1-vm:/home/intelliinvest_org/STOCK.json .
+gcloud compute copy-files --zone asia-east1-a mongodb-1-vm:/home/intelliinvest_org/STOCK_PRICE.json .
+gcloud compute copy-files --zone asia-east1-a mongodb-1-vm:/home/intelliinvest_org/QUANDL_STOCK_PRICE.json .
+gcloud compute copy-files --zone asia-east1-a mongodb-1-vm:/home/intelliinvest_org/STOCK_PRICE_FORECAST.json .
+gcloud compute copy-files --zone asia-east1-a mongodb-1-vm:/home/intelliinvest_org/STOCK_FUNDAMENTALS.json .
+gcloud compute copy-files --zone asia-east1-a mongodb-1-vm:/home/intelliinvest_org/INDUSTRY_FUNDAMENTALS.json .
+gcloud compute copy-files --zone asia-east1-a mongodb-1-vm:/home/intelliinvest_org/STOCK_FUNDAMENTAL_ANALYSIS.json .
+gcloud compute copy-files --zone asia-east1-a mongodb-1-vm:/home/intelliinvest_org/WATCHLIST.json .
+gcloud compute copy-files --zone asia-east1-a mongodb-1-vm:/home/intelliinvest_org/STOCK_SIGNALS.json .
+gcloud compute copy-files --zone asia-east1-a mongodb-1-vm:/home/intelliinvest_org/STOCK_SIGNALS_COMPONENTS_10.json .
+gcloud compute copy-files --zone asia-east1-a mongodb-1-vm:/home/intelliinvest_org/MAGIC_NUMBER_DATA.json .
+

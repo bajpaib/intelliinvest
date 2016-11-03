@@ -1,6 +1,6 @@
 Stock and StockPrices
 ---------------------
-1. http://104.199.173.131/IntelliinvestWebApp/rest/stock/getStocks
+1. http://107.167.183.167/IntelliinvestWebApp/rest/stock/getStocks
 
 Request
 -------
@@ -42,7 +42,7 @@ Response
   }
 ]
 
-2. http://104.199.173.131/IntelliinvestWebApp/rest/stock/getStockPrices
+2. http://107.167.183.167/IntelliinvestWebApp/rest/stock/getStockPrices
 
 Request
 -------
@@ -79,7 +79,7 @@ Response
   }
 ]
 
-3. http://104.199.173.131/IntelliinvestWebApp/rest/stock/getStockById?id=ACC
+3. http://107.167.183.167/IntelliinvestWebApp/rest/stock/getStockById?id=ACC
 
 Request
 -------
@@ -104,7 +104,7 @@ Response
   "message": "Stock details have been returned successfully."
 }
 
-4. http://104.199.173.131/IntelliinvestWebApp/rest/stock/getStockPriceById?id=ACC
+4. http://107.167.183.167/IntelliinvestWebApp/rest/stock/getStockPriceById?id=ACC
 Request
 -------
 

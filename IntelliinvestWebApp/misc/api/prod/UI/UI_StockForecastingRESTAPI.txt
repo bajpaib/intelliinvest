@@ -7,7 +7,7 @@ Request
 -------
 GET
 
-http://104.199.173.131/IntelliinvestWebApp/rest/forecast/getForecastStockPriceForDate?id=ACC&date=2016-09-23
+http://107.167.183.167/IntelliinvestWebApp/rest/forecast/getForecastStockPriceForDate?id=ACC&date=2016-09-23
 
 Response
 --------
@@ -31,7 +31,7 @@ Request
 -------
 GET
 
-http://104.199.173.131/IntelliinvestWebApp/rest/forecast/getForecastStockPricesForDate?date=2016-09-23
+http://107.167.183.167/IntelliinvestWebApp/rest/forecast/getForecastStockPricesForDate?date=2016-09-23
 
 Response
 --------
@@ -71,7 +71,7 @@ Request
 -------
 GET
 
-http://104.199.173.131/IntelliinvestWebApp/rest/forecast/getTimeSeriesById?id=ACC&date=2016-09-23
+http://107.167.183.167/IntelliinvestWebApp/rest/forecast/getTimeSeriesById?id=ACC&date=2016-09-23
 
 Response
 --------

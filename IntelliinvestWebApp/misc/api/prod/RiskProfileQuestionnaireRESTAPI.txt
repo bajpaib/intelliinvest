@@ -1,4 +1,4 @@
-1. http://104.199.173.131/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/risk/profile/questions?userId=raja
+1. http://107.167.183.167/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/risk/profile/questions?userId=raja
 
 
 Request
@@ -11,7 +11,7 @@ Response
 
 
 
-2.http://104.199.173.131/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/risk/profile/questionnaire
+2.http://107.167.183.167/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/risk/profile/questionnaire
 
 Request
 -------
@@ -24,7 +24,7 @@ Response
 200 OK
 
 
-3.http://104.199.173.131/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/risk/investment/profile?userId=raja
+3.http://107.167.183.167/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/risk/investment/profile?userId=raja
 Request
 -------
 POST
@@ -56,7 +56,7 @@ Response
 
 Case where investment profile already available
 
-4.http://104.199.173.131/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/risk/investment/profile?userId=raja
+4.http://107.167.183.167/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/risk/investment/profile?userId=raja
 
 Request
 -------
@@ -70,7 +70,7 @@ Response
 
 Case where investment profile already available
 
-5.http://104.199.173.131/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/risk/investment/profile?userId=xxx
+5.http://107.167.183.167/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/risk/investment/profile?userId=xxx
 
 Request
 -------

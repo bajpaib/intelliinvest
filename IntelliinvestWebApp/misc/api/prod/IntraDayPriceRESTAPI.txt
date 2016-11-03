@@ -1,4 +1,4 @@
-1. http://104.199.173.131/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/google/intraday/volumeprice?securityId=INFY&exchange=NSE
+1. http://107.167.183.167/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/google/intraday/volumeprice?securityId=INFY&exchange=NSE
 
 
 Request
@@ -29,7 +29,7 @@ Response
 
 Failure case
 
-2. http://104.199.173.131/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/google/intraday/volumeprice?securityId=aaa&exchange=NSE
+2. http://107.167.183.167/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/google/intraday/volumeprice?securityId=aaa&exchange=NSE
 
 {
   "exchange": "NSE",

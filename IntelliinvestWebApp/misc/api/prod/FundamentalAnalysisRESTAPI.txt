@@ -1,19 +1,19 @@
 PLEASE USE BELOW ONLY IN CASE OF EMERGENCY
 
 1. Backload Stock Fundamentals from Quandl for all stocks
-http://104.199.173.131/IntelliinvestWebApp/rest/stock/backloadStockFundamentals
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/backloadStockFundamentals
 
 2. Upload Stock Fundamentals from downloaded Quandl file for all stocks
-http://104.199.173.131/IntelliinvestWebApp/rest/stock/uploadStockFundamentals?filePath=C:/data/DEB_20161017.csv
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/uploadStockFundamentals?filePath=C:/data/DEB_20161017.csv
 
 3. Get Stock Fundamentals by id
-http://104.199.173.131/IntelliinvestWebApp/rest/stock/getStockFundamentalsById?id=SBIN
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/getStockFundamentalsById?id=SBIN
 
 4. Get Stock Fundamentals by id and attrName
-http://104.199.173.131/IntelliinvestWebApp/rest/stock/getStockFundamentalsByIdAndAttrName?id=SBIN&attrName=alReturnOnEquity
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/getStockFundamentalsByIdAndAttrName?id=SBIN&attrName=alReturnOnEquity
 
 5. Forecast fundamental analysis for a given date
-http://104.199.173.131/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2016-10-19
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2016-10-19
 
 AttributeNames
 --------------

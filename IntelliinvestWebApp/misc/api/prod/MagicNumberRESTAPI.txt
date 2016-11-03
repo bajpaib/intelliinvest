@@ -1,6 +1,6 @@
 GET Request
 
-1. http://104.199.173.131/IntelliinvestWebApp/rest/magicNumbers?userId=123
+1. http://107.167.183.167/IntelliinvestWebApp/rest/magicNumbers?userId=123
 
 Response:
 [
@@ -26,7 +26,7 @@ Response:
   }
 ]
 
-2. http://104.199.173.131/IntelliinvestWebApp/rest/magicNumber/INFY?userId=123
+2. http://107.167.183.167/IntelliinvestWebApp/rest/magicNumber/INFY?userId=123
 
 Response:
 {
@@ -44,7 +44,7 @@ Response:
 
 POST Request
 
-1.http://104.199.173.131/IntelliinvestWebApp/rest/magicNumber/INFY?userId=123
+1.http://107.167.183.167/IntelliinvestWebApp/rest/magicNumber/INFY?userId=123
 
 Response:
 {
@@ -58,7 +58,7 @@ Response:
   "pnlOscillator": 38.95000000000027
 }
 
-2. http://104.199.173.131/IntelliinvestWebApp/rest/magicNumbers?userId=123
+2. http://107.167.183.167/IntelliinvestWebApp/rest/magicNumbers?userId=123
 
 Note: Not a valid stock code.
 Response:

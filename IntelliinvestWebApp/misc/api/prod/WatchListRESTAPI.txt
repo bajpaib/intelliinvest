@@ -2,7 +2,7 @@ StockSignals Module is prerequisite for this.
 
 All Request are Get Request.
 
-1.	http://104.199.173.131/IntelliinvestWebApp/rest/watchList/get?userId=yogeshgulati1984@gmail.com
+1.	http://107.167.183.167/IntelliinvestWebApp/rest/watchList/get?userId=yogeshgulati1984@gmail.com
 
 Response:
 
@@ -28,7 +28,7 @@ Response:
   "message": null
 }
 
-2.	http://104.199.173.131/IntelliinvestWebApp/rest/watchList/get?userId=yogeshgulati19845@gmail.com
+2.	http://107.167.183.167/IntelliinvestWebApp/rest/watchList/get?userId=yogeshgulati19845@gmail.com
 
 
 Response:
@@ -39,7 +39,7 @@ Response:
   "message": "User with id: yogeshgulati19845@gmail.com doesn't exist or not logged in..."
 }
 
-3.	http://104.199.173.131/IntelliinvestWebApp/rest/watchList/add?userId=yogeshgulati1984@gmail.com&stockCode=GDL
+3.	http://107.167.183.167/IntelliinvestWebApp/rest/watchList/add?userId=yogeshgulati1984@gmail.com&stockCode=GDL
 
 Response:
 {
@@ -57,7 +57,7 @@ Response:
   "message": null
 }
 
-4. http://104.199.173.131/IntelliinvestWebApp/rest/watchList/add?userId=yogeshgulati19845@gmail.com&stockCode=GDL
+4. http://107.167.183.167/IntelliinvestWebApp/rest/watchList/add?userId=yogeshgulati19845@gmail.com&stockCode=GDL
 
 Response:
 {
@@ -67,7 +67,7 @@ Response:
   "message": "User with id: yogeshgulati19845@gmail.com doesn't exist or not logged in..."
 }
 
-5.	http://104.199.173.131/IntelliinvestWebApp/rest/watchList/remove?userId=yogeshgulati1984@gmail.com&stockCode=GDL
+5.	http://107.167.183.167/IntelliinvestWebApp/rest/watchList/remove?userId=yogeshgulati1984@gmail.com&stockCode=GDL
 
 Response:
 {
@@ -78,7 +78,7 @@ Response:
 }
 
 
-5.	http://104.199.173.131/IntelliinvestWebApp/rest/watchList/remove?userId=yogeshgulati1984@gmail.com&stockCode=GDL
+5.	http://107.167.183.167/IntelliinvestWebApp/rest/watchList/remove?userId=yogeshgulati1984@gmail.com&stockCode=GDL
 	Note: stock was not under user's watchlist.
 
 Response:	
@@ -90,7 +90,7 @@ Response:
 }
 
 
-6.	http://104.199.173.131/IntelliinvestWebApp/rest/watchList/sendDailyMails
+6.	http://107.167.183.167/IntelliinvestWebApp/rest/watchList/sendDailyMails
 
 Response:
 {
@@ -98,7 +98,7 @@ Response:
   "message": "Mails has been sent successfully"
 }
 
-7.	http://104.199.173.131/IntelliinvestWebApp/rest/watchList/add?userId=yogeshgulati1984@gmail.com&stockCode=GDL11
+7.	http://107.167.183.167/IntelliinvestWebApp/rest/watchList/add?userId=yogeshgulati1984@gmail.com&stockCode=GDL11
 
 Note: not a valid stockCode
 Response:

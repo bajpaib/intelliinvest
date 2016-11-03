@@ -52,16 +52,21 @@ public class GoogleLiveStockPriceImporter {
 
 	public boolean enablePeriodicRefresh() {
 		boolean enable = false;
-		LocalDateTime localDateTime = dateUtil.getLocalDateTime();
+		LocalDateTime localDateTime = dateUtil.getLocalDateTime();		
 		int hour = localDateTime.getHour();
 		int periodicRefreshStartHour = new Integer(
 				IntelliInvestStore.properties.getProperty("periodic.refresh.start.hr"));
 		int periodicRefreshEndHour = new Integer(IntelliInvestStore.properties.getProperty("periodic.refresh.end.hr"));
 
+		logger.info("Inside enablePeriodicRefresh():localDateTime= "+localDateTime);
+		logger.info("Inside enablePeriodicRefresh():localDateTime.getHour()= "+hour);
+		logger.info("Inside enablePeriodicRefresh():periodicRefreshStartHour= "+periodicRefreshStartHour);
+		logger.info("Inside enablePeriodicRefresh():periodicRefreshEndHour= "+periodicRefreshEndHour);
 		if (!dateUtil.isBankHoliday(dateUtil.getLocalDate()) && hour >= periodicRefreshStartHour
 				&& hour <= periodicRefreshEndHour) {
 			enable = true;
 		}
+		logger.info("Inside enablePeriodicRefresh():enable= "+enable);
 		return enable;
 	}
 
