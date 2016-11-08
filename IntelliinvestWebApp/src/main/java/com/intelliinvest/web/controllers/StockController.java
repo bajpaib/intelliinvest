@@ -114,7 +114,7 @@ public class StockController {
 		if (Helper.isNotNullAndNonEmpty(id)) {
 			try {
 				stockPrice = stockRepository.getStockPriceById(id);
-				quandlStockPrice = quandlEODStockPriceRepository.getEODStockPrice(id);
+				quandlStockPrice = quandlEODStockPriceRepository.getLatestEODStockPrice(id);
 			} catch (Exception e) {
 				errorMsg = e.getMessage();
 				logger.error("Exception inside getStockPriceByCode() " + errorMsg);

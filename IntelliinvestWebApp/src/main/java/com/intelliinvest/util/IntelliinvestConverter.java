@@ -51,6 +51,7 @@ public class IntelliinvestConverter {
 		userResponse.setLoggedIn(user.getLoggedIn());
 		userResponse.setLastLoginDate(user.getLastLoginDate());
 		userResponse.setSendNotification(user.getSendNotification());
+		userResponse.setDeviceId(user.getDeviceId());
 		return userResponse;
 	}
 
@@ -127,7 +128,7 @@ public class IntelliinvestConverter {
 		List<ForecastedStockPriceResponse> responseList = new ArrayList<ForecastedStockPriceResponse>();
 		if (prices != null) {
 			for (ForecastedStockPrice price : prices) {
-				responseList.add(getForecastedStockPriceResponse(price));
+				responseList.add(getForecastedStockPriceResponse(price, null,null));
 			}
 		}
 		responseList.sort(new Comparator<ForecastedStockPriceResponse>() {
@@ -138,17 +139,55 @@ public class IntelliinvestConverter {
 		return responseList;
 	}
 
-	public static ForecastedStockPriceResponse getForecastedStockPriceResponse(ForecastedStockPrice price) {
+	public static ForecastedStockPriceResponse getForecastedStockPriceResponse(ForecastedStockPrice price,
+			QuandlStockPrice close, StockPrice live) {
 		ForecastedStockPriceResponse response = new ForecastedStockPriceResponse();
 		response.setMonthlyForecastDate(price.getMonthlyForecastDate());
-		response.setMonthlyForecastPrice(MathUtil.round(price.getMonthlyForecastPrice()));
+		response.setMonthlyForecastPrice(MathUtil.round(price.getMonthlyForecastPrice()!=null ? price.getMonthlyForecastPrice() : 0));
 		response.setSecurityId(price.getSecurityId());
 		response.setTodayDate(price.getTodayDate());
 		response.setTomorrowForecastDate(price.getTomorrowForecastDate());
-		response.setTomorrowForecastPrice(MathUtil.round(price.getTomorrowForecastPrice()));
+		response.setTomorrowForecastPrice(MathUtil.round(price.getTomorrowForecastPrice() !=null ? price.getTomorrowForecastPrice() : 0));
 		response.setUpdateDate(price.getUpdateDate());
 		response.setWeeklyForecastDate(price.getWeeklyForecastDate());
-		response.setWeeklyForecastPrice(MathUtil.round(price.getWeeklyForecastPrice()));
+		response.setWeeklyForecastPrice(MathUtil.round(price.getWeeklyForecastPrice() !=null ? price.getWeeklyForecastPrice() : 0));
+		double tomorrowPctReturn = 0;
+		double weeklyPctReturn = 0;
+		double monthlyPctReturn = 0;
+		String tomorrowView = "-1";
+		String weeklyView = "-1";
+		String monthlyView = "-1";
+		double closePrc = close != null ? close.getClose() : 0;
+		double livePrc = live != null ? live.getCurrentPrice() : 0;
+
+		if (!MathUtil.isNearZero(closePrc) && !MathUtil.isNearZero(livePrc)) {
+			tomorrowPctReturn = ((price.getTomorrowForecastPrice() - closePrc) / closePrc) * 100;
+			weeklyPctReturn = ((price.getWeeklyForecastPrice() - closePrc) / closePrc) * 100;
+			monthlyPctReturn = ((price.getMonthlyForecastPrice() - closePrc) / closePrc) * 100;
+			// 1 day predict > live price && last close => buy
+			if (price.getTomorrowForecastPrice() > livePrc && price.getTomorrowForecastPrice() > closePrc) {
+				tomorrowView = "1";
+			}
+			// 1 week predict > 1 day predict & live price => buy
+			if (price.getWeeklyForecastPrice() > price.getTomorrowForecastPrice()
+					&& price.getWeeklyForecastPrice() > livePrc) {
+				weeklyView = "1";
+			}
+			// 1 month predict > 1 week predict & 1 day predict & live price ->
+			// buy
+			if (price.getMonthlyForecastPrice() > price.getWeeklyForecastPrice()
+					&& price.getMonthlyForecastPrice() > price.getTomorrowForecastPrice()
+					&& price.getMonthlyForecastPrice() > livePrc) {
+				monthlyView = "1";
+			}
+			
+			response.setTomorrowPctReturn(MathUtil.round(tomorrowPctReturn));
+			response.setWeeklyPctReturn(MathUtil.round(weeklyPctReturn));
+			response.setMonthlyPctReturn(MathUtil.round(monthlyPctReturn));
+			response.setTomorrowView(tomorrowView);
+			response.setWeeklyView(weeklyView);
+			response.setMonthlyView(monthlyView);			
+		}
 		response.setSuccess(true);
 		return response;
 	}
@@ -226,15 +265,10 @@ public class IntelliinvestConverter {
 					stockSignalsDTO.getMovingAverageComponents().getMovingAverage_25(),
 					stockSignalsDTO.getMovingAverageComponents().getMovingAverage_50());
 			StockSignals stockSignals = new StockSignals(stockSignalsDTO.getSecurityId(),
-					/* stockSignalsDTO.getPreviousSignalType(), */stockSignalsDTO.getAdxSignal(),
-					stockSignalsDTO.getSignalDate(), stockSignalsDTO.getAdxSignalPresent(),
-					stockSignalsDTO.getOscillatorSignal(), /*
-															 * stockSignalsDTO.
-															 * getPreviousOscillatorSignal
-															 * (),
-															 */
+					stockSignalsDTO.getAdxSignal(), stockSignalsDTO.getSignalDate(),
+					stockSignalsDTO.getAdxSignalPresent(), stockSignalsDTO.getOscillatorSignal(),
 					stockSignalsDTO.getSignalPresentOscillator(), stockSignalsDTO.getBollingerSignal(),
-					/* stockSignalsDTO.getPreviousBollingerSignal(), */stockSignalsDTO.getSignalPresentBollinger(),
+					stockSignalsDTO.getSignalPresentBollinger(),
 					stockSignalsDTO.getMovingAverageSignals().getMovingAverageSignal_SmallTerm(),
 					stockSignalsDTO.getMovingAverageSignals().getMovingAverageSignal_Main(),
 					stockSignalsDTO.getMovingAverageSignals().getMovingAverageSignal_MidTerm(),
@@ -312,15 +346,9 @@ public class IntelliinvestConverter {
 				stockSignalsComponents.getMovingAverage_15(), stockSignalsComponents.getMovingAverage_25(),
 				stockSignalsComponents.getMovingAverage_50());
 
-		stockSignalsDTO = new StockSignalsDTO(stockSignals.getSecurityId(),
-				/* stockSignals.getPreviousSignalType(), */stockSignals.getAdxSignal(), stockSignals.getSignalDate(),
-				stockSignals.getAdxSignalPresent(), stockSignals.getOscillatorSignal(),
-				/* stockSignals.getPreviousOscillatorSignal(), */stockSignals.getSignalPresentOscillator(),
-				stockSignals
-						.getBollingerSignal(), /*
-												 * stockSignals.
-												 * getPreviousBollingerSignal(),
-												 */
+		stockSignalsDTO = new StockSignalsDTO(stockSignals.getSecurityId(), stockSignals.getAdxSignal(),
+				stockSignals.getSignalDate(), stockSignals.getAdxSignalPresent(), stockSignals.getOscillatorSignal(),
+				stockSignals.getSignalPresentOscillator(), stockSignals.getBollingerSignal(),
 				stockSignals.getSignalPresentBollinger(), stockSignalsComponents.getTR(),
 				stockSignalsComponents.getPlusDM1(), stockSignalsComponents.getMinusDM1(),
 				stockSignalsComponents.getTRn(), stockSignalsComponents.getPlusDMn(),

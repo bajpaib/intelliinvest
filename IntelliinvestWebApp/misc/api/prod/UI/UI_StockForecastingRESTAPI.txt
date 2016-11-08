@@ -1,13 +1,18 @@
 StockForecasting
 ----------------
 
-1. If date = T, returns closing prices forecasted yesterday (T-1) for T, T+5 and T+20 days. Price is forecasted after T-1 closing is received.
+1. Get latest forecast price
+
+http://107.167.183.167/IntelliinvestWebApp/rest/forecast/getLatestForecastStockPrice?id=ACC
+
+
+2. If date = T, returns closing prices forecasted yesterday (T-1) for T, T+5 and T+20 days. Price is forecasted after T-1 closing is received.
 
 Request
 -------
 GET
 
-http://107.167.183.167/IntelliinvestWebApp/rest/forecast/getForecastStockPriceForDate?id=ACC&date=2016-09-23
+http://107.167.183.167/IntelliinvestWebApp/rest/forecast/getLatestForecastStockPrice?id=ACC&date=2016-09-23
 
 Response
 --------
@@ -25,7 +30,7 @@ Response
   "message": "Forecasted Stock Price has been returned successfully."
 }
 
-2. For all stocks, If date = T, returns closing prices forecasted yesterday (T-1) for T, T+5 and T+20 days. Price is forecasted after T-1 closing is received.
+3. For all stocks, If date = T, returns closing prices forecasted yesterday (T-1) for T, T+5 and T+20 days. Price is forecasted after T-1 closing is received.
 
 Request
 -------
@@ -65,13 +70,13 @@ Response
   }
  ]
  
-3. If date= T, retrieve Times Series data for T (Return historical close prices until T-1 and closing prices forecasted on T-1 for T, T+5 and T+20)
+4. If date= T, retrieve Times Series data for T (Return historical close prices until T-1 and closing prices forecasted on T-1 for T, T+5 and T+20)
 
 Request
 -------
 GET
 
-http://107.167.183.167/IntelliinvestWebApp/rest/forecast/getTimeSeriesById?id=ACC&date=2016-09-23
+http://107.167.183.167/IntelliinvestWebApp/rest/forecast/getTimeSeriesById?id=ACC&date=2016-10-17
 
 Response
 --------

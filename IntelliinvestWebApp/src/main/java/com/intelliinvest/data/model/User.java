@@ -13,11 +13,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.intelliinvest.util.JsonDateSerializer;
 import com.intelliinvest.util.JsonDateTimeSerializer;
 
-
-@Document(collection="USER")
+@Document(collection = "USER")
 public class User implements Serializable {
-	
-	@Id private String userId;
+
+	@Id
+	private String userId;
 	private String username;
 	private String phone;
 	private String password;
@@ -37,7 +37,8 @@ public class User implements Serializable {
 	private LocalDateTime createDate;
 	@DateTimeFormat(iso = ISO.DATE_TIME)
 	private LocalDateTime updateDate;
-	
+	private String deviceId;
+
 	public User() {
 		super();
 	}
@@ -48,6 +49,14 @@ public class User implements Serializable {
 
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
 	}
 
 	public String getUsername() {
@@ -138,7 +147,7 @@ public class User implements Serializable {
 	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
-	
+
 	@JsonSerialize(using = JsonDateSerializer.class)
 	public LocalDate getRenewalDate() {
 		return renewalDate;

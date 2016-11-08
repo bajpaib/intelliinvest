@@ -21,6 +21,7 @@ public class StockPriceResponse implements Serializable {
 	private String eodPriceExchange;
 	private LocalDateTime currentPriceUpdateDate;
 	private LocalDateTime eodPriceUpdateDate;
+	private String alReturnOnEquity;
 	private double pctChange;
 	private boolean success;
 	private String message;
@@ -118,6 +119,14 @@ public class StockPriceResponse implements Serializable {
 
 	public void setPctChange(double pctChange) {
 		this.pctChange = pctChange;
+	}
+
+	public String getAlReturnOnEquity() {
+		return alReturnOnEquity;
+	}
+
+	public void setAlReturnOnEquity(String alReturnOnEquity) {
+		this.alReturnOnEquity = alReturnOnEquity;
 	}
 
 	public boolean isSuccess() {

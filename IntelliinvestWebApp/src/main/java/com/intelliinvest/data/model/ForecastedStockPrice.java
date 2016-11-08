@@ -20,9 +20,9 @@ import com.intelliinvest.util.JsonDateTimeSerializer;
 @Document(collection = "STOCK_PRICE_FORECAST")
 public class ForecastedStockPrice implements Serializable {
 	private String securityId;
-	private double tomorrowForecastPrice;
-	private double weeklyForecastPrice;
-	private double monthlyForecastPrice;
+	private Double tomorrowForecastPrice;
+	private Double weeklyForecastPrice;
+	private Double monthlyForecastPrice;
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate todayDate;
 	@DateTimeFormat(iso = ISO.DATE)
@@ -38,8 +38,8 @@ public class ForecastedStockPrice implements Serializable {
 		super();
 	}
 
-	public ForecastedStockPrice(String securityId, double tomorrowForecastPrice, double weeklyForecastPrice,
-			double monthlyForecastPrice, LocalDate todayDate, LocalDate tomorrowForecastDate,
+	public ForecastedStockPrice(String securityId, Double tomorrowForecastPrice, Double weeklyForecastPrice,
+			Double monthlyForecastPrice, LocalDate todayDate, LocalDate tomorrowForecastDate,
 			LocalDate weeklyForecastDate, LocalDate monthlyForecastDate, LocalDateTime updateDate) {
 		super();
 		this.securityId = securityId;
@@ -61,27 +61,27 @@ public class ForecastedStockPrice implements Serializable {
 		this.securityId = securityId;
 	}
 
-	public double getTomorrowForecastPrice() {
+	public Double getTomorrowForecastPrice() {
 		return tomorrowForecastPrice;
 	}
 
-	public void setTomorrowForecastPrice(double tomorrowForecastPrice) {
+	public void setTomorrowForecastPrice(Double tomorrowForecastPrice) {
 		this.tomorrowForecastPrice = tomorrowForecastPrice;
 	}
 
-	public double getWeeklyForecastPrice() {
+	public Double getWeeklyForecastPrice() {
 		return weeklyForecastPrice;
 	}
 
-	public void setWeeklyForecastPrice(double weeklyForecastPrice) {
+	public void setWeeklyForecastPrice(Double weeklyForecastPrice) {
 		this.weeklyForecastPrice = weeklyForecastPrice;
 	}
 
-	public double getMonthlyForecastPrice() {
+	public Double getMonthlyForecastPrice() {
 		return monthlyForecastPrice;
 	}
 
-	public void setMonthlyForecastPrice(double monthlyForecastPrice) {
+	public void setMonthlyForecastPrice(Double monthlyForecastPrice) {
 		this.monthlyForecastPrice = monthlyForecastPrice;
 	}
 
@@ -137,6 +137,12 @@ public class ForecastedStockPrice implements Serializable {
 				+ ", todayDate=" + todayDate + ", tomorrowForecastDate=" + tomorrowForecastDate
 				+ ", weeklyForecastDate=" + weeklyForecastDate + ", monthlyForecastDate=" + monthlyForecastDate
 				+ ", updateDate=" + updateDate + "]";
+	}
+
+	@Override
+	public ForecastedStockPrice clone() {
+		return new ForecastedStockPrice(securityId, tomorrowForecastPrice, weeklyForecastPrice, monthlyForecastPrice,
+				todayDate, tomorrowForecastDate, weeklyForecastDate, monthlyForecastDate, updateDate);
 	}
 
 }

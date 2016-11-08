@@ -16,6 +16,12 @@ public class ForecastedStockPriceResponse {
 	private LocalDate tomorrowForecastDate;
 	private LocalDate weeklyForecastDate;
 	private LocalDate monthlyForecastDate;
+	private double tomorrowPctReturn;
+	private double weeklyPctReturn;
+	private double monthlyPctReturn;
+	private String tomorrowView;
+	private String weeklyView;
+	private String monthlyView;
 	private LocalDateTime updateDate;
 	private boolean success;
 	private String message;
@@ -86,6 +92,54 @@ public class ForecastedStockPriceResponse {
 
 	public void setMonthlyForecastDate(LocalDate monthlyForecastDate) {
 		this.monthlyForecastDate = monthlyForecastDate;
+	}
+
+	public double getTomorrowPctReturn() {
+		return tomorrowPctReturn;
+	}
+
+	public void setTomorrowPctReturn(double tomorrowPctReturn) {
+		this.tomorrowPctReturn = tomorrowPctReturn;
+	}
+
+	public double getWeeklyPctReturn() {
+		return weeklyPctReturn;
+	}
+
+	public void setWeeklyPctReturn(double weeklyPctReturn) {
+		this.weeklyPctReturn = weeklyPctReturn;
+	}
+
+	public double getMonthlyPctReturn() {
+		return monthlyPctReturn;
+	}
+
+	public void setMonthlyPctReturn(double monthlyPctReturn) {
+		this.monthlyPctReturn = monthlyPctReturn;
+	}
+
+	public String getTomorrowView() {
+		return tomorrowView;
+	}
+
+	public void setTomorrowView(String tomorrowView) {
+		this.tomorrowView = tomorrowView;
+	}
+
+	public String getWeeklyView() {
+		return weeklyView;
+	}
+
+	public void setWeeklyView(String weeklyView) {
+		this.weeklyView = weeklyView;
+	}
+
+	public String getMonthlyView() {
+		return monthlyView;
+	}
+
+	public void setMonthlyView(String monthlyView) {
+		this.monthlyView = monthlyView;
 	}
 
 	@JsonSerialize(using = JsonDateTimeSerializer.class)

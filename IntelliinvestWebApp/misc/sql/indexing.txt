@@ -1,0 +1,4 @@
+db.STOCK_SIGNALS.createIndex({'securityId': 1, 'signalDate': -1})
+db.STOCK_SIGNALS_COMPONENTS_10.createIndex({'securityId': 1, 'signalDate': -1})
+db.MAGIC_NUMBER_DATA.createIndex({'securityId':1})
+db.QUANDL_STOCK_PRICE.createIndex({'securityId':1,'eodDate':-1})

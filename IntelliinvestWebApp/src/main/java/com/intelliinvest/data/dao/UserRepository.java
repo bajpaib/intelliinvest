@@ -54,7 +54,7 @@ public class UserRepository {
 		}
 	}
 
-	public User registerUser(String userName, String userId, String phone, String password, boolean sendNotification)
+	public User registerUser(String userName, String userId, String phone, String password, boolean sendNotification,String deviceId)
 			throws Exception {
 		logger.info("Inside register()...");
 		User user = getUserByUserId(userId);
@@ -85,6 +85,7 @@ public class UserRepository {
 		user.setCreateDate(currentDateTime);
 		user.setUpdateDate(currentDateTime);
 		user.setLoggedIn(false);
+		user.setDeviceId(deviceId);
 		mongoTemplate.insert(user, COLLECTION_USER);
 		logger.info("Registration for user " + userName + " with mail id " + userId + " successful");
 		logger.info("Sending activation mail for user " + userId);
@@ -290,5 +291,26 @@ public class UserRepository {
 		userLoginCache.remove(userId);
 		return mongoTemplate.findAndRemove(Query.query(Criteria.where("userId").is(userId)), User.class,
 				COLLECTION_USER);
+	}
+	public User updateDeviceID(String userId,String deviceId) throws Exception {
+		logger.debug("Inside forgotPassword()...");
+		try {
+			User user = getUserByUserId(userId);
+			if (user == null) {
+				logger.error(userId
+						+ " Username does not exists");
+				throw new IntelliinvestException("User " + userId + " does not exists");
+			}
+			Query query = new Query();
+			query.addCriteria(Criteria.where("userId").is(userId));
+			Update update = new Update();
+			update.set("deviceId", deviceId);
+			user = mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true), User.class,
+					COLLECTION_USER);
+			return user;
+		} catch (Exception e) {
+			
+			throw new IntelliinvestException("Error while update device id... " + e.getMessage());
+		}
 	}
 }

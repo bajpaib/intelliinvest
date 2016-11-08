@@ -29,9 +29,9 @@ public class BubbleDataController {
 	private BubbleDataFetcher bubbleDataFetcher;
 
 	@RequestMapping(value = "/bubbleData/technical", method = RequestMethod.GET, produces = APPLICATION_JSON)
-	public @ResponseBody
-	List<BubbleDataResponse> getTechnicalBubbleData() {
-		return bubbleDataFetcher.getTechnicalBubbleData();
+	public @ResponseBody List<BubbleDataResponse> getTechnicalBubbleData(
+			@RequestParam(value = "timePeriod", required = false, defaultValue = "5") int timePeriod) {
+		return bubbleDataFetcher.getTechnicalBubbleData(timePeriod);
 	}
-	
+
 }

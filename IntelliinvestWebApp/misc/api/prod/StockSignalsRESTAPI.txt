@@ -266,3 +266,160 @@ Response: Last day stocks having either of signal as "Y".
     "aggSignal_previous": "Hold"
   },
 ]
+
+
+11. http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/getADXSignalDetails?securityId=GDL&timePeriod=1
+
+	http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/getADXSignalDetails?securityId=GDL
+
+
+12. http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/getBolSignalDetails?securityId=GDL&timePeriod=1
+
+	http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/getBolSignalDetails?securityId=GDL
+
+	
+13. http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/getOscSignalDetails?securityId=GDL&timePeriod=1
+
+	http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/getOscSignalDetails?securityId=GDL
+
+	
+14. http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/getMovAvgSignalDetails?securityId=GDL&timePeriod=1
+
+	http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/getMovAvgSignalDetails?securityId=GDL
+	
+	
+	Note: By Default, if no timePeriod is in request then 2 years data would be returned otherwise according to the timePeriod given in request.
+
+	this case is also happening for following request:
+	
+	http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/getArchive?securityId=COSCO
+	http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/getArchive?securityId=COSCO&timePeriod=4
+	
+	
+Response :
+
+{
+  "adxPnl": "34",
+  "bollingerPnl": "-63.55",
+  "oscillatorPnl": "34",
+  "movingAveragePnl": "0",
+  "securityId": "GDL",
+  "holdBuyPnl": "-29.61",
+  "cp": -3.25,
+  "currentPrice": 231,
+  "currentPriceUpdateDate": "2016-11-04 19:57:37",
+  "currentPriceExchange": "NSE",
+  "eodPrice": 231,
+  "eodPriceExchange": "NSE",
+  "eodDate": "2016-11-04",
+  "eodPriceUpdateDate": "2016-11-04 20:31:24",
+  "stockSignalsList": [
+    {
+      "securityId": "GDL",
+      "adxSignal": "Sell",
+      "signalDate": "2016-07-13",
+      "adxSignalPresent": "Y",
+      "oscillatorSignal": "Hold",
+      "signalPresentOscillator": "Y",
+      "bollingerSignal": "Hold",
+      "signalPresentBollinger": "N",
+      "movingAverageSignal_SmallTerm": "Sell",
+      "movingAverageSignal_Main": "Sell",
+      "movingAverageSignal_MidTerm": "Sell",
+      "movingAverageSignal_LongTerm": "Buy",
+      "movingAverageSignal_SmallTerm_present": "N",
+      "movingAverageSignal_Main_present": "N",
+      "movingAverageSignal_MidTerm_present": "N",
+      "movingAverageSignal_LongTerm_present": "N",
+      "aggSignal": "Hold",
+      "aggSignal_present": "N",
+      "aggSignal_previous": "Hold"
+    },
+    {
+      "securityId": "GDL",
+      "adxSignal": "Buy",
+      "signalDate": "2016-05-31",
+      "adxSignalPresent": "Y",
+      "oscillatorSignal": "Buy",
+      "signalPresentOscillator": "Y",
+      "bollingerSignal": "Buy",
+      "signalPresentBollinger": "Y",
+      "movingAverageSignal_SmallTerm": "Sell",
+      "movingAverageSignal_Main": "Sell",
+      "movingAverageSignal_MidTerm": "Buy",
+      "movingAverageSignal_LongTerm": "Buy",
+      "movingAverageSignal_SmallTerm_present": "N",
+      "movingAverageSignal_Main_present": "Y",
+      "movingAverageSignal_MidTerm_present": "N",
+      "movingAverageSignal_LongTerm_present": "N",
+      "aggSignal": "Buy",
+      "aggSignal_present": "N",
+      "aggSignal_previous": "Hold"
+    },
+    {
+      "securityId": "GDL",
+      "adxSignal": "Sell",
+      "signalDate": "2016-05-24",
+      "adxSignalPresent": "Y",
+      "oscillatorSignal": "Wait",
+      "signalPresentOscillator": "Y",
+      "bollingerSignal": "Sell",
+      "signalPresentBollinger": "N",
+      "movingAverageSignal_SmallTerm": "Sell",
+      "movingAverageSignal_Main": "Buy",
+      "movingAverageSignal_MidTerm": "Buy",
+      "movingAverageSignal_LongTerm": "Buy",
+      "movingAverageSignal_SmallTerm_present": "Y",
+      "movingAverageSignal_Main_present": "N",
+      "movingAverageSignal_MidTerm_present": "Y",
+      "movingAverageSignal_LongTerm_present": "N",
+      "aggSignal": "Hold",
+      "aggSignal_present": "N",
+      "aggSignal_previous": "Hold"
+    },
+    {
+      "securityId": "GDL",
+      "adxSignal": "Buy",
+      "signalDate": "2016-03-02",
+      "adxSignalPresent": "Y",
+      "oscillatorSignal": "Buy",
+      "signalPresentOscillator": "Y",
+      "bollingerSignal": "Buy",
+      "signalPresentBollinger": "N",
+      "movingAverageSignal_SmallTerm": "Buy",
+      "movingAverageSignal_Main": "Sell",
+      "movingAverageSignal_MidTerm": "Sell",
+      "movingAverageSignal_LongTerm": "Sell",
+      "movingAverageSignal_SmallTerm_present": "N",
+      "movingAverageSignal_Main_present": "N",
+      "movingAverageSignal_MidTerm_present": "N",
+      "movingAverageSignal_LongTerm_present": "N",
+      "aggSignal": "Buy",
+      "aggSignal_present": "N",
+      "aggSignal_previous": "Hold"
+    },
+    {
+      "securityId": "GDL",
+      "adxSignal": "Sell",
+      "signalDate": "2016-01-21",
+      "adxSignalPresent": "Y",
+      "oscillatorSignal": "Hold",
+      "signalPresentOscillator": "Y",
+      "bollingerSignal": "Sell",
+      "signalPresentBollinger": "N",
+      "movingAverageSignal_SmallTerm": "Sell",
+      "movingAverageSignal_Main": "Buy",
+      "movingAverageSignal_MidTerm": "Buy",
+      "movingAverageSignal_LongTerm": "Sell",
+      "movingAverageSignal_SmallTerm_present": "N",
+      "movingAverageSignal_Main_present": "N",
+      "movingAverageSignal_MidTerm_present": "N",
+      "movingAverageSignal_LongTerm_present": "N",
+      "aggSignal": "Sell",
+      "aggSignal_present": "Y",
+      "aggSignal_previous": "Hold"
+    }
+  ],
+  "message": "Data has been returned successfully...",
+  "success": true
+}

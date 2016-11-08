@@ -22,12 +22,14 @@ import com.intelliinvest.common.IntelliInvestStore;
 import com.intelliinvest.common.IntelliinvestConstants;
 import com.intelliinvest.data.dao.ForecastedStockPriceRepository;
 import com.intelliinvest.data.dao.QuandlEODStockPriceRepository;
+import com.intelliinvest.data.dao.StockRepository;
 import com.intelliinvest.data.forecast.ClosePriceForecastReport;
 import com.intelliinvest.data.forecast.DailyClosePriceForecaster;
 import com.intelliinvest.data.forecast.MonthlyClosePriceForecaster;
 import com.intelliinvest.data.forecast.WeeklyClosePriceForecaster;
 import com.intelliinvest.data.model.ForecastedStockPrice;
 import com.intelliinvest.data.model.QuandlStockPrice;
+import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.util.IntelliinvestConverter;
 import com.intelliinvest.util.DateUtil;
 import com.intelliinvest.util.Helper;
@@ -48,6 +50,8 @@ public class ForecastedStockPriceController {
 	@Autowired
 	private MonthlyClosePriceForecaster monthlyClosePriceForecaster;
 	@Autowired
+	private StockRepository stockRepository;
+	@Autowired
 	private ForecastedStockPriceRepository forecastedStockPriceRepository;
 	@Autowired
 	private QuandlEODStockPriceRepository quandlEODStockPriceRepository;
@@ -60,6 +64,7 @@ public class ForecastedStockPriceController {
 	 * @param date
 	 * @return
 	 */
+	
 	@RequestMapping(value = "/forecast/getForecastStockPriceForDate", method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public @ResponseBody ForecastedStockPriceResponse getForecastStockPriceForDate(@RequestParam("id") String id,
 			@RequestParam("date") String dateStr) {
@@ -90,7 +95,48 @@ public class ForecastedStockPriceController {
 			error = true;
 		}
 		if (price != null && !error) {
-			response = IntelliinvestConverter.getForecastedStockPriceResponse(price);
+			response = IntelliinvestConverter.getForecastedStockPriceResponse(price, null, null);
+			response.setSuccess(true);
+			response.setMessage("Forecasted Stock Price has been returned successfully.");
+		} else {
+			response.setSecurityId(id);
+			response.setSuccess(false);
+			response.setMessage(errorMsg);
+		}
+		return response;
+	}
+	
+	@RequestMapping(value = "/forecast/getLatestForecastStockPrice", method = RequestMethod.GET, produces = APPLICATION_JSON)
+	public @ResponseBody ForecastedStockPriceResponse getForecastStockPriceForDate(@RequestParam("id") String id) {
+		ForecastedStockPriceResponse response = new ForecastedStockPriceResponse();
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
+		ForecastedStockPrice forecastPrice = null;
+		QuandlStockPrice close = null;
+		StockPrice live = null;
+		boolean error = false;
+		if (Helper.isNotNullAndNonEmpty(id)) {
+			try {
+				forecastPrice = forecastedStockPriceRepository.getLatestForecastStockPrice(id);
+				close = quandlEODStockPriceRepository.getLatestEODStockPrice(id);
+				live = stockRepository.getStockPriceById(id);				
+			} catch (Exception e) {
+				errorMsg = e.getMessage();
+				logger.error("Exception inside getDailyForecastStockPrice() " + e.getMessage());
+				error = true;
+			}
+		}else {
+			errorMsg = "Stock Code or Date is null or empty";
+			logger.error("Exception inside getForecastStockPriceForDate() " + errorMsg);
+			error = true;
+		}
+		
+		if (forecastPrice == null) {
+			errorMsg = "Forecast price not found";
+			logger.error("Inside getForecastStockPriceForDate() " + errorMsg);
+			error = true;
+		}
+		if (forecastPrice != null && !error) {
+			response = IntelliinvestConverter.getForecastedStockPriceResponse(forecastPrice, close, live);
 			response.setSuccess(true);
 			response.setMessage("Forecasted Stock Price has been returned successfully.");
 		} else {
@@ -167,18 +213,25 @@ public class ForecastedStockPriceController {
 							return price1.getEodDate().compareTo(price2.getEodDate());
 
 						}
-					});
-					
+					});					
 
 					timeSeriesResponse.setSecurityId(id);
 					timeSeriesResponse.setDate(date);
 
 					List<String> dateSeries = new ArrayList<String>();
 					List<Double> priceSeries = new ArrayList<Double>();
+					List<Double> openPriceSeries = new ArrayList<Double>();
+					List<Double> highPriceSeries = new ArrayList<Double>();
+					List<Double> lowPriceSeries = new ArrayList<Double>();
+					List<Double> tradedQtySeries = new ArrayList<Double>();
 
 					for (QuandlStockPrice temp : stockPrices) {
 						dateSeries.add(dateFormat.format(temp.getEodDate()));
 						priceSeries.add(MathUtil.round(temp.getClose()));
+						openPriceSeries.add(MathUtil.round(temp.getOpen()));
+						highPriceSeries.add(MathUtil.round(temp.getHigh()));
+						lowPriceSeries.add(MathUtil.round(temp.getLow()));
+						tradedQtySeries.add(MathUtil.round(temp.getTradedQty()));
 					}
 
 					List <LocalDate> forecastDates = new ArrayList<LocalDate>();
@@ -197,21 +250,21 @@ public class ForecastedStockPriceController {
 					
 					TreeMap<LocalDate, Double> sorted = new TreeMap<LocalDate, Double>();
 					for(ForecastedStockPrice price:  prices){
-						if(price.getMonthlyForecastDate()!=null && forecastDates.contains(price.getMonthlyForecastDate()) && !MathUtil.isNearZero(price.getMonthlyForecastPrice())){
+						if(price.getMonthlyForecastDate()!=null && forecastDates.contains(price.getMonthlyForecastDate()) && price.getMonthlyForecastPrice()!=null && !MathUtil.isNearZero(price.getMonthlyForecastPrice())){
 							sorted.put(price.getMonthlyForecastDate(), price.getMonthlyForecastPrice());
 						}
 						
 					}
 					
 					for(ForecastedStockPrice price:  prices){
-						if(price.getWeeklyForecastDate()!=null && forecastDates.contains(price.getWeeklyForecastDate()) && !MathUtil.isNearZero(price.getWeeklyForecastPrice())){
+						if(price.getWeeklyForecastDate()!=null && forecastDates.contains(price.getWeeklyForecastDate()) && price.getWeeklyForecastPrice()!=null && !MathUtil.isNearZero(price.getWeeklyForecastPrice())){
 							sorted.put(price.getWeeklyForecastDate(), price.getWeeklyForecastPrice());
 						}
 						
 					}
 					
 					for(ForecastedStockPrice price:  prices){
-						if(price.getTomorrowForecastDate()!=null && forecastDates.contains(price.getTomorrowForecastDate()) && !MathUtil.isNearZero(price.getTomorrowForecastPrice())){
+						if(price.getTomorrowForecastDate()!=null && forecastDates.contains(price.getTomorrowForecastDate()) && price.getTomorrowForecastPrice()!=null && !MathUtil.isNearZero(price.getTomorrowForecastPrice())){
 							sorted.put(price.getTomorrowForecastDate(), price.getTomorrowForecastPrice());
 						}					
 					}
@@ -221,8 +274,17 @@ public class ForecastedStockPriceController {
 					for (Map.Entry<LocalDate, Double> entry: priceSet) {
 						dateSeries.add(dateFormat.format(entry.getKey()));
 						priceSeries.add(MathUtil.round(entry.getValue()));
+						openPriceSeries.add(new Double(0));
+						highPriceSeries.add(new Double(0));
+						lowPriceSeries.add(new Double(0));
+						tradedQtySeries.add(new Double(0));
 					}
+					
 					timeSeriesResponse.setDateSeries(dateSeries);
+					timeSeriesResponse.setOpenPriceSeries(openPriceSeries);
+					timeSeriesResponse.setHighPriceSeries(highPriceSeries);
+					timeSeriesResponse.setLowPriceSeries(lowPriceSeries);
+					timeSeriesResponse.setTradedQtySeries(tradedQtySeries);
 					timeSeriesResponse.setPriceSeries(priceSeries);
 				}
 			} catch (Exception e) {

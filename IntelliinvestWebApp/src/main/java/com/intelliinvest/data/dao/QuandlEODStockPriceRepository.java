@@ -63,7 +63,7 @@ public class QuandlEODStockPriceRepository {
 		}
 	}
 
-	public QuandlStockPrice getEODStockPrice(String id) {
+	public QuandlStockPrice getLatestEODStockPrice(String id) {
 		QuandlStockPrice price = priceCache.get(id);
 		if (price == null) {
 			logger.error("Inside getEODStockPrice() QuandlStockPrice not found in cache for " + id);
@@ -218,7 +218,7 @@ public class QuandlEODStockPriceRepository {
 	@ManagedOperation(description = "getEODStockPriceFromCache")
 	public String getEODStockPriceFromCache(String id) {
 		try {
-			QuandlStockPrice price = getEODStockPrice(id);
+			QuandlStockPrice price = getLatestEODStockPrice(id);
 			if (price != null) {
 				return price.toString();
 			} else {

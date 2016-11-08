@@ -10,13 +10,22 @@ public class UserFormParameters implements Serializable {
 	String sendNotification;
 	String activationCode;
 	String oldPassword;
-
+	String deviceId;
+	
 	public UserFormParameters() {
 		super();
 	}
 	
 	public String getOldPassword() {
 		return oldPassword;
+	}
+
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
 	}
 
 	public void setOldPassword(String oldPassword) {

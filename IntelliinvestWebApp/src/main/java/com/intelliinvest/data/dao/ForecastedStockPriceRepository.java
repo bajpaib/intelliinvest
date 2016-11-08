@@ -1,10 +1,19 @@
 package com.intelliinvest.data.dao;
 
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.sort;
+
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,10 +21,14 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.BulkOperations.BulkMode;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.jmx.export.annotation.ManagedOperationParameters;
@@ -24,7 +37,12 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import com.intelliinvest.common.IntelliinvestConstants.ForecastType;
 import com.intelliinvest.common.IntelliinvestException;
 import com.intelliinvest.data.model.ForecastedStockPrice;
+import com.intelliinvest.data.model.QuandlStockPrice;
+import com.intelliinvest.data.model.ForecastedStockPrice;
+import com.intelliinvest.data.model.Stock;
+import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.util.DateUtil;
+import com.intelliinvest.util.Helper;
 
 @ManagedResource(objectName = "bean:name=ForecastedStockPriceRepository", description = "ForecastedStockPriceRepository")
 public class ForecastedStockPriceRepository {
@@ -34,7 +52,56 @@ public class ForecastedStockPriceRepository {
 	private MongoTemplate mongoTemplate;
 	@Autowired
 	private DateUtil dateUtil;
+	private Map<String, ForecastedStockPrice> priceCache = new ConcurrentHashMap<String, ForecastedStockPrice>();
 
+	@PostConstruct
+	public void init() {
+		initialiseCacheFromDB();
+	}
+
+	@ManagedOperation(description = "initialiseCacheFromDB")
+	public void initialiseCacheFromDB() {
+		List<ForecastedStockPrice> prices = getLatestForecastStockPricesFromDB();
+		if (Helper.isNotNullAndNonEmpty(prices)) {
+			for (ForecastedStockPrice price : prices) {
+				priceCache.put(price.getSecurityId(), price);
+			}
+			logger.info("Initialised priceCache from DB in ForecastedStockPriceRepository with size " + priceCache.size());
+		} else {
+			logger.error(
+					"Could not initialise priceCache from DB in ForecastedStockPriceRepository. STOCK_PRICE_FORECAST is empty.");
+		}
+	}
+	
+	public List<ForecastedStockPrice> getLatestForecastStockPricesFromDB() throws DataAccessException {
+		logger.info("Inside getLatestStockPrices()...");
+		// retrieve record having max eodDate for each stock
+		final Aggregation aggregation = newAggregation(sort(Sort.Direction.DESC, "todayDate"),
+				group("securityId").first("securityId").as("securityId").first("todayDate").as("todayDate")
+						.first("tomorrowForecastPrice").as("tomorrowForecastPrice").first("weeklyForecastPrice").as("weeklyForecastPrice")
+						.first("monthlyForecastPrice").as("monthlyForecastPrice").first("tomorrowForecastDate").as("tomorrowForecastDate")
+						.first("weeklyForecastDate").as("weeklyForecastDate").first("monthlyForecastDate").as("monthlyForecastDate")
+						.first("updateDate").as("updateDate"))
+								.withOptions(Aggregation.newAggregationOptions().allowDiskUse(true).build());
+		AggregationResults<ForecastedStockPrice> results = mongoTemplate.aggregate(aggregation,
+				COLLECTION_STOCK_PRICE_FORECAST, ForecastedStockPrice.class);
+		List<ForecastedStockPrice> retVal = new ArrayList<ForecastedStockPrice>();
+
+		for (ForecastedStockPrice price : results.getMappedResults()) {
+			retVal.add(price);
+		}
+		return retVal;
+	}
+	
+	public ForecastedStockPrice getLatestForecastStockPrice(String id) {
+		ForecastedStockPrice price = priceCache.get(id);
+		if (price == null) {
+			logger.error("Inside getLatestForecastStockPrice() QuandlStockPrice not found in cache for " + id);
+			return null;
+		}
+		return price.clone();
+	}
+	
 	public ForecastedStockPrice getForecastStockPriceFromDB(String id, LocalDate todayDate)
 			throws DataAccessException {
 		Query query = new Query();
@@ -80,20 +147,20 @@ public class ForecastedStockPriceRepository {
 			switch (forecastType) {
 			case DAILY:
 				update.set("tomorrowForecastDate", dateUtil.getDateFromLocalDate(price.getTomorrowForecastDate()));
-				update.set("tomorrowForecastPrice", price.getTomorrowForecastPrice());
+				update.set("tomorrowForecastPrice", price.getTomorrowForecastPrice() !=null ? price.getTomorrowForecastPrice() : 0);
 				break;
 			case WEEKLY:
 				update.set("weeklyForecastDate", dateUtil.getDateFromLocalDate(price.getWeeklyForecastDate()));
-				update.set("weeklyForecastPrice", price.getWeeklyForecastPrice());
+				update.set("weeklyForecastPrice", price.getWeeklyForecastPrice() !=null ? price.getWeeklyForecastPrice() : 0);
 				break;
 			case MONTHLY:
 				update.set("monthlyForecastDate", dateUtil.getDateFromLocalDate(price.getMonthlyForecastDate()));
-				update.set("monthlyForecastPrice", price.getMonthlyForecastPrice());
+				update.set("monthlyForecastPrice", price.getMonthlyForecastPrice() !=null ? price.getMonthlyForecastPrice() : 0);
 				break;
 			default:
 				logger.error("Defaulting to daily forecastType. Incorrect forecastType " + forecastType.name());
 				update.set("tomorrowForecastDate", dateUtil.getDateFromLocalDate(price.getTomorrowForecastDate()));
-				update.set("tomorrowForecastPrice", price.getTomorrowForecastPrice());
+				update.set("tomorrowForecastPrice", price.getTomorrowForecastPrice() !=null ? price.getTomorrowForecastPrice() : 0);
 				break;
 			}
 			update.set("todayDate", dateUtil.getDateFromLocalDate(price.getTodayDate()));

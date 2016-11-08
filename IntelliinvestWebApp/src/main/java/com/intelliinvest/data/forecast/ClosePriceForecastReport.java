@@ -138,7 +138,7 @@ public class ClosePriceForecastReport {
 
 						ForecastedStockPrice dailyForecastPrice = dailyForecastedPrices.get(stock.getSecurityId());
 						if (dailyForecastPrice != null && dailyForecastPrice.getTomorrowForecastDate().equals(today)) {
-							dailyForecastedClose = dailyForecastPrice.getTomorrowForecastPrice();
+							dailyForecastedClose = dailyForecastPrice.getTomorrowForecastPrice() !=null ? dailyForecastPrice.getTomorrowForecastPrice() : 0;
 							if (!(MathUtil.isNearZero(actualClose) || MathUtil.isNearZero(dailyForecastedClose))) {
 								dailyDifference = eodPrice.getClose() - dailyForecastPrice.getTomorrowForecastPrice();
 								percentDailyDifference = (dailyDifference * 100) / eodPrice.getClose();
@@ -151,7 +151,7 @@ public class ClosePriceForecastReport {
 
 						ForecastedStockPrice weeklyForecastPrice = weeklyForecastedPrices.get(stock.getSecurityId());
 						if (weeklyForecastPrice != null && weeklyForecastPrice.getWeeklyForecastDate().equals(today)) {
-							weeklyForecastedClose = weeklyForecastPrice.getWeeklyForecastPrice();
+							weeklyForecastedClose = weeklyForecastPrice.getWeeklyForecastPrice()!=null ? dailyForecastPrice.getWeeklyForecastPrice() : 0;
 							if (!(MathUtil.isNearZero(actualClose) || MathUtil.isNearZero(weeklyForecastedClose))) {
 								weeklyDifference = eodPrice.getClose() - weeklyForecastPrice.getWeeklyForecastPrice();
 								percentWeeklyDifference = (weeklyDifference * 100) / eodPrice.getClose();
@@ -164,7 +164,7 @@ public class ClosePriceForecastReport {
 						ForecastedStockPrice monthlyForecastPrice = monthlyForecastedPrices.get(stock.getSecurityId());
 						if (monthlyForecastPrice != null
 								&& monthlyForecastPrice.getMonthlyForecastDate().equals(today)) {
-							monthlyForecastedClose = monthlyForecastPrice.getMonthlyForecastPrice();
+							monthlyForecastedClose = monthlyForecastPrice.getMonthlyForecastPrice()!=null ? dailyForecastPrice.getMonthlyForecastPrice() : 0;
 							if (!(MathUtil.isNearZero(actualClose) || MathUtil.isNearZero(monthlyForecastedClose))) {
 								monthlyDifference = eodPrice.getClose()
 										- monthlyForecastPrice.getMonthlyForecastPrice();

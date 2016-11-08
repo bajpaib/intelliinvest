@@ -189,28 +189,25 @@ public class StockFundamentalsImporter {
 					String quarter;
 
 					switch (month) {
-					case 3:
-					case 4:
-					case 5:
-						quarter = IntelliinvestConstants.Quarter.Q1.name();
-						break;
-					case 6:
-					case 7:
-					case 8:
-						quarter = IntelliinvestConstants.Quarter.Q2.name();
-						break;
-					case 9:
-					case 10:
-					case 11:
-						quarter = IntelliinvestConstants.Quarter.Q3.name();
-						break;
-					case 12:
-						quarter = IntelliinvestConstants.Quarter.Q4.name();
-						break;
 					case 1:
 					case 2:
+					case 3:
+						quarter = IntelliinvestConstants.Quarter.Q1.name();
+						break;
+					case 4:
+					case 5:
+					case 6:
+						quarter = IntelliinvestConstants.Quarter.Q2.name();
+						break;
+					case 7:
+					case 8:
+					case 9:
+						quarter = IntelliinvestConstants.Quarter.Q3.name();
+						break;
+					case 10:
+					case 11:
+					case 12:
 						quarter = IntelliinvestConstants.Quarter.Q4.name();
-						year = year - 1;
 						break;
 					default:
 						quarter = IntelliinvestConstants.Quarter.Q1.name();

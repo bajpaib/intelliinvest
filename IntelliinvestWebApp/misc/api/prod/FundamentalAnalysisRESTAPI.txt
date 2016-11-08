@@ -13,8 +13,41 @@ http://107.167.183.167/IntelliinvestWebApp/rest/stock/getStockFundamentalsById?i
 http://107.167.183.167/IntelliinvestWebApp/rest/stock/getStockFundamentalsByIdAndAttrName?id=SBIN&attrName=alReturnOnEquity
 
 5. Forecast fundamental analysis for a given date
-http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2016-10-19
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2016-10-17
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2016-09-30
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2016-06-30
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2016-03-31
 
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2015-12-31
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2015-09-30
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2015-06-30
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2015-03-31
+
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2014-12-31
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2014-09-30
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2014-06-30
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2014-03-31
+
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2013-12-31
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2013-09-30
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2013-06-30
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2013-03-31
+
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2012-12-31
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2012-09-30
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2012-06-30
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2012-03-31
+
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2011-12-31
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2011-09-30
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2011-06-30
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2011-03-31
+
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2010-12-31
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2010-09-30
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2010-06-30
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/forecastFundamentalAnalysis?date=2010-03-31
+    
 AttributeNames
 --------------
 alMarketCap

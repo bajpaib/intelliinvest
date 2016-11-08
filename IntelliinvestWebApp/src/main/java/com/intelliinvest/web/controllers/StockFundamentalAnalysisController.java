@@ -333,8 +333,9 @@ public class StockFundamentalAnalysisController {
 					Stock stock = stockRepository.getStockById(stockAnalysis.getSecurityId());
 					StockPrice stockPrice = stockRepository.getStockPriceById(stockAnalysis.getSecurityId());
 					QuandlStockPrice quandlStockPrice = quandlEODStockPriceRepository
-							.getEODStockPrice(stockAnalysis.getSecurityId());
-
+							.getLatestEODStockPrice(stockAnalysis.getSecurityId());
+					StockFundamentals fundamental = stockFundamentalsRepository.getStockFundamentalsByIdAndAttrName(
+							stockAnalysis.getSecurityId(), IntelliinvestConstants.ANNUAL_RETURN_ON_EQUITY);
 					StockPriceResponse res = new StockPriceResponse();
 					res.setSecurityId(stockAnalysis.getSecurityId());
 					if (stock != null) {
@@ -343,13 +344,25 @@ public class StockFundamentalAnalysisController {
 
 					res.setCurrentPrice(MathUtil.round(stockPrice != null ? stockPrice.getCurrentPrice() : 0));
 					res.setEodPrice(MathUtil.round(quandlStockPrice != null ? quandlStockPrice.getClose() : 0));
-
+					
 					if (!MathUtil.isNearZero(res.getCurrentPrice()) && !MathUtil.isNearZero(res.getEodPrice())) {
 						double pctChange = ((res.getCurrentPrice() - res.getEodPrice()) / res.getEodPrice()) * 100;
 						res.setPctChange(MathUtil.round(pctChange));
 					} else {
 						res.setPctChange(0);
 					}
+					
+					String alReturnOnEquity = "";
+					if(fundamental!=null){
+						Map<String, String> yearQuarterAttrVal = fundamental.getYearQuarterAttrVal();
+						TreeMap<String, String> sorted = new TreeMap<String, String>(yearQuarterAttrVal);
+						Map.Entry<String, String> entry = sorted.lastEntry();
+						if(entry!=null){
+							alReturnOnEquity = entry.getValue();
+						}				
+					}
+					
+					res.setAlReturnOnEquity(alReturnOnEquity);
 					res.setSuccess(true);
 					response.add(res);
 				}

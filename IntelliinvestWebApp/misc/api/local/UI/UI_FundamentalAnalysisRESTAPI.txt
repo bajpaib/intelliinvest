@@ -16,7 +16,7 @@ http://localhost:8080/IntelliinvestWebApp/rest/stock/getFundamentalAnalysisTimeS
 http://localhost:8080/IntelliinvestWebApp/rest/industry/getLatestIndustryFundamentals?name=BANKING
 
 5. For a given industry and date, get industry analysis
-http://localhost:8080/IntelliinvestWebApp/rest/industry/getIndustryFundamentalsForDate?name=BANKING&date=2016-10-14
+http://localhost:8080/IntelliinvestWebApp/rest/industry/getIndustryFundamentalsForDate?name=BANKING&date=2016-10-17
 
 6. For a given industry and attribute, return the time series for industry(date, attributeValue)
 

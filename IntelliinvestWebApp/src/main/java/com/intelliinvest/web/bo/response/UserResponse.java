@@ -29,7 +29,8 @@ public class UserResponse implements Serializable {
 	private boolean sendNotification;
 	private boolean success;
 	private String message;
-
+	private String deviceId;
+	
 	public UserResponse() {
 	}
 
@@ -39,6 +40,14 @@ public class UserResponse implements Serializable {
 
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	public String getDeviceId() {
+		return deviceId;
+	}
+
+	public void setDeviceId(String deviceId) {
+		this.deviceId = deviceId;
 	}
 
 	public String getUsername() {

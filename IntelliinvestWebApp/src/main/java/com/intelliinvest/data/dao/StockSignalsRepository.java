@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -120,6 +121,33 @@ public class StockSignalsRepository {
 					"Could not refresh signalCache from todays signals in StockSignalRepository. STOCK_SIGNALS is empty.");
 		}
 	}
+	
+
+	public StockSignalsArchiveResponse getStockSignalsArchive(int ma, String securityId, int timePeriod) {
+		logger.debug("Inside getStockSignalDetails...from time:::" + timePeriod);
+		LocalDate date = getLastDate(timePeriod);
+
+		logger.debug("from date:" + date);
+		List<StockSignals> stockSignals = mongoTemplate.find(
+				Query.query(Criteria.where("securityId").is(securityId).and("signalDate").gte(date)),
+				StockSignals.class, COLLECTION_STOCK_SIGNALS);
+
+		List<StockSignalsComponents> stockSignalsComponents = mongoTemplate.find(
+				Query.query(Criteria.where("securityId").is(securityId).and("signalDate").gte(date)),
+				StockSignalsComponents.class, COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, ma + ""));
+
+		if (stockSignals != null && stockSignalsComponents != null
+				&& stockSignals.size() == stockSignalsComponents.size())
+			return getArchiveResponse(date, securityId, stockSignals, stockSignalsComponents);
+		else {
+			StockSignalsArchiveResponse response = new StockSignalsArchiveResponse();
+			response.setMessage("Some internal data error...");
+			response.setSuccess(false);
+			return response;
+		}
+
+	}
+
 
 	public List<StockSignals> getLatestStockSignalFromDB() {
 		logger.info("Inside getLatestStockSignalFromDB()...");
@@ -128,6 +156,7 @@ public class StockSignalsRepository {
 				.withOptions(Aggregation.newAggregationOptions().allowDiskUse(true).build());
 		AggregationResults<StockSignals> results = mongoTemplate.aggregate(aggregation, COLLECTION_STOCK_SIGNALS,
 				StockSignals.class);
+		logger.info("return signals list size is:"+results.getMappedResults().size());
 		List<StockSignals> retVal = new ArrayList<StockSignals>();
 
 		for (StockSignals stockSignal : results.getMappedResults()) {
@@ -164,35 +193,49 @@ public class StockSignalsRepository {
 	 * System.out.println(repository.getStockSignalsFromStartDateUsingJoin(
 	 * "ABAN", 10)); }
 	 */
-	public StockSignalsArchiveResponse getStockSignalsArchive(int ma, String securityId, int timePeriod) {
+
+	public StockSignalsArchiveResponse getStockSignalsDetails(int ma, String securityId, int timePeriod,
+			String signalPresentStr) {
 		logger.debug("Inside getStockSignalDetails...from time:::" + timePeriod);
 		LocalDate date = getLastDate(timePeriod);
 
 		logger.debug("from date:" + date);
 		List<StockSignals> stockSignals = mongoTemplate.find(
-				Query.query(Criteria.where("securityId").is(securityId).and("signalDate").gte(date)),
+				Query.query(Criteria.where("securityId").is(securityId).and("signalDate").gte(date)
+						.and(signalPresentStr).is(IntelliinvestConstants.SIGNAL_PRESENT)),
 				StockSignals.class, COLLECTION_STOCK_SIGNALS);
 
-		List<StockSignalsComponents> stockSignalsComponents = mongoTemplate.find(
-				Query.query(Criteria.where("securityId").is(securityId).and("signalDate").gte(date)),
-				StockSignalsComponents.class, COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, ma + ""));
+		if (stockSignals != null && stockSignals.size() > 0) {
+			List<LocalDate> dates = stockSignals.parallelStream().map(StockSignals::getSignalDate)
+					.collect(Collectors.toList());
 
-		if (stockSignals != null && stockSignalsComponents != null
-				&& stockSignals.size() == stockSignalsComponents.size())
-			return getArchiveResponse(date, securityId, stockSignals, stockSignalsComponents, null);
-		else {
-			StockSignalsArchiveResponse response = new StockSignalsArchiveResponse();
-			response.setMessage("Some internal data error...");
-			response.setSuccess(false);
-			return response;
+			List<StockSignalsComponents> stockSignalsComponents = mongoTemplate.find(
+					Query.query(Criteria.where("securityId").is(securityId).and("signalDate").in(dates)),
+					StockSignalsComponents.class,
+					COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, ma + ""));
+
+			logger.info("Stock Signals size :" + stockSignals.size() + " Component List size is : "
+					+ stockSignalsComponents.size());
+			if (stockSignals != null && stockSignalsComponents != null
+					&& stockSignals.size() == stockSignalsComponents.size())
+				return getArchiveResponse(date, securityId, stockSignals, stockSignalsComponents);
+
+		} else {
+			if (stockRepository.getStockById(securityId) != null)
+				return getArchiveResponse(date, securityId, null, null);
+
 		}
+		StockSignalsArchiveResponse response = new StockSignalsArchiveResponse();
+		response.setMessage("Some internal data error...");
+		response.setSuccess(false);
+		return response;
 
 	}
 
 	public StockSignalsResponse getStockSignalsBySecurityId(String securityId) {
 		StockPrice stockPrice = stockRepository.getStockPriceById(securityId);
 		StockSignals stockSignals = signalCache.get(securityId);
-		QuandlStockPrice quandlStockPrice = quandlEODStockPriceRepository.getEODStockPrice(securityId);
+		QuandlStockPrice quandlStockPrice = quandlEODStockPriceRepository.getLatestEODStockPrice(securityId);
 		return IntelliinvestConverter.convertToStockSignalReponse(stockPrice, quandlStockPrice, stockSignals);
 
 	}
@@ -411,14 +454,15 @@ public class StockSignalsRepository {
 	}
 
 	private StockSignalsArchiveResponse getArchiveResponse(LocalDate date, String securityId,
-			List<StockSignals> stockSignalsList, List<StockSignalsComponents> stockSignalsComponentsList,
-			List<StockSignalsDTO> stockSignalsDTOs) {
+			List<StockSignals> stockSignalsList, List<StockSignalsComponents> stockSignalsComponentsList) {
 
 		StockSignalsArchiveResponse stockSignalsArchiveResponse = new StockSignalsArchiveResponse();
 		stockSignalsArchiveResponse.setStockSignalsList(stockSignalsList);
 		stockSignalsArchiveResponse.setSecurityId(securityId);
 
-		if (stockSignalsDTOs == null)
+		List<StockSignalsDTO> stockSignalsDTOs = new ArrayList<>();
+
+		if (stockSignalsList != null && stockSignalsComponentsList != null)
 			stockSignalsDTOs = IntelliinvestConverter.convertBO2DTO(stockSignalsComponentsList, stockSignalsList);
 
 		List<QuandlStockPrice> quandlStockPrices = quandlEODStockPriceRepository.getStockPricesFromStartDate(securityId,
@@ -485,7 +529,7 @@ public class StockSignalsRepository {
 		stockSignalsArchiveResponse.setSuccess(true);
 		stockSignalsArchiveResponse.setMessage("Data has been returned successfully...");
 
-		QuandlStockPrice quandlStockPrice = quandlEODStockPriceRepository.getEODStockPrice(securityId);
+		QuandlStockPrice quandlStockPrice = quandlEODStockPriceRepository.getLatestEODStockPrice(securityId);
 		StockPrice stockPrice = stockRepository.getStockPriceById(securityId);
 
 		setPriceInformation(stockSignalsArchiveResponse, quandlStockPrice, stockPrice);

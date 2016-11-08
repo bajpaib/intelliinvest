@@ -349,8 +349,9 @@ public class StockSignalsGenerator {
 			List<QuandlStockPrice> quandlStockPrices, List<StockSignalsDTO> stockSignalsDTOs) {
 		if (stockSignalsDTOs != null && quandlStockPrices != null && !quandlStockPrices.isEmpty()
 				&& !stockSignalsDTOs.isEmpty()) {
-//			logger.info("Stock Signal list size is:" + stockSignalsDTOs.size() + " quandl price list size is : "
-//					+ quandlStockPrices.size());
+			// logger.info("Stock Signal list size is:" +
+			// stockSignalsDTOs.size() + " quandl price list size is : "
+			// + quandlStockPrices.size());
 		} else {
 			throw new RuntimeException("EOD Prices not available");
 		}
@@ -359,9 +360,10 @@ public class StockSignalsGenerator {
 		MagicNumberData magicNumberData = magicNumberRepository.getMagicNumber(stockCode);
 
 		if (null == magicNumberData) {
+			logger.info("Setting default magic number for stock " + stockCode);
 			magicNumberData = new MagicNumberData(stockCode, ma);
 		}
-//		logger.info("Magic Number Object: " + magicNumberData.toString());
+		// logger.info("Magic Number Object: " + magicNumberData.toString());
 
 		signalComponentHolder.setMagicNumberADX(magicNumberData.getMagicNumberADX());
 		signalComponentHolder.setMagicNumberBolliger(magicNumberData.getMagicNumberBollinger());

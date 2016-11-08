@@ -14,7 +14,11 @@ public class TimeSeriesResponse implements Serializable {
 	private String securityId;
 	private LocalDate date;	
 	private List<String> dateSeries;
+	private List<Double> openPriceSeries;
+	private List<Double> highPriceSeries;
+	private List<Double> lowPriceSeries;
 	private List<Double> priceSeries;
+	private List<Double> tradedQtySeries;	
 	private boolean success;
 	private String message;
 
@@ -55,6 +59,38 @@ public class TimeSeriesResponse implements Serializable {
 		this.priceSeries = priceSeries;
 	}
 
+	public List<Double> getOpenPriceSeries() {
+		return openPriceSeries;
+	}
+
+	public void setOpenPriceSeries(List<Double> openPriceSeries) {
+		this.openPriceSeries = openPriceSeries;
+	}
+
+	public List<Double> getHighPriceSeries() {
+		return highPriceSeries;
+	}
+
+	public void setHighPriceSeries(List<Double> highPriceSeries) {
+		this.highPriceSeries = highPriceSeries;
+	}
+
+	public List<Double> getLowPriceSeries() {
+		return lowPriceSeries;
+	}
+
+	public void setLowPriceSeries(List<Double> lowPriceSeries) {
+		this.lowPriceSeries = lowPriceSeries;
+	}
+
+	public List<Double> getTradedQtySeries() {
+		return tradedQtySeries;
+	}
+
+	public void setTradedQtySeries(List<Double> tradedQtySeries) {
+		this.tradedQtySeries = tradedQtySeries;
+	}
+
 	public boolean isSuccess() {
 		return success;
 	}
@@ -73,7 +109,9 @@ public class TimeSeriesResponse implements Serializable {
 
 	@Override
 	public String toString() {
-		return "TimeSeriesResponse [securityId=" + securityId + ", date=" + date + ", dateSeries=" + dateSeries + ", priceSeries="
-				+ priceSeries + ", success=" + success + ", message=" + message + "]";
+		return "TimeSeriesResponse [securityId=" + securityId + ", date=" + date + ", dateSeries=" + dateSeries
+				+ ", openPriceSeries=" + openPriceSeries + ", highPriceSeries=" + highPriceSeries + ", lowPriceSeries="
+				+ lowPriceSeries + ", priceSeries=" + priceSeries + ", tradedQtySeries=" + tradedQtySeries
+				+ ", success=" + success + ", message=" + message + "]";
 	}
 }

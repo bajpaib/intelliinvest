@@ -345,7 +345,7 @@ public class UserPortfolioRepository {
 				double cp = 0;
 				double eodPrice = 0;
 				StockPrice stockPrice = stockRepository.getStockPriceById(code);
-				QuandlStockPrice quandlStockPrice = quandlEODStockPriceRepository.getEODStockPrice(code);
+				QuandlStockPrice quandlStockPrice = quandlEODStockPriceRepository.getLatestEODStockPrice(code);
 				if (stockPrice != null) {
 					currentPrice = stockPrice.getCurrentPrice();
 					cp = stockPrice.getCp();
@@ -419,7 +419,7 @@ public class UserPortfolioRepository {
 			double cp = 0;
 			double eodPrice = 0;
 			StockPrice stockPrice = stockRepository.getStockPriceById(summaryData.getCode());
-			QuandlStockPrice quandlStockPrice = quandlEODStockPriceRepository.getEODStockPrice(summaryData.getCode());
+			QuandlStockPrice quandlStockPrice = quandlEODStockPriceRepository.getLatestEODStockPrice(summaryData.getCode());
 			if (stockPrice != null) {
 				currentPrice = stockPrice.getCurrentPrice();
 				cp = stockPrice.getCp();

@@ -42,13 +42,42 @@ public class StockSignalsController {
 		return stockSignalsRepository.getStockSignalsBySecurityId(securityId);
 	}
 
+
 	@RequestMapping(value = "/stockSignals/getArchive", method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public @ResponseBody StockSignalsArchiveResponse getStockSignalsArchive(
 			@RequestParam("securityId") String securityId,
 			@RequestParam(value = "timePeriod", required = false, defaultValue = "1") int timePeriod) {
 		return stockSignalsRepository.getStockSignalsArchive(MOVING_AVERAGE, securityId, timePeriod);
 	}
+	
+	@RequestMapping(value = "/stockSignals/getADXSignalDetails", method = RequestMethod.GET, produces = APPLICATION_JSON)
+	public @ResponseBody StockSignalsArchiveResponse getADXStockSignalsDetails(
+			@RequestParam("securityId") String securityId,
+			@RequestParam(value = "timePeriod", required = false, defaultValue = "2") int timePeriod) {
+		return stockSignalsRepository.getStockSignalsDetails(MOVING_AVERAGE, securityId, timePeriod,"adxSignalPresent");
+	}
 
+	@RequestMapping(value = "/stockSignals/getBolSignalDetails", method = RequestMethod.GET, produces = APPLICATION_JSON)
+	public @ResponseBody StockSignalsArchiveResponse getBolStockSignalsDetails(
+			@RequestParam("securityId") String securityId,
+			@RequestParam(value = "timePeriod", required = false, defaultValue = "2") int timePeriod) {
+		return stockSignalsRepository.getStockSignalsDetails(MOVING_AVERAGE, securityId, timePeriod,"signalPresentBollinger");
+	}
+	
+	@RequestMapping(value = "/stockSignals/getOscSignalDetails", method = RequestMethod.GET, produces = APPLICATION_JSON)
+	public @ResponseBody StockSignalsArchiveResponse getOscStockSignalsDetails(
+			@RequestParam("securityId") String securityId,
+			@RequestParam(value = "timePeriod", required = false, defaultValue = "2") int timePeriod) {
+		return stockSignalsRepository.getStockSignalsDetails(MOVING_AVERAGE, securityId, timePeriod,"signalPresentOscillator");
+	}
+	
+	@RequestMapping(value = "/stockSignals/getMovAvgSignalDetails", method = RequestMethod.GET, produces = APPLICATION_JSON)
+	public @ResponseBody StockSignalsArchiveResponse getMovAvgStockSignalsDetails(
+			@RequestParam("securityId") String securityId,
+			@RequestParam(value = "timePeriod", required = false, defaultValue = "2") int timePeriod) {
+		return stockSignalsRepository.getStockSignalsDetails(MOVING_AVERAGE, securityId, timePeriod,"movingAverageSignal_Main_present");
+	}
+	
 	@RequestMapping(value = "/stockSignals/getBySecurityIdAndDate", method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public @ResponseBody StockSignals getStockSignalsBysecurityIdAndDate(@RequestParam("securityId") String securityId,
 			@RequestParam("signalDate") String signalDate) {
