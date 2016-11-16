@@ -3,10 +3,11 @@ package com.intelliinvest.data.signals;
 import com.intelliinvest.common.IntelliinvestConstants;
 import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.data.model.StockSignalsDTO;
+import com.intelliinvest.util.Helper;
 
 public class ADXSignalComponentBuilder implements SignalComponentBuilder {
-	
-	public void generateSignal(SignalComponentHolder signalComponentHolder){
+
+	public void generateSignal(SignalComponentHolder signalComponentHolder) {
 		QuandlStockPrice quandlStockPrice = signalComponentHolder.getQuandlStockPrices().getLast();
 
 		StockSignalsDTO stockSignalsDTO = signalComponentHolder.getStockSignalsDTOs().getLast();
@@ -19,9 +20,8 @@ public class ADXSignalComponentBuilder implements SignalComponentBuilder {
 		// DX
 		stockSignalsDTO.setDX(100 * (stockSignalsDTO.getDiffDIn() / stockSignalsDTO.getSumDIn()));
 
-		
 		int quandlPricesSize = signalComponentHolder.getQuandlStockPrices().size();
-		
+
 		Double previousVolumeAverage = 0D;
 		for (int i = 0; i < quandlPricesSize - 1; i++) {
 			previousVolumeAverage += signalComponentHolder.getQuandlStockPrices().get(i).getTradedQty();
@@ -41,11 +41,13 @@ public class ADXSignalComponentBuilder implements SignalComponentBuilder {
 			volumeWeightage = 1.3D;
 		}
 
-		if(quandlPricesSize!=signalComponentHolder.getMa()){
+		if (quandlPricesSize != signalComponentHolder.getMa()) {
 			stockSignalsDTO.setADXn(stockSignalsDTO.getDX());
-		}else{
-			StockSignalsDTO stockSignalsDTO_1 = signalComponentHolder.getStockSignalsDTOs().get(signalComponentHolder.getStockSignalsDTOs().size()-2);
-			stockSignalsDTO.setADXn(((stockSignalsDTO_1.getADXn() * ((quandlPricesSize - 1D) / quandlPricesSize)) + (stockSignalsDTO.getDX() * (1D / quandlPricesSize))) * volumeWeightage);
+		} else {
+			StockSignalsDTO stockSignalsDTO_1 = signalComponentHolder.getStockSignalsDTOs()
+					.get(signalComponentHolder.getStockSignalsDTOs().size() - 2);
+			stockSignalsDTO.setADXn(((stockSignalsDTO_1.getADXn() * ((quandlPricesSize - 1D) / quandlPricesSize))
+					+ (stockSignalsDTO.getDX() * (1D / quandlPricesSize))) * volumeWeightage);
 			Double delta = 5D;
 			// signal
 			String signal = "";
@@ -66,24 +68,8 @@ public class ADXSignalComponentBuilder implements SignalComponentBuilder {
 
 			stockSignalsDTO.setAdxSignal(signal);
 
-			String signalPresent = IntelliinvestConstants.SIGNAL_PRESENT;
-			if (signal.equals(IntelliinvestConstants.BUY) && (stockSignalsDTO_1.getAdxSignal().equals(IntelliinvestConstants.BUY)
-					|| stockSignalsDTO_1.getAdxSignal().equals(IntelliinvestConstants.HOLD))) {
-				signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
-			} else if (signal.equals(IntelliinvestConstants.HOLD) && (stockSignalsDTO_1.getAdxSignal().equals(IntelliinvestConstants.BUY)
-					|| stockSignalsDTO_1.getAdxSignal().equals(IntelliinvestConstants.HOLD))) {
-				signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
-			} else if (signal.equals(IntelliinvestConstants.SELL) && (stockSignalsDTO_1.getAdxSignal().equals(IntelliinvestConstants.SELL)
-					|| stockSignalsDTO_1.getAdxSignal().equals(IntelliinvestConstants.WAIT))) {
-				signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
-			} else if (signal.equals(IntelliinvestConstants.WAIT) && (stockSignalsDTO_1.getAdxSignal().equals(IntelliinvestConstants.SELL)
-					|| stockSignalsDTO_1.getAdxSignal().equals(IntelliinvestConstants.WAIT))) {
-				signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
-			}
-
-//			stockSignalsDTO.setPreviousSignalType(stockSignalsDTO_1.getSignalType());
-			stockSignalsDTO.setAdxSignalPresent(signalPresent);
+			stockSignalsDTO.setAdxSignalPresent(Helper.getSignalPresentData(signal, stockSignalsDTO_1.getAdxSignal()));
 		}
 	}
-	
+
 }

@@ -514,7 +514,7 @@ public class MagicNumberGenerator {
 			} else {
 				logger.info("Price not found for the particular object::::::::::");
 			}
-//			logger.info("Stock Signals DTO object is:" + stockSignalsDTO);
+			// logger.info("Stock Signals DTO object is:" + stockSignalsDTO);
 		}
 
 		if (null != stockSignalsDTO_1
@@ -551,7 +551,7 @@ public class MagicNumberGenerator {
 			} else {
 				logger.info("Price not found for the particular object::::::::::");
 			}
-//			logger.info("Stock Signals DTO object is:" + stockSignalsDTO);
+			// logger.info("Stock Signals DTO object is:" + stockSignalsDTO);
 		}
 
 		if (null != stockSignalsDTO_1
@@ -588,7 +588,7 @@ public class MagicNumberGenerator {
 			} else {
 				logger.info("Price not found for the particular object::::::::::");
 			}
-//			logger.info("Stock Signals DTO object is:" + stockSignalsDTO);
+			// logger.info("Stock Signals DTO object is:" + stockSignalsDTO);
 		}
 
 		if (null != stockSignalsDTO_1
@@ -626,7 +626,7 @@ public class MagicNumberGenerator {
 			} else {
 				logger.info("Price not found for the particular object::::::::::");
 			}
-//			logger.info("Stock Signals DTO object is:" + stockSignalsDTO);
+			// logger.info("Stock Signals DTO object is:" + stockSignalsDTO);
 		}
 
 		if (null != stockSignalsDTO_1 && stockSignalsDTO_1.getMovingAverageSignals().getMovingAverageSignal_Main()
@@ -636,4 +636,78 @@ public class MagicNumberGenerator {
 		}
 		return pnl;
 	}
+
+	public static Double getPnlMovingAverageLongTerm(Map<LocalDate, Double> priceMap,
+			List<StockSignalsDTO> stockSignalsDTOsWithSignalPresnt, QuandlStockPrice lastQuandlStockPrice,
+			StockSignalsDTO lastStockSignalsDTO) {
+		logger.info("Signal Present list: " + stockSignalsDTOsWithSignalPresnt.size());
+		Double pnl = 0D;
+		StockSignalsDTO stockSignalsDTO_1 = null;
+		for (StockSignalsDTO stockSignalsDTO : stockSignalsDTOsWithSignalPresnt) {
+			if (priceMap.get(stockSignalsDTO.getSignalDate()) != null) {
+				if (!stockSignalsDTO.getMovingAverageSignals().getMovingAverageSignal_LongTerm()
+						.equalsIgnoreCase(IntelliinvestConstants.BUY) && null == stockSignalsDTO_1) {
+					// logger.info("pnl in first not BUY case :" +pnl);
+				} else if (stockSignalsDTO.getMovingAverageSignals().getMovingAverageSignal_LongTerm()
+						.equalsIgnoreCase(IntelliinvestConstants.BUY)) {
+					stockSignalsDTO_1 = stockSignalsDTO;
+					Double price = priceMap.get(stockSignalsDTO.getSignalDate()) * stockSignalsDTO.getSplitMultiplier();
+					pnl = pnl - price;
+					// logger.info("pnl in BUY case :" +pnl);
+				} else if (!stockSignalsDTO.getMovingAverageSignals().getMovingAverageSignal_LongTerm()
+						.equalsIgnoreCase(IntelliinvestConstants.BUY)) {
+					stockSignalsDTO_1 = stockSignalsDTO;
+					Double price = priceMap.get(stockSignalsDTO.getSignalDate()) * stockSignalsDTO.getSplitMultiplier();
+					pnl = pnl + price;
+					// logger.info("pnl in not BUY case :" +pnl);
+				}
+			} else {
+				logger.info("Price not found for the particular object::::::::::");
+			}
+			// logger.info("Stock Signals DTO object is:" + stockSignalsDTO);
+		}
+
+		if (null != stockSignalsDTO_1 && stockSignalsDTO_1.getMovingAverageSignals().getMovingAverageSignal_LongTerm()
+				.equalsIgnoreCase(IntelliinvestConstants.BUY)) {
+			Double price = lastQuandlStockPrice.getClose() * lastStockSignalsDTO.getSplitMultiplier();
+			pnl = pnl + price;
+		}
+		return pnl;
+	}
+	
+	public static Double getPnlAgg(Map<LocalDate, Double> priceMap,
+			List<StockSignalsDTO> stockSignalsDTOsWithSignalPresnt, QuandlStockPrice lastQuandlStockPrice,
+			StockSignalsDTO lastStockSignalsDTO) {
+		logger.info("Signal Present list: " + stockSignalsDTOsWithSignalPresnt.size());
+		Double pnl = 0D;
+		StockSignalsDTO stockSignalsDTO_1 = null;
+		for (StockSignalsDTO stockSignalsDTO : stockSignalsDTOsWithSignalPresnt) {
+			if (priceMap.get(stockSignalsDTO.getSignalDate()) != null) {
+				if (!stockSignalsDTO.getAggSignal().equalsIgnoreCase(IntelliinvestConstants.BUY)
+						&& null == stockSignalsDTO_1) {
+				} else if (stockSignalsDTO.getAggSignal().equalsIgnoreCase(IntelliinvestConstants.BUY)) {
+					stockSignalsDTO_1 = stockSignalsDTO;
+					Double price = priceMap.get(stockSignalsDTO.getSignalDate()) * stockSignalsDTO.getSplitMultiplier();
+					pnl = pnl - price;
+					// logger.info("pnl in BUY case :" +pnl);
+				} else if (!stockSignalsDTO.getAggSignal().equalsIgnoreCase(IntelliinvestConstants.BUY)) {
+					stockSignalsDTO_1 = stockSignalsDTO;
+					Double price = priceMap.get(stockSignalsDTO.getSignalDate()) * stockSignalsDTO.getSplitMultiplier();
+					pnl = pnl + price;
+					// logger.info("pnl in not BUY case :" +pnl);
+				}
+			} else {
+				logger.info("Price not found for the particular object::::::::::");
+			}
+			// logger.info("Stock Signals DTO object is:" + stockSignalsDTO);
+		}
+
+		if (null != stockSignalsDTO_1 && stockSignalsDTO_1.getAggSignal()
+				.equalsIgnoreCase(IntelliinvestConstants.BUY)) {
+			Double price = lastQuandlStockPrice.getClose() * lastStockSignalsDTO.getSplitMultiplier();
+			pnl = pnl + price;
+		}
+		return pnl;
+	}
+
 }

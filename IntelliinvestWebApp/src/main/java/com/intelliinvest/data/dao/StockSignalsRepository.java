@@ -41,6 +41,7 @@ import com.intelliinvest.data.signals.MagicNumberGenerator;
 import com.intelliinvest.util.DateUtil;
 import com.intelliinvest.util.Helper;
 import com.intelliinvest.util.IntelliinvestConverter;
+import com.intelliinvest.web.bo.response.StockPnlData;
 import com.intelliinvest.web.bo.response.StockSignalsArchiveResponse;
 import com.intelliinvest.web.bo.response.StockSignalsResponse;
 
@@ -121,7 +122,6 @@ public class StockSignalsRepository {
 					"Could not refresh signalCache from todays signals in StockSignalRepository. STOCK_SIGNALS is empty.");
 		}
 	}
-	
 
 	public StockSignalsArchiveResponse getStockSignalsArchive(int ma, String securityId, int timePeriod) {
 		logger.debug("Inside getStockSignalDetails...from time:::" + timePeriod);
@@ -148,7 +148,6 @@ public class StockSignalsRepository {
 
 	}
 
-
 	public List<StockSignals> getLatestStockSignalFromDB() {
 		logger.info("Inside getLatestStockSignalFromDB()...");
 
@@ -156,7 +155,7 @@ public class StockSignalsRepository {
 				.withOptions(Aggregation.newAggregationOptions().allowDiskUse(true).build());
 		AggregationResults<StockSignals> results = mongoTemplate.aggregate(aggregation, COLLECTION_STOCK_SIGNALS,
 				StockSignals.class);
-		logger.info("return signals list size is:"+results.getMappedResults().size());
+		logger.info("return signals list size is:" + results.getMappedResults().size());
 		List<StockSignals> retVal = new ArrayList<StockSignals>();
 
 		for (StockSignals stockSignal : results.getMappedResults()) {
@@ -289,7 +288,7 @@ public class StockSignalsRepository {
 					update.set("signalDate", dateUtil.getDateFromLocalDate(stockSignal.getSignalDate()));
 					update.set("adxSignalPresent", stockSignal.getAdxSignalPresent());
 					update.set("oscillatorSignal", stockSignal.getOscillatorSignal());
-					update.set("signalPresentOscillator", stockSignal.getAdxSignalPresent());
+					update.set("signalPresentOscillator", stockSignal.getSignalPresentOscillator());
 					update.set("bollingerSignal", stockSignal.getBollingerSignal());
 					update.set("signalPresentBollinger", stockSignal.getSignalPresentBollinger());
 					update.set("movingAverageSignal_SmallTerm", stockSignal.getMovingAverageSignal_SmallTerm());
@@ -415,14 +414,9 @@ public class StockSignalsRepository {
 
 		List<StockSignalsComponents> stockSignalsComponentsList = mongoTemplate.find(query,
 				StockSignalsComponents.class, COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, ma + ""));
-		if (stockSignalsList != null && stockSignalsComponentsList != null
-				&& stockSignalsList.size() == stockSignalsComponentsList.size())
-			return IntelliinvestConverter.convertBO2DTO(stockSignalsComponentsList, stockSignalsList);
-		else {
-			logger.info("Stock list size :" + stockSignalsList.size() + " and components list size is : "
-					+ stockSignalsComponentsList.size());
-			return null;
-		}
+
+		return IntelliinvestConverter.convertBO2DTO(stockSignalsComponentsList, stockSignalsList);
+
 	}
 
 	public List<StockSignals> getTechnicalAnalysisData() {
@@ -460,10 +454,8 @@ public class StockSignalsRepository {
 		stockSignalsArchiveResponse.setStockSignalsList(stockSignalsList);
 		stockSignalsArchiveResponse.setSecurityId(securityId);
 
-		List<StockSignalsDTO> stockSignalsDTOs = new ArrayList<>();
-
-		if (stockSignalsList != null && stockSignalsComponentsList != null)
-			stockSignalsDTOs = IntelliinvestConverter.convertBO2DTO(stockSignalsComponentsList, stockSignalsList);
+		List<StockSignalsDTO> stockSignalsDTOs = IntelliinvestConverter.convertBO2DTO(stockSignalsComponentsList,
+				stockSignalsList);
 
 		List<QuandlStockPrice> quandlStockPrices = quandlEODStockPriceRepository.getStockPricesFromStartDate(securityId,
 				date);
@@ -480,7 +472,8 @@ public class StockSignalsRepository {
 		List<StockSignalsDTO> stockSignalsDTOsWithOscSignalPresnt = new ArrayList<StockSignalsDTO>();
 		List<StockSignalsDTO> stockSignalsDTOsWithBollSignalPresnt = new ArrayList<StockSignalsDTO>();
 		List<StockSignalsDTO> stockSignalsDTOsWithMovingAveragePresnt = new ArrayList<StockSignalsDTO>();
-
+		List<StockSignalsDTO> stockSignalsDTOsWithMovingAverageLongTermPresnt = new ArrayList<StockSignalsDTO>();
+		
 		logger.info("Stock Signals list size is :" + stockSignalsDTOs.size());
 		StockSignalsDTO lastStockSignalsDTO = null;
 		for (StockSignalsDTO stockSignalsDTO : stockSignalsDTOs) {
@@ -498,6 +491,10 @@ public class StockSignalsRepository {
 			if (IntelliinvestConstants.SIGNAL_PRESENT
 					.equals(stockSignalsDTO.getMovingAverageSignals().getMovingAverageSignal_Main_present())) {
 				stockSignalsDTOsWithMovingAveragePresnt.add(stockSignalsDTO);
+			}
+			if (IntelliinvestConstants.SIGNAL_PRESENT
+					.equals(stockSignalsDTO.getMovingAverageSignals().getMovingAverageSignal_LongTerm_present())) {
+				stockSignalsDTOsWithMovingAverageLongTermPresnt.add(stockSignalsDTO);
 			}
 			// logger.debug("Stock Signals object: " +
 			// stockSignalsDTO.toString());
@@ -519,6 +516,11 @@ public class StockSignalsRepository {
 				.setMovingAveragePnl(Helper.formatDecimalNumber(magicNumberGenerator.getPnlMovingAverage(priceMap,
 						stockSignalsDTOsWithMovingAveragePresnt, lastQuandlStockPrice, lastStockSignalsDTO)));
 
+		stockSignalsArchiveResponse
+		.setMovingAvgLongTermPnl(Helper.formatDecimalNumber(magicNumberGenerator.getPnlMovingAverageLongTerm(priceMap,
+				stockSignalsDTOsWithMovingAverageLongTermPresnt, lastQuandlStockPrice, lastStockSignalsDTO)));
+
+		
 		QuandlStockPrice stockPrice_first = quandlStockPrices.get(0);
 		QuandlStockPrice stockPrice_last = quandlStockPrices.get(quandlStockPrices.size() - 1);
 
@@ -551,5 +553,106 @@ public class StockSignalsRepository {
 			stockSignalsArchiveResponse.setEodPriceExchange(quandlStockPrice.getExchange());
 			stockSignalsArchiveResponse.setEodPriceUpdateDate(quandlStockPrice.getUpdateDate());
 		}
+	}
+
+	public StockSignals getStockSignalsForWatchList(String securityId) {
+		final Aggregation aggregation = newAggregation(
+				Aggregation.match(Criteria.where("securityId").is(securityId).and("aggSignal_present").is("Y")),
+				sort(Sort.Direction.DESC, "signalDate"), getGroupObj())
+						.withOptions(Aggregation.newAggregationOptions().allowDiskUse(true).build());
+		AggregationResults<StockSignals> results = mongoTemplate.aggregate(aggregation, COLLECTION_STOCK_SIGNALS,
+				StockSignals.class);
+		logger.info("return result size is::" + results.getMappedResults().size());
+		if (results.getMappedResults().size() > 0)
+			return results.getMappedResults().get(0);
+		else
+			return null;
+	}
+	
+	public StockPnlData getStockPnlData(Integer ma, String securityId, int timePeriod) {
+		StockPnlData stockPnlData = new StockPnlData();
+		stockPnlData.setSecurityId(securityId);
+		LocalDate date = getLastDate(timePeriod);
+
+		logger.debug("from date:" + date);
+		List<StockSignals> stockSignals = mongoTemplate.find(
+				Query.query(Criteria.where("securityId").is(securityId).and("signalDate").gte(date)),
+				StockSignals.class, COLLECTION_STOCK_SIGNALS);
+
+		List<StockSignalsComponents> stockSignalsComponents = mongoTemplate.find(
+				Query.query(Criteria.where("securityId").is(securityId).and("signalDate").gte(date)),
+				StockSignalsComponents.class, COLLECTION_STOCK_SIGNALS_COMPONENTS.replace(MAGIC_NUMBER_STR, ma + ""));
+
+		List<StockSignalsDTO> stockSignalsDTOs = IntelliinvestConverter.convertBO2DTO(stockSignalsComponents,
+				stockSignals);
+
+		logger.info("DTOs list size is : " + stockSignalsDTOs.size());
+		if (stockSignalsDTOs != null && !stockSignalsDTOs.isEmpty()) {
+
+			List<QuandlStockPrice> quandlStockPrices = quandlEODStockPriceRepository
+					.getStockPricesFromStartDate(securityId, date);
+
+			Map<LocalDate, Double> priceMap = new HashMap<LocalDate, Double>();
+			QuandlStockPrice lastQuandlStockPrice = null;
+			for (QuandlStockPrice quandlStockPrice : quandlStockPrices) {
+				priceMap.put(quandlStockPrice.getEodDate(), quandlStockPrice.getClose());
+				lastQuandlStockPrice = quandlStockPrice;
+			}
+
+			logger.info(priceMap.toString());
+			List<StockSignalsDTO> stockSignalsDTOsWithADXSignalPresnt = new ArrayList<StockSignalsDTO>();
+			List<StockSignalsDTO> stockSignalsDTOsWithOscSignalPresnt = new ArrayList<StockSignalsDTO>();
+			List<StockSignalsDTO> stockSignalsDTOsWithBollSignalPresnt = new ArrayList<StockSignalsDTO>();
+			List<StockSignalsDTO> stockSignalsDTOsWithMovingAveragePresnt = new ArrayList<StockSignalsDTO>();
+			List<StockSignalsDTO> stockSignalsDTOsWithAggSignalPresnt = new ArrayList<StockSignalsDTO>();
+
+			StockSignalsDTO lastStockSignalsDTO = null;
+			for (StockSignalsDTO stockSignalsDTO : stockSignalsDTOs) {
+				if (IntelliinvestConstants.SIGNAL_PRESENT.equals(stockSignalsDTO.getAdxSignalPresent())) {
+					stockSignalsDTOsWithADXSignalPresnt.add(stockSignalsDTO);
+				}
+
+				if (IntelliinvestConstants.SIGNAL_PRESENT.equals(stockSignalsDTO.getSignalPresentBollinger())) {
+					stockSignalsDTOsWithBollSignalPresnt.add(stockSignalsDTO);
+				}
+
+				if (IntelliinvestConstants.SIGNAL_PRESENT.equals(stockSignalsDTO.getSignalPresentOscillator())) {
+					stockSignalsDTOsWithOscSignalPresnt.add(stockSignalsDTO);
+				}
+				if (IntelliinvestConstants.SIGNAL_PRESENT
+						.equals(stockSignalsDTO.getMovingAverageSignals().getMovingAverageSignal_Main_present())) {
+					stockSignalsDTOsWithMovingAveragePresnt.add(stockSignalsDTO);
+				}
+				if (IntelliinvestConstants.SIGNAL_PRESENT.equals(stockSignalsDTO.getAggSignal_present())) {
+					stockSignalsDTOsWithAggSignalPresnt.add(stockSignalsDTO);
+				}
+
+				lastStockSignalsDTO = stockSignalsDTO;
+			}
+
+			stockPnlData.setAdxPnl(Helper.formatDecimalNumber(magicNumberGenerator.getPnlADX(priceMap,
+					stockSignalsDTOsWithADXSignalPresnt, lastQuandlStockPrice, lastStockSignalsDTO)));
+
+			stockPnlData.setOscillatorPnl(Helper.formatDecimalNumber(magicNumberGenerator.getPnlOscillator(priceMap,
+					stockSignalsDTOsWithOscSignalPresnt, lastQuandlStockPrice, lastStockSignalsDTO)));
+
+			stockPnlData.setBollingerPnl(Helper.formatDecimalNumber(magicNumberGenerator.getPnlBollinger(priceMap,
+					stockSignalsDTOsWithBollSignalPresnt, lastQuandlStockPrice, lastStockSignalsDTO)));
+
+			stockPnlData
+					.setMovingAveragePnl(Helper.formatDecimalNumber(magicNumberGenerator.getPnlMovingAverage(priceMap,
+							stockSignalsDTOsWithMovingAveragePresnt, lastQuandlStockPrice, lastStockSignalsDTO)));
+
+			stockPnlData.setAggPnl(Helper.formatDecimalNumber(magicNumberGenerator.getPnlAgg(priceMap,
+					stockSignalsDTOsWithAggSignalPresnt, lastQuandlStockPrice, lastStockSignalsDTO)));
+
+			stockPnlData.setSuccess(true);
+			stockPnlData.setMsg("Data has been returned successfully.");
+		} else {
+			stockPnlData.setSuccess(false);
+			stockPnlData.setMsg("Some Internal error occurred...");
+		}
+
+		return stockPnlData;
 	}
 }

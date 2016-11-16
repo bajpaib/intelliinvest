@@ -77,40 +77,14 @@ public class WatchListRepository {
 		// refreshCache();
 	}
 
-	// @ManagedOperation(description = "initialiseCacheFromDB")
-	// public boolean refreshCache() {
-	// logger.debug("in refreshCache method....");
-	// List<WatchListStockData> watchListStocksDatasList =
-	// getAllTradingAccountData();
-	// logger.debug("WatchList Data for Cache, size is " +
-	// watchListStocksDatasList.size());
-	// if (watchListStocksDatasList != null && watchListStocksDatasList.size() >
-	// 0)
-	// for (WatchListStockData watchListStockData : watchListStocksDatasList) {
-	// if (watchListStockData.getCode() != null)
-	// watchListStockDataCache.put(watchListStockData.getCode(),
-	// watchListStockData);
-	// }
-	// return true;
-	// }
-
 	private WatchListStockData getWatchListData(String stockCode) {
-		logger.debug("in getAllTradingAccountData method....");
-		// WatchListStockData retVal = new WatchListStockData();
-		// for (Stock stock : stockRepository.getStocks()) {
+//		logger.debug("in getAllTradingAccountData method....");
+		StockSignals stockSignals = stockSignalsRepository.getStockSignalsForWatchList(stockCode);
 
-		// String symbol = stock.getSecurityId();
-		// QuandlStockPrice priceObj = quandlEODStockPriceRepository
-		// .getEODStockPriceObjFromCache(symbol);
-		StockSignals stockSignals = stockSignalsRepository.getStockSignalsFromCache(stockCode);
-
-		// StockPrice stockPrice =
-		// stockRepository.getStockPriceById(symbol);
 		QuandlStockPrice stockPrice = quandlEODStockPriceRepository.getLatestEODStockPrice(stockCode);
 		if (stockPrice != null && stockSignals != null) {
 			return getWatchListDataObj(stockPrice.getClose(), stockSignals);
 		}
-		// }
 		return null;
 	}
 
@@ -131,30 +105,39 @@ public class WatchListRepository {
 		logger.debug("in getTradingAccountData method....");
 		WatchListResponse response = new WatchListResponse();
 		response.setUserId(userId);
-
+		boolean isError = false;
 		if (isValidUser(userId)) {
 			List<WatchListStockData> stocksData = new ArrayList<WatchListStockData>();
 			Query query = Query.query(Criteria.where("userId").is(userId));
-			// query.fields().include("code");
-			// query.fields().exclude("userId");
 			List<WatchListData> watchListDatas = mongoTemplate.find(query, WatchListData.class, COLLECTION_WATCHLIST);
 
 			if (watchListDatas != null && watchListDatas.size() > 0)
 				for (WatchListData watchListData : watchListDatas) {
 					WatchListStockData watchListStockData = getWatchListDataForCodeFromCache(watchListData.getCode());
-					stocksData.add(watchListStockData);
+					if (watchListStockData != null)
+						stocksData.add(watchListStockData);
+					else {
+						isError = true;
+					}
 				}
-			response.setStocksData(stocksData);
-			response.setSuccess(true);
-			response.setMessage("Data successfully returned...");
+
+			if (!isError) {
+				response.setStocksData(stocksData);
+				response.setSuccess(true);
+				response.setMessage("Data successfully returned...");
+			} else {
+				response.setStocksData(stocksData);
+				response.setSuccess(false);
+				response.setMessage("Some Internal Error there...");
+			}
 			return response;
+
 		} else {
 			response.setSuccess(false);
 			response.setMessage("User with id: " + userId + " doesn't exist or not logged in...");
 			return response;
 		}
 	}
-
 	private boolean isValidUser(String userId) {
 		if (userId != null) {
 			User user = userRepository.getUserByUserId(userId);
@@ -321,6 +304,7 @@ public class WatchListRepository {
 		for (String stock : stocks) {
 			WatchListStockData stockData = getWatchListDataForCodeFromCache(stock);
 			if (null == stockData || null == stockData.getSignalDate()) {
+				logger.info("stockData is null for code:" + stock);
 				continue;
 			}
 			DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMdd");

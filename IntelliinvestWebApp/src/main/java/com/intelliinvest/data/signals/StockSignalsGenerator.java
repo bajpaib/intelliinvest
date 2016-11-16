@@ -30,7 +30,6 @@ import com.intelliinvest.data.model.StockSignalsDTO;
 import com.intelliinvest.util.DateUtil;
 import com.intelliinvest.util.HttpUtil;
 import com.intelliinvest.util.ScheduledThreadPoolHelper;
-import com.sun.org.apache.bcel.internal.generic.GETSTATIC;
 
 @ManagedResource(objectName = "bean:name=StockSignalsGenerator", description = "StockSignalsGenerator")
 public class StockSignalsGenerator {

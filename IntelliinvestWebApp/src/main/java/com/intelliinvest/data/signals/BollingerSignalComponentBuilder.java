@@ -7,8 +7,9 @@ import org.apache.log4j.Logger;
 import com.intelliinvest.common.IntelliinvestConstants;
 import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.data.model.StockSignalsDTO;
+import com.intelliinvest.util.Helper;
 
-public class BollingerSignalComponentBuilder implements SignalComponentBuilder{
+public class BollingerSignalComponentBuilder implements SignalComponentBuilder {
 	private static Logger logger = Logger.getLogger(BollingerSignalComponentBuilder.class);
 
 	public void generateSignal(SignalComponentHolder signalComponentHolder) {
@@ -27,25 +28,27 @@ public class BollingerSignalComponentBuilder implements SignalComponentBuilder{
 		double upperBound = sma + (2 * stdDeviation);
 		double lowerBound = sma - (2 * stdDeviation);
 		Double bandwidth = (upperBound - lowerBound) / sma;
-		
+
 		StockSignalsDTO stockSignalsDTO = signalComponentHolder.getStockSignalsDTOs().getLast();
 		stockSignalsDTO.setUpperBound(upperBound);
 		stockSignalsDTO.setLowerBound(lowerBound);
 		stockSignalsDTO.setSma(sma);
 		stockSignalsDTO.setBandwidth(bandwidth);
-		
-		if(quandlStockPrices.size()<signalComponentHolder.getMa()){
+
+		if (quandlStockPrices.size() < signalComponentHolder.getMa()) {
+			stockSignalsDTO.setBollingerSignal(IntelliinvestConstants.WAIT);
+			stockSignalsDTO.setSignalPresentBollinger(IntelliinvestConstants.SIGNAL_NOT_PRESENT);
 			return;
 		}
-		
-		StockSignalsDTO previousStockSignalsDTO = signalComponentHolder.getStockSignalsDTOs().get(signalComponentHolder.getStockSignalsDTOs().size()-2);
-		
+
+		StockSignalsDTO previousStockSignalsDTO = signalComponentHolder.getStockSignalsDTOs()
+				.get(signalComponentHolder.getStockSignalsDTOs().size() - 2);
+
 		Double plusDIn = stockSignalsDTO.getPlusDIn();
 		Double minusDIn = stockSignalsDTO.getMinusDIn();
-		
+
 		if (bandwidth != null && bandwidth != -1) {
 			String signal = "";
-			String signalPresent = IntelliinvestConstants.SIGNAL_PRESENT;
 			if (bandwidth > signalComponentHolder.getMagicNumberBolliger() && plusDIn > minusDIn)
 				signal = IntelliinvestConstants.BUY;
 			else if (bandwidth > signalComponentHolder.getMagicNumberBolliger() && plusDIn < minusDIn)
@@ -60,26 +63,9 @@ public class BollingerSignalComponentBuilder implements SignalComponentBuilder{
 				}
 			}
 
-			if (signal.equals(IntelliinvestConstants.BUY) && (previousStockSignalsDTO.getBollingerSignal() != null
-					&& (previousStockSignalsDTO.getBollingerSignal().equals(IntelliinvestConstants.BUY)
-							|| previousStockSignalsDTO.getBollingerSignal().equals(IntelliinvestConstants.HOLD)))) {
-				signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
-			} else if (signal.equals(IntelliinvestConstants.HOLD) && (previousStockSignalsDTO.getBollingerSignal() != null
-					&& (previousStockSignalsDTO.getBollingerSignal().equals(IntelliinvestConstants.BUY)
-							|| previousStockSignalsDTO.getBollingerSignal().equals(IntelliinvestConstants.HOLD)))) {
-				signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
-			} else if (signal.equals(IntelliinvestConstants.SELL) && (previousStockSignalsDTO.getBollingerSignal() != null
-					&& (previousStockSignalsDTO.getBollingerSignal().equals(IntelliinvestConstants.SELL)
-							|| previousStockSignalsDTO.getBollingerSignal().equals(IntelliinvestConstants.WAIT)))) {
-				signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
-			} else if (signal.equals(IntelliinvestConstants.WAIT) && (previousStockSignalsDTO.getBollingerSignal() != null
-					&& (previousStockSignalsDTO.getBollingerSignal().equals(IntelliinvestConstants.SELL)
-							|| previousStockSignalsDTO.getBollingerSignal().equals(IntelliinvestConstants.WAIT)))) {
-				signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
-			}
 			stockSignalsDTO.setBollingerSignal(signal);
-			stockSignalsDTO.setSignalPresentBollinger(signalPresent);
-//			stockSignalsDTO.setPreviousBollingerSignal(previousStockSignalsDTO.getBollingerSignal());
+			stockSignalsDTO.setSignalPresentBollinger(
+					Helper.getSignalPresentData(signal, previousStockSignalsDTO.getBollingerSignal()));
 		} else {
 			logger.info("No bollinger signals has been generating for code:" + stockSignalsDTO.getSecurityId() + "--"
 					+ stockSignalsDTO.getSignalDate());
@@ -87,8 +73,7 @@ public class BollingerSignalComponentBuilder implements SignalComponentBuilder{
 			stockSignalsDTO.setSignalPresentBollinger(IntelliinvestConstants.SIGNAL_NOT_PRESENT);
 		}
 	}
-	
-	
+
 	private double getStdDeviation(double average, double[] close_prices) {
 		double temp = 0;
 		for (double price : close_prices) {

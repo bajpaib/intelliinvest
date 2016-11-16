@@ -25,7 +25,6 @@ public class WatchListController {
 	@RequestMapping(value = "/watchList/get", method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public @ResponseBody WatchListResponse getWatchListData(@RequestParam("userId") String userId) {
 		logger.debug("in getWatchListData method...");
-		logger.info("in getWatchListData method, info...");
 		return watchListRepository.getTradingAccountData(userId);
 	}
 

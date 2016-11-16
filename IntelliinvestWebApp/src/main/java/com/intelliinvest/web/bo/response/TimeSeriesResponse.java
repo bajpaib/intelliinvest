@@ -2,6 +2,7 @@ package com.intelliinvest.web.bo.response;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -10,15 +11,10 @@ import com.intelliinvest.util.JsonDateSerializer;
 
 @JsonAutoDetect
 public class TimeSeriesResponse implements Serializable {
-
 	private String securityId;
-	private LocalDate date;	
-	private List<String> dateSeries;
-	private List<Double> openPriceSeries;
-	private List<Double> highPriceSeries;
-	private List<Double> lowPriceSeries;
-	private List<Double> priceSeries;
-	private List<Double> tradedQtySeries;	
+	private LocalDate date;
+	private List<StockPriceTimeSeriesResponse> stockPriceTimeSeries = new ArrayList<StockPriceTimeSeriesResponse>();
+//	private ForecastedStockPriceResponse forecastedStockPriceResponse = null;
 	private boolean success;
 	private String message;
 
@@ -43,53 +39,21 @@ public class TimeSeriesResponse implements Serializable {
 		this.date = date;
 	}
 
-	public List<String> getDateSeries() {
-		return dateSeries;
+	public List<StockPriceTimeSeriesResponse> getStockPriceTimeSeries() {
+		return stockPriceTimeSeries;
 	}
 
-	public void setDateSeries(List<String> dateSeries) {
-		this.dateSeries = dateSeries;
+	public void addStockPriceTimeSeries(StockPriceTimeSeriesResponse response) {
+		this.stockPriceTimeSeries.add(response);
 	}
 
-	public List<Double> getPriceSeries() {
-		return priceSeries;
+/*	public ForecastedStockPriceResponse getForecastedStockPriceResponse() {
+		return forecastedStockPriceResponse;
 	}
 
-	public void setPriceSeries(List<Double> priceSeries) {
-		this.priceSeries = priceSeries;
-	}
-
-	public List<Double> getOpenPriceSeries() {
-		return openPriceSeries;
-	}
-
-	public void setOpenPriceSeries(List<Double> openPriceSeries) {
-		this.openPriceSeries = openPriceSeries;
-	}
-
-	public List<Double> getHighPriceSeries() {
-		return highPriceSeries;
-	}
-
-	public void setHighPriceSeries(List<Double> highPriceSeries) {
-		this.highPriceSeries = highPriceSeries;
-	}
-
-	public List<Double> getLowPriceSeries() {
-		return lowPriceSeries;
-	}
-
-	public void setLowPriceSeries(List<Double> lowPriceSeries) {
-		this.lowPriceSeries = lowPriceSeries;
-	}
-
-	public List<Double> getTradedQtySeries() {
-		return tradedQtySeries;
-	}
-
-	public void setTradedQtySeries(List<Double> tradedQtySeries) {
-		this.tradedQtySeries = tradedQtySeries;
-	}
+	public void setForecastedStockPriceResponse(ForecastedStockPriceResponse forecastedStockPriceResponse) {
+		this.forecastedStockPriceResponse = forecastedStockPriceResponse;
+	}*/
 
 	public boolean isSuccess() {
 		return success;
@@ -109,9 +73,8 @@ public class TimeSeriesResponse implements Serializable {
 
 	@Override
 	public String toString() {
-		return "TimeSeriesResponse [securityId=" + securityId + ", date=" + date + ", dateSeries=" + dateSeries
-				+ ", openPriceSeries=" + openPriceSeries + ", highPriceSeries=" + highPriceSeries + ", lowPriceSeries="
-				+ lowPriceSeries + ", priceSeries=" + priceSeries + ", tradedQtySeries=" + tradedQtySeries
-				+ ", success=" + success + ", message=" + message + "]";
+		return "TimeSeriesResponse [securityId=" + securityId + ", date=" + date + ", stockPriceTimeSeries="
+				+ stockPriceTimeSeries + ", success=" + success + ", message=" + message + "]";
 	}
+
 }

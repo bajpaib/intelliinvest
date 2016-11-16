@@ -20,6 +20,7 @@ public class StockSignalsArchiveResponse {
 	private String movingAveragePnl;
 	private String securityId;
 	private String holdBuyPnl;
+	private String movingAvgLongTermPnl;
 
 	private double cp;
 	private double currentPrice;
@@ -37,6 +38,16 @@ public class StockSignalsArchiveResponse {
 	List<StockSignals> stockSignalsList;
 	String message;
 	boolean success;
+
+	
+	
+	public String getMovingAvgLongTermPnl() {
+		return movingAvgLongTermPnl;
+	}
+
+	public void setMovingAvgLongTermPnl(String movingAvgLongTermPnl) {
+		this.movingAvgLongTermPnl = movingAvgLongTermPnl;
+	}
 
 	public double getCp() {
 		return cp;
