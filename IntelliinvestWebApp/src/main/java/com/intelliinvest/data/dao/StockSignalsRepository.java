@@ -599,7 +599,7 @@ public class StockSignalsRepository {
 				lastQuandlStockPrice = quandlStockPrice;
 			}
 
-			logger.info(priceMap.toString());
+//			logger.info(priceMap.toString());
 			List<StockSignalsDTO> stockSignalsDTOsWithADXSignalPresnt = new ArrayList<StockSignalsDTO>();
 			List<StockSignalsDTO> stockSignalsDTOsWithOscSignalPresnt = new ArrayList<StockSignalsDTO>();
 			List<StockSignalsDTO> stockSignalsDTOsWithBollSignalPresnt = new ArrayList<StockSignalsDTO>();

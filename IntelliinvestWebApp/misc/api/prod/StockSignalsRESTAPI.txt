@@ -287,6 +287,10 @@ Response: Last day stocks having either of signal as "Y".
 
 	http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/getMovAvgSignalDetails?securityId=GDL
 	
+15. http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/getMovAvgLongTermSignalDetails?securityId=GDL&timePeriod=1
+
+	http://107.167.183.167/IntelliinvestWebApp/rest/stockSignals/getMovAvgLongTermSignalDetails?securityId=GDL
+
 	
 	Note: By Default, if no timePeriod is in request then 2 years data would be returned otherwise according to the timePeriod given in request.
 

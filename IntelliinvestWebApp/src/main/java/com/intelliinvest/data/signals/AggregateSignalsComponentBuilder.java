@@ -86,7 +86,7 @@ public class AggregateSignalsComponentBuilder implements SignalComponentBuilder 
 
 		String signalPresent = IntelliinvestConstants.SIGNAL_PRESENT;
 
-		if (aggSignal == preStockSignalsDTO.getAggSignal())
+		if (aggSignal.equalsIgnoreCase(preStockSignalsDTO.getAggSignal()))
 			signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
 
 		stockSignalsDTO.setAggSignal_present(signalPresent);

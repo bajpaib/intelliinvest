@@ -15,6 +15,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.intelliinvest.common.IntelliInvestStore;
@@ -62,6 +63,7 @@ public class StockSignalsGenerator {
 		initializeScheduledTasks();
 	}
 
+	@ManagedOperation(description = "initializeScheduledTasks")
 	private void initializeScheduledTasks() {
 		Runnable dailyStockSignalsGeneratorTask = new Runnable() {
 			public void run() {
