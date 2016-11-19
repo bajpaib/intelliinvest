@@ -56,10 +56,10 @@ public class BubbleDataFetcher {
 	}
 
 	@ManagedOperation(description = "refreshCache")
-	private void refreshCache() {
+	public void refreshCache() {
 		logger.info("Inside refresh cache method....");
-
 		cache.put(DEFAULT_TIME_PERIOD, getTechnicalDataFromDB(DEFAULT_TIME_PERIOD));
+		logger.info("Bubble Data Cache has been refreshed...");
 	}
 
 	List<BubbleData> getTechnicalDataFromDB(int timePeriod) {

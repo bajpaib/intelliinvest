@@ -19,6 +19,7 @@ import org.springframework.jmx.export.annotation.ManagedOperation;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 import com.intelliinvest.common.IntelliInvestStore;
+import com.intelliinvest.data.bubbleData.BubbleDataFetcher;
 import com.intelliinvest.data.dao.MagicNumberRepository;
 import com.intelliinvest.data.dao.QuandlEODStockPriceRepository;
 import com.intelliinvest.data.dao.StockRepository;
@@ -54,6 +55,9 @@ public class StockSignalsGenerator {
 	@Autowired
 	WatchListRepository watchListRepository;
 
+	@Autowired
+	BubbleDataFetcher bubbleDataFetcher;
+	
 	private int MOVING_AVERGAE_STOCK_PRICE_LIMIT = new Integer(
 			IntelliInvestStore.properties.get("movingAverage").toString());
 	private static Integer MOVING_AVERAGE = new Integer(IntelliInvestStore.properties.get("ma").toString());;
@@ -72,7 +76,7 @@ public class StockSignalsGenerator {
 						// We need to generate forecast report for today
 						generateSignalsForToday();
 						watchListRepository.sendDailyTradingAccountUpdateMail();
-
+						bubbleDataFetcher.refreshCache();
 					} catch (Exception e) {
 						logger.error("Error while running StockSignalsImporter for all stocks " + e.getMessage());
 					}
