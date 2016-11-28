@@ -7,43 +7,95 @@ GET
 
 Response
 --------
-{
-  "descriptions": [
-    "\n<div style=\"padding:0px; margin-bottom:1.5em;\">\n<a href=\"http://economictimes.indiatimes.com/markets/stocks/recos/buy-infosys-ltd-target-rs-1196-cholamandalam-securities-limited/articleshow/54897116.cms\" style=\"font-size:1.2em\">Buy Infosys Ltd. target Rs 1196 : Cholamandalam Securities Limited</a>\n<br> <span style=\"color:#888888;\">Economic Times</span> - <span style=\"white-space:nowrap\">10 hours ago </span>\n<div style=\"width:80%;\">Cholamandalam Securities Limited has a buy call on Infosys Ltd. with a target price of Rs 1196 .The current market price of Infosys Ltd. is 1022.05 Time period given by analyst is a year when Infosys Ltd. price can reach defined target. Cholamandalam&nbsp;...</div>\n</div>\n",
-    "\n<div style=\"padding:0px; margin-bottom:1.5em;\">\n<a href=\"http://postregistrar.com/2016/10/17/traders-roundup-infosys-ltd-adr-nyseinfy/\" style=\"font-size:1.2em\">Trader&#39;s Roundup: Infosys Ltd ADR (NYSE:INFY)</a>\n<br> <span style=\"color:#888888;\">Post Registrar</span> - <span style=\"white-space:nowrap\">7 hours ago </span>\n<div style=\"width:80%;\">Infosys Ltd ADR (NYSE:INFY) share price plunged -5.95% or -0.99 points to reach at $15.66 during previous trading session. The stock&#39;s price fluctuated within the range of $15.51 - $16.04 during previous trading session.</div>\n<a href=\"https://www.benzinga.com/analyst-ratings/analyst-color/16/10/8569419/infosys-weak-guidance-suggests-long-term-headwinds-bmo-p\">Infosys&#39; Weak Guidance Suggests Long-Term Headwinds, BMO Prefers Computer Sciences</a> - <span style=\"color:#888888\">Benzinga</span><br>\n<a href=\"http://dailyquint.com/2016-10-17-infosys-ltd-infy-posts-quarterly-earnings-results-hits-expectations/\">Infosys Ltd. (INFY) Posts Quarterly Earnings Results, Hits Expectations</a> - <span style=\"color:#888888\">DailyQuint</span><br>\n</div>\n",
-    "\n<div style=\"padding:0px; margin-bottom:1.5em;\">\n<a href=\"http://www.reuters.com/article/us-infosys-results-idUSKCN12E0BF\" style=\"font-size:1.2em\">Infosys cuts revenue outlook again as clients slow spending ahead of US ...</a>\n<br> <span style=\"color:#888888;\">Reuters</span> - <span style=\"white-space:nowrap\">Oct 14, 2016 </span>\n<div style=\"width:80%;\">MUMBAI/BENGALURU Infosys Ltd (INFY.NS) cut its annual revenue growth target for the second time in three months as India&#39;s software service exporters feel the pinch of major Western clients holding back on spending as they wait to see how November&#39;s&nbsp;...</div>\n<a href=\"http://www.wsj.com/articles/infosys-reports-6-1-profit-rise-lowers-revenue-forecast-1476426732\">Infosys Reports 6.1% Profit Rise, Lowers Revenue Forecast</a> - <span style=\"color:#888888\">Wall Street Journal</span><br>\n<a href=\"http://www.thehindu.com/news/national/telangana/infosys-cuts-revenue-forecast-for-second-time-in-2-quarters/article9221852.ece\">Infosys cuts revenue forecast for second time in 2 quarters</a> - <span style=\"color:#888888\">The Hindu</span><br>\n</div>\n"
-    ....
-  ],
-  "message": "Success",
-  "success": true,
-  "stockCode": "INFY"
-}
+<rss version="2.0">
+    <channel>
+        <title>News for Infosys Ltd - Google Finance</title>
+        <description>News for Infosys Ltd - Google Finance</description>
+        <link>http://www.google.com/finance?q=NSE:INFY&amp;amp;client=news-rss&amp;amp;ei=LX08WKDLG4KdugSE4onYBA</link>
+        <image>
+            <title>News for Infosys Ltd - Google Finance</title>
+            <url>/finance/s/M4XFgDr56u4/images/logo_us.gif</url>
+            <link>http://www.google.com/finance?q=NSE:INFY&amp;amp;client=news-rss&amp;amp;ei=LX08WKDLG4KdugSE4onYBA</link>
+        </image>
+        <item>
+            <title>Infosys Ltd. (INFY) Receives Consensus Rating of ?Hold? from Analysts</title>
+            <link>https://baseballnewssource.com/markets/infosys-ltd-infy-receives-consensus-rating-of-hold-from-analysts/249678.html</link>
+            <guid isPermaLink="false">tag:finance.google.com,cluster:52779285309452</guid>
+            <pubDate>Mon, 28 Nov 2016 13:59:42 GMT</pubDate>
+            <description>
+&lt;div style=&quot;padding:0px; margin-bottom:1.5em;&quot;&gt;
+&lt;a href=&quot;https://baseballnewssource.com/markets/infosys-ltd-infy-receives-consensus-rating-of-hold-from-analysts/249678.html&quot; style=&quot;font-size:1.2em&quot;&gt;Infosys Ltd. (INFY) Receives Consensus Rating of ?Hold? from Analysts&lt;/a&gt;
+&lt;br&gt; &lt;span style=&quot;color:#888888;&quot;&gt;BBNS&lt;/span&gt; - &lt;span style=&quot;white-space:nowrap&quot;&gt;4 hours ago &lt;/span&gt;
+&lt;div style=&quot;width:80%;&quot;&gt;Infosys logo Shares of Infosys Ltd. (NYSE:INFY) have been given an average recommendation of ?Hold? by the sixteen ratings firms that are presently covering the stock.&lt;/div&gt;
+&lt;a href=&quot;http://postregistrar.com/2016/11/28/price-target-estimates-under-analysts-radar-infosys-ltd-adr-nyseinfy/&quot;&gt;Price Target Estimates Under Analyst&amp;#39;s Radar: Infosys Ltd ADR (NYSE:INFY)&lt;/a&gt; - &lt;span style=&quot;color:#888888&quot;&gt;Post Registrar&lt;/span&gt;&lt;br&gt;
+&lt;/div&gt;
+</description>
+        </item>
+        ....
+        ....
+ </channel>
+</rss> 
+
+2. http://localhost:8080/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/news?stockCode=INFY&count=2
+
+
+Request
+-------
+GET
+
+Response
+--------
+<rss version="2.0">
+    <channel>
+        <title>News for Infosys Ltd - Google Finance</title>
+        <description>News for Infosys Ltd - Google Finance</description>
+        <link>http://www.google.com/finance?q=NSE:INFY&amp;amp;client=news-rss&amp;amp;ei=gX08WPHdGoKdugSE4onYBA</link>
+        <image>
+            <title>News for Infosys Ltd - Google Finance</title>
+            <url>/finance/s/M4XFgDr56u4/images/logo_us.gif</url>
+            <link>http://www.google.com/finance?q=NSE:INFY&amp;amp;client=news-rss&amp;amp;ei=gX08WPHdGoKdugSE4onYBA</link>
+        </image>
+        <item>
+            <title>Infosys Ltd. (INFY) Receives Consensus Rating of ?Hold? from Analysts</title>
+            <link>https://baseballnewssource.com/markets/infosys-ltd-infy-receives-consensus-rating-of-hold-from-analysts/249678.html</link>
+            <guid isPermaLink="false">tag:finance.google.com,cluster:52779285309452</guid>
+            <pubDate>Mon, 28 Nov 2016 13:59:42 GMT</pubDate>
+            <description>
+&lt;div style="padding:0px; margin-bottom:1.5em;"&gt;
+&lt;a href="https://baseballnewssource.com/markets/infosys-ltd-infy-receives-consensus-rating-of-hold-from-analysts/249678.html" style="font-size:1.2em"&gt;Infosys Ltd. (INFY) Receives Consensus Rating of ?Hold? from Analysts&lt;/a&gt;
+&lt;br&gt; &lt;span style="color:#888888;"&gt;BBNS&lt;/span&gt; - &lt;span style="white-space:nowrap"&gt;4 hours ago &lt;/span&gt;
+&lt;div style="width:80%;"&gt;Infosys logo Shares of Infosys Ltd. (NYSE:INFY) have been given an average recommendation of ?Hold? by the sixteen ratings firms that are presently covering the stock.&lt;/div&gt;
+&lt;/div&gt;
+</description>
+        </item>
+        <item>
+            <title>Infosys Cuts Sales Forecast Again as Clients Trim Spending</title>
+            <link>http://www.bloomberg.com/news/articles/2016-10-14/infosys-cuts-sales-forecast-again-as-clients-rein-in-spending</link>
+            <guid isPermaLink="false">tag:finance.google.com,cluster:52779241198168</guid>
+            <pubDate>Fri, 14 Oct 2016 04:47:58 GMT</pubDate>
+            <description>
+&lt;div style="padding:0px; margin-bottom:1.5em;"&gt;
+&lt;a href="http://www.bloomberg.com/news/articles/2016-10-14/infosys-cuts-sales-forecast-again-as-clients-rein-in-spending" style="font-size:1.2em"&gt;Infosys Cuts Sales Forecast Again as Clients Trim Spending&lt;/a&gt;
+&lt;br&gt; &lt;span style="color:#888888;"&gt;Bloomberg&lt;/span&gt; - &lt;span style="white-space:nowrap"&gt;Oct 14, 2016 &lt;/span&gt;
+&lt;div style="width:80%;"&gt;Infosys Ltd. cut its annual sales forecast for the second time in three months as growth slows in the banking and financial services sectors and clients adopt a more cautious spending approach.&lt;/div&gt;
+&lt;a href="http://www.wsj.com/articles/infosys-reports-6-1-profit-rise-lowers-revenue-forecast-1476426732"&gt;Infosys Reports 6.1% Profit Rise, Lowers Revenue Forecast&lt;/a&gt; - &lt;span style="color:#888888"&gt;Wall Street Journal&lt;/span&gt;&lt;br&gt;
+&lt;a href="http://www.reuters.com/article/us-infosys-results-idUSKCN12E0BF"&gt;Infosys cuts revenue outlook again as clients slow spending ahead of US ...&lt;/a&gt; - &lt;span style="color:#888888"&gt;Reuters&lt;/span&gt;&lt;br&gt;
+&lt;/div&gt;
+</description>
+        </item>
+    </channel>
+</rss> 
 
 Failure case
 1. http://localhost:8080/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/news?stockCode=XXXX
 
 Response
 --------
-{
-  "descriptions": null,
-  "message": "Error fetching news for stock XXXX",
-  "success": false,
-  "stockCode": "XXXX"
-}
-
-2.http://localhost:8080/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/news?stockCode=
-
-Response
---------
-{
-  "descriptions": null,
-  "message": "Stock can not be empty",
-  "success": false,
-  "stockCode": ""
-}
+Http Status : 500
+Request processing failed; nested exception is java.lang.RuntimeException: Error fetching new for stock
 
 
-TopStoreies API
+TopStories API
 
 
 http://localhost:8080/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/news/topstories
@@ -54,25 +106,39 @@ GET
 
 Response
 --------
-{
-  "descriptions": [
-    "<table border=\"0\" cellpadding=\"2\" cellspacing=\"7\" style=\"vertical-align:top;\"><tr><td width=\"80\" align=\"center\" valign=\"top\"><font style=\"font-size:85%;font-family:arial,sans-serif\"><a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNGHVDokoOiPC-plq1c01hKhhGMhAw&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779244420283&amp;ei=aTQFWMD5FsOq4gKWs4q4Ag&amp;url=http://www.firstpost.com/business/gst-council-meeting-beginning-tomorrow-to-decide-on-tax-rate-compensation-formula-3056696.html\"><img src=\"//t1.gstatic.com/images?q=tbn:ANd9GcSLol51NUyAxMpElU2Yq7jxyS_cT25QlesNuhb1fTy5RE8LvPESPligBr0Uu3ef7ZWluNG1iaQj\" alt=\"\" border=\"1\" width=\"80\" height=\"80\"><br><font size=\"-2\">Firstpost</font></a></font></td><td valign=\"top\" class=\"j\"><font style=\"font-size:85%;font-family:arial,sans-serif\"><br><div style=\"padding-top:0.8em;\"><img alt=\"\" height=\"1\" width=\"1\"></div><div class=\"lh\"><a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNHoYSb8lvRLqmWbQYtrpsS2YWZJ0g&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779244420283&amp;ei=aTQFWMD5FsOq4gKWs4q4Ag&amp;url=http://economictimes.indiatimes.com/news/economy/policy/too-many-tax-slabs-will-distort-gst-cait/articleshow/54907286.cms\"><b>Too many tax slabs will distort GST: CAIT</b></a><br><font size=\"-1\"><b><font color=\"#6f6f6f\">Economic Times</font></b></font><br><font size=\"-1\">NEW DELHI: A day ahead of the crucial three-day meeting of the Goods and Services Tax (GST) Council to decide on rates, a key traders&#39; body has pitched for minimal tax slabs under the proposed tax regime. �??Too many tax slabs will distort GST,�?? the&nbsp;...</font><br><font size=\"-1\"><a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNHd__LjLMIt7DewPLVCBcwlNOEP7Q&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779244420283&amp;ei=aTQFWMD5FsOq4gKWs4q4Ag&amp;url=http://www.business-standard.com/article/economy-policy/centre-proposes-26-peak-rate-for-gst-116101701382_1.html\">Centre proposes 26% peak rate for GST</a><font size=\"-1\" color=\"#6f6f6f\"><nobr>Business Standard</nobr></font></font><br><font size=\"-1\"><a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNEEx1TGvX0JdLPH6i5-FTbc-t-GEQ&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779244420283&amp;ei=aTQFWMD5FsOq4gKWs4q4Ag&amp;url=http://www.ndtv.com/india-news/parliamentarians-doctors-seek-40-sin-tax-on-tobacco-products-1475484\">Parliamentarians, Doctors Seek 40% Sin Tax On Tobacco Products</a><font size=\"-1\" color=\"#6f6f6f\"><nobr>NDTV</nobr></font></font><br><font size=\"-1\"><a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNES_7dGI344610bnIOeFTT_dU2Pqw&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779244420283&amp;ei=aTQFWMD5FsOq4gKWs4q4Ag&amp;url=http://www.livemint.com/Home-Page/w0F9PII2likNf7oeDapiBP/GST-fate-in-balance-as-council-begins-deliberations-today.html\">GST fate in balance as council begins deliberations today</a><font size=\"-1\" color=\"#6f6f6f\"><nobr>Livemint</nobr></font></font><br><font size=\"-1\" class=\"p\"><a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNGFQ5gG58mK_DMiTtj9ue9xJ6XMCA&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779244420283&amp;ei=aTQFWMD5FsOq4gKWs4q4Ag&amp;url=http://indiatoday.intoday.in/story/appeal-to-gst-council-for-highest-tobacco-tax/1/789012.html\"><nobr>India Today</nobr></a>&nbsp;-<a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNHkAdQVlQLvATHM7h8nDLM_rXW3CQ&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779244420283&amp;ei=aTQFWMD5FsOq4gKWs4q4Ag&amp;url=http://www.financialexpress.com/economy/gst-reaches-the-crucial-rate-test-hurdle/421617/\"><nobr>Financial Express</nobr></a>&nbsp;-<a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNHYOhu0UyBzGQ8V6N9nuY4Fcycdfw&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779244420283&amp;ei=aTQFWMD5FsOq4gKWs4q4Ag&amp;url=http://www.thehindubusinessline.com/economy/gst-council/article9231241.ece\"><nobr>Hindu Business Line</nobr></a>&nbsp;-<a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNHw27vACmkeBgvr7_aPWnKvkKtBrw&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779244420283&amp;ei=aTQFWMD5FsOq4gKWs4q4Ag&amp;url=http://auto.economictimes.indiatimes.com/news/policy/gst-council-to-meet-tomorrow-decide-on-tax-rate-by-oct-20/54899524\"><nobr>ETAuto.com</nobr></a></font><br><font class=\"p\" size=\"-1\"><a class=\"p\" href=\"http://news.google.com/news/more?ncl=d0tAnyGidMU2sSM07miV7DY24saPM&amp;authuser=0&amp;ned=in&amp;topic=b\"><nobr><b>all 37 news articles&nbsp;&raquo;</b></nobr></a></font></div></font></td></tr></table>",
-    "<table border=\"0\" cellpadding=\"2\" cellspacing=\"7\" style=\"vertical-align:top;\"><tr><td width=\"80\" align=\"center\" valign=\"top\"><font style=\"font-size:85%;font-family:arial,sans-serif\"><a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNG3h9xlzkomtl3aRg_UdKLuqS-idQ&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779242345820&amp;ei=aTQFWMD5FsOq4gKWs4q4Ag&amp;url=http://www.thehindubusinessline.com/companies/essar-not-exiting-oil-and-gas-business-prashant-ruia/article9230378.ece\"><img src=\"//t2.gstatic.com/images?q=tbn:ANd9GcTVRFj_qOLMR1RgkOc04bYZOXNS2iEDSpkybpxXR4zN1PPtRwCi5m9azK0joHYFIFcxz0EMtw8N\" alt=\"\" border=\"1\" width=\"80\" height=\"80\"><br><font size=\"-2\">Hindu Business Line</font></a></font></td><td valign=\"top\" class=\"j\"><font style=\"font-size:85%;font-family:arial,sans-serif\"><br><div style=\"padding-top:0.8em;\"><img alt=\"\" height=\"1\" width=\"1\"></div><div class=\"lh\"><a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNFYLwBRA5mqhaEnTA6NKztgvuEbhA&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779242345820&amp;ei=aTQFWMD5FsOq4gKWs4q4Ag&amp;url=http://indianexpress.com/article/business/banking-and-finance/essar-deal-may-resolve-10-per-cent-of-banks-npa-mess-analysts-3088598/\"><b>Essar deal may resolve 10 per cent of banks&#39; NPA mess: Analysts</b></a><br><font size=\"-1\"><b><font color=\"#6f6f6f\">The Indian Express</font></b></font><br><font size=\"-1\">The promoters have also sold their entire stake in Vadinar Port to the same investors for Rs 13,300 crore. By: ENS Economic Bureau Mumbai Published:Oct 18, 2016, 1:45. business. ICICI, StanChart, SBI stocks jump up to 7 per cent on Essar deal. Related&nbsp;...</font><br><font size=\"-1\"><a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNGBqpDyfjq1-tH_gcQiyxuRhNecMw&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779242345820&amp;ei=aTQFWMD5FsOq4gKWs4q4Ag&amp;url=http://www.business-standard.com/article/companies/foreign-companies-lead-in-asset-purchase-after-essar-oil-buy-116101701357_1.html\">Foreign companies lead in asset purchase after Essar Oil buy</a><font size=\"-1\" color=\"#6f6f6f\"><nobr>Business Standard</nobr></font></font><br><font size=\"-1\"><a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNGEtA4Z_B3fjYcXzBkydxuAZj7YmQ&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779242345820&amp;ei=aTQFWMD5FsOq4gKWs4q4Ag&amp;url=http://timesofindia.indiatimes.com/business/india-business/Rosnefts-13-billion-Essar-deal-may-redraw-oil-routes-for-India/articleshow/54904599.cms\">Rosneft&#39;s $13 billion Essar deal may redraw oil routes for India</a><font size=\"-1\" color=\"#6f6f6f\"><nobr>Times of India</nobr></font></font><br><font size=\"-1\"><a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNFNN9R8o4FL50nxfQ2EvQd9cUE9KA&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779242345820&amp;ei=aTQFWMD5FsOq4gKWs4q4Ag&amp;url=http://www.financialexpress.com/industry/companies/russias-mega-india-oil-deal-with-essar-oil-takes-turf-war-to-mideast-backyard/421890/\">Russia&#39;s Mega India Oil Deal with Essar Oil Takes Turf War to Mideast Backyard</a><font size=\"-1\" color=\"#6f6f6f\"><nobr>Financial Express</nobr></font></font><br><font size=\"-1\" class=\"p\"><a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNHw4q2jafnTE6bGL4CJ45Wh-aCkfA&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779242345820&amp;ei=aTQFWMD5FsOq4gKWs4q4Ag&amp;url=http://www.thehindu.com/business/Industry/essar-oil-deal-may-give-breather-to-bank-npas/article9231268.ece\"><nobr>The Hindu</nobr></a>&nbsp;-<a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNHIgDT9UBaMc1g-aRBiSBXRftM0IQ&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779242345820&amp;ei=aTQFWMD5FsOq4gKWs4q4Ag&amp;url=http://www.livemint.com/Industry/W5ya9icS39PGa5BdfLYRkI/Essar-deal-deepens-Trafiguras-Rosneft-India-ties.html\"><nobr>Livemint</nobr></a>&nbsp;-<a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNFKQllbBdK41AQj8Z4kvYKaCzpaXA&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779242345820&amp;ei=aTQFWMD5FsOq4gKWs4q4Ag&amp;url=http://profit.ndtv.com/news/energy/article-essar-not-exiting-oil-gas-business-prashant-ruia-1475377\"><nobr>NDTV</nobr></a>&nbsp;-<a href=\"http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNFTNAgFCCEpwZMMqbk5U3chx0EPBg&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779242345820&amp;ei=aTQFWMD5FsOq4gKWs4q4Ag&amp;url=http://economictimes.indiatimes.com/industry/banking/finance/banking/sale-of-essar-oil-significant-for-indian-banking-system-kotak/articleshow/54897656.cms\"><nobr>Economic Times</nobr></a></font><br><font class=\"p\" size=\"-1\"><a class=\"p\" href=\"http://news.google.com/news/more?ncl=dy1rijXvLM89hUMgFD9H-Je5DJ7oM&amp;authuser=0&amp;ned=in&amp;topic=b\"><nobr><b>all 252 news articles&nbsp;&raquo;</b></nobr></a></font></div></font></td></tr></table>",
-  ....
-  ],
-   "message": "Success",
-  "success": true,
-  "stockCode": "TOP_STORIES"
-}
+<rss version="2.0">
+    <channel>
+        <generator>NFE/1.0</generator>
+        <title>Business - Google News</title>
+        <link>http://news.google.com/news?hl=en&amp;pz=1&amp;ned=in&amp;topic=b</link>
+        <language>en-IN</language>
+        <webMaster>news-feedback@google.com</webMaster>
+        <copyright>&amp;copy;2016 Google</copyright>
+        <pubDate>Mon, 28 Nov 2016 18:55:37 GMT</pubDate>
+        <lastBuildDate>Mon, 28 Nov 2016 18:55:37 GMT</lastBuildDate>
+        <image>
+            <title>Business - Google News</title>
+            <url>https://ssl.gstatic.com/news-static/img/logo/en_in/news.gif</url>
+            <link>http://news.google.com/news?hl=en&amp;pz=1&amp;ned=in&amp;topic=b</link>
+        </image>
+        <item>
+            <title>Pay 50% tax on unaccounted deposits, or 85% if caught, says Modi government - Economic Times</title>
+            <link>http://news.google.com/news/url?sa=t&amp;fd=R&amp;ct2=in&amp;usg=AFQjCNGP0-_MlFU5-56pb6DWUlKM7pNxlg&amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;cid=52779286148794&amp;ei=qX08WKjgIcjL4gLblJrYBw&amp;url=http://economictimes.indiatimes.com/wealth/personal-finance-news/30-tax-10-penalty-and-33-surcharge-proposed-on-undisclosed-income-under-demonetisation/articleshow/55665377.cms</link>
+            <guid isPermaLink="false">tag:news.google.com,2005:cluster=52779286148794</guid>
+            <category>Business</category>
+            <pubDate>Mon, 28 Nov 2016 14:25:00 GMT</pubDate>
+            <description>&lt;table border=&quot;0&quot; cellpadding=&quot;2&quot; cellspacing=&quot;7&quot; style=&quot;vertical-align:top;&quot;&gt;&lt;tr&gt;&lt;td width=&quot;80&quot; align=&quot;center&quot; valign=&quot;top&quot;&gt;&lt;font style=&quot;font-size:85%;font-family:arial,sans-serif&quot;&gt;&lt;a href=&quot;http://news.google.com/news/url?sa=t&amp;amp;fd=R&amp;amp;ct2=in&amp;amp;usg=AFQjCNGP0-_MlFU5-56pb6DWUlKM7pNxlg&amp;amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;amp;cid=52779286148794&amp;amp;ei=qX08WKjgIcjL4gLblJrYBw&amp;amp;url=http://economictimes.indiatimes.com/wealth/personal-finance-news/30-tax-10-penalty-and-33-surcharge-proposed-on-undisclosed-income-under-demonetisation/articleshow/55665377.cms&quot;&gt;&lt;img src=&quot;//t3.gstatic.com/images?q=tbn:ANd9GcTzBgIPDqZKfDpO9oswvR-KQAy9MjEBp3L9SGQYzq9H7UkWv2QYYXG_BnacbW4gkqQBfvD852Cz&quot; alt=&quot;&quot; border=&quot;1&quot; width=&quot;80&quot; height=&quot;80&quot;&gt;&lt;br&gt;&lt;font size=&quot;-2&quot;&gt;Economic Times&lt;/font&gt;&lt;/a&gt;&lt;/font&gt;&lt;/td&gt;&lt;td valign=&quot;top&quot; class=&quot;j&quot;&gt;&lt;font style=&quot;font-size:85%;font-family:arial,sans-serif&quot;&gt;&lt;br&gt;&lt;div style=&quot;padding-top:0.8em;&quot;&gt;&lt;img alt=&quot;&quot; height=&quot;1&quot; width=&quot;1&quot;&gt;&lt;/div&gt;&lt;div class=&quot;lh&quot;&gt;&lt;a href=&quot;http://news.google.com/news/url?sa=t&amp;amp;fd=R&amp;amp;ct2=in&amp;amp;usg=AFQjCNGP0-_MlFU5-56pb6DWUlKM7pNxlg&amp;amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;amp;cid=52779286148794&amp;amp;ei=qX08WKjgIcjL4gLblJrYBw&amp;amp;url=http://economictimes.indiatimes.com/wealth/personal-finance-news/30-tax-10-penalty-and-33-surcharge-proposed-on-undisclosed-income-under-demonetisation/articleshow/55665377.cms&quot;&gt;&lt;b&gt;Pay 50% tax on unaccounted deposits, or 85% if caught, says Modi government&lt;/b&gt;&lt;/a&gt;&lt;br&gt;&lt;font size=&quot;-1&quot;&gt;&lt;b&gt;&lt;font color=&quot;#6f6f6f&quot;&gt;Economic Times&lt;/font&gt;&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font size=&quot;-1&quot;&gt;NEW DELHI: Providing yet another opportunity to black money holders to legalise their wealth, government has proposed to tax at 50 per cent the unaccounted demonetised cash that is disclosed voluntarily till December 30, after which a steep up to 85 &lt;b&gt;...&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font size=&quot;-1&quot;&gt;&lt;a href=&quot;http://news.google.com/news/url?sa=t&amp;amp;fd=R&amp;amp;ct2=in&amp;amp;usg=AFQjCNGlhAvJ3k1Wy2cW_4_hYEPxYWG_Gg&amp;amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;amp;cid=52779286148794&amp;amp;ei=qX08WKjgIcjL4gLblJrYBw&amp;amp;url=http://www.thehindu.com/business/Economy/Tax-defaulters-get-another-chance/article16715094.ece&quot;&gt;Tax defaulters get another chance&lt;/a&gt;&lt;font size=&quot;-1&quot; color=&quot;#6f6f6f&quot;&gt;&lt;nobr&gt;The Hindu&lt;/nobr&gt;&lt;/font&gt;&lt;/font&gt;&lt;br&gt;&lt;font size=&quot;-1&quot;&gt;&lt;a href=&quot;http://news.google.com/news/url?sa=t&amp;amp;fd=R&amp;amp;ct2=in&amp;amp;usg=AFQjCNHqPeE7TIlgfpdMpdsMh9I7s_NpFw&amp;amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;amp;cid=52779286148794&amp;amp;ei=qX08WKjgIcjL4gLblJrYBw&amp;amp;url=http://www.firstpost.com/business/pm-modis-black-money-hunt-taxation-law-second-amendment-bill-is-last-chance-for-evaders-to-come-clean-3128694.html&quot;&gt;Black money hunt: Taxation Law Second Amendment Bill is last chance for evaders to come clean&lt;/a&gt;&lt;font size=&quot;-1&quot; color=&quot;#6f6f6f&quot;&gt;&lt;nobr&gt;Firstpost&lt;/nobr&gt;&lt;/font&gt;&lt;/font&gt;&lt;br&gt;&lt;font size=&quot;-1&quot;&gt;&lt;a href=&quot;http://news.google.com/news/url?sa=t&amp;amp;fd=R&amp;amp;ct2=in&amp;amp;usg=AFQjCNGbjfcevtLT2VFrdPvA06_0TEVFXg&amp;amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;amp;cid=52779286148794&amp;amp;ei=qX08WKjgIcjL4gLblJrYBw&amp;amp;url=http://indianexpress.com/article/india/india-news-india/accept-income-declaration-scheme-fine-in-old-rs-500-dont-seek-source-iba-to-banks-4400383/&quot;&gt;Accept Income Declaration Scheme fine in old Rs 500, don&amp;#39;t seek source: IBA to banks&lt;/a&gt;&lt;font size=&quot;-1&quot; color=&quot;#6f6f6f&quot;&gt;&lt;nobr&gt;The Indian Express&lt;/nobr&gt;&lt;/font&gt;&lt;/font&gt;&lt;br&gt;&lt;font size=&quot;-1&quot; class=&quot;p&quot;&gt;&lt;a href=&quot;http://news.google.com/news/url?sa=t&amp;amp;fd=R&amp;amp;ct2=in&amp;amp;usg=AFQjCNF7LlPW_eewr-0WoM06Qa2asmEezw&amp;amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;amp;cid=52779286148794&amp;amp;ei=qX08WKjgIcjL4gLblJrYBw&amp;amp;url=http://www.business-standard.com/article/news-ians/75-penalty-surcharge-on-undisclosed-income-new-black-money-scheme-launched-roundup-116112801154_1.html&quot;&gt;&lt;nobr&gt;Business Standard&lt;/nobr&gt;&lt;/a&gt;&amp;nbsp;-&lt;a href=&quot;http://news.google.com/news/url?sa=t&amp;amp;fd=R&amp;amp;ct2=in&amp;amp;usg=AFQjCNGGE_Ys1h9CZ5Z0vmrtYDGWK-mutQ&amp;amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;amp;cid=52779286148794&amp;amp;ei=qX08WKjgIcjL4gLblJrYBw&amp;amp;url=http://profit.ndtv.com/news/your-money/article-penalty-under-search-seizure-to-be-up-3-fold-at-30-in-income-tax-act-1631365&quot;&gt;&lt;nobr&gt;NDTV&lt;/nobr&gt;&lt;/a&gt;&amp;nbsp;-&lt;a href=&quot;http://news.google.com/news/url?sa=t&amp;amp;fd=R&amp;amp;ct2=in&amp;amp;usg=AFQjCNFPEoidkM3G_MBXNcf_r7aC9HaIzA&amp;amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;amp;cid=52779286148794&amp;amp;ei=qX08WKjgIcjL4gLblJrYBw&amp;amp;url=http://www.tribuneindia.com/news/nation/pay-50-tax-on-unaccounted-cash-or-85-if-caught-govt/329531.html&quot;&gt;&lt;nobr&gt;Chandigarh Tribune&lt;/nobr&gt;&lt;/a&gt;&amp;nbsp;-&lt;a href=&quot;http://news.google.com/news/url?sa=t&amp;amp;fd=R&amp;amp;ct2=in&amp;amp;usg=AFQjCNG6d3vyXct46oek01euMIIzwNjmJg&amp;amp;clid=c3a7d30bb8a4878e06b80cf16b898331&amp;amp;cid=52779286148794&amp;amp;ei=qX08WKjgIcjL4gLblJrYBw&amp;amp;url=http://www.hindustantimes.com/business-news/income-tax-amendment-bill-tabled-in-lok-sabha-50-tax-on-unaccounted-deposits-85-if-caught/story-2CnQj3NkzxB4hLA1Lpip2O.html&quot;&gt;&lt;nobr&gt;Hindustan Times&lt;/nobr&gt;&lt;/a&gt;&lt;/font&gt;&lt;br&gt;&lt;font class=&quot;p&quot; size=&quot;-1&quot;&gt;&lt;a class=&quot;p&quot; href=&quot;http://news.google.com/news/more?ncl=d2c2cVppSgNZfnMnA2fUF9PS0YX1M&amp;amp;authuser=0&amp;amp;ned=in&amp;amp;topic=b&quot;&gt;&lt;nobr&gt;&lt;b&gt;all 70 news articles&amp;nbsp;&amp;raquo;&lt;/b&gt;&lt;/nobr&gt;&lt;/a&gt;&lt;/font&gt;&lt;/div&gt;&lt;/font&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</description>
+        </item>
+        ...
+        ...
+        <description>Google News</description>
+    </channel>
+</rss>
 
 Failure case
 1. http://localhost:8080/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/news/topstories
 
 Response
 --------
-{
-  "descriptions": null,
-  "message": "Error fetching top stories",
-  "success": false,
-  "stockCode": "TOP_STORIES"
-}
+Http Status 500 
+Request processing failed; nested exception is java.lang.RuntimeException: Error fetching top stories

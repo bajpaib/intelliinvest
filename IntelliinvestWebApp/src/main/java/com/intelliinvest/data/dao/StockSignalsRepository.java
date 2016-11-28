@@ -88,7 +88,7 @@ public class StockSignalsRepository {
 		logger.debug("list size is: " + stockSignals.size());
 		if (Helper.isNotNullAndNonEmpty(stockSignals)) {
 			for (StockSignals stockSignal : stockSignals) {
-				if (stockSignal != null) {
+				if (stockSignal != null && null!=stockSignal.getSecurityId()) {
 					// logger.debug("stcok signals : " + stockSignal);
 					signalCache.put(stockSignal.getSecurityId(), stockSignal);
 				} else {
