@@ -88,7 +88,7 @@ public class StockSignalsRepository {
 		logger.debug("list size is: " + stockSignals.size());
 		if (Helper.isNotNullAndNonEmpty(stockSignals)) {
 			for (StockSignals stockSignal : stockSignals) {
-				if (stockSignal != null && null!=stockSignal.getSecurityId()) {
+				if (stockSignal != null && stockSignal.getSecurityId()!=null) {
 					// logger.debug("stcok signals : " + stockSignal);
 					signalCache.put(stockSignal.getSecurityId(), stockSignal);
 				} else {
@@ -462,6 +462,7 @@ public class StockSignalsRepository {
 
 		Map<LocalDate, Double> priceMap = new HashMap<LocalDate, Double>();
 		QuandlStockPrice lastQuandlStockPrice = null;
+		QuandlStockPrice firstQuandlStockPrice = quandlStockPrices.get(0);
 		for (QuandlStockPrice quandlStockPrice : quandlStockPrices) {
 			priceMap.put(quandlStockPrice.getEodDate(), quandlStockPrice.getClose());
 			lastQuandlStockPrice = quandlStockPrice;
@@ -501,24 +502,24 @@ public class StockSignalsRepository {
 			lastStockSignalsDTO = stockSignalsDTO;
 		}
 
-		stockSignalsArchiveResponse.setAdxPnl(Helper.formatDecimalNumber(magicNumberGenerator.getPnlADX(priceMap,
-				stockSignalsDTOsWithADXSignalPresnt, lastQuandlStockPrice, lastStockSignalsDTO)));
+		stockSignalsArchiveResponse.setAdxPnl(Helper.formatDecimalNumber(getPercentagePnlData(magicNumberGenerator.getPnlADX(priceMap,
+				stockSignalsDTOsWithADXSignalPresnt, lastQuandlStockPrice, lastStockSignalsDTO),firstQuandlStockPrice)));
 
 		stockSignalsArchiveResponse
-				.setOscillatorPnl(Helper.formatDecimalNumber(magicNumberGenerator.getPnlOscillator(priceMap,
-						stockSignalsDTOsWithOscSignalPresnt, lastQuandlStockPrice, lastStockSignalsDTO)));
+				.setOscillatorPnl(Helper.formatDecimalNumber(getPercentagePnlData(magicNumberGenerator.getPnlOscillator(priceMap,
+						stockSignalsDTOsWithOscSignalPresnt, lastQuandlStockPrice, lastStockSignalsDTO),firstQuandlStockPrice)));
 
 		stockSignalsArchiveResponse
-				.setBollingerPnl(Helper.formatDecimalNumber(magicNumberGenerator.getPnlBollinger(priceMap,
-						stockSignalsDTOsWithBollSignalPresnt, lastQuandlStockPrice, lastStockSignalsDTO)));
+				.setBollingerPnl(Helper.formatDecimalNumber(getPercentagePnlData(magicNumberGenerator.getPnlBollinger(priceMap,
+						stockSignalsDTOsWithBollSignalPresnt, lastQuandlStockPrice, lastStockSignalsDTO),firstQuandlStockPrice)));
 
 		stockSignalsArchiveResponse
-				.setMovingAveragePnl(Helper.formatDecimalNumber(magicNumberGenerator.getPnlMovingAverage(priceMap,
-						stockSignalsDTOsWithMovingAveragePresnt, lastQuandlStockPrice, lastStockSignalsDTO)));
+				.setMovingAveragePnl(Helper.formatDecimalNumber(getPercentagePnlData(magicNumberGenerator.getPnlMovingAverage(priceMap,
+						stockSignalsDTOsWithMovingAveragePresnt, lastQuandlStockPrice, lastStockSignalsDTO),firstQuandlStockPrice)));
 
 		stockSignalsArchiveResponse
-		.setMovingAvgLongTermPnl(Helper.formatDecimalNumber(magicNumberGenerator.getPnlMovingAverageLongTerm(priceMap,
-				stockSignalsDTOsWithMovingAverageLongTermPresnt, lastQuandlStockPrice, lastStockSignalsDTO)));
+		.setMovingAvgLongTermPnl(Helper.formatDecimalNumber(getPercentagePnlData(magicNumberGenerator.getPnlMovingAverageLongTerm(priceMap,
+				stockSignalsDTOsWithMovingAverageLongTermPresnt, lastQuandlStockPrice, lastStockSignalsDTO),firstQuandlStockPrice)));
 
 		
 		QuandlStockPrice stockPrice_first = quandlStockPrices.get(0);
@@ -537,6 +538,10 @@ public class StockSignalsRepository {
 		setPriceInformation(stockSignalsArchiveResponse, quandlStockPrice, stockPrice);
 
 		return stockSignalsArchiveResponse;
+	}
+
+	private Double getPercentagePnlData(Double pnlVal, QuandlStockPrice firstQuandlStockPrice) {
+		return (pnlVal/firstQuandlStockPrice.getClose())*100;
 	}
 
 	private void setPriceInformation(StockSignalsArchiveResponse stockSignalsArchiveResponse,
