@@ -43,6 +43,7 @@ public class ADXSignalComponentBuilder implements SignalComponentBuilder {
 
 		if (quandlPricesSize != signalComponentHolder.getMa()) {
 			stockSignalsDTO.setADXn(stockSignalsDTO.getDX());
+			stockSignalsDTO.setAdxSignalPresent(IntelliinvestConstants.SIGNAL_NOT_PRESENT);
 		} else {
 			StockSignalsDTO stockSignalsDTO_1 = signalComponentHolder.getStockSignalsDTOs()
 					.get(signalComponentHolder.getStockSignalsDTOs().size() - 2);

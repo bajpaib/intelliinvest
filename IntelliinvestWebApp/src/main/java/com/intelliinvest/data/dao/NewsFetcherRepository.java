@@ -56,6 +56,7 @@ public class NewsFetcherRepository {
 			}
 			String url = GOOGLE_NEWS_URL.replace("#CODE#", stockCode.replace("&", "%26")).replace("#EXCHANGE#",
 					exchange);
+			logger.info("URL:"+url);
 			return limitNews(HttpUtil.getFromHttpUrlAsString(url), count);
 		} catch (Exception e) {
 			logger.info("Error retreiving new from google  " + e.getMessage());
@@ -64,6 +65,7 @@ public class NewsFetcherRepository {
 	}
 	
 	private String limitNews(String response, Integer count) throws Exception{
+		logger.info("in limit news response....");
 		InputSource inputSource = new InputSource(new StringReader(response));
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

@@ -30,7 +30,7 @@ public class AggregateSignalsComponentBuilder implements SignalComponentBuilder 
 			// default value....");
 			stockSignalsDTO.setAggSignal(aggSignal);
 			stockSignalsDTO.setAggSignal_present(IntelliinvestConstants.SIGNAL_NOT_PRESENT);
-			stockSignalsDTO.setAggSignal_previous(null);
+			stockSignalsDTO.setAggSignal_previous(aggSignal);
 			return;
 		}
 		int noOfSell = 0, noOfBuy = 0;

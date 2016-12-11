@@ -60,10 +60,18 @@ public class StockSignalsGenerator {
 	
 	private int MOVING_AVERGAE_STOCK_PRICE_LIMIT = new Integer(
 			IntelliInvestStore.properties.get("movingAverage").toString());
-	private static Integer MOVING_AVERAGE = new Integer(IntelliInvestStore.properties.get("ma").toString());;
+	private static Integer MOVING_AVERAGE = new Integer(IntelliInvestStore.properties.get("ma").toString());
 
+	private static Double MAGIC_NUMBER_BOLLINGER=null;
 	@PostConstruct
 	public void init() {
+		try{
+			MAGIC_NUMBER_BOLLINGER = new Double(IntelliInvestStore.properties.get("magicnumber.bollinger").toString());
+			logger.info("Setting up bollinger magic numeber:::"+MAGIC_NUMBER_BOLLINGER);
+		}
+		catch(NumberFormatException e){
+			logger.debug("Exception while picking magicnumber.bollinger from properties file, so will pick from db at runtime...");
+		}
 		initializeScheduledTasks();
 	}
 
@@ -184,9 +192,11 @@ public class StockSignalsGenerator {
 			logger.info("Setting default magic number for stock " + stockCode);
 			magicNumberData = new MagicNumberData(stockCode, ma);
 		}
-		// else
-		// logger.info("Magic Number Object: " + magicNumberData.toString());
-
+		else if(MAGIC_NUMBER_BOLLINGER!=null){
+			logger.info("Setting up MAGIC_NUMBER_BOLLINGER....."+MAGIC_NUMBER_BOLLINGER);
+			magicNumberData.setMagicNumberBollinger(MAGIC_NUMBER_BOLLINGER);
+		}
+		
 		SignalComponentHolder signalComponentHolder = new SignalComponentHolder(ma, 3);
 
 		signalComponentHolder.setMagicNumberADX(magicNumberData.getMagicNumberADX());
@@ -367,6 +377,9 @@ public class StockSignalsGenerator {
 		if (null == magicNumberData) {
 			logger.info("Setting default magic number for stock " + stockCode);
 			magicNumberData = new MagicNumberData(stockCode, ma);
+		}
+		else if(MAGIC_NUMBER_BOLLINGER!=null){
+			magicNumberData.setMagicNumberBollinger(MAGIC_NUMBER_BOLLINGER);
 		}
 		// logger.info("Magic Number Object: " + magicNumberData.toString());
 

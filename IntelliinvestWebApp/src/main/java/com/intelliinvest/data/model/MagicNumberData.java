@@ -9,7 +9,7 @@ public class MagicNumberData{
 	String securityId;
 	Integer movingAverage;
 	Integer magicNumberADX = 45;
-	Double magicNumberBollinger = .17;
+	Double magicNumberBollinger = .15;
 	Integer magicNumberOscillator = 15;
 	Double pnlADX = 0D;
 	Double pnlBollinger = 0D;
