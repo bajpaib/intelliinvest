@@ -7,6 +7,10 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.intelliinvest.util.JsonDateSerializer;
+import com.intelliinvest.util.JsonDateTimeSerializer;
+
 public class StockAnalysisResponse {
 	private String securityId;
 	
@@ -171,6 +175,8 @@ public class StockAnalysisResponse {
 	public void setNews(String news) {
 		this.news = news;
 	}
+	
+	@JsonSerialize(using = JsonDateSerializer.class)
 	public LocalDate getSignalDate() {
 		return signalDate;
 	}
@@ -189,6 +195,8 @@ public class StockAnalysisResponse {
 	public void setCurrentPrice(double currentPrice) {
 		this.currentPrice = currentPrice;
 	}
+	
+	@JsonSerialize(using = JsonDateTimeSerializer.class)
 	public LocalDateTime getCurrentPriceUpdateDate() {
 		return currentPriceUpdateDate;
 	}
@@ -213,12 +221,16 @@ public class StockAnalysisResponse {
 	public void setEodPriceExchange(String eodPriceExchange) {
 		this.eodPriceExchange = eodPriceExchange;
 	}
+	
+	@JsonSerialize(using = JsonDateSerializer.class)
 	public LocalDate getEodDate() {
 		return eodDate;
 	}
 	public void setEodDate(LocalDate eodDate) {
 		this.eodDate = eodDate;
 	}
+	
+	@JsonSerialize(using = JsonDateTimeSerializer.class)
 	public LocalDateTime getEodPriceUpdateDate() {
 		return eodPriceUpdateDate;
 	}

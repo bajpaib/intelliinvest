@@ -193,7 +193,7 @@ public class StockSignalsGenerator {
 			magicNumberData = new MagicNumberData(stockCode, ma);
 		}
 		else if(MAGIC_NUMBER_BOLLINGER!=null){
-			logger.info("Setting up MAGIC_NUMBER_BOLLINGER....."+MAGIC_NUMBER_BOLLINGER);
+//			logger.info("Setting up MAGIC_NUMBER_BOLLINGER....."+MAGIC_NUMBER_BOLLINGER);
 			magicNumberData.setMagicNumberBollinger(MAGIC_NUMBER_BOLLINGER);
 		}
 		
