@@ -177,8 +177,6 @@
 		class="com.intelliinvest.data.dao.RiskProfileQuestionnaireRepository"></beans:bean>
 	<beans:bean id="quandlStockPriceImporter"
 		class="com.intelliinvest.data.importer.QuandlEODStockPriceImporter"></beans:bean>
-	<beans:bean id="googleLiveStockPriceImporter"
-		class="com.intelliinvest.data.importer.GoogleLiveStockPriceImporter"></beans:bean>
 	<beans:bean id="stockFundamentalsImporter"
 		class="com.intelliinvest.data.importer.StockFundamentalsImporter"></beans:bean>
 	<beans:bean id="dailyClosePriceForecaster"
@@ -207,12 +205,13 @@
 		class="com.intelliinvest.data.signals.StockSignalsGenerator"></beans:bean>
 	<beans:bean id="magicNumberGenerator"
 		class="com.intelliinvest.data.signals.MagicNumberGenerator"></beans:bean>
-
 	<beans:bean id="bubbleDataFetcher"
 		class="com.intelliinvest.data.bubbleData.BubbleDataFetcher"></beans:bean>
 	<beans:bean id="stockAnalysisRepository"
 			class="com.intelliinvest.data.dao.StockAnalysisRepository"></beans:bean>
-
+	<beans:bean id="googleLiveStockPriceImporter"
+		class="com.intelliinvest.data.importer.GoogleLiveStockPriceImporter"></beans:bean>
+	
 
 
 	<context:component-scan base-package="com.intelliinvest.web.controllers" />

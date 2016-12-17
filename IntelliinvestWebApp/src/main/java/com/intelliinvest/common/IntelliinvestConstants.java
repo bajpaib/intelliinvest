@@ -153,6 +153,15 @@ public interface IntelliinvestConstants {
 	public final String QUARTER_DIVIDEND_PERCENT = "Q_DIV_PCT";
 	public final String QUARTER_FACE_VALUE = "Q_FV";
 
+//	public final String ANNUAL_MARKET_CAP = "A_MCAP";
+//	public final String ANNUAL_NET_WORTH = "A_EQCAP";
+//	public final String ANNUAL_DIVIDEND = "A_DIV";
+//	public final String ANNUAL_EARNING_PER_SHARE = "A_EPS";
+//	public final String ANNUAL_ENTERPRISE_VALUE = "A_EV";
+//	public final String ANNUAL_FREE_CASH_FLOW = "A_NCF";
+//	public final String ANNUAL_OPERATING_MARGIN = "A_OPMPCT";
+//	public final String ANNUAL_FACE_VALUE = "A_FV";
+
 	public final List<String> stockFundamentalAttrList = new ArrayList<>(Arrays.asList(ANNUAL_MARKET_CAPITALIZATION,
 			ANNUAL_BOOK_VALUE_PER_SHARE, ANNUAL_EARNING_PER_SHARE, ANNUAL_EARNING_PER_SHARE_PCT,
 			ANNUAL_PRICE_TO_EARNING, ANNUAL_CASH_TO_DEBT_RATIO, ANNUAL_CURRENT_RATIO, ANNUAL_EQUITY_TO_ASSET_RATIO,
@@ -160,7 +169,8 @@ public interface IntelliinvestConstants {
 			ANNUAL_COST_OF_EQUITY, ANNUAL_COST_OF_DEBT, ANNUAL_TOTAL_INCOME, ANNUAL_ASSET_TURNOVER, ANNUAL_TOTAL_ASSET,
 			ANNUAL_SHAREHOLDER_EQUITY, ANNUAL_RETURN_ON_ASSETS, ANNUAL_DEGREE_OF_FINANCIAL_LEVERAGE,
 			QUARTER_EBIDTA_MARGIN, QUARTER_OPERATING_MARGIN, QUARTER_NET_MARGIN, QUARTER_OUTSTANDING_SHARES,
-			QUARTER_DIVIDEND_PERCENT, QUARTER_UNADJUSTED_BSE_CLOSE_PRICE));
+			QUARTER_DIVIDEND_PERCENT, QUARTER_UNADJUSTED_BSE_CLOSE_PRICE, ANNUAL_MARKET_CAPITALIZATION, ANNUAL_SHAREHOLDER_EQUITY, ANNUAL_DIVIDEND,
+			ANNUAL_EARNING_PER_SHARE, ANNUAL_ENTERPRISE_VALUE, ANNUAL_NET_CASHFLOW, ANNUAL_OPERATING_MARGIN, ANNUAL_FACE_VALUE));
 
 	// Java to DB Stock Fundamentals attribute mapping
 	public final Map<String, String> stockFundamentalDBAttrMap = new HashMap<String, String>() {
@@ -183,22 +193,28 @@ public interface IntelliinvestConstants {
 			put("qrOperatingMargin", QUARTER_OPERATING_MARGIN);
 			put("qrNetMargin", QUARTER_NET_MARGIN);
 			put("qrDividendPercent", QUARTER_DIVIDEND_PERCENT);
+			put("alNetWorth", ANNUAL_SHAREHOLDER_EQUITY);
+			put("alDividend", ANNUAL_DIVIDEND);
+			put("alEPSRatio", ANNUAL_EARNING_PER_SHARE);
+			put("alEntVal", ANNUAL_ENTERPRISE_VALUE);
+			put("alCashFlow", ANNUAL_NET_CASHFLOW);
+			put("alOpMargin", ANNUAL_OPERATING_MARGIN);
+			put("alFaceValue", ANNUAL_FACE_VALUE);
 		}
 	};
 
-	//Signals String
+	// Signals String
 	public final String WAIT = "Wait";
 	public final String HOLD = "Hold";
 	public final String BUY = "Buy";
 	public final String SELL = "Sell";
-	
+
 	public final String HOLD_ID = "0";
 	public final String BUY_ID = "1";
 	public final String SELL_ID = "-1";
-	
-	
-	public final String SIGNAL_PRESENT="Y";
-	public final String SIGNAL_NOT_PRESENT="N";
+
+	public final String SIGNAL_PRESENT = "Y";
+	public final String SIGNAL_NOT_PRESENT = "N";
 
 	// Industry Names present in STOCK table
 	public final String INDUSTRY_AGRICULTURE = "AGRICULTURE";

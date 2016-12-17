@@ -1,7 +1,9 @@
 package com.intelliinvest.util;
 
 import java.text.DecimalFormat;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import com.intelliinvest.common.IntelliinvestConstants;
@@ -50,5 +52,30 @@ public class Helper {
 			signalPresent = IntelliinvestConstants.SIGNAL_NOT_PRESENT;
 		}
 		return signalPresent;
+	}
+
+	public static String getIIRandomNumber(int maxLength) {
+
+		Random random = new Random();
+
+		double no = random.nextDouble();
+		String randomNumber = "ii" + no;
+		if (randomNumber.length() > maxLength)
+			return randomNumber.substring(0, maxLength);
+		else
+			return randomNumber;
+
+	}
+
+	public static void main(String[] args) {
+		HashSet<String> randomNumbers = new HashSet<>();
+
+		for (int i = 0; i < 1000; i++) {
+			String rNo = getIIRandomNumber(35);
+			if (!randomNumbers.contains(rNo))
+				randomNumbers.add(rNo);
+			else
+				System.out.println("repeat case:" + rNo);
+		}
 	}
 }

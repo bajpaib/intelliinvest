@@ -22,24 +22,23 @@ public class StockAnalysisResponse {
 	private String movingAverageSignal_LongTerm;
 	private String aggSignal;
 	
-	
 	//fundamental signals
-	private String alEPSRatio;
-	private String annOperatingMargin_fundamental_analysis;
-	private String annDividendPercent;
-	private String annNetWorth;
-	private String faceValue;
-	private String mktCap;
-	private String freeCashFlow;
-	private String enterpriseValue;
+	private String alEPSRatio="";
+	private String annOperatingMargin_fundamental_analysis="";
+	private String annDividendPercent="";
+	private String annNetWorth="";
+	private String faceValue="";
+	private String mktCap="";
+	private String freeCashFlow="";
+	private String enterpriseValue="";
 	
 	//industry signals
 	private double alReturnOnEquity;
 	private double qrOperatingMargin_industry_analysis;
-	private String competitiveStrength;
+	private String competitiveStrength="";
 	
 	//news
-	String news;
+	String news="";
 	
 	@DateTimeFormat(iso = ISO.DATE)
 	private LocalDate signalDate;

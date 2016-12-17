@@ -74,7 +74,9 @@ public class StockFundamentalsController {
 	@RequestMapping(value = "/stock/backloadStockFundamentals", method = RequestMethod.GET)
 	public @ResponseBody String backloadStockFundamentals() {
 		try {
+			logger.info("backload stock Fundamentals has been started.....");
 			stockFundamentalsImporter.bulkUploadStockFundamentals();
+			logger.info("backload stock Fundamentals has been completed successfully.....");
 		} catch (Exception e) {
 			logger.error("Error while backloadStockFundamentals " + e.getMessage());
 			return e.getMessage();
