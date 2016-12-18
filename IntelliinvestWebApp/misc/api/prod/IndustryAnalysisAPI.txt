@@ -1,0 +1,19 @@
+http://107.167.183.167/IntelliinvestWebApp/rest/stock/getIndustryAnalysis?securityId=WIPRO
+
+{
+  "name": "IT_AND_ITES",
+  "roe": 0.29989352456927115,
+  "qrOperatingMargin": 0.2820658582442863,
+  "alLeveredBeta": 0.6258410639926907,
+  "alEPSPct": 0.05143007074403217,
+  "alCashToDebtRatio": 35.786961351475846,
+  "roe_signal": 0,
+  "qrOperatingMargin_signal": 0,
+  "alLeveredBeta_signal": 0,
+  "alEPSPct_signal": 1,
+  "alCashToDebtRatio_signal": -1,
+  "aggSignal": 0,
+  "success": true,
+  "message": "Data has been returned successfully.",
+  "updateDate": null
+}

@@ -109,6 +109,14 @@ public class IndustryFundamentalsRepository {
 		return mongoTemplate.find(query, IndustryFundamentals.class, COLLECTION_INDUSTRY_FUNDAMENTALS);
 	}
 	
+	public List<IndustryFundamentals> getIndustryFundamentalsFromDBAfterDate(String name, LocalDate date) throws DataAccessException {
+		logger.info("Fetching industry fundamentals data for: "+name+" and after date: "+date);
+		Query query = new Query();
+		query.with(new Sort(Sort.Direction.ASC, "todayDate"));
+		query.addCriteria(Criteria.where("todayDate").gte(date).and("name").is(name));
+		return mongoTemplate.find(query, IndustryFundamentals.class, COLLECTION_INDUSTRY_FUNDAMENTALS);
+	}
+
 	public IndustryFundamentals getIndustryFundamentalsFromDB(String name, LocalDate date) throws DataAccessException {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("todayDate").is(date).and("name").is(name));
