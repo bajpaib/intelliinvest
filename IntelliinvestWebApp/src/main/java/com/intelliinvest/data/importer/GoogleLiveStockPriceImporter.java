@@ -25,6 +25,7 @@ import com.intelliinvest.util.DateUtil;
 import com.intelliinvest.util.Helper;
 import com.intelliinvest.util.HttpUtil;
 import com.intelliinvest.util.ScheduledThreadPoolHelper;
+import com.intelliinvest.web.bo.response.StockPriceTimeSeriesResponse;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -37,8 +38,9 @@ public class GoogleLiveStockPriceImporter {
 	@Autowired
 	private DateUtil dateUtil;
 	private final static String GOOGLE_QUOTE_URL = "https://www.google.com/finance/info?q=#CODE#";
-	private final static String GOOGLE_REALTIME_QUOTE_URL = "http://www.google.com/finance/getprices?q=#CODE#&x=#EXCHANGE#&i=120&p=1d&f=d,c,v&df=cpct";
-
+	private final static String GOOGLE_REALTIME_QUOTE_URL = "http://www.google.com/finance/getprices?q=#CODE#&x=#EXCHANGE#&i=#INTERVAL#&p=#PERIOD#&f=d,c,v&df=cpct";
+	private final static String GOOGLE_REALTIME_FULL_QUOTE_URL = "http://www.google.com/finance/getprices?q=#CODE#&x=#EXCHANGE#&i=#INTERVAL#&p=#PERIOD#&f=d,c,v,o,h,l&df=cpct";
+	
 	private static boolean REFRESH_PERIODICALLY = false;
 
 	@PostConstruct
@@ -286,24 +288,24 @@ public class GoogleLiveStockPriceImporter {
 		try {
 			for (Stock stock : worldStocks) {
 				String securityId = stock.getSecurityId();
-				String response = HttpUtil
-						.getFromHttpUrlAsString(GOOGLE_QUOTE_URL.replace("#CODE#", securityId.replace("&", "%26")));
-				JSONArray jsonArray = JSONArray.fromObject(response.replaceFirst("//", "").trim());
-				for (int j = 0; j < jsonArray.size(); j++) {
-					try {
-						JSONObject stockObject = (JSONObject) jsonArray.get(j);
-						Double price = new Double(stockObject.getString("l_fix").replaceAll(",", ""));
-						Double cp = new Double(stockObject.getString("cp").replaceAll(",", ""));
-						stockCurrentPriceList.add(
-								new StockPrice(stock.getSecurityId(), IntelliinvestConstants.EXCHANGE_BSE, cp, price, dateUtil.getLocalDateTime()));
-					} catch (Exception e) {
-						logger.error("Error fetching stock price for " + securityId);
-						logger.error(e.getMessage());
-					}
+				try {
+					String response = HttpUtil
+							.getFromHttpUrlAsString(GOOGLE_QUOTE_URL.replace("#CODE#", securityId.replace("&", "%26")));
+					JSONArray jsonArray = JSONArray.fromObject(response.replaceFirst("//", "").trim());
+					for (int j = 0; j < jsonArray.size(); j++) {
+							JSONObject stockObject = (JSONObject) jsonArray.get(j);
+							Double price = new Double(stockObject.getString("l_fix").replaceAll(",", ""));
+							Double cp = new Double(stockObject.getString("cp").replaceAll(",", ""));
+							stockCurrentPriceList.add(
+									new StockPrice(stock.getSecurityId(), "", cp, price, dateUtil.getLocalDateTime()));
+					} 
+				}catch (Exception e) {
+					logger.error("Error fetching stock price for " + securityId);
+					logger.error(e.getMessage());
 				}
 			}
 		} catch (Exception e) {
-			logger.error("Error fetching World stock prices");
+			logger.error("Error fetching World stock prices", e);
 		}
 		return stockCurrentPriceList;
 	}
@@ -337,13 +339,57 @@ public class GoogleLiveStockPriceImporter {
 		return "Success";
 	}
 	
-	public List<PriceVolumeData> getIntraDayPriceVolumeData(String exchange, String securityId) {
-		List<PriceVolumeData> volumeChartDataList = new ArrayList<PriceVolumeData>(); 
+	public List<StockPriceTimeSeriesResponse> getStockPriceTimeSeriesResponse(String exchange, String securityId, Integer requestInterval, String period) {
+		List<StockPriceTimeSeriesResponse> volumeChartDataList = new ArrayList<StockPriceTimeSeriesResponse>(); 
 		try{
-			String response = HttpUtil.getFromHttpUrlAsString(GOOGLE_REALTIME_QUOTE_URL.replace("#CODE#", securityId.replace("&", "%26")).replace("#EXCHANGE#", exchange));
+			String response = HttpUtil.getFromHttpUrlAsString(
+					GOOGLE_REALTIME_FULL_QUOTE_URL.replace("#CODE#", securityId.replace("&", "%26"))
+						.replace("#EXCHANGE#", exchange)
+						.replace("#INTERVAL#", requestInterval.toString())
+						.replace("#PERIOD#", period));
 			String[] values = response.split("\n");
 			Date baseDate = null;
-			Integer interval = 120;
+			Integer interval = requestInterval;
+			for(String value : values){
+				Date date = null;
+				if(value.startsWith("COLUMNS")){
+					continue;
+				}else if(value.split(",").length==6){
+					String[] datas = value.split(",");
+					if(datas[0].startsWith("a")){
+						baseDate = new Date(new Long(datas[0].replace("a", ""))*1000L);
+						date = baseDate;
+					}else{
+						date = new Date(baseDate.getTime() + (new Long(datas[0])*interval*1000L));
+					}
+					Double close = new Double(datas[1]);
+					Double high = new Double(datas[2]);
+					Double low = new Double(datas[3]);
+					Double open = new Double(datas[4]);
+					Double volume = new Double(datas[5]);
+					volumeChartDataList.add(new StockPriceTimeSeriesResponse(securityId, open, high, low, close, volume, dateUtil.getLocalDateFromDate(date)));
+				}else if(value.startsWith("INTERVAL")){
+					interval = new Integer(value.replace("INTERVAL=", ""));
+				}
+			}
+			return volumeChartDataList;
+		}catch(Exception e){
+			logger.info("Error fetching StockPrice TimeSeries Response", e);
+			return new ArrayList<StockPriceTimeSeriesResponse>();
+		}
+	}
+	
+	public List<PriceVolumeData> getPriceVolumeData(String exchange, String securityId, Integer requestInterval, String period) {
+		List<PriceVolumeData> volumeChartDataList = new ArrayList<PriceVolumeData>(); 
+		try{
+			String response = HttpUtil.getFromHttpUrlAsString(
+						GOOGLE_REALTIME_QUOTE_URL.replace("#CODE#", securityId.replace("&", "%26"))
+						.replace("#EXCHANGE#", exchange)
+						.replace("#INTERVAL#", requestInterval.toString())
+						.replace("#PERIOD#", period));
+			String[] values = response.split("\n");
+			Date baseDate = null;
+			Integer interval = requestInterval;
 			for(String value : values){
 				Date date = null;
 				if(value.startsWith("COLUMNS")){

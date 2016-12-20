@@ -25,7 +25,6 @@ import com.intelliinvest.data.dao.StockFundamentalsRepository;
 import com.intelliinvest.data.dao.StockRepository;
 import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.data.model.Stock;
-import com.intelliinvest.data.model.StockFundamentals;
 import com.intelliinvest.data.model.StockPrice;
 import com.intelliinvest.util.IntelliinvestConverter;
 import com.intelliinvest.util.Helper;
@@ -87,6 +86,30 @@ public class StockController {
 		boolean error = false;
 		try {
 			stocks = stockRepository.getStocks();
+		} catch (Exception e) {
+			errorMsg = e.getMessage();
+			logger.error("Exception inside getStocks() " + errorMsg);
+			error = true;
+		}
+		if (stocks != null && !error) {
+			return IntelliinvestConverter.convertStockList(stocks);
+		} else {
+			List<StockResponse> list = new ArrayList<StockResponse>();
+			StockResponse stockResponse = new StockResponse();
+			stockResponse.setSuccess(false);
+			stockResponse.setMessage(errorMsg);
+			list.add(stockResponse);
+			return list;
+		}
+	}
+	
+	@RequestMapping(value = "/stock/getWorldStocks", method = RequestMethod.GET, produces = APPLICATION_JSON)
+	public @ResponseBody List<StockResponse> getWorldStocks() {
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
+		List<Stock> stocks = null;
+		boolean error = false;
+		try {
+			stocks = stockRepository.getWorldStocks();
 		} catch (Exception e) {
 			errorMsg = e.getMessage();
 			logger.error("Exception inside getStocks() " + errorMsg);
@@ -167,6 +190,31 @@ public class StockController {
 			return list;
 		}
 	}
+	
+	@RequestMapping(value = "/stock/getWorldStockPrices", method = RequestMethod.GET, produces = APPLICATION_JSON)
+	public @ResponseBody List<StockPriceResponse> getWorldStockPrices() {
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
+		List<StockPrice> stockPrices = null;
+		Map<String, QuandlStockPrice> quandlStockPrices = new HashMap<String, QuandlStockPrice>();
+		boolean error = false;
+		try {
+			stockPrices = stockRepository.getWorldStockPrices();
+		} catch (Exception e) {
+			errorMsg = e.getMessage();
+			logger.error("Exception inside getStockPrices() " + errorMsg);
+			error = true;
+		}
+		if (stockPrices != null && !error) {
+			return IntelliinvestConverter.convertStockPriceList(stockPrices, quandlStockPrices);
+		} else {
+			List<StockPriceResponse> list = new ArrayList<StockPriceResponse>();
+			StockPriceResponse stockPriceResponse = new StockPriceResponse();
+			stockPriceResponse.setSuccess(false);
+			stockPriceResponse.setMessage(errorMsg);
+			list.add(stockPriceResponse);
+			return list;
+		}
+	}
 
 	@RequestMapping(value = "/stock/findMissingStockPrices", method = RequestMethod.GET, produces = APPLICATION_JSON)
 	public @ResponseBody void findMissingStockPrices(@RequestParam("date") String dateStr) throws Exception {
@@ -179,7 +227,6 @@ public class StockController {
 			List<Stock> stocks = null;
 			List<StockPrice> stockPrices = null;
 			List<QuandlStockPrice> quandlStockPrices = null;
-			List<StockFundamentals> stockFundamentals = null;
 			
 			String reportDataDir = IntelliInvestStore.properties.getProperty("close.price.forecast.report.data.dir");
 			stocks = stockRepository.getStocksFromDB();

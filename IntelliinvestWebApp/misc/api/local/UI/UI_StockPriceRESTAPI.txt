@@ -126,7 +126,87 @@ Response
   "message": "StockPrice details have been returned successfully."
 }
 
+5. http://localhost:8080/IntelliinvestWebApp/rest/stock/getWorldStockPrices
+Request
+-------
 
+GET
+
+Response
+--------
+[
+  {
+    "securityId": "INDEXBOM:BSE-100",
+    "name": null,
+    "cp": -0.4,
+    "currentPrice": 8335.17,
+    "eodPrice": 0,
+    "eodDate": null,
+    "currentPriceExchange": "",
+    "eodPriceExchange": null,
+    "currentPriceUpdateDate": "2016-12-20 07:32:27",
+    "eodPriceUpdateDate": null,
+    "alReturnOnEquity": null,
+    "pctChange": 0,
+    "success": true,
+    "message": null
+  },
+  {
+    "securityId": "INDEXBOM:BSE-200",
+    "name": null,
+    "cp": -0.44,
+    "currentPrice": 3491.71,
+    "eodPrice": 0,
+    "eodDate": null,
+    "currentPriceExchange": "",
+    "eodPriceExchange": null,
+    "currentPriceUpdateDate": "2016-12-20 07:32:27",
+    "eodPriceUpdateDate": null,
+    "alReturnOnEquity": null,
+    "pctChange": 0,
+    "success": true,
+    "message": null
+  }
+  ]
  
+6. http://localhost:8080/IntelliinvestWebApp/rest/stock/getWorldStocks
+Request
+-------
 
+GET
+
+Response
+--------
+[
+  {
+    "securityId": "INDEXBOM:BSE-100",
+    "bseCode": "",
+    "nseCode": "",
+    "fundamentalCode": "",
+    "name": "BSE Top 100",
+    "isin": "",
+    "industry": "",
+    "worldStock": true,
+    "niftyStock": false,
+    "nseStock": false,
+    "updateDate": "2016-09-15 05:30:00",
+    "success": true,
+    "message": null
+  },
+  {
+    "securityId": "INDEXBOM:BSE-200",
+    "bseCode": "",
+    "nseCode": "",
+    "fundamentalCode": "",
+    "name": "BSE Top 200",
+    "isin": "",
+    "industry": "",
+    "worldStock": true,
+    "niftyStock": false,
+    "nseStock": false,
+    "updateDate": "2016-09-15 05:30:00",
+    "success": true,
+    "message": null
+  }
+  ]
 

@@ -166,6 +166,29 @@ public class StockRepository {
 		}
 		return retVal;
 	}
+	
+	public List<Stock> getWorldStocks() {
+		logger.debug("Inside getStocksFromCache()...");
+		List<Stock> retVal = new ArrayList<Stock>();
+		if (stockCache.size() == 0) {
+			logger.error("Inside getStocks() stockCache is empty");
+		}
+		for (Stock stock : stockCache.values()) {
+			if(stock.isWorldStock()){
+				retVal.add(stock);
+			}
+		}
+
+		if (Helper.isNotNullAndNonEmpty(retVal)) {
+			retVal.sort(new Comparator<Stock>() {
+				public int compare(Stock stock1, Stock stock2) {
+					return stock1.getSecurityId().compareTo(stock2.getSecurityId());
+
+				}
+			});
+		}
+		return retVal;
+	}
 
 	public List<Stock> getStocksFromDB() throws DataAccessException {
 		logger.debug("Inside getStocksFromDB()...");
@@ -192,6 +215,26 @@ public class StockRepository {
 		}
 		for (StockPrice price : stockPriceCache.values()) {
 			retVal.add(price);
+		}
+		if (Helper.isNotNullAndNonEmpty(retVal)) {
+			retVal.sort(new Comparator<StockPrice>() {
+				public int compare(StockPrice price1, StockPrice price2) {
+					return price1.getSecurityId().compareTo(price2.getSecurityId());
+				}
+			});
+		}
+		return retVal;
+	}
+	
+	public List<StockPrice> getWorldStockPrices() throws DataAccessException {
+		logger.debug("Inside getWorldStockPrices()...");
+		List<Stock> worldStocks = getWorldStocks();
+		List<StockPrice> retVal = new ArrayList<StockPrice>();
+		if (stockPriceCache.size() == 0) {
+			logger.error("Inside getStockPrices() stockPriceCache is empty");
+		}
+		for(Stock stock : worldStocks){
+			retVal.add(stockPriceCache.get(stock.getSecurityId()));
 		}
 		if (Helper.isNotNullAndNonEmpty(retVal)) {
 			retVal.sort(new Comparator<StockPrice>() {

@@ -38,3 +38,42 @@ Failure case
   "success": false,
   "message": "Error fetching Intra Day Price Volume Data"
 }
+
+
+3. http://localhost:8080/IntelliinvestWebApp-0.0.1-SNAPSHOT/rest/google/eod/timeseries?exchange=INDEXBOM&securityId=BSE-100
+
+
+Request
+-------
+GET
+
+Response
+--------
+{
+  "securityId": "BSE-100",
+  "date": "2016-12-20",
+  "stockPriceTimeSeries": [
+    {
+      "securityId": "BSE-100",
+      "open": 8309.86,
+      "high": 8384.87,
+      "low": 8288.57,
+      "close": 8378.07,
+      "tradedQty": 0,
+      "date": "2014-12-22",
+      "success": false,
+      "message": null
+    },
+    {
+      "securityId": "BSE-100",
+      "open": 8384.44,
+      "high": 8422.85,
+      "low": 8308.81,
+      "close": 8321.91,
+      "tradedQty": 0,
+      "date": "2014-12-23",
+      "success": false,
+      "message": null
+    },
+    ....
+}
