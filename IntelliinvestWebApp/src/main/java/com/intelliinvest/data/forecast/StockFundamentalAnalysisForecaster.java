@@ -22,6 +22,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 import com.intelliinvest.common.IntelliInvestStore;
 import com.intelliinvest.common.IntelliinvestConstants;
 import com.intelliinvest.common.IntelliinvestException;
+import com.intelliinvest.data.dao.IndustryFundamentalAnalysisRepository;
 import com.intelliinvest.data.dao.IndustryFundamentalsRepository;
 import com.intelliinvest.data.dao.QuandlEODStockPriceRepository;
 import com.intelliinvest.data.dao.StockFundamentalAnalysisRepository;
@@ -98,6 +99,8 @@ public class StockFundamentalAnalysisForecaster {
 	@Autowired
 	private QuandlEODStockPriceRepository quandlEODStockPriceRepository;
 	@Autowired
+	IndustryFundamentalAnalysisRepository industryFundamentalAnalysisRepository;
+	@Autowired
 	private DateUtil dateUtil;
 	private String minYearQuarter = "2005Q1";
 
@@ -114,6 +117,7 @@ public class StockFundamentalAnalysisForecaster {
 				if (!dateUtil.isBankHoliday(dateUtil.getLocalDate())) {
 					try {
 						forecastFundamentalAnalysis(dateUtil.getLocalDate());
+						industryFundamentalAnalysisRepository.refreshAllIndustriesFundamentalAnalysis();
 					} catch (Exception e) {
 						logger.error("Error while forecasting fundamental analysis for stocks " + e.getMessage());
 					}

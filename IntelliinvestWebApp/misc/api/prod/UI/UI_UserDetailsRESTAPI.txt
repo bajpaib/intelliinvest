@@ -8,7 +8,11 @@ Request
 "username":"prashantbajpai",
 "password":"Welcome123",
 "phone":"+6581368478",
-"sendNotification":true
+"sendNotification":true,
+"deviceId":"a1111",
+"reTakeQuestionaire": false,
+"pushNotification": false,
+"showZeroPortfolio": false
 }
 
 Response
@@ -30,6 +34,10 @@ Response
   "lastLoginDate": null,
   "loggedIn": false,
   "sendNotification": true,
+  "deviceId":"a1111",
+  "reTakeQuestionaire": false,
+  "pushNotification": false,
+  "showZeroPortfolio": false
   "success": true,
   "message": "Registration for user prashantbajpai with userId id prashant.bajpai@gmail.com is successful. Please activate your account by clicking link in your activation userId."
 }
@@ -137,30 +145,34 @@ Request
 -------
 
 {
-"userId":"prashant.bajpai@gmail.com"
+"userId":"yogeshgulati1984@gmail.com"
 }
 
 Response
 --------
 
 {
-  "userId": "prashant.bajpai@gmail.com",
-  "username": "prashantbajpai",
-  "phone": "+6581368478",
+  "userId": "yogeshgulati1984@gmail.com",
+  "username": "YG",
+  "phone": "9716942945",
   "password": null,
   "plan": "DEFAULT_10",
   "userType": "User",
   "active": "Y",
-  "activationCode": "ACT39902",
-  "createDate": "2016.07.06 AD at 15.42.19 SGT",
-  "updateDate": "2016.07.06 AD at 15.51.35 SGT",
-  "renewalDate": "2016.07.06 AD at 00.00.00 SGT",
-  "expiryDate": "2016.08.05 AD at 00.00.00 SGT",
-  "lastLoginDate": "2016.07.06 AD at 15.49.23 SGT",
+  "activationCode": "ACT32526",
+  "createDate": "2016-09-25 13:52:12",
+  "updateDate": "2016-12-06 09:52:41",
+  "renewalDate": "2016-09-25",
+  "expiryDate": "2016-11-09",
+  "lastLoginDate": "2016-12-06 09:52:41",
   "loggedIn": true,
   "sendNotification": true,
   "success": true,
-  "message": "User details have been returned successfully."
+  "message": "User details have been returned successfully.",
+  "deviceId": "devvvv11",
+  "reTakeQuestionaire": false,
+  "pushNotification": false,
+  "showZeroPortfolio": false
 }
 
 6. http://107.167.183.167/IntelliinvestWebApp/rest/user/forgotPassword
@@ -268,9 +280,12 @@ Request
 -------
 
 {
-"userId":"prashant.bajpai@gmail.com",
+"userId":"yogeshgulati1984@gmail.com",
 "phone":"+6581360000",
-"sendNotification":false
+"sendNotification":false,
+"reTakeQuestionaire": false,
+"pushNotification": true,
+"showZeroPortfolio": true
 }
 
 
@@ -278,23 +293,27 @@ Response
 --------
 
 {
-  "userId": "prashant.bajpai@gmail.com",
-  "username": "prashantbajpai",
-  "phone": "+6581360000",
+  "userId": "yogeshgulati1984@gmail.com",
+  "username": "YG",
+  "phone": "9716942945",
   "password": null,
   "plan": "DEFAULT_10",
   "userType": "User",
   "active": "Y",
-  "activationCode": "ACT39902",
-  "createDate": "2016.07.06 AD at 15.42.19 SGT",
-  "updateDate": "2016.07.06 AD at 16.08.38 SGT",
-  "renewalDate": "2016.07.06 AD at 00.00.00 SGT",
-  "expiryDate": "2016.08.05 AD at 00.00.00 SGT",
-  "lastLoginDate": "2016.07.06 AD at 16.02.36 SGT",
+  "activationCode": "ACT32526",
+  "createDate": "2016-09-25 13:52:12",
+  "updateDate": "2016-12-22 22:14:43",
+  "renewalDate": "2016-09-25",
+  "expiryDate": "2016-11-09",
+  "lastLoginDate": "2016-12-06 09:52:41",
   "loggedIn": true,
-  "sendNotification": false,
+  "sendNotification": true,
   "success": true,
-  "message": "User details have been updated successfully."
+  "message": "User details have been updated successfully.",
+  "deviceId": "devvvv22",
+  "reTakeQuestionaire": false,
+  "pushNotification": true,
+  "showZeroPortfolio": true
 }
 
 9. http://107.167.183.167/IntelliinvestWebApp/rest/user/remove
@@ -325,4 +344,72 @@ Response
   "sendNotification": false,
   "success": true,
   "message": "User has been removed successfully."
+}
+
+10. http://107.167.183.167/IntelliinvestWebApp/rest/user/updateDeviceId
+
+Request:
+{
+"userId":"yogeshgulati1984@gmail.com",
+"deviceId":"devvvv22"
+}
+
+Response:
+
+{
+  "userId": "yogeshgulati1984@gmail.com",
+  "username": "YG",
+  "phone": "9716942945",
+  "password": null,
+  "plan": "DEFAULT_10",
+  "userType": "User",
+  "active": "Y",
+  "activationCode": "ACT32526",
+  "createDate": "2016-09-25 13:52:12",
+  "updateDate": "2016-12-06 09:52:41",
+  "renewalDate": "2016-09-25",
+  "expiryDate": "2016-11-09",
+  "lastLoginDate": "2016-12-06 09:52:41",
+  "loggedIn": true,
+  "sendNotification": true,
+  "success": true,
+  "message": "Device ID has been updated successfully.",
+  "deviceId": "devvvv22",
+  "reTakeQuestionaire": false,
+  "pushNotification": false,
+  "showZeroPortfolio": false
+}
+
+
+11.	http://107.167.183.167/IntelliinvestWebApp/rest/user/updateReTakeQuestionaire
+
+Request:
+{
+"userId":"yogeshgulati1984@gmail.com",
+"reTakeQuestionaire":true
+}
+
+Response:
+{
+  "userId": "yogeshgulati1984@gmail.com",
+  "username": "YG",
+  "phone": "9716942945",
+  "password": null,
+  "plan": "DEFAULT_10",
+  "userType": "User",
+  "active": "Y",
+  "activationCode": "ACT32526",
+  "createDate": "2016-09-25 13:52:12",
+  "updateDate": "2016-12-06 09:52:41",
+  "renewalDate": "2016-09-25",
+  "expiryDate": "2016-11-09",
+  "lastLoginDate": "2016-12-06 09:52:41",
+  "loggedIn": true,
+  "sendNotification": true,
+  "success": true,
+  "message": "Retake Questionaire paarmeter has been updated successfully.",
+  "deviceId": "devvvv22",
+  "reTakeQuestionaire": true,
+  "pushNotification": false,
+  "showZeroPortfolio": false
 }

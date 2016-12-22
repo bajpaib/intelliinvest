@@ -11,11 +11,40 @@ public class UserFormParameters implements Serializable {
 	String activationCode;
 	String oldPassword;
 	String deviceId;
+
+	String reTakeQuestionaire;
+	String pushNotification;
+	String showZeroPortfolio;
+
 	
 	public UserFormParameters() {
 		super();
 	}
 	
+	public String getReTakeQuestionaire() {
+		return reTakeQuestionaire;
+	}
+
+	public void setReTakeQuestionaire(String reTakeQuestionaire) {
+		this.reTakeQuestionaire = reTakeQuestionaire;
+	}
+
+	public String getPushNotification() {
+		return pushNotification;
+	}
+
+	public void setPushNotification(String pushNotification) {
+		this.pushNotification = pushNotification;
+	}
+
+	public String getShowZeroPortfolio() {
+		return showZeroPortfolio;
+	}
+
+	public void setShowZeroPortfolio(String showZeroPortfolio) {
+		this.showZeroPortfolio = showZeroPortfolio;
+	}
+
 	public String getOldPassword() {
 		return oldPassword;
 	}

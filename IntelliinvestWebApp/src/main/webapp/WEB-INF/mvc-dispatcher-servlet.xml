@@ -208,10 +208,12 @@
 	<beans:bean id="bubbleDataFetcher"
 		class="com.intelliinvest.data.bubbleData.BubbleDataFetcher"></beans:bean>
 	<beans:bean id="stockAnalysisRepository"
-			class="com.intelliinvest.data.dao.StockAnalysisRepository"></beans:bean>
+		class="com.intelliinvest.data.dao.StockAnalysisRepository"></beans:bean>
 	<beans:bean id="googleLiveStockPriceImporter"
 		class="com.intelliinvest.data.importer.GoogleLiveStockPriceImporter"></beans:bean>
-	
+	<beans:bean id="industryFundamentalAnalysisRepository"
+		class="com.intelliinvest.data.dao.IndustryFundamentalAnalysisRepository"></beans:bean>
+
 
 
 	<context:component-scan base-package="com.intelliinvest.web.controllers" />

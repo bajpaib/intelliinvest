@@ -33,6 +33,7 @@ import com.intelliinvest.util.Helper;
 public class StockRepository {
 	private static Logger logger = Logger.getLogger(StockRepository.class);
 	private static final String COLLECTION_STOCK = "STOCK";
+	private static final String INDUSTRY_COLUMN_NAME = "industry";
 	private static final String COLLECTION_STOCK_PRICE = "STOCK_PRICE";
 	@Autowired
 	private MongoTemplate mongoTemplate;
@@ -314,5 +315,11 @@ public class StockRepository {
 		} else {
 			return "Stock Price not found";
 		}
+	}
+	
+	@ManagedOperation(description = "getIndustriesName")
+	@ManagedOperationParameters()
+	public List<String> getIndustriesName() throws DataAccessException {
+		return mongoTemplate.getCollection(COLLECTION_STOCK).distinct(INDUSTRY_COLUMN_NAME);
 	}
 }

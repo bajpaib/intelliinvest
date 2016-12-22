@@ -56,6 +56,10 @@ public class IntelliinvestConverter {
 		userResponse.setLastLoginDate(user.getLastLoginDate());
 		userResponse.setSendNotification(user.getSendNotification());
 		userResponse.setDeviceId(user.getDeviceId());
+		userResponse.setPushNotification(user.isPushNotification());
+		userResponse.setShowZeroPortfolio(user.isShowZeroPortfolio());
+		userResponse.setReTakeQuestionaire(user.isReTakeQuestionaire());
+	
 		return userResponse;
 	}
 

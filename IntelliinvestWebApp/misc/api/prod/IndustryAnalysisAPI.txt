@@ -1,4 +1,69 @@
-http://107.167.183.167/IntelliinvestWebApp/rest/stock/getIndustryAnalysis?securityId=WIPRO
+1.	http://107.167.183.167/IntelliinvestWebApp/rest/stock/getAllIndustryFundamentalAnalysis
+
+{
+  "industriesFundamentalAnalysis": [
+    {
+      "name": "ENGINEERING",
+      "alReturnOnEquity": 0.14688090287529154,
+      "qrOperatingMargin": 0.10294583888152506,
+      "alLeveredBeta": 1.21018078880112,
+      "alEPSPct": 0.02133476075173522,
+      "alCashToDebtRatio": 59173.55623564223,
+      "alReturnOnEquity_signal": 1,
+      "qrOperatingMargin_signal": 1,
+      "alLeveredBeta_signal": 1,
+      "alEPSPct_signal": 0,
+      "alCashToDebtRatio_signal": 1,
+      "aggSignal": 0,
+      "todayDate": null,
+      "t_minus_1": null,
+      "t_minus_2": null,
+      "updateDate": "2016-12-22 17:59:55"
+    },
+    {
+      "name": "OIL_AND_GAS",
+      "alReturnOnEquity": 0.16762639024982104,
+      "qrOperatingMargin": 0.11900296065308454,
+      "alLeveredBeta": 1.0401485045454029,
+      "alEPSPct": 0.08971930335005195,
+      "alCashToDebtRatio": 3.0118701246080763,
+      "alReturnOnEquity_signal": -1,
+      "qrOperatingMargin_signal": -1,
+      "alLeveredBeta_signal": 1,
+      "alEPSPct_signal": 1,
+      "alCashToDebtRatio_signal": 0,
+      "aggSignal": 0,
+      "todayDate": null,
+      "t_minus_1": null,
+      "t_minus_2": null,
+      "updateDate": "2016-12-22 17:59:56"
+    },
+    {
+      "name": "AUTO_COMPONENTS",
+      "alReturnOnEquity": 0.21351940246233542,
+      "qrOperatingMargin": 0.17307334975232408,
+      "alLeveredBeta": 0.9833266707577047,
+      "alEPSPct": 0.03751396060644683,
+      "alCashToDebtRatio": 11.110828605272891,
+      "alReturnOnEquity_signal": 1,
+      "qrOperatingMargin_signal": 1,
+      "alLeveredBeta_signal": 1,
+      "alEPSPct_signal": -1,
+      "alCashToDebtRatio_signal": 1,
+      "aggSignal": 0,
+      "todayDate": null,
+      "t_minus_1": null,
+      "t_minus_2": null,
+      "updateDate": "2016-12-22 17:59:56"
+    },
+    
+  ],
+  "success": false,
+  "message": "Invalid Input Value, Please check..."
+}
+
+
+2.	http://107.167.183.167/IntelliinvestWebApp/rest/stock/getIndustryAnalysis?securityId=WIPRO
 
 {
   "name": "IT_AND_ITES",
@@ -16,4 +81,48 @@ http://107.167.183.167/IntelliinvestWebApp/rest/stock/getIndustryAnalysis?securi
   "success": true,
   "message": "Data has been returned successfully.",
   "updateDate": null
+}
+
+
+
+	
+3.	http://107.167.183.167/IntelliinvestWebApp/rest/stock/getIndustryFundamentalAnalysisByName?name=CEMENT
+
+{
+  "name": "CEMENT",
+  "alReturnOnEquity": 0.08729633213624631,
+  "qrOperatingMargin": 0.20502096340968715,
+  "alLeveredBeta": 1.0632031951929468,
+  "alEPSPct": 0.01746517419724957,
+  "alCashToDebtRatio": 12.904802947610547,
+  "alReturnOnEquity_signal": 0,
+  "qrOperatingMargin_signal": 1,
+  "alLeveredBeta_signal": 1,
+  "alEPSPct_signal": 0,
+  "alCashToDebtRatio_signal": 0,
+  "aggSignal": 0,
+  "todayDate": null,
+  "t_minus_1": null,
+  "t_minus_2": null,
+  "updateDate": "2016-12-22 17:59:56"
+}
+
+4.	http://107.167.183.167/IntelliinvestWebApp/rest/stock/getIndustryFundamentalAnalysisById?securityId=WIPRO
+{
+  "name": "IT_AND_ITES",
+  "alReturnOnEquity": 0.2990115769011142,
+  "qrOperatingMargin": 0.28361254955258036,
+  "alLeveredBeta": 0.6224176967442786,
+  "alEPSPct": 0.050331416049350985,
+  "alCashToDebtRatio": 35.63012978774143,
+  "alReturnOnEquity_signal": 0,
+  "qrOperatingMargin_signal": 0,
+  "alLeveredBeta_signal": 0,
+  "alEPSPct_signal": 0,
+  "alCashToDebtRatio_signal": -1,
+  "aggSignal": 0,
+  "todayDate": null,
+  "t_minus_1": null,
+  "t_minus_2": null,
+  "updateDate": "2016-12-22 17:59:56"
 }

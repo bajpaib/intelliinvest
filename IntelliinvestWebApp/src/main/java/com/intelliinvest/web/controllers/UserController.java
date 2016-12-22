@@ -39,6 +39,11 @@ public class UserController {
 		String phone = userFormParameters.getPhone();
 		String sendNotification = userFormParameters.getSendNotification();
 		String deviceId = userFormParameters.getDeviceId();
+
+		String pushNotification = userFormParameters.getPushNotification();
+		String showZeroPortfolio = userFormParameters.getShowZeroPortfolio();
+		String reTakeQuestionarie = userFormParameters.getReTakeQuestionaire();
+
 		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		User user = null;
 		boolean error = false;
@@ -46,8 +51,9 @@ public class UserController {
 			if (Helper.isNotNullAndNonEmpty(username) && Helper.isNotNullAndNonEmpty(password)
 					&& Helper.isNotNullAndNonEmpty(userId) && Helper.isNotNullAndNonEmpty(phone)
 					&& Helper.isNotNullAndNonEmpty(sendNotification + "")) {
-				user = userRepository.registerUser(username, userId, phone, password,
-						Boolean.valueOf(sendNotification),deviceId);
+				user = userRepository.registerUser(username, userId, phone, password, Boolean.valueOf(sendNotification),
+						deviceId, Boolean.valueOf(pushNotification), Boolean.valueOf(showZeroPortfolio),
+						Boolean.valueOf(reTakeQuestionarie));
 			}
 		} catch (Exception e) {
 			errorMsg = e.getMessage();
@@ -188,11 +194,15 @@ public class UserController {
 		String password = userFormParameters.getPassword();
 		String phone = userFormParameters.getPhone();
 		String sendNotification = userFormParameters.getSendNotification();
+		String pushNotification = userFormParameters.getPushNotification();
+		String showZeroPortfolio = userFormParameters.getShowZeroPortfolio();
+		String reTakeQuestionarie = userFormParameters.getReTakeQuestionaire();
 		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
 		User user = null;
 		boolean error = false;
 		try {
-			user = userRepository.updateUser(userName, userId, phone, oldPassword, password, sendNotification);
+			user = userRepository.updateUser(userName, userId, phone, oldPassword, password, sendNotification,
+					pushNotification, showZeroPortfolio, reTakeQuestionarie);
 		} catch (Exception e) {
 			errorMsg = e.getMessage();
 			logger.error("Exception inside updateUser() " + errorMsg);
@@ -298,6 +308,7 @@ public class UserController {
 		}
 		return userResponse;
 	}
+
 	@RequestMapping(value = "/user/updateDeviceId", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
 	public @ResponseBody UserResponse updateDeviceId(@RequestBody UserFormParameters userFormParameters) {
 		UserResponse userResponse = new UserResponse();
@@ -328,4 +339,33 @@ public class UserController {
 		return userResponse;
 	}
 
+	@RequestMapping(value = "/user/updateReTakeQuestionaire", method = RequestMethod.POST, produces = APPLICATION_JSON, consumes = APPLICATION_JSON)
+	public @ResponseBody UserResponse updateReTakeQuestionaire(@RequestBody UserFormParameters userFormParameters) {
+		UserResponse userResponse = new UserResponse();
+		String userId = userFormParameters.getUserId();
+		String reTakeQuestionaire = userFormParameters.getReTakeQuestionaire();
+		String errorMsg = IntelliinvestConstants.ERROR_MSG_DEFAULT;
+		User user = null;
+		boolean error = false;
+
+		if (Helper.isNotNullAndNonEmpty(userId) && Helper.isNotNullAndNonEmpty(reTakeQuestionaire)) {
+			try {
+				user = userRepository.updateReTakeQuestionaire(userId, reTakeQuestionaire);
+			} catch (Exception e) {
+				errorMsg = e.getMessage();
+				logger.error("Exception inside updateUser() " + errorMsg);
+				error = true;
+			}
+		}
+		if (user != null && !error) {
+			userResponse = IntelliinvestConverter.getUserResponse(user);
+			userResponse.setSuccess(true);
+			userResponse.setMessage("Retake Questionaire paarmeter has been updated successfully.");
+		} else {
+			userResponse.setUserId(userId);
+			userResponse.setSuccess(false);
+			userResponse.setMessage(errorMsg);
+		}
+		return userResponse;
+	}
 }
