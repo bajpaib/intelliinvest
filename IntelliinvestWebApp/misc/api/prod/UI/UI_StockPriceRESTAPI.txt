@@ -126,7 +126,7 @@ Response
   "message": "StockPrice details have been returned successfully."
 }
 
-5. http://localhost:8080/IntelliinvestWebApp/rest/stock/getWorldStockPrices
+5. http://107.167.183.167/IntelliinvestWebApp/rest/stock/getWorldStockPrices
 Request
 -------
 
@@ -169,7 +169,7 @@ Response
   }
   ]
  
-6. http://localhost:8080/IntelliinvestWebApp/rest/stock/getWorldStocks
+6. http://107.167.183.167/IntelliinvestWebApp/rest/stock/getWorldStocks
 Request
 -------
 

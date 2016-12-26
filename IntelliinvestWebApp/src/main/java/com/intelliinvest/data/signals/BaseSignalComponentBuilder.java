@@ -17,6 +17,8 @@ public class BaseSignalComponentBuilder implements SignalComponentBuilder {
 		int quandlPricesSize = signalComponentHolder.getQuandlStockPrices().size();
 		if (quandlPricesSize == 1) {
 			stockSignalsDTO.setSplitMultiplier(1D);
+			stockSignalsDTO.setTR(quandlStockPrice.getHigh() - quandlStockPrice.getLow());
+			stockSignalsDTO.setTRn(stockSignalsDTO.getTR());
 			return;
 		}
 		StockSignalsDTO previousSignalComponent = signalComponentHolder.getStockSignalsDTOs()
@@ -56,43 +58,30 @@ public class BaseSignalComponentBuilder implements SignalComponentBuilder {
 
 			Double high = quandlStockPrice.getHigh() * stockSignalsDTO.getSplitMultiplier();
 			Double low = quandlStockPrice.getLow() * stockSignalsDTO.getSplitMultiplier();
-
+			open = quandlStockPrice.getOpen() * stockSignalsDTO.getSplitMultiplier();
+			
 			Double high_low = high - low;
 			Double high_close = Math.abs(high - close_1);
 			Double low_close = Math.abs(low - close_1);
-
-			// TR
 			stockSignalsDTO.setTR(max(high_low, high_close, low_close));
-
-			// plusDM1
 			if ((high - high_1) > (low_1 - low)) {
 				stockSignalsDTO.setPlusDM1(max(high - high_1, 0D));
 			}
-
-			// minusDM1
 			if ((low_1 - low) > (high - high_1)) {
 				stockSignalsDTO.setMinusDM1(max(low_1 - low, 0D));
 			}
-
-			// TRn
 			int ma = signalComponentHolder.getMa();
-
-			stockSignalsDTO
-					.setTRn((previousSignalComponent.getTRn() * (quandlPricesSize - 1) / ma) + stockSignalsDTO.getTR());
-
-			// plusDMn
-			stockSignalsDTO.setPlusDMn((previousSignalComponent.getPlusDMn() * (quandlPricesSize - 1) / ma)
-					+ stockSignalsDTO.getPlusDM1());
-
-			// minusDMn
-			stockSignalsDTO.setMinusDMn((previousSignalComponent.getMinusDMn() * (quandlPricesSize - 1) / ma)
-					+ stockSignalsDTO.getMinusDM1());
-
-			// plusDIn
-			// minusDIn
+			if(quandlPricesSize<ma){
+				stockSignalsDTO.setTRn(previousSignalComponent.getTRn() + stockSignalsDTO.getTR());
+				stockSignalsDTO.setPlusDMn(previousSignalComponent.getPlusDMn() + stockSignalsDTO.getPlusDM1());
+				stockSignalsDTO.setMinusDMn(previousSignalComponent.getMinusDMn() + stockSignalsDTO.getMinusDM1());
+			}else{
+				stockSignalsDTO.setTRn((previousSignalComponent.getTRn() * (quandlPricesSize - 1) / ma) + stockSignalsDTO.getTR());
+				stockSignalsDTO.setPlusDMn((previousSignalComponent.getPlusDMn() * (quandlPricesSize - 1) / ma) + stockSignalsDTO.getPlusDM1());
+				stockSignalsDTO.setMinusDMn((previousSignalComponent.getMinusDMn() * (quandlPricesSize - 1) / ma) + stockSignalsDTO.getMinusDM1());
+			}
 			if (stockSignalsDTO.getTRn() != 0) {
 				stockSignalsDTO.setPlusDIn(100 * (stockSignalsDTO.getPlusDMn() / stockSignalsDTO.getTRn()));
-
 				stockSignalsDTO.setMinusDIn(100 * (stockSignalsDTO.getMinusDMn() / stockSignalsDTO.getTRn()));
 			} else {
 				stockSignalsDTO.setPlusDIn(0D);

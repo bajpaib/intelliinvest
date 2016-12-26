@@ -4,10 +4,10 @@
 TimeHorizon
 
 --Question
-How long do you intend to invest before you need your money?
+How long do you intend to invest before you need your money
 3 to 5 years
 6 to 10 years
-> 10 years
+More than 10 years
 
 
 
@@ -16,7 +16,7 @@ How long do you intend to invest before you need your money?
 Feedback
 
 --Question
-Rate your experience with IntelliInvest?
+Rate your experience with IntelliInvest
 Poor
 Average
 Good
@@ -28,25 +28,44 @@ OutStanding
 Comfort with risk
 
 --Question
-Choose the expression which defines your lifestyle the best:				
+Choose the expression which defines your lifestyle the best				
 Look before you leap
 All good things come to who waits
 Born lucky
-no guts, no glory
+no guts no glory
 Just do it
-20|15|10|5|0
+0|5|10|15|20
 
 --Question
-On days when the stock market jumps way up, you				
-wish you had invested more
+On days when stock market drops drastically				
+you wish you had never invested into stock market 
+you call your financial advisor and ask for recommendation
+you pay little attention
+you tell friends that you are glad you are not in the market because it fluctuates too much
+you feel glad you are not in the market because it fluctuates too much
+20|15|10|5|0
+
+
+--Question
+When stock market fluctuates too much between days				
+wish you had learnt more about stock market before investment 
 call your financial advisor and ask for recommendation
 pay little attention
-tell friends that you are glad you're not in the market because it fluctuates too much
-feel glad you’re not in the market because it fluctuates too much
+tell friends that you are glad you are not in the market because it fluctuates too much
+feel glad you are not in the market because it fluctuates too much
 20|15|10|5|0
 
 --Question
-I am willing to take substantial financial risk to earn sustantial returns
+I am willing to take substantial financial risk to earn substantial returns
+Strongly agree
+Agree
+No Strong opinion
+Disagree
+Strongly Disagree
+20|15|10|5|0
+
+--Question
+I understand risk and return go hand in hand
 Strongly agree
 Agree
 No Strong opinion
@@ -58,55 +77,136 @@ Strongly Disagree
 Knowledge
 
 --Question
-If you have bought a stock at Rs 200 a week ago & it jumps to Rs 275 today. What is will be your move:				
+If you have bought a stock at Rs 200 a week ago and it jumps to Rs 275 today. What is will be your move		
 Buy a put
-Think to buy a Put
-Sell the stock
+Think to buy a put
+Buy more of the same stock
 Discuss with my broker before deciding
 Rely on the my broker
-0|5|10|15|20
+20|15|10|5|0
 
 --Question
-Your choice of daily news feed & office random conversations is :
-Financial / Stock markets
-Financial/Various industry trends
+If you have bought a stock at Rs 200 a week ago and it drops to Rs 150 today. What is will be your move		
+Buy a call
+Think to Buy a call
+Buy more stocks of the same
+Discuss with my broker before deciding
+Rely on the my broker
+20|15|10|5|0
+
+--Question
+If you have bought a stock at Rs 200 a week ago and remains at Rs 200 today. What is will be your move		
+Analyse the fundamentals
+Buy more stocks
+Sell the stocks
+Discuss with my broker before deciding
+Rely on the my broker
+20|15|10|5|0
+
+--Question
+Your choice of daily news feed & office random conversations is
+Financial or Stock markets
+Financial or Various industry trends
 No preference
-All genre news/ any discussion where you have an opinion
-Not interested/ prefers listening than participating
+All genre news or any discussion where you have an opinion
+Not interested or prefers listening than participating
+20|15|10|5|0
+
+--Question
+Your choice of reading during a long journey would be
+News on Financial or Stock markets
+Business Magazine
+Whatever is available
+Random reading on trending in the nation
+Not interested or prefers listening to music or watch a movie
+20|15|10|5|0
+
+--Question
+Your choice of mobile app downloads with regular notifications and alerts
+Financial or Stock markets
+Live Mint or Economics Time
+No preference
+All genre news
+Not interested
 20|15|10|5|0
 
 --QuestionGroup
 Investment choice
 
 --Question
-If you win Rs 10,000 incentive due to good performance, you would:
-Buy an insurance policy
-Open a recurring savings account
-Go shopping
-Buy lottery tickets
-Buy some stocks
+If you win Rs 10000 incentive due to good performance:
+You buy an insurance policy
+You open a recurring savings account
+You go shopping
+You buy lottery tickets
+You buy some stocks
 0|5|10|15|20
 
 --Question
-If you had received a bonus of Rs 1,00,000 this year, you would-				
-Not take any action on this money, unless your wife/father reminds you to.
-Wait for your friend to suggest 3 best places to invest/save.
-Depends on your immediate financial needs.
-Start gathering relevant informations before making the investment decision immediately and invest soon.
-Allocate this money to different investment avenues in next 1 week.
+If your spouse wins Rs 50000 incentive due to good performance
+You buy an insurance policy
+You open a recurring savings account
+You go shopping
+You buy lottery tickets
+You buy some stocks
 0|5|10|15|20
 
 --Question
-If you had received a bonus of Rs 1,00,000 this year, what would you do with that money?				
+If you had received a bonus of Rs 100000 this year				
+You not take any action on this money unless your wife or father reminds you to
+You wait for your friend to suggest 3 best places to invest or save
+You depends on your immediate financial needs
+You start gathering relevant informations before making the investment decision immediately and invest soon
+Allocate this money to different investment avenues in next 1 week
+0|5|10|15|20
+
+--Question
+If your salary is hiked by 1.5 time this year				
+You ignore planning about this additional income unless your wife/father reminds you to
+You wait for your friend to suggest 3 best places to invest or save
+You firstly fulfil all the immediate financial needs
+You start gathering relevant informations before making the investment decision immediately and invest soon
+You allocate  this money to a fixed monthly investment scheme
+0|5|10|15|20
+
+--Question
+If your family income increases by 50 percent this year			
+Not take any action on this money unless your wife or father reminds you to
+Save only 20 percent of this additional income in the savings account
+Wait for your friend to suggest 3 best places to invest or save
+Start gathering relevant informations before making the investment decision immediately and invest soon
+Allocate this money to different investment avenues in next 1 week
+0|5|10|15|20
+
+--Question
+If you had received a bonus of Rs 100000 this year what would you do with that money			
 Put the entire amount in a FD
-Put Rs 70,000 in a FD & remaining in PPF.
-Will wait for the right occassion to invest or save.
-Will take advise from my friends and invest in the safest MF.
-Will open a demat account & start trading.
+Put Rs 70000 in a FD and remaining in PPF
+Will wait for the right occassion to invest or save
+Will take advise from my friends and invest in the safest MF
+Will open a demat account and start trading.
 0|5|10|15|20
 
 --Question
-I have very little experience of investing in stocks & shares.
+If you had received a return of Rs 500000 this year on maturity of your old savings what would you do with that money			
+Put the entire amount in a FD
+Put Rs 350000 in a FD and remaining in PPF
+Will wait for the right occassion to invest or save
+Will take advise from my friends and invest in the safest MF
+Will open a demat account and start trading
+0|5|10|15|20
+
+--Question
+If you won a lottery of Rs 100000 this year what would you do with that money				
+Put the entire amount in a FD
+Put Rs 70,000 in a FD and remaining in PPF
+Spend the entire amount on a vacation
+Will take advise from my friends and invest in the safest MF
+Will open a demat account and start trading
+0|5|10|15|20
+
+--Question
+I have very little experience of investing in stocks and shares
 Strongly agree
 Agree
 No Strong opinion
@@ -115,11 +215,20 @@ Strongly Disagree
 0|5|10|15|20
 
 --Question
+I have all the understanding of investing in stocks and shares
+Strongly Disagree
+Disagree
+No Strong opinion
+Agree
+Strongly agree
+0|5|10|15|20
+
+--Question
 Your attitude toward money is best described as
-Wherever possible use other's money
+Wherever possible use others money
 Dollar saved is dollar earned
 It is OK to get credit sometime
-Cash & Carry
+Cash and Carry
 You have got to spend money to earn money
 0|5|10|15|20
 
@@ -132,15 +241,16 @@ Disagree
 Strongly Disagree
 0|5|10|15|20
 
+
 --QuestionGroup
 Regret
 
 --Question
-You want to take someone out for a special dinner in a city that’s new to you. How do you pick a place?
+You want to take someone out for a special dinner in a city that is new to you. How do you pick a place
 read restaurant reviews from a reliable source
-ask friends if they knowof a suitable place
+ask friends if they know a suitable place
 Go to the place nearby
-call the only other person you know in this city, who eats out a lot but only recently moved there
+call the only other person you know in this city who eats out a lot but only recently moved there
 visit the city sometime before your dinner to check out the restaurants yourself
 20|15|10|5|0
 
@@ -153,9 +263,19 @@ Get suggestion from your friend once and decide where to buy based on his feedba
 Go checkout stores yourself and compare and buy
 20|15|10|5|0
 
+--Question
+You want to take your spouse for a holiday. How do you pick a place
+read reviews from a reliable sourcebuy
+ask friends if they knowof a suitable place
+Pick a place nearby for roadtrip
+call the only other person you know who travels out a lot but only recently got married
+visit the your tried and test favourite place
+20|15|10|5|0
+
+
 --ScoreToRiskMap
-119|Low
-139|Moderate
+100|Low
+140|Moderate
 160|High
 
 --InvestmentTypes
@@ -171,4 +291,5 @@ FD|Mutual funds|Equity
 2|Low||20|40|40
 2|Moderate||10|30|60
 2|High||0|0|100
+
 

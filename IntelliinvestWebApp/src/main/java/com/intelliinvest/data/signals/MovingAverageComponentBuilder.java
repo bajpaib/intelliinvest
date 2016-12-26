@@ -5,7 +5,6 @@ import java.util.List;
 import com.intelliinvest.common.IntelliinvestConstants;
 import com.intelliinvest.data.model.QuandlStockPrice;
 import com.intelliinvest.data.model.StockSignalsDTO;
-import com.intelliinvest.data.model.StockSignalsDTO.MovingAverageComponents;
 import com.intelliinvest.data.model.StockSignalsDTO.MovingAverageSignals;
 import com.intelliinvest.util.Helper;
 
@@ -16,14 +15,13 @@ public class MovingAverageComponentBuilder implements SignalComponentBuilder {
 		int size = signalComponentHolder.getStockSignalsDTOs().size();
 		// logger.debug("Size:" +
 		// signalComponentHolder.getStockSignalsDTOSize());
-		if (size > 1) {
-
-			generateMovingAverageSignals(signalComponentHolder.getQuandlStockPrices(),
-					signalComponentHolder.getStockSignalsDTOs().getLast(), signalComponentHolder.getStockSignalsDTOs()
-							.get(signalComponentHolder.getStockSignalsDTOSize() - 2));
-		} else {
+		if (size == 1) {
 			generateMovingAverageSignals(signalComponentHolder.getQuandlStockPrices(),
 					signalComponentHolder.getStockSignalsDTOs().getLast(), null);
+		} else {
+			generateMovingAverageSignals(signalComponentHolder.getQuandlStockPrices(),
+					signalComponentHolder.getStockSignalsDTOs().getLast(), signalComponentHolder.getStockSignalsDTOs()
+							.get(signalComponentHolder.getStockSignalsDTOs().size() - 2));
 		}
 
 	}

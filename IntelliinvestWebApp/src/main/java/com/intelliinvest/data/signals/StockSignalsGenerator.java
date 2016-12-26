@@ -62,16 +62,11 @@ public class StockSignalsGenerator {
 			IntelliInvestStore.properties.get("movingAverage").toString());
 	private static Integer MOVING_AVERAGE = new Integer(IntelliInvestStore.properties.get("ma").toString());
 
-	private static Double MAGIC_NUMBER_BOLLINGER=null;
+	private static Double MAGIC_NUMBER_BOLLINGER= new Double(IntelliInvestStore.properties.get("magicnumber.bollinger").toString());
+	private static Double MAGIC_NUMBER_OSCILLATOR= new Double(IntelliInvestStore.properties.get("magicnumber.oscillator").toString());
+	private static Double MAGIC_NUMBER_ADX= new Double(IntelliInvestStore.properties.get("magicnumber.adx").toString());
 	@PostConstruct
 	public void init() {
-		try{
-			MAGIC_NUMBER_BOLLINGER = new Double(IntelliInvestStore.properties.get("magicnumber.bollinger").toString());
-			logger.info("Setting up bollinger magic numeber:::"+MAGIC_NUMBER_BOLLINGER);
-		}
-		catch(NumberFormatException e){
-			logger.debug("Exception while picking magicnumber.bollinger from properties file, so will pick from db at runtime...");
-		}
 		initializeScheduledTasks();
 	}
 
@@ -114,7 +109,7 @@ public class StockSignalsGenerator {
 
 	public static void main(String[] args) throws Exception {
 		StockSignalsGenerator signalComponentGenerator = new StockSignalsGenerator();
-		String url = "https://www.quandl.com/api/v3/datasets/NSE/INFY.csv?api_key=yhwhU_RHkVxbTtFTff9t&start_date=2013-01-01&end_date=2016-09-30";
+		String url = "https://www.quandl.com/api/v3/datasets/NSE/TATASTEEL.csv?api_key=yhwhU_RHkVxbTtFTff9t&start_date=2005-10-24&end_date=2016-12-23";
 		String eodPricesAsString = HttpUtil.getFromUrlAsString(url);
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		String[] eodPricesAsArray = eodPricesAsString.split("\n");
@@ -132,15 +127,15 @@ public class StockSignalsGenerator {
 			int tradedQty = new Double(eodPriceAsArray[6]).intValue();
 			double turnover = new Double(eodPriceAsArray[7]);
 
-			QuandlStockPrice quandlStockPrice = new QuandlStockPrice("INFY", "NSE", "EQ", open, high, low, close, last,
+			QuandlStockPrice quandlStockPrice = new QuandlStockPrice("ELDERHCL", "NSE", "EQ", open, high, low, close, last,
 					wap, tradedQty, turnover, eodDate, LocalDateTime.now());
 			quandlStockPrices.push(quandlStockPrice);
 
 		}
-		SignalComponentHolder signalComponentHolder = new SignalComponentHolder(10, 3);
-		Integer magicNumberADX = 45;
-		Double magicNumberBolliger = .17;
-		Integer magicNumberOscillator = 15;
+		SignalComponentHolder signalComponentHolder = new SignalComponentHolder(10, 10);
+		Integer magicNumberADX = 30;
+		Double magicNumberBolliger = 0.24000000000000007;
+		Integer magicNumberOscillator = 22;
 		signalComponentHolder.setMagicNumberADX(magicNumberADX);
 		signalComponentHolder.setMagicNumberBolliger(magicNumberBolliger);
 		signalComponentHolder.setMagicNumberOscillator(magicNumberOscillator);
@@ -188,17 +183,7 @@ public class StockSignalsGenerator {
 	private List<StockSignalsDTO> generateSignals(Integer ma, String stockCode,
 			List<QuandlStockPrice> quandlStockPrices) {
 		MagicNumberData magicNumberData = magicNumberRepository.getMagicNumber(stockCode);
-		if (null == magicNumberData) {
-			logger.info("Setting default magic number for stock " + stockCode);
-			magicNumberData = new MagicNumberData(stockCode, ma);
-		}
-		else if(MAGIC_NUMBER_BOLLINGER!=null){
-//			logger.info("Setting up MAGIC_NUMBER_BOLLINGER....."+MAGIC_NUMBER_BOLLINGER);
-			magicNumberData.setMagicNumberBollinger(MAGIC_NUMBER_BOLLINGER);
-		}
-		
 		SignalComponentHolder signalComponentHolder = new SignalComponentHolder(ma, 3);
-
 		signalComponentHolder.setMagicNumberADX(magicNumberData.getMagicNumberADX());
 		signalComponentHolder.setMagicNumberBolliger(magicNumberData.getMagicNumberBollinger());
 		signalComponentHolder.setMagicNumberOscillator(magicNumberData.getMagicNumberOscillator());
@@ -364,29 +349,15 @@ public class StockSignalsGenerator {
 			List<QuandlStockPrice> quandlStockPrices, List<StockSignalsDTO> stockSignalsDTOs) {
 		if (stockSignalsDTOs != null && quandlStockPrices != null && !quandlStockPrices.isEmpty()
 				&& !stockSignalsDTOs.isEmpty()) {
-			// logger.info("Stock Signal list size is:" +
-			// stockSignalsDTOs.size() + " quandl price list size is : "
-			// + quandlStockPrices.size());
 		} else {
 			throw new RuntimeException("EOD Prices not available");
 		}
 
 		SignalComponentHolder signalComponentHolder = new SignalComponentHolder(ma, 3);
 		MagicNumberData magicNumberData = magicNumberRepository.getMagicNumber(stockCode);
-
-		if (null == magicNumberData) {
-			logger.info("Setting default magic number for stock " + stockCode);
-			magicNumberData = new MagicNumberData(stockCode, ma);
-		}
-		else if(MAGIC_NUMBER_BOLLINGER!=null){
-			magicNumberData.setMagicNumberBollinger(MAGIC_NUMBER_BOLLINGER);
-		}
-		// logger.info("Magic Number Object: " + magicNumberData.toString());
-
 		signalComponentHolder.setMagicNumberADX(magicNumberData.getMagicNumberADX());
 		signalComponentHolder.setMagicNumberBolliger(magicNumberData.getMagicNumberBollinger());
 		signalComponentHolder.setMagicNumberOscillator(magicNumberData.getMagicNumberOscillator());
-
 		signalComponentHolder.addStockSignalsDTOs(stockSignalsDTOs);
 		return generateTodaysSignal(signalComponentHolder, quandlStockPrices);
 	}
@@ -396,7 +367,6 @@ public class StockSignalsGenerator {
 		QuandlStockPrice quandlStockPrice = quandlStockPrices.get(quandlStockPrices.size() - 1);
 		quandlStockPrices = quandlStockPrices.subList(0, quandlStockPrices.size() - 1);
 		signalComponentHolder.addQuandlStockPrices(quandlStockPrices);
-
 		SignalComponentInitilaizer signalComponentInitilaizer = new SignalComponentInitilaizer();
 		BaseSignalComponentBuilder baseSignalComponentBuilder = new BaseSignalComponentBuilder();
 		ADXSignalComponentBuilder adxSignalComponentBuilder = new ADXSignalComponentBuilder();
