@@ -18,6 +18,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 import com.intelliinvest.common.IntelliInvestStore;
+import com.intelliinvest.common.IntelliinvestConstants;
 import com.intelliinvest.common.IntelliinvestException;
 import com.intelliinvest.data.model.User;
 import com.intelliinvest.util.DateUtil;
@@ -54,7 +55,8 @@ public class UserRepository {
 		}
 	}
 
-	public User registerUser(String userName, String userId, String phone, String password, boolean sendNotification,String deviceId)
+	public User registerUser(String userName, String userId, String phone, String password, boolean sendNotification,
+			String deviceId, Boolean pushNotification, Boolean showZeroPortf, Boolean reTakeQuestionaire)
 			throws Exception {
 		logger.info("Inside register()...");
 		User user = getUserByUserId(userId);
@@ -86,6 +88,9 @@ public class UserRepository {
 		user.setUpdateDate(currentDateTime);
 		user.setLoggedIn(false);
 		user.setDeviceId(deviceId);
+		user.setPushNotification(pushNotification);
+		user.setShowZeroPortfolio(showZeroPortf);
+		user.setReTakeQuestionaire(reTakeQuestionaire);
 		mongoTemplate.insert(user, COLLECTION_USER);
 		logger.info("Registration for user " + userName + " with mail id " + userId + " successful");
 		logger.info("Sending activation mail for user " + userId);
@@ -240,7 +245,8 @@ public class UserRepository {
 	}
 
 	public User updateUser(String userName, String userId, String phone, String oldPassword, String newPassword,
-			String sendNotification) throws Exception {
+			String sendNotification, String pushNotification, String showZeroPortfolio, String reTakeQuestionarie)
+			throws Exception {
 		logger.debug("Inside updateUser()...");
 		User user = getUserByUserId(userId);
 		if (user == null) {
@@ -254,6 +260,15 @@ public class UserRepository {
 
 		if (Helper.isNotNullAndNonEmpty(sendNotification)) {
 			update.set("sendNotification", Boolean.parseBoolean(sendNotification));
+		}
+		if (Helper.isNotNullAndNonEmpty(pushNotification)) {
+			update.set("pushNotification", Boolean.parseBoolean(pushNotification));
+		}
+		if (Helper.isNotNullAndNonEmpty(showZeroPortfolio)) {
+			update.set("showZeroPortfolio", Boolean.parseBoolean(showZeroPortfolio));
+		}
+		if (Helper.isNotNullAndNonEmpty(reTakeQuestionarie)) {
+			update.set("reTakeQuestionaire", Boolean.parseBoolean(reTakeQuestionarie));
 		}
 		if (Helper.isNotNullAndNonEmpty(phone)) {
 			update.set("phone", phone);
@@ -292,14 +307,17 @@ public class UserRepository {
 		return mongoTemplate.findAndRemove(Query.query(Criteria.where("userId").is(userId)), User.class,
 				COLLECTION_USER);
 	}
-	public User updateDeviceID(String userId,String deviceId) throws Exception {
-		logger.debug("Inside forgotPassword()...");
+
+	public User updateDeviceID(String userId, String deviceId) throws Exception {
+		logger.debug("Inside updateDeviceID()...");
 		try {
 			User user = getUserByUserId(userId);
 			if (user == null) {
-				logger.error(userId
-						+ " Username does not exists");
+				logger.error(userId + " Username does not exists");
 				throw new IntelliinvestException("User " + userId + " does not exists");
+			}
+			if (!user.getLoggedIn()) {
+				throw new IntelliinvestException("User " + userId + " is not logged in");
 			}
 			Query query = new Query();
 			query.addCriteria(Criteria.where("userId").is(userId));
@@ -309,8 +327,34 @@ public class UserRepository {
 					COLLECTION_USER);
 			return user;
 		} catch (Exception e) {
-			
+
 			throw new IntelliinvestException("Error while update device id... " + e.getMessage());
+		}
+	}
+
+	public User updateReTakeQuestionaire(String userId, String reTakeQuestionaire) throws Exception {
+		logger.debug("Inside updateReTakeQuestionaire()...");
+		try {
+			User user = getUserByUserId(userId);
+			if (user == null) {
+				logger.error(userId + " Username does not exists");
+				throw new IntelliinvestException("User " + userId + " does not exists");
+			}
+			if (!user.getLoggedIn()) {
+				throw new IntelliinvestException("User " + userId + " is not logged in");
+			}
+			Query query = new Query();
+			query.addCriteria(Criteria.where("userId").is(userId));
+			Update update = new Update();
+			logger.info("userid:"+userId);
+			logger.info("retake questionaire: "+reTakeQuestionaire);
+			update.set("reTakeQuestionaire", Boolean.parseBoolean(reTakeQuestionaire));
+			user = mongoTemplate.findAndModify(query, update, new FindAndModifyOptions().returnNew(true), User.class,
+					COLLECTION_USER);
+			return user;
+
+		} catch (Exception e) {
+			throw new IntelliinvestException("Error while update retakequestionaire parameter... " + e.getMessage());
 		}
 	}
 }

@@ -38,9 +38,36 @@ public class User implements Serializable {
 	@DateTimeFormat(iso = ISO.DATE_TIME)
 	private LocalDateTime updateDate;
 	private String deviceId;
+	private boolean reTakeQuestionaire;
+	private boolean pushNotification;
+	private boolean showZeroPortfolio;
 
 	public User() {
 		super();
+	}
+
+	public boolean isReTakeQuestionaire() {
+		return reTakeQuestionaire;
+	}
+
+	public void setReTakeQuestionaire(boolean reTakeQuestionaire) {
+		this.reTakeQuestionaire = reTakeQuestionaire;
+	}
+
+	public boolean isPushNotification() {
+		return pushNotification;
+	}
+
+	public void setPushNotification(boolean pushNotification) {
+		this.pushNotification = pushNotification;
+	}
+
+	public boolean isShowZeroPortfolio() {
+		return showZeroPortfolio;
+	}
+
+	public void setShowZeroPortfolio(boolean showZeroPortfolio) {
+		this.showZeroPortfolio = showZeroPortfolio;
 	}
 
 	public String getUserId() {
